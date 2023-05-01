@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial
 
 from enums.enums import ParameterType
 from model.DspEffect import DspEffect
+from model.DspParameter import DspParameter
 from model.MainModel import MainModel
 
 KNOB_SIZE = 40
@@ -16,6 +17,7 @@ class CentralWidget(QWidget):
         self.main_model = MainModel()
         main_layout = QGridLayout(self)
         self.setLayout(main_layout)
+
         tab_widget = QTabWidget(self)
         tab_widget.addTab(self.create_dsp_page(self.main_model.currentDsp1), 'DSP 1')
         tab_widget.addTab(self.create_dsp_page(self.main_model.currentDsp2), 'DSP 2')
@@ -30,6 +32,7 @@ class CentralWidget(QWidget):
 
         hbox_layout = QHBoxLayout(self)
         dsp_page.setLayout(hbox_layout)
+
         list_widget = QListWidget(self)
         list_widget.insertItem(0, "OFF")
         for idx, dsp_effect in enumerate(self.main_model.getDspList()):
@@ -54,14 +57,14 @@ class CentralWidget(QWidget):
         hbox_layout.addLayout(qgrid_layout)
         return dsp_page
 
-    def create_combo_input(self, dsp_parameter, idx, qgrid_layout):
+    def create_combo_input(self, dsp_parameter: DspParameter, idx: int, qgrid_layout: QGridLayout):
         combo_box = QComboBox(self)
         combo_box.addItems(dsp_parameter.choices)
         combo_box.currentIndexChanged.connect(lambda state, cb=combo_box: self.on_combo_changed(cb))
         qgrid_layout.addWidget(QLabel(dsp_parameter.name + ":"), idx, 0)
         qgrid_layout.addWidget(combo_box, idx, 1)
 
-    def create_knob_input(self, dsp_parameter, idx, qgrid_layout):
+    def create_knob_input(self, dsp_parameter: DspParameter, idx: int, qgrid_layout: QGridLayout):
         knob_value_input = QSpinBox(self)
         knob_value_input.setMinimum(dsp_parameter.choices[0])
         knob_value_input.setMaximum(dsp_parameter.choices[1])
@@ -78,22 +81,22 @@ class CentralWidget(QWidget):
         qgrid_layout.addLayout(hbox, idx, 1)
 
     @staticmethod
-    def on_list_widget_click(list_widget):
+    def on_list_widget_click(list_widget: QListWidget):
         item_id = list_widget.currentItem().data(Qt.UserRole)
         print(str(item_id) + " - " + list_widget.currentItem().text())
 
     @staticmethod
-    def on_combo_changed(combo):
+    def on_combo_changed(combo: QComboBox):
         print(combo.currentText())
 
     @staticmethod
-    def on_knob_changed(knob, knob_value_input):
+    def on_knob_changed(knob: QDial, knob_value_input: QSpinBox):
         if knob.value() != knob_value_input.value():
             print(knob.value())
             knob_value_input.setValue(knob.value())
 
     @staticmethod
-    def on_knob_spinbox_changed(knob_value_input, knob):
+    def on_knob_spinbox_changed(knob_value_input: QSpinBox, knob: QDial):
         if knob_value_input.value() != knob.value():
             print(knob_value_input.value())
             knob.setValue(knob_value_input.value())
