@@ -29,7 +29,6 @@ class CentralWidget(QWidget):
 
     def create_dsp_page(self, current_dsp: DspEffect):
         dsp_page = QWidget(self)
-
         hbox_layout = QHBoxLayout(self)
         dsp_page.setLayout(hbox_layout)
 
