@@ -118,7 +118,11 @@ dspEffectList = [  # DspEffect(0, "!!ERROR!!"),
 
 class MainModel:
     def __init__(self):
-        self.currentDsp1 = dspEffectList[0]
+        self.currentDsp1 = dspEffectList[0]  # TODO: set "OFF" by default
         self.currentDsp2 = dspEffectList[1]
         self.currentDsp3 = dspEffectList[2]
         self.currentDsp4 = dspEffectList[3]
+
+    @staticmethod
+    def getDspList():
+        return dspEffectList

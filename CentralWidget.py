@@ -12,14 +12,14 @@ class CentralWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        main_model = MainModel()
+        self.main_model = MainModel()
         main_layout = QGridLayout(self)
         self.setLayout(main_layout)
         tab_widget = QTabWidget(self)
-        tab_widget.addTab(self.create_dsp_page(main_model.currentDsp1), 'DSP 1')
-        tab_widget.addTab(self.create_dsp_page(main_model.currentDsp2), 'DSP 2')
-        tab_widget.addTab(self.create_dsp_page(main_model.currentDsp3), 'DSP 3')
-        tab_widget.addTab(self.create_dsp_page(main_model.currentDsp4), 'DSP 4')
+        tab_widget.addTab(self.create_dsp_page(self.main_model.currentDsp1), 'DSP 1')
+        tab_widget.addTab(self.create_dsp_page(self.main_model.currentDsp2), 'DSP 2')
+        tab_widget.addTab(self.create_dsp_page(self.main_model.currentDsp3), 'DSP 3')
+        tab_widget.addTab(self.create_dsp_page(self.main_model.currentDsp4), 'DSP 4')
         tab_widget.addTab(self.create_main_params_page(), 'Main parameters')  # TODO: should be the first tab
 
         main_layout.addWidget(tab_widget, 0, 0, 2, 1)
@@ -31,11 +31,9 @@ class CentralWidget(QWidget):
         dsp_page.setLayout(hbox_layout)
         list_widget = QListWidget(self)
         list_widget.insertItem(0, "OFF")
-        list_widget.insertItem(1, "Red")
-        list_widget.insertItem(2, "Orange")
-        list_widget.insertItem(3, "Blue")
-        list_widget.insertItem(4, "White")
-        list_widget.insertItem(5, "Green")
+        for dsp_effect in self.main_model.getDspList():
+            list_widget.insertItem(dsp_effect.id, dsp_effect.name)
+
         # list_widget.clicked.connect(self.clicked)
         hbox_layout.addWidget(list_widget)
 
