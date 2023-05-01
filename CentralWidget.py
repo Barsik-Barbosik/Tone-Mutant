@@ -1,5 +1,6 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
-    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox
+    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem
 
 from enums.enums import ParameterType
 from model.DspEffect import DspEffect
@@ -31,10 +32,13 @@ class CentralWidget(QWidget):
         dsp_page.setLayout(hbox_layout)
         list_widget = QListWidget(self)
         list_widget.insertItem(0, "OFF")
-        for dsp_effect in self.main_model.getDspList():
-            list_widget.insertItem(dsp_effect.id, dsp_effect.name)
+        for idx, dsp_effect in enumerate(self.main_model.getDspList()):
+            item = QListWidgetItem()
+            item.setText(dsp_effect.name)
+            item.setData(Qt.UserRole, dsp_effect.id)
+            list_widget.insertItem(idx + 1, item)
 
-        # list_widget.clicked.connect(self.clicked)
+        list_widget.itemClicked.connect(lambda state, lw=list_widget: self.on_list_widget_click(lw))
         hbox_layout.addWidget(list_widget)
 
         qgrid_layout = QGridLayout(self)
@@ -72,6 +76,11 @@ class CentralWidget(QWidget):
         hbox.addWidget(knob)
         qgrid_layout.addWidget(QLabel(dsp_parameter.name + ":"), idx, 0)
         qgrid_layout.addLayout(hbox, idx, 1)
+
+    @staticmethod
+    def on_list_widget_click(list_widget):
+        item_id = list_widget.currentItem().data(Qt.UserRole)
+        print(str(item_id) + " - " + list_widget.currentItem().text())
 
     @staticmethod
     def on_combo_changed(combo):
