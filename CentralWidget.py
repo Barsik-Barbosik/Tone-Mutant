@@ -68,6 +68,7 @@ class CentralWidget(QWidget):
         knob.setMaximum(knob_value_input.maximum())
         knob.setFixedSize(KNOB_SIZE, KNOB_SIZE)
         knob.valueChanged.connect(lambda state, kn=knob, inp=knob_value_input: self.on_knob_changed(kn, inp))
+        knob_value_input.valueChanged.connect(lambda state, inp=knob_value_input, kn=knob: self.on_knob_spinbox_changed(inp, kn))
         hbox = QHBoxLayout(self)
         hbox.addWidget(knob_value_input)
         hbox.addWidget(knob)
@@ -80,8 +81,15 @@ class CentralWidget(QWidget):
 
     @staticmethod
     def on_knob_changed(knob, knob_value_input):
-        print(knob.value())
-        knob_value_input.setValue(knob.value())
+        if knob.value() != knob_value_input.value():
+            print(knob.value())
+            knob_value_input.setValue(knob.value())
+
+    @staticmethod
+    def on_knob_spinbox_changed(knob_value_input, knob):
+        if knob_value_input.value() != knob.value():
+            print(knob_value_input.value())
+            knob.setValue(knob_value_input.value())
 
     def create_main_params_page(self):
         main_params_page = QWidget(self)

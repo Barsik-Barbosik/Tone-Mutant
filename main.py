@@ -9,6 +9,8 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("CT-X Controller")
+        self.setStyleSheet("QWidget {font-size: 11pt;}")
+
         self.central_widget = CentralWidget()
         self.setCentralWidget(self.central_widget)
 
