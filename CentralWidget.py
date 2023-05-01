@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QLineEdit, QDial, \
-    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
+    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox
 
 from enums.enums import ParameterType
 from model.DspEffect import DspEffect
@@ -41,15 +41,10 @@ class CentralWidget(QWidget):
 
         qgrid_layout = QGridLayout(self)
         for idx, dsp_parameter in enumerate(current_dsp.dsp_parameter_list):
-            print(dsp_parameter.name)
             if dsp_parameter.type == ParameterType.COMBO:
-                print("COMBO")
-                qgrid_layout.addWidget(QLabel(dsp_parameter.name + ":"), idx, 0)
-                qgrid_layout.addWidget(QLineEdit(), idx, 1)
+                self.create_combo_input(dsp_parameter, idx, qgrid_layout)
             elif dsp_parameter.type == ParameterType.KNOB:
                 self.create_knob_input(dsp_parameter, idx, qgrid_layout)
-            elif dsp_parameter.type == ParameterType.KNOB_WITH_MIDDLE:
-                self.create_knob_with_middle_input(dsp_parameter, idx, qgrid_layout)
 
         empty_filler = QWidget(self)
         empty_filler.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -57,27 +52,17 @@ class CentralWidget(QWidget):
         hbox_layout.addLayout(qgrid_layout)
         return dsp_page
 
-    def create_knob_input(self, dsp_parameter, idx, qgrid_layout):
-        print("KNOB")
-        knob_value_input = QSpinBox(self)
-        knob_value_input.setMinimum(dsp_parameter.settings[0])
-        knob_value_input.setMaximum(dsp_parameter.settings[1])
-        knob = QDial(self)
-        knob.setMinimum(knob_value_input.minimum())
-        knob.setMaximum(knob_value_input.maximum())
-        knob.setFixedSize(KNOB_SIZE, KNOB_SIZE)
-        knob.valueChanged.connect(lambda state, kn=knob, inp=knob_value_input: self.on_knob_changed(kn, inp))
-        hbox = QHBoxLayout(self)
-        hbox.addWidget(knob_value_input)
-        hbox.addWidget(knob)
+    def create_combo_input(self, dsp_parameter, idx, qgrid_layout):
+        combo_box = QComboBox(self)
+        combo_box.addItems(dsp_parameter.choices)
+        combo_box.currentIndexChanged.connect(lambda state, cb=combo_box: self.on_combo_changed(cb))
         qgrid_layout.addWidget(QLabel(dsp_parameter.name + ":"), idx, 0)
-        qgrid_layout.addLayout(hbox, idx, 1)
+        qgrid_layout.addWidget(combo_box, idx, 1)
 
-    def create_knob_with_middle_input(self, dsp_parameter, idx, qgrid_layout):
-        print("KNOB_WITH_MIDDLE")
+    def create_knob_input(self, dsp_parameter, idx, qgrid_layout):
         knob_value_input = QSpinBox(self)
-        knob_value_input.setMinimum(dsp_parameter.settings[0])
-        knob_value_input.setMaximum(dsp_parameter.settings[2])
+        knob_value_input.setMinimum(dsp_parameter.choices[0])
+        knob_value_input.setMaximum(dsp_parameter.choices[1])
         knob = QDial(self)
         knob.setMinimum(knob_value_input.minimum())
         knob.setMaximum(knob_value_input.maximum())
@@ -90,7 +75,12 @@ class CentralWidget(QWidget):
         qgrid_layout.addLayout(hbox, idx, 1)
 
     @staticmethod
+    def on_combo_changed(combo):
+        print(combo.currentText())
+
+    @staticmethod
     def on_knob_changed(knob, knob_value_input):
+        print(knob.value())
         knob_value_input.setValue(knob.value())
 
     def create_main_params_page(self):
