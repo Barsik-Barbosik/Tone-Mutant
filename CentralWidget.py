@@ -19,14 +19,20 @@ class CentralWidget(QWidget):
         main_layout = QGridLayout(self)
         self.setLayout(main_layout)
 
-        tab_widget = QTabWidget(self)
-        tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 1')
-        tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 2')
-        tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 3')
-        tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 4')
-        tab_widget.addTab(self.create_main_params_page(), 'Main parameters')  # TODO: should be the first tab
+        self.tab_widget = QTabWidget(self)
+        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 1')
+        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 2')
+        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 3')
+        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 4')
+        self.tab_widget.addTab(self.create_main_params_page(), 'Main parameters')  # TODO: should be the first tab
+        self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
-        main_layout.addWidget(tab_widget, 0, 0, 2, 1)
+        main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
+
+    def on_tab_changed(self, i):
+        # print("Tab Index Changed! Current Tab Index: %d" % i)
+        tab_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
+        self.show_status_msg(tab_name)
 
     def create_dsp_page(self, qgrid_layout: QGridLayout):
         dsp_page = QWidget(self)
