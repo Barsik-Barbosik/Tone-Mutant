@@ -43,12 +43,12 @@ class CentralWidget(QWidget):
         list_widget.itemClicked.connect(lambda state, lw=list_widget: self.on_list_widget_click(lw, qgrid_layout))
         hbox_layout.addWidget(list_widget)  # left side
 
-        self.update_parameter_panel(qgrid_layout)
+        self.redraw_dsp_params_panel(qgrid_layout)
         hbox_layout.addLayout(qgrid_layout)  # right side
 
         return dsp_page
 
-    def update_parameter_panel(self, qgrid_layout: QGridLayout):
+    def redraw_dsp_params_panel(self, qgrid_layout: QGridLayout):
         self.clear_layout(qgrid_layout)
 
         if self.main_model.currentDsp1 is not None:
@@ -95,7 +95,7 @@ class CentralWidget(QWidget):
         item_id: int = list_widget.currentItem().data(Qt.UserRole)
         print(str(item_id) + " - " + list_widget.currentItem().text())
         self.main_model.setCurrentDsp1(item_id)
-        self.update_parameter_panel(qgrid_layout)
+        self.redraw_dsp_params_panel(qgrid_layout)
 
     @staticmethod
     def on_combo_changed(combo: QComboBox, dsp_parameter_name: str):
