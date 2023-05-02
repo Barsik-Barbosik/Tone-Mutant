@@ -28,11 +28,12 @@ class CentralWidget(QWidget):
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
         main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
+        self.main_model.currentTabName = self.tab_widget.tabText(self.tab_widget.currentIndex())
 
     def on_tab_changed(self, i):
-        # print("Tab Index Changed! Current Tab Index: %d" % i)
         tab_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
         self.show_status_msg(tab_name)
+        self.main_model.currentTabName = tab_name
 
     def create_dsp_page(self, qgrid_layout: QGridLayout):
         dsp_page = QWidget(self)
@@ -58,8 +59,8 @@ class CentralWidget(QWidget):
     def redraw_dsp_params_panel(self, qgrid_layout: QGridLayout):
         self.clear_layout(qgrid_layout)
 
-        if self.main_model.currentDsp1 is not None:
-            for idx, dsp_parameter in enumerate(self.main_model.currentDsp1.dsp_parameter_list):
+        if self.main_model.getCurrentDsp() is not None:
+            for idx, dsp_parameter in enumerate(self.main_model.getCurrentDsp().dsp_parameter_list):
                 if dsp_parameter.type == ParameterType.COMBO:
                     self.create_combo_input(dsp_parameter, idx, qgrid_layout)
                 elif dsp_parameter.type == ParameterType.KNOB:
@@ -102,8 +103,9 @@ class CentralWidget(QWidget):
         item_id: int = list_widget.currentItem().data(Qt.UserRole)
         print(str(item_id) + " - " + list_widget.currentItem().text())
         dsp_effect: DspEffect = self.main_model.getDspEffectById(item_id)
-        self.main_model.setCurrentDsp1(item_id)
+        self.main_model.setCurrentDsp(item_id)
         self.show_status_msg(dsp_effect.description if dsp_effect is not None else "")
+        self.main_model.print_main_model_debug_info()
         self.redraw_dsp_params_panel(qgrid_layout)
 
     @staticmethod
