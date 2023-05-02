@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial
     QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem
 
 from enums.enums import ParameterType
+from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
 from model.MainModel import MainModel
 
@@ -94,7 +95,9 @@ class CentralWidget(QWidget):
     def on_list_widget_click(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
         item_id: int = list_widget.currentItem().data(Qt.UserRole)
         print(str(item_id) + " - " + list_widget.currentItem().text())
+        dsp_effect: DspEffect = self.main_model.getDspEffectById(item_id)
         self.main_model.setCurrentDsp1(item_id)
+        self.show_status_msg(dsp_effect.description if dsp_effect is not None else "")
         self.redraw_dsp_params_panel(qgrid_layout)
 
     @staticmethod
@@ -124,6 +127,9 @@ class CentralWidget(QWidget):
                     child.widget().deleteLater()
                 elif child.layout() is not None:
                     self.clear_layout(child.layout())
+
+    def show_status_msg(self, text: str):
+        self.parent().status_bar.showMessage(text)
 
     def create_main_params_page(self):
         main_params_page = QWidget(self)

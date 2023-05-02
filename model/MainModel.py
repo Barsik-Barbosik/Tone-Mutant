@@ -123,14 +123,15 @@ class MainModel:
         self.currentDsp3 = None
         self.currentDsp4 = None
 
-    def getDspEffectById(self, id: int):
+    def setCurrentDsp1(self, id: int):
+        self.currentDsp1 = self.getDspEffectById(id)
+
+    @staticmethod
+    def getDspEffectById(id: int):
         for dspEffect in dspEffectList:
             if dspEffect.id == id:
                 return dspEffect
         return None
-
-    def setCurrentDsp1(self, id: int):
-        self.currentDsp1 = self.getDspEffectById(id)
 
     @staticmethod
     def getDspList():
