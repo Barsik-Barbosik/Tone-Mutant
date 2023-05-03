@@ -184,12 +184,13 @@ class MainModel:
         elif self.currentTabName == "DSP 4":
             self.selectedDsp4 = new_dsp_effect
 
-    def print_main_model_debug_info(self):
-        print("currentTabName: " + str(self.currentTabName))
-        print("selectedDsp1: " + str(self.selectedDsp1))
-        print("selectedDsp2: " + str(self.selectedDsp2))
-        print("selectedDsp3: " + str(self.selectedDsp3))
-        print("selectedDsp4: " + str(self.selectedDsp4))
+    def get_output_text(self) -> str:
+        output: str = "currentTabName: " + str(self.currentTabName) \
+                      + "\nselectedDsp1: " + str(self.selectedDsp1.name if self.selectedDsp1 is not None else "OFF") \
+                      + "\nselectedDsp2: " + str(self.selectedDsp2.name if self.selectedDsp2 is not None else "OFF") \
+                      + "\nselectedDsp3: " + str(self.selectedDsp3.name if self.selectedDsp3 is not None else "OFF") \
+                      + "\nselectedDsp4: " + str(self.selectedDsp4.name if self.selectedDsp4 is not None else "OFF")
+        return output
 
     @staticmethod
     def get_dsp_effect_by_id(id: int) -> DspEffect:

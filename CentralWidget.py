@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
-    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem
+    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser
 
 from enums.enums import ParameterType
 from model.DspEffect import DspEffect
@@ -15,16 +15,18 @@ class CentralWidget(QWidget):
         super().__init__(*args, **kwargs)
 
         self.main_model = MainModel()
+        self.output_tab_textbox = QTextBrowser()
 
         main_layout = QGridLayout(self)
         self.setLayout(main_layout)
 
         self.tab_widget = QTabWidget(self)
+        self.tab_widget.addTab(self.create_main_params_page(), 'Main parameters')
         self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 1')
         self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 2')
         self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 3')
         self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 4')
-        self.tab_widget.addTab(self.create_main_params_page(), 'Main parameters')  # TODO: should be the first tab
+        self.tab_widget.addTab(self.create_output_page(), 'Output')
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
         main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
@@ -34,8 +36,10 @@ class CentralWidget(QWidget):
         tab_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
         self.main_model.currentTabName = tab_name
         self.show_status_msg(tab_name + ": " + self.main_model.get_current_dsp_name())
+        if tab_name == "Output":
+            self.output_tab_textbox.setPlainText(self.main_model.get_output_text())
 
-    def create_dsp_page(self, qgrid_layout: QGridLayout):
+    def create_dsp_page(self, qgrid_layout: QGridLayout) -> QWidget:
         dsp_page = QWidget(self)
         hbox_layout = QHBoxLayout(self)
         dsp_page.setLayout(hbox_layout)
@@ -104,7 +108,7 @@ class CentralWidget(QWidget):
         dsp_effect: DspEffect = self.main_model.get_dsp_effect_by_id(item_id)
         self.main_model.set_current_dsp(item_id)
         self.show_status_msg(dsp_effect.description if dsp_effect is not None else "")
-        self.main_model.print_main_model_debug_info()
+        self.main_model.get_output_text()
         self.redraw_dsp_params_panel(qgrid_layout)
 
     @staticmethod
@@ -138,7 +142,7 @@ class CentralWidget(QWidget):
     def show_status_msg(self, text: str):
         self.parent().status_bar.showMessage(text)
 
-    def create_main_params_page(self):
+    def create_main_params_page(self) -> QWidget:
         main_params_page = QWidget(self)
         layout = QFormLayout()
         layout.addRow('Atk. time:', QSpinBox(self))
@@ -156,3 +160,10 @@ class CentralWidget(QWidget):
         layout.addRow('Modulation:', QSpinBox(self))
         main_params_page.setLayout(layout)
         return main_params_page
+
+    def create_output_page(self) -> QWidget:
+        output_page = QWidget(self)
+        hbox_layout = QHBoxLayout(self)
+        hbox_layout.addWidget(self.output_tab_textbox)
+        output_page.setLayout(hbox_layout)
+        return output_page
