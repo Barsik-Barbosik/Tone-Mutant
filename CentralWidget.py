@@ -46,7 +46,7 @@ class CentralWidget(QWidget):
 
         list_widget = QListWidget(self)
         list_widget.insertItem(0, "OFF")
-        for idx, dsp_effect in enumerate(self.main_model.get_dsp_list()):
+        for idx, dsp_effect in enumerate(self.main_model.get_dsp_effects_tuple()):
             item = QListWidgetItem()
             item.setText(dsp_effect.name)
             item.setData(Qt.UserRole, dsp_effect.id)
@@ -108,7 +108,6 @@ class CentralWidget(QWidget):
         dsp_effect: DspEffect = self.main_model.get_dsp_effect_by_id(item_id)
         self.main_model.set_current_dsp(item_id)
         self.show_status_msg(dsp_effect.description if dsp_effect is not None else "")
-        self.main_model.get_output_text()
         self.redraw_dsp_params_panel(qgrid_layout)
 
     @staticmethod

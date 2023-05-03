@@ -2,7 +2,7 @@ from enums.enums import ParameterType
 from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
 
-dspEffectList = [  # DspEffect(0, "!!ERROR!!"),
+dspEffectsTuple = (  # DspEffect(0, "!!ERROR!!"),
     DspEffect(27, "Mono 1-Band EQ", "This is a single-band monaural equalizer.",
               [DspParameter(1, "EQ Frequency", "Adjusts the center frequency of Equalizer.", ParameterType.COMBO,
                             ["100Hz", "125Hz", "160Hz", "200Hz", "250Hz", "315Hz", "400Hz", "500Hz", "630Hz", "800Hz",
@@ -146,7 +146,7 @@ dspEffectList = [  # DspEffect(0, "!!ERROR!!"),
     DspEffect(24, "Amp Cabinet", "Simulates the amp and speaker cabinet without drive and distortion.", []),
     DspEffect(17, "* Multi Chorus", "Unknown secret DSP effect", []),
     DspEffect(25, "* Holw Body", "Unknown secret DSP effect", []),
-    DspEffect(26, "* Pino Body", "Unknown secret DSP effect", [])]
+    DspEffect(26, "* Pino Body", "Unknown secret DSP effect", []))
 
 
 class MainModel:
@@ -194,11 +194,11 @@ class MainModel:
 
     @staticmethod
     def get_dsp_effect_by_id(id: int) -> DspEffect:
-        for dspEffect in dspEffectList:
+        for dspEffect in dspEffectsTuple:
             if dspEffect.id == id:
                 return dspEffect
         return None
 
     @staticmethod
-    def get_dsp_list():
-        return dspEffectList
+    def get_dsp_effects_tuple():
+        return dspEffectsTuple
