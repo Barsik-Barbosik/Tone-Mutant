@@ -170,6 +170,9 @@ class MainModel:
         else:
             return None
 
+    def get_current_dsp_name(self):
+        return self.get_current_dsp().name if self.get_current_dsp() is not None else "OFF"
+
     def set_current_dsp(self, id: int):
         new_dsp_effect: DspEffect = self.get_dsp_effect_by_id(id)
         if self.currentTabName == "DSP 1":

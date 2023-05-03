@@ -32,8 +32,8 @@ class CentralWidget(QWidget):
 
     def on_tab_changed(self, i):
         tab_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
-        self.show_status_msg(tab_name)
         self.main_model.currentTabName = tab_name
+        self.show_status_msg(tab_name + ": " + self.main_model.get_current_dsp_name())
 
     def create_dsp_page(self, qgrid_layout: QGridLayout):
         dsp_page = QWidget(self)
@@ -61,10 +61,11 @@ class CentralWidget(QWidget):
 
         if self.main_model.get_current_dsp() is not None:
             for idx, dsp_parameter in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
+                qgrid_layout.addWidget(QLabel(dsp_parameter.name + ":"), idx, 0)
                 if dsp_parameter.type == ParameterType.COMBO:
-                    self.create_combo_input(dsp_parameter, idx, qgrid_layout)
+                    qgrid_layout.addWidget(self.create_combo_input(dsp_parameter), idx, 1)
                 elif dsp_parameter.type == ParameterType.KNOB:
-                    self.create_knob_input(dsp_parameter, idx, qgrid_layout)
+                    qgrid_layout.addLayout(self.create_knob_input(dsp_parameter), idx, 1)
         else:
             qgrid_layout.addWidget(QLabel("------------------- OFF ----------------"), 0, 0)
 
@@ -72,15 +73,14 @@ class CentralWidget(QWidget):
         empty_filler.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         qgrid_layout.addWidget(empty_filler)
 
-    def create_combo_input(self, dsp_parameter: DspParameter, idx: int, qgrid_layout: QGridLayout):
+    def create_combo_input(self, dsp_parameter: DspParameter) -> QComboBox:
         print("creating combo for " + dsp_parameter.name)
         combo_box = QComboBox(self)
         combo_box.addItems(dsp_parameter.choices)
         combo_box.currentIndexChanged.connect(lambda state, cb=combo_box: self.on_combo_changed(cb, dsp_parameter.name))
-        qgrid_layout.addWidget(QLabel(dsp_parameter.name + ":"), idx, 0)
-        qgrid_layout.addWidget(combo_box, idx, 1)
+        return combo_box
 
-    def create_knob_input(self, dsp_parameter: DspParameter, idx: int, qgrid_layout: QGridLayout):
+    def create_knob_input(self, dsp_parameter: DspParameter) -> QHBoxLayout:
         print("creating knob for " + dsp_parameter.name)
         knob_value_input = QSpinBox(self)
         knob_value_input.setMinimum(dsp_parameter.choices[0])
@@ -96,8 +96,7 @@ class CentralWidget(QWidget):
         hbox = QHBoxLayout(self)
         hbox.addWidget(knob_value_input)
         hbox.addWidget(knob)
-        qgrid_layout.addWidget(QLabel(dsp_parameter.name + ":"), idx, 0)
-        qgrid_layout.addLayout(hbox, idx, 1)
+        return hbox
 
     def on_list_widget_click(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
         item_id: int = list_widget.currentItem().data(Qt.UserRole)
