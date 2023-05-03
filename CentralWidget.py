@@ -42,7 +42,7 @@ class CentralWidget(QWidget):
 
         list_widget = QListWidget(self)
         list_widget.insertItem(0, "OFF")
-        for idx, dsp_effect in enumerate(self.main_model.getDspList()):
+        for idx, dsp_effect in enumerate(self.main_model.get_dsp_list()):
             item = QListWidgetItem()
             item.setText(dsp_effect.name)
             item.setData(Qt.UserRole, dsp_effect.id)
@@ -59,8 +59,8 @@ class CentralWidget(QWidget):
     def redraw_dsp_params_panel(self, qgrid_layout: QGridLayout):
         self.clear_layout(qgrid_layout)
 
-        if self.main_model.getCurrentDsp() is not None:
-            for idx, dsp_parameter in enumerate(self.main_model.getCurrentDsp().dsp_parameter_list):
+        if self.main_model.get_current_dsp() is not None:
+            for idx, dsp_parameter in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
                 if dsp_parameter.type == ParameterType.COMBO:
                     self.create_combo_input(dsp_parameter, idx, qgrid_layout)
                 elif dsp_parameter.type == ParameterType.KNOB:
@@ -102,8 +102,8 @@ class CentralWidget(QWidget):
     def on_list_widget_click(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
         item_id: int = list_widget.currentItem().data(Qt.UserRole)
         print(str(item_id) + " - " + list_widget.currentItem().text())
-        dsp_effect: DspEffect = self.main_model.getDspEffectById(item_id)
-        self.main_model.setCurrentDsp(item_id)
+        dsp_effect: DspEffect = self.main_model.get_dsp_effect_by_id(item_id)
+        self.main_model.set_current_dsp(item_id)
         self.show_status_msg(dsp_effect.description if dsp_effect is not None else "")
         self.main_model.print_main_model_debug_info()
         self.redraw_dsp_params_panel(qgrid_layout)

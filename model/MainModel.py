@@ -157,7 +157,7 @@ class MainModel:
         self.selectedDsp3: DspEffect = None
         self.selectedDsp4: DspEffect = None
 
-    def getCurrentDsp(self):
+    def get_current_dsp(self) -> DspEffect:
         # TODO: make static list of tab names
         if self.currentTabName == "DSP 1":
             return self.selectedDsp1
@@ -170,16 +170,16 @@ class MainModel:
         else:
             return None
 
-    def setCurrentDsp(self, id: int):
-        newDspEffect: DspEffect = self.getDspEffectById(id)
+    def set_current_dsp(self, id: int):
+        new_dsp_effect: DspEffect = self.get_dsp_effect_by_id(id)
         if self.currentTabName == "DSP 1":
-            self.selectedDsp1 = newDspEffect
+            self.selectedDsp1 = new_dsp_effect
         elif self.currentTabName == "DSP 2":
-            self.selectedDsp2 = newDspEffect
+            self.selectedDsp2 = new_dsp_effect
         elif self.currentTabName == "DSP 3":
-            self.selectedDsp3 = newDspEffect
+            self.selectedDsp3 = new_dsp_effect
         elif self.currentTabName == "DSP 4":
-            self.selectedDsp4 = newDspEffect
+            self.selectedDsp4 = new_dsp_effect
 
     def print_main_model_debug_info(self):
         print("currentTabName: " + str(self.currentTabName))
@@ -189,12 +189,12 @@ class MainModel:
         print("selectedDsp4: " + str(self.selectedDsp4))
 
     @staticmethod
-    def getDspEffectById(id: int):
+    def get_dsp_effect_by_id(id: int) -> DspEffect:
         for dspEffect in dspEffectList:
             if dspEffect.id == id:
                 return dspEffect
         return None
 
     @staticmethod
-    def getDspList():
+    def get_dsp_list():
         return dspEffectList
