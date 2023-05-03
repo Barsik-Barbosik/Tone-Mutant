@@ -144,19 +144,13 @@ class CentralWidget(QWidget):
     def create_main_params_page(self) -> QWidget:
         main_params_page = QWidget(self)
         layout = QFormLayout()
-        layout.addRow('Atk. time:', QSpinBox(self))
-        layout.addRow('Rel. time:', QSpinBox(self))
-        layout.addRow('Cutoff F:', QSpinBox(self))
-        layout.addRow('Resonance:', QSpinBox(self))
-        layout.addRow('Vibrato:', QSpinBox(self))
-        layout.addRow('Oct. shift:', QSpinBox(self))
-        layout.addRow('Volume:', QSpinBox(self))
-        layout.addRow('Velocity sensitivity:', QSpinBox(self))
-        layout.addRow('Rev. send:', QSpinBox(self))
-        layout.addRow('Cho. send:', QSpinBox(self))
-        layout.addRow('Dly. send:', QSpinBox(self))
-        layout.addRow('Pitch band:', QSpinBox(self))
-        layout.addRow('Modulation:', QSpinBox(self))
+
+        main_params_tuple = self.main_model.get_main_params_tuple()
+        for idx, parameter in enumerate(main_params_tuple):
+            if parameter.type == ParameterType.COMBO:
+                layout.addRow(parameter.name + ':', self.create_combo_input(parameter))
+            elif parameter.type == ParameterType.KNOB:
+                layout.addRow(parameter.name + ':', self.create_knob_input(parameter))
         main_params_page.setLayout(layout)
         return main_params_page
 

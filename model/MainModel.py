@@ -2,6 +2,22 @@ from enums.enums import ParameterType
 from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
 
+mainParamsTuple = (DspParameter(100, "Atk. time", "Atk. time - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(101, "Rel. time", "Rel. time - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Cutoff F", "Cutoff F - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Resonance", "Resonance - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Vibrato", "Vibrato - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Oct. shif", "Oct. shif - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Volume", "Volume - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Velocity sensitivity", "Velocity sensitivity - description.", ParameterType.KNOB,
+                                [0, 127], 0),
+                   DspParameter(102, "Rev. send", "Rev. send - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Cho. send", "Cho. send - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Dly. send", "Dly. send - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Pitch band", "Pitch band - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Modulation", "Modulation - description.", ParameterType.KNOB, [0, 127], 0),
+                   DspParameter(102, "Sustain pedal", "Sustain pedal - description.", ParameterType.KNOB, [0, 127], 0))
+
 dspEffectsTuple = (  # DspEffect(0, "!!ERROR!!"),
     DspEffect(27, "Mono 1-Band EQ", "This is a single-band monaural equalizer.",
               [DspParameter(1, "EQ Frequency", "Adjusts the center frequency of Equalizer.", ParameterType.COMBO,
@@ -202,3 +218,7 @@ class MainModel:
     @staticmethod
     def get_dsp_effects_tuple():
         return dspEffectsTuple
+
+    @staticmethod
+    def get_main_params_tuple():
+        return mainParamsTuple
