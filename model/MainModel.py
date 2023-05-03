@@ -16,7 +16,8 @@ mainParamsTuple = (DspParameter(100, "Atk. time", "Atk. time - description.", Pa
                    DspParameter(102, "Dly. send", "Dly. send - description.", ParameterType.KNOB, [0, 127], 0),
                    DspParameter(102, "Pitch band", "Pitch band - description.", ParameterType.KNOB, [0, 127], 0),
                    DspParameter(102, "Modulation", "Modulation - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Sustain pedal", "Sustain pedal - description.", ParameterType.KNOB, [0, 127], 0))
+                   DspParameter(102, "Sustain pedal", "Sustain pedal - description.", ParameterType.COMBO,
+                                ["OFF", "ON"], 0))
 
 dspEffectsTuple = (  # DspEffect(0, "!!ERROR!!"),
     DspEffect(27, "Mono 1-Band EQ", "This is a single-band monaural equalizer.",

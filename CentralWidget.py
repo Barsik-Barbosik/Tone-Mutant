@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
-    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser
+    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QSpacerItem
 
 from enums.enums import ParameterType
 from model.DspEffect import DspEffect
@@ -143,15 +143,26 @@ class CentralWidget(QWidget):
 
     def create_main_params_page(self) -> QWidget:
         main_params_page = QWidget(self)
-        layout = QFormLayout()
+        hbox_layout = QHBoxLayout(self)
+        left_layout = QFormLayout()
+        right_layout = QFormLayout()
 
-        main_params_tuple = self.main_model.get_main_params_tuple()
-        for idx, parameter in enumerate(main_params_tuple):
-            if parameter.type == ParameterType.COMBO:
-                layout.addRow(parameter.name + ':', self.create_combo_input(parameter))
-            elif parameter.type == ParameterType.KNOB:
-                layout.addRow(parameter.name + ':', self.create_knob_input(parameter))
-        main_params_page.setLayout(layout)
+        for idx, parameter in enumerate(self.main_model.get_main_params_tuple()):
+            if idx < 7:
+                if parameter.type == ParameterType.COMBO:
+                    left_layout.addRow(parameter.name + ':', self.create_combo_input(parameter))
+                elif parameter.type == ParameterType.KNOB:
+                    left_layout.addRow(parameter.name + ':', self.create_knob_input(parameter))
+            else:
+                if parameter.type == ParameterType.COMBO:
+                    right_layout.addRow(parameter.name + ':', self.create_combo_input(parameter))
+                elif parameter.type == ParameterType.KNOB:
+                    right_layout.addRow(parameter.name + ':', self.create_knob_input(parameter))
+
+        hbox_layout.addLayout(left_layout)
+        hbox_layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Expanding, QSizePolicy.Expanding))
+        hbox_layout.addLayout(right_layout)
+        main_params_page.setLayout(hbox_layout)
         return main_params_page
 
     def create_output_page(self) -> QWidget:
