@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
     QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QSpacerItem
 
-from enums.enums import ParameterType
+from enums.enums import ParameterType, TabName
 from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
 from model.MainModel import MainModel
@@ -21,22 +21,20 @@ class CentralWidget(QWidget):
         self.setLayout(main_layout)
 
         self.tab_widget = QTabWidget(self)
-        self.tab_widget.addTab(self.create_main_params_page(), 'Main parameters')
-        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 1')
-        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 2')
-        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 3')
-        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), 'DSP 4')
-        self.tab_widget.addTab(self.create_output_page(), 'Output')
+        self.tab_widget.addTab(self.create_main_params_page(), TabName.MAIN_PARAMETERS.value)
+        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), TabName.DSP_1.value)
+        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), TabName.DSP_2.value)
+        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), TabName.DSP_3.value)
+        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), TabName.DSP_4.value)
+        self.tab_widget.addTab(self.create_output_page(), TabName.OUTPUT.value)
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
         main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
-        self.main_model.currentTabName = self.tab_widget.tabText(self.tab_widget.currentIndex())
 
     def on_tab_changed(self, i):
-        tab_name = self.tab_widget.tabText(self.tab_widget.currentIndex())
-        self.main_model.currentTabName = tab_name
-        self.show_status_msg(tab_name + ": " + self.main_model.get_current_dsp_name())
-        if tab_name == "Output":
+        self.main_model.currentTabName = TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
+        self.show_status_msg(self.main_model.currentTabName.value + ": " + self.main_model.get_current_dsp_name())
+        if self.main_model.currentTabName == TabName.OUTPUT:
             self.output_tab_textbox.setPlainText(self.main_model.get_output_text())
 
     def create_dsp_page(self, qgrid_layout: QGridLayout) -> QWidget:
@@ -150,14 +148,14 @@ class CentralWidget(QWidget):
         for idx, parameter in enumerate(self.main_model.get_main_params_tuple()):
             if idx < 7:
                 if parameter.type == ParameterType.COMBO:
-                    left_layout.addRow(parameter.name + ':', self.create_combo_input(parameter))
+                    left_layout.addRow(parameter.name + ":", self.create_combo_input(parameter))
                 elif parameter.type == ParameterType.KNOB:
-                    left_layout.addRow(parameter.name + ':', self.create_knob_input(parameter))
+                    left_layout.addRow(parameter.name + ":", self.create_knob_input(parameter))
             else:
                 if parameter.type == ParameterType.COMBO:
-                    right_layout.addRow(parameter.name + ':', self.create_combo_input(parameter))
+                    right_layout.addRow(parameter.name + ":", self.create_combo_input(parameter))
                 elif parameter.type == ParameterType.KNOB:
-                    right_layout.addRow(parameter.name + ':', self.create_knob_input(parameter))
+                    right_layout.addRow(parameter.name + ":", self.create_knob_input(parameter))
 
         hbox_layout.addLayout(left_layout)
         hbox_layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Expanding, QSizePolicy.Expanding))

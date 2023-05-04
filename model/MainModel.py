@@ -1,25 +1,27 @@
-from enums.enums import ParameterType
+from enum import Enum
+
+from enums.enums import ParameterType, TabName
 from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
 
-mainParamsTuple = (DspParameter(100, "Atk. time", "Atk. time - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(101, "Rel. time", "Rel. time - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Cutoff F", "Cutoff F - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Resonance", "Resonance - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Vibrato", "Vibrato - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Oct. shif", "Oct. shif - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Volume", "Volume - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Velocity sensitivity", "Velocity sensitivity - description.", ParameterType.KNOB,
-                                [0, 127], 0),
-                   DspParameter(102, "Rev. send", "Rev. send - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Cho. send", "Cho. send - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Dly. send", "Dly. send - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Pitch band", "Pitch band - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Modulation", "Modulation - description.", ParameterType.KNOB, [0, 127], 0),
-                   DspParameter(102, "Sustain pedal", "Sustain pedal - description.", ParameterType.COMBO,
-                                ["OFF", "ON"], 0))
+mainParamsTuple: tuple = (DspParameter(100, "Atk. time", "Atk. time - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(101, "Rel. time", "Rel. time - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Cutoff F", "Cutoff F - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Resonance", "Resonance - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Vibrato", "Vibrato - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Oct. shif", "Oct. shif - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Volume", "Volume - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Velocity sensitivity", "Velocity sensitivity - description.",
+                                       ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Rev. send", "Rev. send - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Cho. send", "Cho. send - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Dly. send", "Dly. send - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Pitch band", "Pitch band - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Modulation", "Modulation - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Sustain pedal", "Sustain pedal - description.", ParameterType.COMBO,
+                                       ["OFF", "ON"], 0))
 
-dspEffectsTuple = (  # DspEffect(0, "!!ERROR!!"),
+dspEffectsTuple: tuple = (  # DspEffect(0, "!!ERROR!!"),
     DspEffect(27, "Mono 1-Band EQ", "This is a single-band monaural equalizer.",
               [DspParameter(1, "EQ Frequency", "Adjusts the center frequency of Equalizer.", ParameterType.COMBO,
                             ["100Hz", "125Hz", "160Hz", "200Hz", "250Hz", "315Hz", "400Hz", "500Hz", "630Hz", "800Hz",
@@ -168,41 +170,40 @@ dspEffectsTuple = (  # DspEffect(0, "!!ERROR!!"),
 
 class MainModel:
     def __init__(self):
-        self.currentTabName: str = None
+        self.currentTabName: Enum = TabName.MAIN_PARAMETERS
         self.selectedDsp1: DspEffect = None
         self.selectedDsp2: DspEffect = None
         self.selectedDsp3: DspEffect = None
         self.selectedDsp4: DspEffect = None
 
     def get_current_dsp(self) -> DspEffect:
-        # TODO: make static list of tab names
-        if self.currentTabName == "DSP 1":
+        if self.currentTabName == TabName.DSP_1:
             return self.selectedDsp1
-        elif self.currentTabName == "DSP 2":
+        elif self.currentTabName == TabName.DSP_2:
             return self.selectedDsp2
-        elif self.currentTabName == "DSP 3":
+        elif self.currentTabName == TabName.DSP_3:
             return self.selectedDsp3
-        elif self.currentTabName == "DSP 4":
+        elif self.currentTabName == TabName.DSP_4:
             return self.selectedDsp4
         else:
             return None
 
-    def get_current_dsp_name(self):
+    def get_current_dsp_name(self) -> str:
         return self.get_current_dsp().name if self.get_current_dsp() is not None else "OFF"
 
     def set_current_dsp(self, id: int):
         new_dsp_effect: DspEffect = self.get_dsp_effect_by_id(id)
-        if self.currentTabName == "DSP 1":
+        if self.currentTabName == TabName.DSP_1:
             self.selectedDsp1 = new_dsp_effect
-        elif self.currentTabName == "DSP 2":
+        elif self.currentTabName == TabName.DSP_2:
             self.selectedDsp2 = new_dsp_effect
-        elif self.currentTabName == "DSP 3":
+        elif self.currentTabName == TabName.DSP_3:
             self.selectedDsp3 = new_dsp_effect
-        elif self.currentTabName == "DSP 4":
+        elif self.currentTabName == TabName.DSP_4:
             self.selectedDsp4 = new_dsp_effect
 
     def get_output_text(self) -> str:
-        output: str = "currentTabName: " + str(self.currentTabName) \
+        output: str = "currentTabName: " + str(self.currentTabName.value) \
                       + "\nselectedDsp1: " + str(self.selectedDsp1.name if self.selectedDsp1 is not None else "OFF") \
                       + "\nselectedDsp2: " + str(self.selectedDsp2.name if self.selectedDsp2 is not None else "OFF") \
                       + "\nselectedDsp3: " + str(self.selectedDsp3.name if self.selectedDsp3 is not None else "OFF") \
@@ -217,9 +218,9 @@ class MainModel:
         return None
 
     @staticmethod
-    def get_dsp_effects_tuple():
+    def get_dsp_effects_tuple() -> tuple:
         return dspEffectsTuple
 
     @staticmethod
-    def get_main_params_tuple():
+    def get_main_params_tuple() -> tuple:
         return mainParamsTuple
