@@ -9,7 +9,7 @@ mainParamsTuple: tuple = (DspParameter(100, "Atk. time", "Atk. time - descriptio
                           DspParameter(102, "Cutoff F", "Cutoff F - description.", ParameterType.KNOB, [0, 127], 0),
                           DspParameter(102, "Resonance", "Resonance - description.", ParameterType.KNOB, [0, 127], 0),
                           DspParameter(102, "Vibrato", "Vibrato - description.", ParameterType.KNOB, [0, 127], 0),
-                          DspParameter(102, "Oct. shif", "Oct. shif - description.", ParameterType.KNOB, [0, 127], 0),
+                          DspParameter(102, "Oct. shift", "Oct. shift - description.", ParameterType.KNOB, [0, 127], 0),
                           DspParameter(102, "Volume", "Volume - description.", ParameterType.KNOB, [0, 127], 0),
                           DspParameter(102, "Velocity sensitivity", "Velocity sensitivity - description.",
                                        ParameterType.KNOB, [0, 127], 0),
@@ -203,11 +203,23 @@ class MainModel:
             self.selectedDsp4 = new_dsp_effect
 
     def get_output_text(self) -> str:
-        output: str = "currentTabName: " + str(self.currentTabName.value) \
-                      + "\nselectedDsp1: " + str(self.selectedDsp1.name if self.selectedDsp1 is not None else "OFF") \
-                      + "\nselectedDsp2: " + str(self.selectedDsp2.name if self.selectedDsp2 is not None else "OFF") \
-                      + "\nselectedDsp3: " + str(self.selectedDsp3.name if self.selectedDsp3 is not None else "OFF") \
-                      + "\nselectedDsp4: " + str(self.selectedDsp4.name if self.selectedDsp4 is not None else "OFF")
+        output: str = "Current tab: " + str(self.currentTabName.value) + "\n" \
+                      + "\nDSP 1: " + str(self.selectedDsp1.name if self.selectedDsp1 is not None else "OFF") \
+                      + self.get_params_info(self.selectedDsp1) \
+                      + "\nDSP 2: " + str(self.selectedDsp2.name if self.selectedDsp2 is not None else "OFF") \
+                      + self.get_params_info(self.selectedDsp2) \
+                      + "\nDSP 3: " + str(self.selectedDsp3.name if self.selectedDsp3 is not None else "OFF") \
+                      + self.get_params_info(self.selectedDsp3) \
+                      + "\nDSP 4: " + str(self.selectedDsp4.name if self.selectedDsp4 is not None else "OFF") \
+                      + self.get_params_info(self.selectedDsp4)
+        return output
+
+    @staticmethod
+    def get_params_info(dsp_effect: DspEffect) -> str:
+        output: str = ""
+        if dsp_effect is not None:
+            for parameter in dsp_effect.dsp_parameter_list:
+                output = output + "\n\t" + parameter.name + ": " + str(parameter.value)
         return output
 
     @staticmethod

@@ -11,3 +11,4 @@ class DspParameter:
         self.type = type
         self.choices = choices
         self.default_value = default_value
+        self.value = self.default_value
