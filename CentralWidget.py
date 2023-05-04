@@ -49,7 +49,7 @@ class CentralWidget(QWidget):
             item.setText(dsp_effect.name)
             item.setData(Qt.UserRole, dsp_effect.id)
             list_widget.insertItem(idx + 1, item)
-
+        list_widget.setCurrentRow(0)
         list_widget.itemClicked.connect(lambda state, lw=list_widget: self.on_list_widget_click(lw, qgrid_layout))
         hbox_layout.addWidget(list_widget)  # left side
 
@@ -78,6 +78,7 @@ class CentralWidget(QWidget):
     def create_combo_input(self, dsp_parameter: DspParameter) -> QComboBox:
         combo_box = QComboBox(self)
         combo_box.addItems(dsp_parameter.choices)
+        combo_box.setCurrentIndex(dsp_parameter.default_value)
         combo_box.currentIndexChanged.connect(lambda state: self.on_combo_changed(combo_box, dsp_parameter))
         return combo_box
 
@@ -85,9 +86,11 @@ class CentralWidget(QWidget):
         knob_spinbox = QSpinBox(self)
         knob_spinbox.setMinimum(dsp_parameter.choices[0])
         knob_spinbox.setMaximum(dsp_parameter.choices[1])
+        knob_spinbox.setValue(dsp_parameter.default_value)
         knob = QDial(self)
         knob.setMinimum(knob_spinbox.minimum())
         knob.setMaximum(knob_spinbox.maximum())
+        knob.setValue(dsp_parameter.default_value)
         knob.setFixedSize(KNOB_SIZE, KNOB_SIZE)
         knob.valueChanged.connect(lambda state: self.on_knob_changed(knob, knob_spinbox, dsp_parameter))
         knob_spinbox.valueChanged.connect(
