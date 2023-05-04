@@ -76,14 +76,12 @@ class CentralWidget(QWidget):
         qgrid_layout.addWidget(empty_filler)
 
     def create_combo_input(self, dsp_parameter: DspParameter) -> QComboBox:
-        print("creating combo for " + dsp_parameter.name)
         combo_box = QComboBox(self)
         combo_box.addItems(dsp_parameter.choices)
-        combo_box.currentIndexChanged.connect(lambda state, cb=combo_box: self.on_combo_changed(cb, dsp_parameter.name))
+        combo_box.currentIndexChanged.connect(lambda state: self.on_combo_changed(combo_box, dsp_parameter))
         return combo_box
 
     def create_knob_input(self, dsp_parameter: DspParameter) -> QHBoxLayout:
-        print("creating knob for " + dsp_parameter.name)
         knob_value_input = QSpinBox(self)
         knob_value_input.setMinimum(dsp_parameter.choices[0])
         knob_value_input.setMaximum(dsp_parameter.choices[1])
@@ -108,10 +106,9 @@ class CentralWidget(QWidget):
         self.show_status_msg(dsp_effect.description if dsp_effect is not None else "")
         self.redraw_dsp_params_panel(qgrid_layout)
 
-    @staticmethod
-    def on_combo_changed(combo: QComboBox, dsp_parameter_name: str):
-        print("setting " + dsp_parameter_name)
-        print(combo.currentText())
+    def on_combo_changed(self, combo: QComboBox, dsp_parameter: DspParameter):
+        dsp_parameter.value = combo.currentText()
+        self.main_model.print_updated_parameter_value(dsp_parameter)
 
     @staticmethod
     def on_knob_changed(knob: QDial, knob_value_input: QSpinBox, dsp_parameter_name: str):
