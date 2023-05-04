@@ -11,4 +11,5 @@ class DspParameter:
         self.type = type
         self.choices = choices
         self.default_value = default_value
-        self.value = self.default_value
+
+        self.value = self.choices[self.default_value] if type == ParameterType.COMBO else self.default_value

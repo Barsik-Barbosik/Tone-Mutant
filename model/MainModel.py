@@ -224,7 +224,7 @@ class MainModel:
 
     @staticmethod
     def print_updated_parameter_value(dsp_parameter: DspParameter):
-        print("Setting " + dsp_parameter.name + ": " + dsp_parameter.value + "(SEND MIDI EVENT NOW!)")
+        print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value) + " (SEND MIDI EVENT NOW!)")
 
     @staticmethod
     def get_dsp_effect_by_id(id: int) -> DspEffect:

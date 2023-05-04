@@ -82,19 +82,18 @@ class CentralWidget(QWidget):
         return combo_box
 
     def create_knob_input(self, dsp_parameter: DspParameter) -> QHBoxLayout:
-        knob_value_input = QSpinBox(self)
-        knob_value_input.setMinimum(dsp_parameter.choices[0])
-        knob_value_input.setMaximum(dsp_parameter.choices[1])
+        knob_spinbox = QSpinBox(self)
+        knob_spinbox.setMinimum(dsp_parameter.choices[0])
+        knob_spinbox.setMaximum(dsp_parameter.choices[1])
         knob = QDial(self)
-        knob.setMinimum(knob_value_input.minimum())
-        knob.setMaximum(knob_value_input.maximum())
+        knob.setMinimum(knob_spinbox.minimum())
+        knob.setMaximum(knob_spinbox.maximum())
         knob.setFixedSize(KNOB_SIZE, KNOB_SIZE)
-        knob.valueChanged.connect(
-            lambda state, kn=knob, inp=knob_value_input: self.on_knob_changed(kn, inp, dsp_parameter.name))
-        knob_value_input.valueChanged.connect(
-            lambda state, inp=knob_value_input, kn=knob: self.on_knob_spinbox_changed(inp, kn, dsp_parameter.name))
+        knob.valueChanged.connect(lambda state: self.on_knob_changed(knob, knob_spinbox, dsp_parameter))
+        knob_spinbox.valueChanged.connect(
+            lambda state: self.on_knob_spinbox_changed(knob_spinbox, knob, dsp_parameter))
         hbox = QHBoxLayout(self)
-        hbox.addWidget(knob_value_input)
+        hbox.addWidget(knob_spinbox)
         hbox.addWidget(knob)
         return hbox
 
@@ -110,19 +109,17 @@ class CentralWidget(QWidget):
         dsp_parameter.value = combo.currentText()
         self.main_model.print_updated_parameter_value(dsp_parameter)
 
-    @staticmethod
-    def on_knob_changed(knob: QDial, knob_value_input: QSpinBox, dsp_parameter_name: str):
-        if knob.value() != knob_value_input.value():
-            print("setting " + dsp_parameter_name)
-            print(knob.value())
-            knob_value_input.setValue(knob.value())
+    def on_knob_changed(self, knob: QDial, linked_knob_spinbox: QSpinBox, dsp_parameter: DspParameter):
+        if knob.value() != linked_knob_spinbox.value():
+            linked_knob_spinbox.setValue(knob.value())
+            dsp_parameter.value = knob.value()
+            self.main_model.print_updated_parameter_value(dsp_parameter)
 
-    @staticmethod
-    def on_knob_spinbox_changed(knob_value_input: QSpinBox, knob: QDial, dsp_parameter_name: str):
-        if knob_value_input.value() != knob.value():
-            print("setting " + dsp_parameter_name)
-            print(knob_value_input.value())
-            knob.setValue(knob_value_input.value())
+    def on_knob_spinbox_changed(self, knob_spinbox: QSpinBox, linked_knob: QDial, dsp_parameter: DspParameter):
+        if knob_spinbox.value() != linked_knob.value():
+            linked_knob.setValue(knob_spinbox.value())
+            dsp_parameter.value = knob_spinbox.value()
+            self.main_model.print_updated_parameter_value(dsp_parameter)
 
     def clear_layout(self, layout):
         if layout is not None:
