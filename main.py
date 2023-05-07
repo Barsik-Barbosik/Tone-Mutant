@@ -3,6 +3,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QStatusBar, QMainWindow, QMenu, QAction, QMenuBar
 
 from central_widget import CentralWidget
+from midi_settings_window import MidiSettingsWindow
 
 
 class MainWindow(QMainWindow):
@@ -20,6 +21,8 @@ class MainWindow(QMainWindow):
         self.status_bar = self.init_status_bar()
         self.setStatusBar(self.status_bar)
 
+        self.midi_settings_window = None
+
     def init_menu_bar(self):
         menu_bar = QMenuBar(self)
 
@@ -32,6 +35,7 @@ class MainWindow(QMainWindow):
         save_action.setStatusTip('Save TON-file')
         midi_settings_action = QAction("&MIDI settings", self)
         midi_settings_action.setStatusTip('Open MIDI settings')
+        midi_settings_action.triggered.connect(self.show_midi_settings)
         exit_action = QAction("&Exit", self)
         exit_action.setStatusTip('Exit application')
         exit_action.triggered.connect(self.exit_call)
@@ -50,6 +54,14 @@ class MainWindow(QMainWindow):
         status_bar.showMessage("Hello!!", 1000)
 
         return status_bar
+
+    def show_midi_settings(self):
+        if self.midi_settings_window is None:
+            self.midi_settings_window = MidiSettingsWindow()
+            self.midi_settings_window.show()
+        else:
+            self.midi_settings_window.close()
+            self.midi_settings_window = None
 
     def exit_call(self):
         self.central_widget.midi.Close()
