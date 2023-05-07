@@ -6,6 +6,7 @@ from enums.enums import ParameterType, TabName
 from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
 from model.MainModel import MainModel
+from my_midi import Midi
 
 KNOB_SIZE = 40
 
@@ -14,6 +15,7 @@ class CentralWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.midi = Midi()
         self.main_model = MainModel()
         self.output_tab_textbox = QTextBrowser()
 

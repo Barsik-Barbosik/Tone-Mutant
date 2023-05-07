@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
         return status_bar
 
     def exit_call(self):
-        print('Exit app')
+        self.central_widget.midi.Close()
         self.close()
 
 
@@ -60,4 +60,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
+    app.aboutToQuit.connect(window.exit_call)
     sys.exit(app.exec())
