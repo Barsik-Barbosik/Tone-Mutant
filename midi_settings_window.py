@@ -28,7 +28,8 @@ class MidiSettingsWindow(QWidget):
         self.layout = QGridLayout(self)
         self.input_port_combo = self.create_combo_box("Input port:", input_ports, self.input_name)
         self.output_port_combo = self.create_combo_box("Output port:", output_ports, self.output_name)
-        self.channel_combo = self.create_combo_box("Channel:", channels, "32" if self.realtime_channel == 32 else "16")
+        self.channel_combo = self.create_combo_box("Channel:", channels,
+                                                   channels[1] if self.realtime_channel == 32 else channels[0])
         self.layout.addWidget(spacer, 4, 0, 1, 2)
         self.layout.setRowMinimumHeight(4, 20)
         self.layout.setRowStretch(4, 20)
@@ -46,11 +47,13 @@ class MidiSettingsWindow(QWidget):
 
         self.setLayout(self.layout)
 
-    def create_combo_box(self, label, items, default_selection):
+        self.show()
+
+    def create_combo_box(self, label, items, selection):
         self.layout.addWidget(QLabel(label), self.layout.rowCount(), 0)
         combo_box = QComboBox(self)
         combo_box.addItems(items)
-        combo_box.setCurrentText(default_selection)
+        combo_box.setCurrentText(selection)
         self.layout.addWidget(combo_box, self.layout.rowCount() - 1, 1)
         return combo_box
 

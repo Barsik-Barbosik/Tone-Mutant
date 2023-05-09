@@ -56,12 +56,7 @@ class MainWindow(QMainWindow):
         return status_bar
 
     def show_midi_settings(self):
-        if self.midi_settings_window is None:
-            self.midi_settings_window = MidiSettingsWindow()
-            self.midi_settings_window.show()
-        else:
-            self.midi_settings_window.close()
-            self.midi_settings_window = None
+        self.midi_settings_window = MidiSettingsWindow()
 
     def exit_call(self):
         self.central_widget.midi.Close()
