@@ -52,7 +52,7 @@ class Midi(midi_comms.MidiComms):
         midiout.delete()
 
     def set_parameter(self, parameter, data, block0=0):
-        sysex = self.MakeSimpleSysEx(parameter, data, block0)
+        sysex = self.make_simple_sys_ex(parameter, data, block0)
         self.send_sysex(sysex)
 
     def set_dsp_parameters(self, dsp_params):
@@ -61,20 +61,20 @@ class Midi(midi_comms.MidiComms):
         msg_end = bytes.fromhex("F7")
         self.send_sysex(msg_start + dsp_params + msg_end)
 
-    def TwoBytes(self, X):
+    def two_bytes(self, X):
         # Expect X to be between 0 and 32267
         return struct.pack("<BB", X % 128, X // 128)
 
-    def MakeSimpleSysEx(self, parameter, data, block0=0):
-        return bytes.fromhex("F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00") + self.TwoBytes(block0) \
-               + self.TwoBytes(parameter) + bytes.fromhex("00 00 00 00") \
-               + self.TwoBytes(data) + bytes.fromhex("F7")
+    def make_simple_sys_ex(self, parameter, data, block0=0):
+        return bytes.fromhex("F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00") + self.two_bytes(block0) \
+            + self.two_bytes(parameter) + bytes.fromhex("00 00 00 00") \
+            + self.two_bytes(data) + bytes.fromhex("F7")
 
-    def MakeSysEx(self, parameter, data, category=3, memory=3, parameter_set=0, block0=0):
+    def make_sys_ex(self, parameter, data, category=3, memory=3, parameter_set=0, block0=0):
         return bytes.fromhex("F0 44 19 01 7F 01") \
-               + struct.pack("<BBHHHHHHHH", category, memory, parameter_set, 0, 0, 0, block0, parameter, 0, 0) \
-               + data + bytes.fromhex("F7")
+            + struct.pack("<BBHHHHHHHH", category, memory, parameter_set, 0, 0, 0, block0, parameter, 0, 0) \
+            + data + bytes.fromhex("F7")
 
-    def MakeProgramChange(self, prgm, bankMSB, bankLSB=0, channel=0):
+    def make_program_change(self, prgm, bankMSB, bankLSB=0, channel=0):
         return struct.pack("<BBBBBBBB", 0xB0 + channel, 0x00, bankMSB, 0xB0 + channel, 0x20, bankLSB, 0xC0 + channel,
                            prgm)
