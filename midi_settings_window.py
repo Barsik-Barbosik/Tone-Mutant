@@ -14,21 +14,21 @@ class MidiSettingsWindow(QWidget):
 
         cfg = configparser.ConfigParser()
         cfg.read(CONFIG_FILENAME)
-        input_name = cfg.get('Midi', 'InPort', fallback="")
-        output_name = cfg.get('Midi', 'OutPort', fallback="")
-        realtime_channel = int(cfg.get('Midi Real-Time', 'Channel', fallback="0"))
+        self.input_name = cfg.get('Midi', 'InPort', fallback="")
+        self.output_name = cfg.get('Midi', 'OutPort', fallback="")
+        self.realtime_channel = int(cfg.get('Midi Real-Time', 'Channel', fallback="0"))
 
         input_ports = rtmidi.MidiIn().get_ports()
         output_ports = rtmidi.MidiOut().get_ports()
-        channels = ["0  Upper keyboard 1", "32  MIDI In 1"]
+        channels = ["0 - Upper keyboard 1", "32 - MIDI In 1"]
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.layout = QGridLayout(self)
-        self.create_combo_box("Input port:", input_ports, input_name)
-        self.create_combo_box("Output port:", output_ports, output_name)
-        self.create_combo_box("Channel:", channels, "32" if realtime_channel == 32 else "16")
+        self.input_port_combo = self.create_combo_box("Input port:", input_ports, self.input_name)
+        self.output_port_combo = self.create_combo_box("Output port:", output_ports, self.output_name)
+        self.channel_combo = self.create_combo_box("Channel:", channels, "32" if self.realtime_channel == 32 else "16")
         self.layout.addWidget(spacer, 4, 0, 1, 2)
         self.layout.setRowMinimumHeight(4, 20)
         self.layout.setRowStretch(4, 20)
@@ -36,7 +36,9 @@ class MidiSettingsWindow(QWidget):
         button_layout = QHBoxLayout()
         button_layout.addWidget(spacer)
         ok_button = QPushButton("OK", self)
+        ok_button.clicked.connect(self.ok_button_action)
         cancel_button = QPushButton("CANCEL", self)
+        cancel_button.clicked.connect(self.cancel_button_action)
         button_layout.addWidget(ok_button)
         button_layout.addWidget(cancel_button)
         button_layout.addWidget(spacer)
@@ -51,3 +53,33 @@ class MidiSettingsWindow(QWidget):
         combo_box.setCurrentText(default_selection)
         self.layout.addWidget(combo_box, self.layout.rowCount() - 1, 1)
         return combo_box
+
+    def ok_button_action(self):
+        cfg = configparser.ConfigParser()
+        cfg.read(CONFIG_FILENAME)
+
+        if self.input_port_combo.currentIndex() != -1:
+            self.input_name = self.input_port_combo.currentText()
+            if not cfg.has_section("Midi"):
+                cfg.add_section("Midi")
+            cfg.set('Midi', 'InPort', self.input_name)
+
+        if self.output_port_combo.currentIndex() != -1:
+            self.output_name = self.output_port_combo.currentText()
+            if not cfg.has_section("Midi"):
+                cfg.add_section("Midi")
+            cfg.set('Midi', 'OutPort', self.output_name)
+
+        if self.channel_combo.currentIndex() != -1:
+            self.realtime_channel = 32 if self.channel_combo.currentIndex() == 1 else 0
+            if not cfg.has_section("Midi Real-Time"):
+                cfg.add_section("Midi Real-Time")
+            cfg.set("Midi Real-Time", "Channel", str(self.realtime_channel))
+
+        with open(CONFIG_FILENAME, 'w') as cfg_file:
+            cfg.write(cfg_file)
+
+        self.close()
+
+    def cancel_button_action(self):
+        self.close()
