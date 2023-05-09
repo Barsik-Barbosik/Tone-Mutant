@@ -1,5 +1,9 @@
+import configparser
+
 import rtmidi
 from PyQt5.QtWidgets import QWidget, QLabel, QComboBox, QGridLayout, QHBoxLayout, QPushButton, QSizePolicy
+
+CONFIG_FILENAME = 'config.cfg'
 
 
 class MidiSettingsWindow(QWidget):
@@ -8,9 +12,11 @@ class MidiSettingsWindow(QWidget):
         super().__init__()
         self.setWindowTitle("MIDI settings")
 
-        input_name = "AAAAAAAAA"  # TODO: read from config file
-        output_name = "AAAAAAAAA"  # TODO: read from config file
-        realtime_channel = 32  # TODO: read from config file
+        cfg = configparser.ConfigParser()
+        cfg.read(CONFIG_FILENAME)
+        input_name = cfg.get('Midi', 'InPort', fallback="")
+        output_name = cfg.get('Midi', 'OutPort', fallback="")
+        realtime_channel = int(cfg.get('Midi Real-Time', 'Channel', fallback="0"))
 
         input_ports = rtmidi.MidiIn().get_ports()
         output_ports = rtmidi.MidiOut().get_ports()
