@@ -73,9 +73,7 @@ class CentralWidget(QWidget):
         else:
             qgrid_layout.addWidget(QLabel("------------------- OFF ----------------"), 0, 0)
 
-        empty_filler = QWidget(self)
-        empty_filler.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        qgrid_layout.addWidget(empty_filler)
+        qgrid_layout.addWidget(self.get_spacer())
 
     def create_combo_input(self, dsp_parameter: DspParameter) -> QComboBox:
         combo_box = QComboBox(self)
@@ -168,3 +166,8 @@ class CentralWidget(QWidget):
         hbox_layout.addWidget(self.output_tab_textbox)
         output_page.setLayout(hbox_layout)
         return output_page
+
+    def get_spacer(self):
+        spacer = QWidget(self)
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        return spacer
