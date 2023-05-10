@@ -8,6 +8,7 @@ class ParameterType(Enum):
 
 class SysexType(Enum):
     SET_DSP_MODULE = 85
+    SET_DSP_PARAMS = 87
 
 
 class TabName(Enum):

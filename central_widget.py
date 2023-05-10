@@ -111,19 +111,22 @@ class CentralWidget(QWidget):
 
     def on_combo_changed(self, combo: QComboBox, dsp_parameter: DspParameter):
         dsp_parameter.value = combo.currentText()
-        self.main_model.print_updated_parameter_value(dsp_parameter)
+        # self.main_model.print_updated_parameter_value(dsp_parameter)
+        self.send_midi_param_change(dsp_parameter)
 
     def on_knob_changed(self, knob: QDial, linked_knob_spinbox: QSpinBox, dsp_parameter: DspParameter):
         if knob.value() != linked_knob_spinbox.value():
             linked_knob_spinbox.setValue(knob.value())
             dsp_parameter.value = knob.value()
-            self.main_model.print_updated_parameter_value(dsp_parameter)
+            # self.main_model.print_updated_parameter_value(dsp_parameter)
+            self.send_midi_param_change(dsp_parameter)
 
     def on_knob_spinbox_changed(self, knob_spinbox: QSpinBox, linked_knob: QDial, dsp_parameter: DspParameter):
         if knob_spinbox.value() != linked_knob.value():
             linked_knob.setValue(knob_spinbox.value())
             dsp_parameter.value = knob_spinbox.value()
-            self.main_model.print_updated_parameter_value(dsp_parameter)
+            # self.main_model.print_updated_parameter_value(dsp_parameter)
+            self.send_midi_param_change(dsp_parameter)
 
     def clear_layout(self, layout):
         if layout is not None:
@@ -184,3 +187,21 @@ class CentralWidget(QWidget):
                 self.midi.set_parameter(SysexType.SET_DSP_MODULE.value, parameter_value, block0=block0)
         except Exception as e:
             self.parent().show_error_msg(str(e))
+
+    def send_midi_param_change(self, dsp_parameter: DspParameter):
+        print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value))
+        print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
+
+        params_hex_string = ""
+        params_as_list = self.main_model.get_current_dsp_params_as_list()
+
+        while len(params_as_list) < 9:
+            params_as_list.append(0)
+
+        for param_value in params_as_list:
+            params_hex_string = params_hex_string + " " + self.midi.decimal_to_hex(param_value)
+
+        params_hex_string = (params_hex_string + " 70 70 37 7F 00").strip()
+
+        print(params_hex_string)
+        self.midi.set_dsp_parameters(bytes.fromhex(params_hex_string))

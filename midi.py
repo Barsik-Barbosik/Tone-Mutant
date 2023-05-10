@@ -77,20 +77,28 @@ class Midi(midi_comms.MidiComms):
         msg_end = bytes.fromhex("F7")
         self.send_sysex(msg_start + dsp_params + msg_end)
 
-    def two_bytes(self, X):
-        # Expect X to be between 0 and 32267
-        return struct.pack("<BB", X % 128, X // 128)
-
     def make_simple_sys_ex(self, parameter, data, block0=0):
-        return bytes.fromhex("F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00") + self.two_bytes(block0) \
-            + self.two_bytes(parameter) + bytes.fromhex("00 00 00 00") \
-            + self.two_bytes(data) + bytes.fromhex("F7")
+        return bytes.fromhex("F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00") + self.decimal_to_two_bytes(block0) \
+            + self.decimal_to_two_bytes(parameter) + bytes.fromhex("00 00 00 00") \
+            + self.decimal_to_two_bytes(data) + bytes.fromhex("F7")
 
     def make_sys_ex(self, parameter, data, category=3, memory=3, parameter_set=0, block0=0):
         return bytes.fromhex("F0 44 19 01 7F 01") \
             + struct.pack("<BBHHHHHHHH", category, memory, parameter_set, 0, 0, 0, block0, parameter, 0, 0) \
             + data + bytes.fromhex("F7")
 
-    def make_program_change(self, prgm, bankMSB, bankLSB=0, channel=0):
+    @staticmethod
+    def make_program_change(prgm, bankMSB, bankLSB=0, channel=0):
         return struct.pack("<BBBBBBBB", 0xB0 + channel, 0x00, bankMSB, 0xB0 + channel, 0x20, bankLSB, 0xC0 + channel,
                            prgm)
+
+    @staticmethod
+    def decimal_to_hex(decimal_num):
+        return '{:02x}'.format(decimal_num)
+
+    @staticmethod
+    def decimal_to_two_bytes(decimal_num):
+        if decimal_num > 32267:
+            raise ValueError("Number is too big: {}".format(decimal_num))
+
+        return struct.pack("<BB", decimal_num % 128, decimal_num // 128)

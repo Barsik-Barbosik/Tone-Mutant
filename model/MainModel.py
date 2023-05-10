@@ -235,9 +235,20 @@ class MainModel:
                 output = output + "\n\t" + parameter.name + ": " + str(parameter.value)
         return output
 
-    @staticmethod
-    def print_updated_parameter_value(dsp_parameter: DspParameter):
-        print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value) + " (SEND MIDI EVENT NOW!)")
+    def get_current_dsp_params_as_list(self) -> list:
+        output = []
+        dsp_effect = self.get_current_dsp()
+        if dsp_effect is not None:
+            for parameter in dsp_effect.dsp_parameter_list:
+                if parameter.type == ParameterType.COMBO:
+                    output.append(parameter.choices.index(parameter.value))
+                elif parameter.type == ParameterType.KNOB:
+                    output.append(parameter.value - parameter.choices[0])
+        return output
+
+    # @staticmethod
+    # def print_updated_parameter_value(dsp_parameter: DspParameter):
+    #     print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value))
 
     @staticmethod
     def get_dsp_effect_by_id(id: int) -> DspEffect:
