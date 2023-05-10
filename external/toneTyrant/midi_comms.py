@@ -51,7 +51,7 @@ class MidiComms:
 
     def __init__(self):
         cfg = configparser.ConfigParser()
-        cfg.read('config.cfg')
+        cfg.read('tyrant.cfg')
         self._input_name = cfg.get('Midi', 'InPort', fallback="")
         self._output_name = cfg.get('Midi', 'OutPort', fallback="")
         self._realtime_channel = int(cfg.get('Midi Real-Time', 'Channel', fallback="0"))

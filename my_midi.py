@@ -1,3 +1,5 @@
+import configparser
+import queue
 import struct
 import time
 
@@ -5,8 +7,22 @@ import rtmidi
 
 import external.toneTyrant.midi_comms as midi_comms
 
+CONFIG_FILENAME = 'config.cfg'
+
 
 class Midi(midi_comms.MidiComms):
+
+    def __init__(self):
+        cfg = configparser.ConfigParser()
+        cfg.read(CONFIG_FILENAME)
+        self._input_name = cfg.get('Midi', 'InPort', fallback="")
+        self._output_name = cfg.get('Midi', 'OutPort', fallback="")
+        self._realtime_enable = True
+        self._realtime_channel = int(cfg.get('Midi Real-Time', 'Channel', fallback="0"))
+        self._logging_level = 0
+        self._queue = queue.Queue()
+        self._thread = midi_comms.MidiComms.MidiThread(self)
+        self._thread.start()
 
     def send_sysex(self, packet):
         """
