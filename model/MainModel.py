@@ -189,6 +189,18 @@ class MainModel:
         else:
             return None
 
+    def get_current_dsp_id(self) -> int:
+        if self.currentTabName == TabName.DSP_1:
+            return 0
+        elif self.currentTabName == TabName.DSP_2:
+            return 1
+        elif self.currentTabName == TabName.DSP_3:
+            return 2
+        elif self.currentTabName == TabName.DSP_4:
+            return 3
+        else:
+            return None
+
     def get_current_dsp_name(self) -> str:
         return self.get_current_dsp().name if self.get_current_dsp() is not None else "OFF"
 

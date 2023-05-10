@@ -2,11 +2,11 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
     QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QSpacerItem
 
-from enums.enums import ParameterType, TabName
+from enums.enums import ParameterType, TabName, SysexType
+from midi import Midi
 from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
 from model.MainModel import MainModel
-from my_midi import Midi
 
 KNOB_SIZE = 40
 
@@ -35,7 +35,8 @@ class CentralWidget(QWidget):
 
     def on_tab_changed(self, i):
         self.main_model.currentTabName = TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
-        self.show_status_msg(self.main_model.currentTabName.value + ": " + self.main_model.get_current_dsp_name())
+        self.parent().show_status_msg(
+            self.main_model.currentTabName.value + ": " + self.main_model.get_current_dsp_name())
         if self.main_model.currentTabName == TabName.OUTPUT:
             self.output_tab_textbox.setPlainText(self.main_model.get_output_text())
 
@@ -102,10 +103,10 @@ class CentralWidget(QWidget):
 
     def on_list_widget_click(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
         item_id: int = list_widget.currentItem().data(Qt.UserRole)
-        print(str(item_id) + " - " + list_widget.currentItem().text())
         dsp_effect: DspEffect = self.main_model.get_dsp_effect_by_id(item_id)
         self.main_model.set_current_dsp(item_id)
-        self.show_status_msg(dsp_effect.description if dsp_effect is not None else "")
+        self.parent().show_status_msg(dsp_effect.description if dsp_effect is not None else "")
+        self.send_midi_dsp_change()
         self.redraw_dsp_params_panel(qgrid_layout)
 
     def on_combo_changed(self, combo: QComboBox, dsp_parameter: DspParameter):
@@ -132,9 +133,6 @@ class CentralWidget(QWidget):
                     child.widget().deleteLater()
                 elif child.layout() is not None:
                     self.clear_layout(child.layout())
-
-    def show_status_msg(self, text: str):
-        self.parent().status_bar.showMessage(text)
 
     def create_main_params_page(self) -> QWidget:
         main_params_page = QWidget(self)
@@ -171,3 +169,18 @@ class CentralWidget(QWidget):
         spacer = QWidget(self)
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         return spacer
+
+    def send_midi_dsp_change(self):
+        try:
+            if self.main_model.get_current_dsp() is None:
+                print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
+                print("Current DSP effect id: OFF")
+            else:
+                print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
+                print("Current DSP effect id: " + str(self.main_model.get_current_dsp().id))
+                print("Current DSP effect name: " + self.main_model.get_current_dsp().name)
+                block0 = self.main_model.get_current_dsp_id()
+                parameter_value = self.main_model.get_current_dsp().id
+                self.midi.set_parameter(SysexType.SET_DSP_MODULE.value, parameter_value, block0=block0)
+        except Exception as e:
+            self.parent().show_error_msg(str(e))

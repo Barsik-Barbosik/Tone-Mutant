@@ -50,10 +50,17 @@ class MainWindow(QMainWindow):
     def init_status_bar(self):
         status_bar = QStatusBar(self)
         status_bar.setStyleSheet("background-color: white;")
-        # statusBar.setStyleSheet("color: red")
         status_bar.showMessage("Hello!!", 1000)
 
         return status_bar
+
+    def show_status_msg(self, text: str):
+        self.status_bar.setStyleSheet("background-color: white; color: black")
+        self.status_bar.showMessage(text)
+
+    def show_error_msg(self, text: str):
+        self.status_bar.setStyleSheet("background-color: white; color: red")
+        self.status_bar.showMessage(text)
 
     def show_midi_settings(self):
         self.midi_settings_window = MidiSettingsWindow()
