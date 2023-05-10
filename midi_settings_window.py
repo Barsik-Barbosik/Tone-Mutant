@@ -16,7 +16,7 @@ class MidiSettingsWindow(QWidget):
         cfg.read(CONFIG_FILENAME)
         self.input_name = cfg.get('Midi', 'InPort', fallback="")
         self.output_name = cfg.get('Midi', 'OutPort', fallback="")
-        self.realtime_channel = int(cfg.get('Midi Real-Time', 'Channel', fallback="0"))
+        self.channel = int(cfg.get('Midi Real-Time', 'Channel', fallback="0"))
 
         input_ports = rtmidi.MidiIn().get_ports()
         output_ports = rtmidi.MidiOut().get_ports()
@@ -29,7 +29,7 @@ class MidiSettingsWindow(QWidget):
         self.input_port_combo = self.create_combo_box("Input port:", input_ports, self.input_name)
         self.output_port_combo = self.create_combo_box("Output port:", output_ports, self.output_name)
         self.channel_combo = self.create_combo_box("Channel:", channels,
-                                                   channels[1] if self.realtime_channel == 32 else channels[0])
+                                                   channels[1] if self.channel == 32 else channels[0])
         self.layout.addWidget(spacer, 4, 0, 1, 2)
         self.layout.setRowMinimumHeight(4, 20)
         self.layout.setRowStretch(4, 20)
@@ -74,10 +74,10 @@ class MidiSettingsWindow(QWidget):
             cfg.set('Midi', 'OutPort', self.output_name)
 
         if self.channel_combo.currentIndex() != -1:
-            self.realtime_channel = 32 if self.channel_combo.currentIndex() == 1 else 0
+            self.channel = 32 if self.channel_combo.currentIndex() == 1 else 0
             if not cfg.has_section("Midi Real-Time"):
                 cfg.add_section("Midi Real-Time")
-            cfg.set("Midi Real-Time", "Channel", str(self.realtime_channel))
+            cfg.set("Midi Real-Time", "Channel", str(self.channel))
 
         with open(CONFIG_FILENAME, 'w') as cfg_file:
             cfg.write(cfg_file)
