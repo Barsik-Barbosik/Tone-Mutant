@@ -73,7 +73,7 @@ class Midi(midi_comms.MidiComms):
 
     def set_dsp_parameters(self, dsp_params):
         # Array size is always 14 bytes: length is "0D"
-        msg_start = bytes.fromhex("F0 44 19 01 7F 01 03 03 21 00 00 00 00 00 00 00 00 00 57 00 00 00 0D 00")
+        msg_start = bytes.fromhex("F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 57 00 00 00 0D 00")
         msg_end = bytes.fromhex("F7")
         self.send_sysex(msg_start + dsp_params + msg_end)
 
