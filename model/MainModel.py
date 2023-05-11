@@ -21,7 +21,7 @@ mainParamsTuple: tuple = (DspParameter(100, "Atk. time", "Atk. time - descriptio
                           DspParameter(102, "Sustain pedal", "Sustain pedal - description.", ParameterType.COMBO,
                                        ["OFF", "ON"], 0))
 
-dspEffectsTuple: tuple = (  # DspEffect(0, "!!ERROR!!"),
+dspEffectsTuple: tuple = (
     DspEffect(27, "Mono 1-Band EQ", "This is a single-band monaural equalizer.",
               [DspParameter(1, "EQ Frequency", "Adjusts the center frequency of Equalizer.", ParameterType.COMBO,
                             ["100Hz", "125Hz", "160Hz", "200Hz", "250Hz", "315Hz", "400Hz", "500Hz", "630Hz", "800Hz",
@@ -346,8 +346,8 @@ dspEffectsTuple: tuple = (  # DspEffect(0, "!!ERROR!!"),
     DspEffect(15, "Distortion", "Distortion, wah, and amp simulator combined into a single effect.", []),
     DspEffect(23, "Drive", "Simulates the drive of a musical instrument amplifier.", []),
     DspEffect(24, "Amp Cabinet", "Simulates the amp and speaker cabinet without drive and distortion.", []),
-    DspEffect(17, "* Multi Chorus", "Unknown secret DSP effect", []),
-    DspEffect(25, "* Hollow Body", "Unknown secret DSP effect", [
+    DspEffect(17, "Multi Chorus (hidden)", "Hidden DSP effect.", []),
+    DspEffect(25, "Hollow Body (hidden)", "Hidden DSP effect. It represents guitar body types.", [
         DspParameter(1, "Body type", "Body type.", ParameterType.COMBO,
                      ["Thin body", "Mid body", "Thick body", "Roundback", "Acc bass"], 0),
         DspParameter(2, "Body level", "Body level.", ParameterType.KNOB, [0, 127], 0),
@@ -356,18 +356,21 @@ dspEffectsTuple: tuple = (  # DspEffect(0, "!!ERROR!!"),
         DspParameter(4, "Amb Level", "Amb Level.", ParameterType.KNOB, [0, 127], 0),
         DspParameter(5, "Wet Level", "Adjusts the level of the effect sound.", ParameterType.KNOB, [0, 127], 0),
         DspParameter(6, "Dry Level", "Adjusts the level of the direct sound.", ParameterType.KNOB, [0, 127], 0)]),
-    DspEffect(26, "* Piano Body", "Unknown secret DSP effect", [
-        DspParameter(1, "Body type", "Body type.", ParameterType.COMBO,
-                     ["Piano 1", "Piano 2", "Piano 3"], 0),
-        DspParameter(2, "Body level L", "Body level LEFT.", ParameterType.KNOB, [0, 127], 0),
-        DspParameter(3, "Body level R", "Body level RIGHT.", ParameterType.KNOB, [0, 127], 0),
-        DspParameter(4, "Amb type", "Amb type.", ParameterType.COMBO,
-                     ["Type 0", "Type 1", "Type 2", "Type 3", "Type 4", "Type 5", "Type 6", "Type 7"], 0),
-        DspParameter(5, "Amb Level", "Amb Level.", ParameterType.KNOB, [0, 127], 0),
-        DspParameter(6, "Lid type", "Lid type.", ParameterType.COMBO,
-                     ["Closed", "Semi Open", "Full Open", "Removed"], 0),
-        DspParameter(7, "Wet Level", "Adjusts the level of the effect sound.", ParameterType.KNOB, [0, 127], 0),
-        DspParameter(8, "Dry Level", "Adjusts the level of the direct sound.", ParameterType.KNOB, [0, 127], 0)]))
+    DspEffect(26, "Piano Body (hidden)",
+              "Hidden DSP effect. It represents piano body types. This effect is suited to acoustic piano play.", [
+                  DspParameter(1, "Body type", "Body type.", ParameterType.COMBO,
+                               ["Piano 1", "Piano 2", "Piano 3"], 0),
+                  DspParameter(2, "Body level L", "Body level LEFT.", ParameterType.KNOB, [0, 127], 0),
+                  DspParameter(3, "Body level R", "Body level RIGHT.", ParameterType.KNOB, [0, 127], 0),
+                  DspParameter(4, "Amb type", "Amb type.", ParameterType.COMBO,
+                               ["Type 0", "Type 1", "Type 2", "Type 3", "Type 4", "Type 5", "Type 6", "Type 7"], 0),
+                  DspParameter(5, "Amb Level", "Amb Level.", ParameterType.KNOB, [0, 127], 0),
+                  DspParameter(6, "Lid type", "Lid type.", ParameterType.COMBO,
+                               ["Closed", "Semi Open", "Full Open", "Removed"], 0),
+                  DspParameter(7, "Wet Level", "Adjusts the level of the effect sound.", ParameterType.KNOB, [0, 127],
+                               0),
+                  DspParameter(8, "Dry Level", "Adjusts the level of the direct sound.", ParameterType.KNOB, [0, 127],
+                               0)]))
 
 
 class MainModel:
