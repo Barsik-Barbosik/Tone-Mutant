@@ -347,7 +347,15 @@ dspEffectsTuple: tuple = (  # DspEffect(0, "!!ERROR!!"),
     DspEffect(23, "Drive", "Simulates the drive of a musical instrument amplifier.", []),
     DspEffect(24, "Amp Cabinet", "Simulates the amp and speaker cabinet without drive and distortion.", []),
     DspEffect(17, "* Multi Chorus", "Unknown secret DSP effect", []),
-    DspEffect(25, "* Holw Body", "Unknown secret DSP effect", []),
+    DspEffect(25, "* Hollow Body", "Unknown secret DSP effect", [
+        DspParameter(1, "Body type", "Body type.", ParameterType.COMBO,
+                     ["Thin body", "Mid body", "Thick body", "Roundback", "Acc bass"], 0),
+        DspParameter(2, "Body level", "Body level.", ParameterType.KNOB, [0, 127], 0),
+        DspParameter(3, "Amb type", "Amb type.", ParameterType.COMBO,
+                     ["Type 0", "Type 1", "Type 2", "Type 3", "Type 4", "Type 5", "Type 6", "Type 7"], 0),
+        DspParameter(4, "Amb Level", "Amb Level.", ParameterType.KNOB, [0, 127], 0),
+        DspParameter(5, "Wet Level", "Adjusts the level of the effect sound.", ParameterType.KNOB, [0, 127], 0),
+        DspParameter(6, "Dry Level", "Adjusts the level of the direct sound.", ParameterType.KNOB, [0, 127], 0)]),
     DspEffect(26, "* Pino Body", "Unknown secret DSP effect", []))
 
 
