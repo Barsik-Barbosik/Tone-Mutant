@@ -2,7 +2,7 @@ import sys
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QStatusBar, QMainWindow, QMenu, QAction, QMenuBar, QTextBrowser, QDockWidget, \
-    QWidget, QHBoxLayout, QTabWidget, QGridLayout
+    QWidget, QHBoxLayout, QTabWidget
 
 from central_widget import CentralWidget
 from midi_settings_window import MidiSettingsWindow
@@ -19,6 +19,7 @@ class MainWindow(QMainWindow):
 
         self.central_widget = CentralWidget()
         self.setCentralWidget(self.central_widget)
+        self.central_widget.layout().setContentsMargins(10, 10, 0, 10)  # remove right margin
 
         self.help_texbox = QTextBrowser()
         self.right_dock = self.init_right_dock(self.help_texbox)
@@ -68,6 +69,7 @@ class MainWindow(QMainWindow):
 
         outer_widget = QWidget(self)
         outer_layout = QHBoxLayout(self)
+        outer_layout.setContentsMargins(0, 10, 10, 10)  # remove left margin
         outer_layout.addWidget(tab_widget)
         outer_widget.setLayout(outer_layout)
 
