@@ -2,7 +2,7 @@ import sys
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QStatusBar, QMainWindow, QMenu, QAction, QMenuBar, QTextBrowser, QDockWidget, \
-    QWidget, QHBoxLayout
+    QWidget, QHBoxLayout, QTabWidget, QGridLayout
 
 from central_widget import CentralWidget
 from midi_settings_window import MidiSettingsWindow
@@ -36,14 +36,14 @@ class MainWindow(QMainWindow):
         menu_bar.addMenu(file_menu)
 
         open_action = QAction("&Open tone", self)
-        open_action.setStatusTip('Open TON-file')
+        open_action.setStatusTip("Open TON-file")
         save_action = QAction("&Save tone", self)
-        save_action.setStatusTip('Save TON-file')
+        save_action.setStatusTip("Save TON-file")
         midi_settings_action = QAction("&MIDI settings", self)
-        midi_settings_action.setStatusTip('Open MIDI settings')
+        midi_settings_action.setStatusTip("Open MIDI settings")
         midi_settings_action.triggered.connect(self.show_midi_settings)
         exit_action = QAction("&Exit", self)
-        exit_action.setStatusTip('Exit application')
+        exit_action.setStatusTip("Exit application")
         exit_action.triggered.connect(self.exit_call)
 
         file_menu.addAction(open_action)
@@ -54,15 +54,24 @@ class MainWindow(QMainWindow):
         return menu_bar
 
     def init_right_dock(self, help_texbox):
-        right_dock = QDockWidget('Help', self)
+        right_dock = QDockWidget("Right Dock", self)
         right_dock.setTitleBarWidget(QWidget())
         right_dock.setFloating(False)
 
-        help_widget = QWidget(self)
-        hbox_layout = QHBoxLayout(self)
-        hbox_layout.addWidget(help_texbox)
-        help_widget.setLayout(hbox_layout)
-        right_dock.setWidget(help_widget)
+        inter_widget = QWidget(self)
+        inter_layout = QHBoxLayout(self)
+        inter_layout.addWidget(help_texbox)
+        inter_widget.setLayout(inter_layout)
+
+        tab_widget = QTabWidget(self)
+        tab_widget.addTab(inter_widget, "Info / Help")
+
+        outer_widget = QWidget(self)
+        outer_layout = QHBoxLayout(self)
+        outer_layout.addWidget(tab_widget)
+        outer_widget.setLayout(outer_layout)
+
+        right_dock.setWidget(outer_widget)
 
         return right_dock
 
