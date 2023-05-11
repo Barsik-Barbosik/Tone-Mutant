@@ -36,7 +36,7 @@ class CentralWidget(QWidget):
     def on_tab_changed(self, i):
         self.main_model.currentTabName = TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
         self.parent().show_status_msg(
-            self.main_model.currentTabName.value + ": " + self.main_model.get_current_dsp_name())
+            self.main_model.currentTabName.value + ": " + self.main_model.get_current_dsp_name(), 1000)
         if self.main_model.currentTabName == TabName.OUTPUT:
             self.output_tab_textbox.setPlainText(self.main_model.get_output_text())
 
@@ -105,7 +105,8 @@ class CentralWidget(QWidget):
         item_id: int = list_widget.currentItem().data(Qt.UserRole)
         dsp_effect: DspEffect = self.main_model.get_dsp_effect_by_id(item_id)
         self.main_model.set_current_dsp(item_id)
-        self.parent().show_status_msg(dsp_effect.description if dsp_effect is not None else "")
+        self.parent().show_help_msg(
+            "<b>" + self.main_model.get_current_dsp_name() + "</b><br/>" + dsp_effect.description if dsp_effect is not None else "DSP module is not selected.")
         self.send_midi_dsp_change()
         self.redraw_dsp_params_panel(qgrid_layout)
 

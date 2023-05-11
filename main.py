@@ -1,6 +1,8 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication, QStatusBar, QMainWindow, QMenu, QAction, QMenuBar
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QStatusBar, QMainWindow, QMenu, QAction, QMenuBar, QTextBrowser, QDockWidget, \
+    QWidget, QHBoxLayout
 
 from central_widget import CentralWidget
 from midi_settings_window import MidiSettingsWindow
@@ -17,6 +19,10 @@ class MainWindow(QMainWindow):
 
         self.central_widget = CentralWidget()
         self.setCentralWidget(self.central_widget)
+
+        self.help_texbox = QTextBrowser()
+        self.right_dock = self.init_right_dock(self.help_texbox)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.right_dock)
 
         self.status_bar = self.init_status_bar()
         self.setStatusBar(self.status_bar)
@@ -47,6 +53,22 @@ class MainWindow(QMainWindow):
 
         return menu_bar
 
+    def init_right_dock(self, help_texbox):
+        right_dock = QDockWidget('Help', self)
+        right_dock.setTitleBarWidget(QWidget())
+        right_dock.setFloating(False)
+
+        help_widget = QWidget(self)
+        hbox_layout = QHBoxLayout(self)
+        hbox_layout.addWidget(help_texbox)
+        help_widget.setLayout(hbox_layout)
+        right_dock.setWidget(help_widget)
+
+        return right_dock
+
+    def show_help_msg(self, text: str):
+        self.help_texbox.setHtml(text)
+
     def init_status_bar(self):
         status_bar = QStatusBar(self)
         status_bar.setStyleSheet("background-color: white;")
@@ -54,9 +76,9 @@ class MainWindow(QMainWindow):
 
         return status_bar
 
-    def show_status_msg(self, text: str):
+    def show_status_msg(self, text: str, msecs: int):
         self.status_bar.setStyleSheet("background-color: white; color: black")
-        self.status_bar.showMessage(text)
+        self.status_bar.showMessage(text, msecs)
 
     def show_error_msg(self, text: str):
         self.status_bar.setStyleSheet("background-color: white; color: red")
