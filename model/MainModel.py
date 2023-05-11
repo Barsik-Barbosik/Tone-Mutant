@@ -356,7 +356,18 @@ dspEffectsTuple: tuple = (  # DspEffect(0, "!!ERROR!!"),
         DspParameter(4, "Amb Level", "Amb Level.", ParameterType.KNOB, [0, 127], 0),
         DspParameter(5, "Wet Level", "Adjusts the level of the effect sound.", ParameterType.KNOB, [0, 127], 0),
         DspParameter(6, "Dry Level", "Adjusts the level of the direct sound.", ParameterType.KNOB, [0, 127], 0)]),
-    DspEffect(26, "* Pino Body", "Unknown secret DSP effect", []))
+    DspEffect(26, "* Piano Body", "Unknown secret DSP effect", [
+        DspParameter(1, "Body type", "Body type.", ParameterType.COMBO,
+                     ["Piano 1", "Piano 2", "Piano 3"], 0),
+        DspParameter(2, "Body level L", "Body level LEFT.", ParameterType.KNOB, [0, 127], 0),
+        DspParameter(3, "Body level R", "Body level RIGHT.", ParameterType.KNOB, [0, 127], 0),
+        DspParameter(4, "Amb type", "Amb type.", ParameterType.COMBO,
+                     ["Type 0", "Type 1", "Type 2", "Type 3", "Type 4", "Type 5", "Type 6", "Type 7"], 0),
+        DspParameter(5, "Amb Level", "Amb Level.", ParameterType.KNOB, [0, 127], 0),
+        DspParameter(6, "Lid type", "Lid type.", ParameterType.COMBO,
+                     ["Closed", "Semi Open", "Full Open", "Removed"], 0),
+        DspParameter(7, "Wet Level", "Adjusts the level of the effect sound.", ParameterType.KNOB, [0, 127], 0),
+        DspParameter(8, "Dry Level", "Adjusts the level of the direct sound.", ParameterType.KNOB, [0, 127], 0)]))
 
 
 class MainModel:
