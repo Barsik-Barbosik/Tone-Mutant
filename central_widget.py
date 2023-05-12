@@ -71,7 +71,7 @@ class CentralWidget(QWidget):
                 qgrid_layout.addWidget(QLabel(dsp_parameter.name + ":"), idx, 0)
                 if dsp_parameter.type == ParameterType.COMBO:
                     qgrid_layout.addWidget(self.create_combo_input(dsp_parameter), idx, 1)
-                elif dsp_parameter.type == ParameterType.KNOB:
+                elif dsp_parameter.type == ParameterType.KNOB or dsp_parameter.type == ParameterType.KNOB_2BYTES:
                     qgrid_layout.addLayout(self.create_knob_input(dsp_parameter), idx, 1)
         else:
             qgrid_layout.addWidget(self.get_spacer(), 0, 0, 1, 2)
@@ -152,12 +152,12 @@ class CentralWidget(QWidget):
             if idx < 7:
                 if parameter.type == ParameterType.COMBO:
                     left_layout.addRow(parameter.name + ":", self.create_combo_input(parameter))
-                elif parameter.type == ParameterType.KNOB:
+                elif parameter.type == ParameterType.KNOB or parameter.type == ParameterType.KNOB_2BYTES:
                     left_layout.addRow(parameter.name + ":", self.create_knob_input(parameter))
             else:
                 if parameter.type == ParameterType.COMBO:
                     right_layout.addRow(parameter.name + ":", self.create_combo_input(parameter))
-                elif parameter.type == ParameterType.KNOB:
+                elif parameter.type == ParameterType.KNOB or parameter.type == ParameterType.KNOB_2BYTES:
                     right_layout.addRow(parameter.name + ":", self.create_knob_input(parameter))
 
         hbox_layout.addLayout(left_layout)
