@@ -24,10 +24,10 @@ class CentralWidget(QWidget):
 
         self.tab_widget = QTabWidget(self)
         self.tab_widget.addTab(self.create_main_params_page(), TabName.MAIN_PARAMETERS.value)
-        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), TabName.DSP_1.value)
-        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), TabName.DSP_2.value)
-        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), TabName.DSP_3.value)
-        self.tab_widget.addTab(self.create_dsp_page(QGridLayout(self)), TabName.DSP_4.value)
+        self.tab_widget.addTab(self.create_dsp_page(), TabName.DSP_1.value)
+        self.tab_widget.addTab(self.create_dsp_page(), TabName.DSP_2.value)
+        self.tab_widget.addTab(self.create_dsp_page(), TabName.DSP_3.value)
+        self.tab_widget.addTab(self.create_dsp_page(), TabName.DSP_4.value)
         self.tab_widget.addTab(self.create_output_page(), TabName.OUTPUT.value)
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
@@ -40,12 +40,14 @@ class CentralWidget(QWidget):
         if self.main_model.currentTabName == TabName.OUTPUT:
             self.output_tab_textbox.setPlainText(self.main_model.get_output_text())
 
-    def create_dsp_page(self, qgrid_layout: QGridLayout) -> QWidget:
+    def create_dsp_page(self) -> QWidget:
+        qgrid_layout = QGridLayout(self)
         dsp_page = QWidget(self)
         hbox_layout = QHBoxLayout(self)
         dsp_page.setLayout(hbox_layout)
 
         list_widget = QListWidget(self)
+        list_widget.setFixedWidth(180)
         list_widget.insertItem(0, "OFF")
         for idx, dsp_effect in enumerate(self.main_model.get_dsp_effects_tuple()):
             item = QListWidgetItem()
@@ -72,9 +74,11 @@ class CentralWidget(QWidget):
                 elif dsp_parameter.type == ParameterType.KNOB:
                     qgrid_layout.addLayout(self.create_knob_input(dsp_parameter), idx, 1)
         else:
-            qgrid_layout.addWidget(QLabel("------------------- OFF ----------------"), 0, 0)
+            qgrid_layout.addWidget(self.get_spacer(), 0, 0, 1, 2)
 
-        qgrid_layout.addWidget(self.get_spacer())
+        spacer = self.get_spacer()
+        spacer.setFixedWidth(250)
+        qgrid_layout.addWidget(spacer)
 
     def create_combo_input(self, dsp_parameter: DspParameter) -> QComboBox:
         combo_box = QComboBox(self)

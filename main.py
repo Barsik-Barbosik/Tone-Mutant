@@ -106,6 +106,7 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MainWindow()
+    window.resize(900, 600)
     window.show()
     app.aboutToQuit.connect(window.exit_call)
     sys.exit(app.exec())
