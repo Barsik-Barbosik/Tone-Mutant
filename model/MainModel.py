@@ -426,7 +426,13 @@ dspEffectsTuple: tuple = (
                             0),
                DspParameter(4, "Dry Level", "Adjusts the level of the direct sound.", ParameterType.KNOB, [0, 127],
                             0)]),
-    DspEffect(17, "Multi Chorus (hidden)", "Hidden DSP effect.", []),
+    DspEffect(17, "Multi Chorus (hidden)", "Hidden DSP effect.", [
+        DspParameter(1, "Rate", "Adjusts the LFO rate.", ParameterType.KNOB, [0, 127], 0),
+        DspParameter(2, "Depth", "Adjusts the LFO depth.", ParameterType.KNOB, [0, 127], 0),
+        DspParameter(3, "Wet Level", "Adjusts the level of the effect sound.", ParameterType.KNOB, [0, 127],
+                     0),
+        DspParameter(4, "Dry Level", "Adjusts the level of the direct sound.", ParameterType.KNOB, [0, 127],
+                     0)]),
     DspEffect(25, "Hollow Body (hidden)", "Hidden DSP effect. It represents guitar body types.", [
         DspParameter(1, "Body type", "Body type.", ParameterType.COMBO,
                      ["Thin body", "Mid body", "Thick body", "Roundback", "Acc bass"], 0),
