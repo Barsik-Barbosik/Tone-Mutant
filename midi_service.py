@@ -49,15 +49,22 @@ class MidiService:
         time.sleep(0.01)
         self.midi_in.get_message()
 
+    def send_dsp_params_change(self, params_list):
+        # Array size is always 14 bytes: length is "0D"
+        msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 57 00 00 00 0D 00"
+        msg_params = ""
+        msg_end = "F7"
+
+        for param_value in params_list:
+            msg_params = msg_params + " " + self.decimal_to_hex(param_value)
+        msg_params = msg_params.strip()
+
+        print("DSP Params: " + msg_params)
+        self.send_sysex(bytes.fromhex(msg_start + msg_params + msg_end))
+
     def set_parameter(self, parameter, data, block0=0):
         sysex = self.make_simple_sys_ex(parameter, data, block0)
         self.send_sysex(sysex)
-
-    def set_dsp_parameters(self, dsp_params):
-        # Array size is always 14 bytes: length is "0D"
-        msg_start = bytes.fromhex("F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 57 00 00 00 0D 00")
-        msg_end = bytes.fromhex("F7")
-        self.send_sysex(msg_start + dsp_params + msg_end)
 
     def make_simple_sys_ex(self, parameter, data, block0=0):
         return bytes.fromhex("F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00") + self.decimal_to_two_bytes(block0) \

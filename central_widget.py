@@ -191,6 +191,8 @@ class CentralWidget(QWidget):
             try:
                 block0 = self.main_model.get_current_dsp_id()
                 parameter_value = self.main_model.get_current_dsp().id
+
+                # TODO: make method "midi.dsp_module_change"
                 self.midi.set_parameter(SysexType.SET_DSP_MODULE.value, parameter_value, block0=block0)
             except Exception as e:
                 self.parent().show_error_msg(str(e))
@@ -199,16 +201,7 @@ class CentralWidget(QWidget):
         print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value))
         print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
 
-        params_hex_string = ""
-        params_as_list = self.main_model.get_current_dsp_params_as_list()
-
-        for param_value in params_as_list:
-            params_hex_string = params_hex_string + " " + self.midi.decimal_to_hex(param_value)
-
-        params_hex_string = params_hex_string.strip()
-        print(params_hex_string)
-
         try:
-            self.midi.set_dsp_parameters(bytes.fromhex(params_hex_string))
+            self.midi.send_dsp_params_change(self.main_model.get_current_dsp_params_as_list())
         except Exception as e:
             self.parent().show_error_msg(str(e))
