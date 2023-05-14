@@ -180,19 +180,20 @@ class CentralWidget(QWidget):
         return spacer
 
     def send_midi_dsp_change(self):
-        try:
-            if self.main_model.get_current_dsp() is None:
-                print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
-                print("Current DSP effect id: OFF")
-            else:
-                print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
-                print("Current DSP effect id: " + str(self.main_model.get_current_dsp().id))
-                print("Current DSP effect name: " + self.main_model.get_current_dsp().name)
+        if self.main_model.get_current_dsp() is None:
+            print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
+            print("Current DSP effect id: OFF")
+        else:
+            print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
+            print("Current DSP effect id: " + str(self.main_model.get_current_dsp().id))
+            print("Current DSP effect name: " + self.main_model.get_current_dsp().name)
+
+            try:
                 block0 = self.main_model.get_current_dsp_id()
                 parameter_value = self.main_model.get_current_dsp().id
                 self.midi.set_parameter(SysexType.SET_DSP_MODULE.value, parameter_value, block0=block0)
-        except Exception as e:
-            self.parent().show_error_msg(str(e))
+            except Exception as e:
+                self.parent().show_error_msg(str(e))
 
     def send_midi_param_change(self, dsp_parameter: DspParameter):
         print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value))
@@ -208,6 +209,9 @@ class CentralWidget(QWidget):
             params_hex_string = params_hex_string + " " + self.midi.decimal_to_hex(param_value)
 
         params_hex_string = (params_hex_string + " 70 70 37 7F 00").strip()
-
         print(params_hex_string)
-        self.midi.set_dsp_parameters(bytes.fromhex(params_hex_string))
+
+        try:
+            self.midi.set_dsp_parameters(bytes.fromhex(params_hex_string))
+        except Exception as e:
+            self.parent().show_error_msg(str(e))
