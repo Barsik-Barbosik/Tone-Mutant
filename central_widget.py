@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
     QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QSpacerItem
 
-from enums.enums import ParameterType, TabName, SysexType
+from enums.enums import ParameterType, TabName
 from midi_service import MidiService
 from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
@@ -178,25 +178,24 @@ class CentralWidget(QWidget):
 
     def send_dsp_module_change_sysex(self):
         if self.main_model.get_current_dsp() is None:
-            print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
+            print("Current DSP block id: " + str(self.main_model.get_current_block_id()))
             print("Current DSP effect id: OFF")
+            # TODO: turn DSP off
+            self.parent().show_status_msg("Not implemented!!", 1000)
         else:
-            print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
+            print("Current DSP block id: " + str(self.main_model.get_current_block_id()))
             print("Current DSP effect id: " + str(self.main_model.get_current_dsp().id))
             print("Current DSP effect name: " + self.main_model.get_current_dsp().name)
 
             try:
-                block0 = self.main_model.get_current_dsp_id()
-                parameter_value = self.main_model.get_current_dsp().id
-
-                # TODO: make method "midi.dsp_module_change"
-                self.midi.set_parameter(SysexType.SET_DSP_MODULE.value, parameter_value, block0=block0)
+                self.midi.send_dsp_module_change_sysex(self.main_model.get_current_dsp().id,
+                                                       self.main_model.get_current_block_id())
             except Exception as e:
                 self.parent().show_error_msg(str(e))
 
     def send_dsp_param_change_sysex(self, dsp_parameter: DspParameter):
         print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value))
-        print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
+        print("Current DSP module id: " + str(self.main_model.get_current_block_id()))
 
         try:
             self.midi.send_dsp_params_change_sysex(self.main_model.get_current_dsp_params_as_list())

@@ -31,7 +31,7 @@ class MainModel:
         else:
             return None
 
-    def get_current_dsp_id(self) -> int:
+    def get_current_block_id(self) -> int:
         if self.currentTabName == TabName.DSP_1:
             return 0
         elif self.currentTabName == TabName.DSP_2:
@@ -81,7 +81,6 @@ class MainModel:
         output = [0] * 14
         dsp_effect = self.get_current_dsp()
         if dsp_effect is not None:
-            # sorted_list = sorted(dsp_effect.dsp_parameter_list, key=lambda obj: obj.id)
             for idx, parameter in enumerate(dsp_effect.dsp_parameter_list):
                 if parameter.type == ParameterType.COMBO:
                     output[idx] = parameter.choices.index(parameter.value)
@@ -93,7 +92,3 @@ class MainModel:
                     output[12] = int(str(parameter.value).zfill(4)[:2])  # first 2 digits
                     output[13] = int(str(parameter.value).zfill(4)[2:])  # last 2 digits
         return output
-
-    # @staticmethod
-    # def print_updated_parameter_value(dsp_parameter: DspParameter):
-    #     print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value))
