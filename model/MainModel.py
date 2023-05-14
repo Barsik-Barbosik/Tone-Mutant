@@ -78,20 +78,20 @@ class MainModel:
         return output
 
     def get_current_dsp_params_as_list(self) -> list:
-        output = []
+        output = [0] * 14
         dsp_effect = self.get_current_dsp()
         if dsp_effect is not None:
-            sorted_list = sorted(dsp_effect.dsp_parameter_list, key=lambda obj: obj.id)
-            for parameter in sorted_list:
+            # sorted_list = sorted(dsp_effect.dsp_parameter_list, key=lambda obj: obj.id)
+            for idx, parameter in enumerate(dsp_effect.dsp_parameter_list):
                 if parameter.type == ParameterType.COMBO:
-                    output.append(parameter.choices.index(parameter.value))
+                    output[idx] = parameter.choices.index(parameter.value)
                 elif parameter.type == ParameterType.KNOB:
-                    output.append(parameter.value - parameter.choices[0])
+                    output[idx] = parameter.value - parameter.choices[0]
                 elif parameter.type == ParameterType.KNOB_2BYTES:
                     # special case, only for "delay" DSP effect
-                    output = [0] + output
-                    output.append(int(str(parameter.value).zfill(4)[:2]))  # first 2 digits
-                    output.append(int(str(parameter.value).zfill(4)[2:]))  # last 2 digits
+                    output[idx] = 0
+                    output[12] = int(str(parameter.value).zfill(4)[:2])  # first 2 digits
+                    output[13] = int(str(parameter.value).zfill(4)[2:])  # last 2 digits
         return output
 
     # @staticmethod

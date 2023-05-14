@@ -202,9 +202,6 @@ class CentralWidget(QWidget):
         params_hex_string = ""
         params_as_list = self.main_model.get_current_dsp_params_as_list()
 
-        while len(params_as_list) < 13:
-            params_as_list.append(0)
-
         for param_value in params_as_list:
             params_hex_string = params_hex_string + " " + self.midi.decimal_to_hex(param_value)
 
