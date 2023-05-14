@@ -81,16 +81,17 @@ class MainModel:
         output = []
         dsp_effect = self.get_current_dsp()
         if dsp_effect is not None:
-            for parameter in dsp_effect.dsp_parameter_list:
+            sorted_list = sorted(dsp_effect.dsp_parameter_list, key=lambda obj: obj.id)
+            for parameter in sorted_list:
                 if parameter.type == ParameterType.COMBO:
                     output.append(parameter.choices.index(parameter.value))
                 elif parameter.type == ParameterType.KNOB:
                     output.append(parameter.value - parameter.choices[0])
                 elif parameter.type == ParameterType.KNOB_2BYTES:
-                    # output.append(parameter.value - parameter.choices[0])
-                    # TODO: 2 bytes
-                    output.append(0)
-                    output.append(0)
+                    # special case, only for "delay" DSP effect
+                    output = [0] + output
+                    output.append(int(str(parameter.value).zfill(4)[:2]))  # first 2 digits
+                    output.append(int(str(parameter.value).zfill(4)[2:]))  # last 2 digits
         return output
 
     # @staticmethod
