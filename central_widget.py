@@ -112,27 +112,24 @@ class CentralWidget(QWidget):
         self.main_model.set_current_dsp(item_id)
         self.parent().show_help_msg(
             "<b>" + self.main_model.get_current_dsp_name() + "</b><br/>" + dsp_effect.description if dsp_effect is not None else "DSP module is not selected.")
-        self.send_midi_dsp_change()
+        self.send_dsp_module_change_sysex()
         self.redraw_dsp_params_panel(qgrid_layout)
 
     def on_combo_changed(self, combo: QComboBox, dsp_parameter: DspParameter):
         dsp_parameter.value = combo.currentText()
-        # self.main_model.print_updated_parameter_value(dsp_parameter)
-        self.send_midi_param_change(dsp_parameter)
+        self.send_dsp_param_change_sysex(dsp_parameter)
 
     def on_knob_changed(self, knob: QDial, linked_knob_spinbox: QSpinBox, dsp_parameter: DspParameter):
         if knob.value() != linked_knob_spinbox.value():
             linked_knob_spinbox.setValue(knob.value())
             dsp_parameter.value = knob.value()
-            # self.main_model.print_updated_parameter_value(dsp_parameter)
-            self.send_midi_param_change(dsp_parameter)
+            self.send_dsp_param_change_sysex(dsp_parameter)
 
     def on_knob_spinbox_changed(self, knob_spinbox: QSpinBox, linked_knob: QDial, dsp_parameter: DspParameter):
         if knob_spinbox.value() != linked_knob.value():
             linked_knob.setValue(knob_spinbox.value())
             dsp_parameter.value = knob_spinbox.value()
-            # self.main_model.print_updated_parameter_value(dsp_parameter)
-            self.send_midi_param_change(dsp_parameter)
+            self.send_dsp_param_change_sysex(dsp_parameter)
 
     def clear_layout(self, layout):
         if layout is not None:
@@ -179,7 +176,7 @@ class CentralWidget(QWidget):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         return spacer
 
-    def send_midi_dsp_change(self):
+    def send_dsp_module_change_sysex(self):
         if self.main_model.get_current_dsp() is None:
             print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
             print("Current DSP effect id: OFF")
@@ -197,11 +194,11 @@ class CentralWidget(QWidget):
             except Exception as e:
                 self.parent().show_error_msg(str(e))
 
-    def send_midi_param_change(self, dsp_parameter: DspParameter):
+    def send_dsp_param_change_sysex(self, dsp_parameter: DspParameter):
         print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value))
         print("Current DSP module id: " + str(self.main_model.get_current_dsp_id()))
 
         try:
-            self.midi.send_dsp_params_change(self.main_model.get_current_dsp_params_as_list())
+            self.midi.send_dsp_params_change_sysex(self.main_model.get_current_dsp_params_as_list())
         except Exception as e:
             self.parent().show_error_msg(str(e))

@@ -49,7 +49,7 @@ class MidiService:
         time.sleep(0.01)
         self.midi_in.get_message()
 
-    def send_dsp_params_change(self, params_list):
+    def send_dsp_params_change_sysex(self, params_list):
         # Array size is always 14 bytes: length is "0D"
         msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 57 00 00 00 0D 00"
         msg_params = ""
