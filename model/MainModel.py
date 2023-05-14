@@ -3,6 +3,8 @@ from enum import Enum
 from enums.enums import ParameterType, TabName
 from model.DspEffect import DspEffect
 
+EMPTY_DSP_NAME = "OFF"
+
 
 class MainModel:
     def __init__(self):
@@ -44,7 +46,7 @@ class MainModel:
             return None
 
     def get_current_dsp_name(self) -> str:
-        return self.get_current_dsp().name if self.get_current_dsp() is not None else "OFF"
+        return self.get_current_dsp().name if self.get_current_dsp() is not None else EMPTY_DSP_NAME
 
     def set_current_dsp(self, dsp_id: int):
         new_dsp_effect: DspEffect = self.get_dsp_effect_by_id(dsp_id)
@@ -59,13 +61,13 @@ class MainModel:
 
     def get_output_text(self) -> str:
         output: str = "Current tab: " + str(self.currentTabName.value) + "\n" \
-                      + "\nDSP 1: " + str(self.selectedDsp1.name if self.selectedDsp1 is not None else "OFF") \
+                      + "\nDSP 1: " + str(self.selectedDsp1.name if self.selectedDsp1 is not None else EMPTY_DSP_NAME) \
                       + self.get_params_info(self.selectedDsp1) \
-                      + "\nDSP 2: " + str(self.selectedDsp2.name if self.selectedDsp2 is not None else "OFF") \
+                      + "\nDSP 2: " + str(self.selectedDsp2.name if self.selectedDsp2 is not None else EMPTY_DSP_NAME) \
                       + self.get_params_info(self.selectedDsp2) \
-                      + "\nDSP 3: " + str(self.selectedDsp3.name if self.selectedDsp3 is not None else "OFF") \
+                      + "\nDSP 3: " + str(self.selectedDsp3.name if self.selectedDsp3 is not None else EMPTY_DSP_NAME) \
                       + self.get_params_info(self.selectedDsp3) \
-                      + "\nDSP 4: " + str(self.selectedDsp4.name if self.selectedDsp4 is not None else "OFF") \
+                      + "\nDSP 4: " + str(self.selectedDsp4.name if self.selectedDsp4 is not None else EMPTY_DSP_NAME) \
                       + self.get_params_info(self.selectedDsp4)
         return output
 
