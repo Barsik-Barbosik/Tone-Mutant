@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial
     QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QSpacerItem
 
 from enums.enums import ParameterType, TabName, SysexType
-from midi import Midi
+from midi_service import MidiService
 from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
 from model.MainModel import MainModel
@@ -15,7 +15,7 @@ class CentralWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.midi = Midi()
+        self.midi = MidiService()
         self.main_model = MainModel()
         self.output_tab_textbox = QTextBrowser()
 

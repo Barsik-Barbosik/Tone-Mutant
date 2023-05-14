@@ -7,7 +7,7 @@ import rtmidi
 CONFIG_FILENAME = 'config.cfg'
 
 
-class Midi:
+class MidiService:
 
     def __init__(self):
         cfg = configparser.ConfigParser()
