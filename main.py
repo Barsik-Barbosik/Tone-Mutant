@@ -99,7 +99,7 @@ class MainWindow(QMainWindow):
         self.midi_settings_window = MidiSettingsWindow()
 
     def exit_call(self):
-        self.central_widget.midi.Close()
+        self.central_widget.midi.close_midi_ports()
         self.close()
 
 

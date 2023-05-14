@@ -1,71 +1,53 @@
 import configparser
-import queue
 import struct
 import time
 
 import rtmidi
 
-import external.toneTyrant.midi_comms as midi_comms
-
 CONFIG_FILENAME = 'config.cfg'
 
 
-class Midi(midi_comms.MidiComms):
+class Midi:
 
     def __init__(self):
         cfg = configparser.ConfigParser()
         cfg.read(CONFIG_FILENAME)
-        self._input_name = cfg.get('Midi', 'InPort', fallback="")
-        self._output_name = cfg.get('Midi', 'OutPort', fallback="")
-        self._realtime_enable = True
-        self._realtime_channel = int(cfg.get('Midi Real-Time', 'Channel', fallback="0"))
-        self._logging_level = 0
-        self._queue = queue.Queue()
-        self._thread = midi_comms.MidiComms.MidiThread(self)
-        self._thread.start()
+        self.input_name = cfg.get('Midi', 'InPort', fallback="")
+        self.output_name = cfg.get('Midi', 'OutPort', fallback="")
+        self.channel = int(cfg.get('Midi Real-Time', 'Channel', fallback="0"))
+
+        self.midi_in = rtmidi.MidiIn()
+        self.midi_out = rtmidi.MidiOut()
+        self.open_midi_ports()
+
+    def open_midi_ports(self):
+        for i in range(self.midi_out.get_port_count()):
+            if self.output_name == self.midi_out.get_port_name(i):
+                self.midi_out.open_port(port=i)
+        for i in range(self.midi_in.get_port_count()):
+            if self.input_name == self.midi_in.get_port_name(i):
+                self.midi_in.open_port(port=i)
+
+    def close_midi_ports(self):
+        self.midi_in.close_port()
+        self.midi_out.close_port()
+        self.midi_in.delete()
+        self.midi_out.delete()
 
     def send_sysex(self, packet):
-        """
-        Send SysEx to the keyboard
-        """
         print("SysEx: " + packet.hex(" ").upper())
 
-        # Open the device (if needed)
-        midiin = rtmidi.MidiIn()
-        midiout = rtmidi.MidiOut()
-        for i in range(midiout.get_port_count()):
-            if self._output_name == midiout.get_port_name(i):
-                midiout.open_port(port=i)
-        for i in range(midiin.get_port_count()):
-            if self._input_name == midiin.get_port_name(i):
-                midiin.open_port(port=i)
-        if not midiout.is_port_open() or not midiin.is_port_open():
+        if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
             raise Exception("Could not find the named port. Please check MIDI settings.")
 
-        midiin.ignore_types(sysex=False)
+        self.midi_in.ignore_types(sysex=False)
+        self.flush_input_queue()
+        self.midi_out.send_message(bytearray(packet))
+        self.flush_input_queue()
 
-        # Flush the input queue
+    def flush_input_queue(self):
         time.sleep(0.01)
-        midiin.get_message()
-
-        # Send the packet
-        midiout.send_message(bytearray(packet))
-        print(" Sent: " + packet.hex(" ").upper())
-        time.sleep(0.1)
-        # Handle any response -- don't expect one
-        midiin.get_message()
-        time.sleep(0.01)
-
-        # Close the device
-        midiin.close_port()
-        midiout.close_port()
-
-        # Also delete the instances. See notes in rtmidi-python documentation. This is
-        # needed to get around delays in the python garbage-collector. A better
-        # solution might be to keep the ports open and close only when exiting the
-        # program.
-        midiin.delete()
-        midiout.delete()
+        self.midi_in.get_message()
 
     def set_parameter(self, parameter, data, block0=0):
         sysex = self.make_simple_sys_ex(parameter, data, block0)
@@ -82,7 +64,8 @@ class Midi(midi_comms.MidiComms):
             + self.decimal_to_two_bytes(parameter) + bytes.fromhex("00 00 00 00") \
             + self.decimal_to_two_bytes(data) + bytes.fromhex("F7")
 
-    def make_sys_ex(self, parameter, data, category=3, memory=3, parameter_set=0, block0=0):
+    @staticmethod
+    def make_sys_ex(parameter, data, category=3, memory=3, parameter_set=0, block0=0):
         return bytes.fromhex("F0 44 19 01 7F 01") \
             + struct.pack("<BBHHHHHHHH", category, memory, parameter_set, 0, 0, 0, block0, parameter, 0, 0) \
             + data + bytes.fromhex("F7")
