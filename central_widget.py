@@ -6,6 +6,7 @@ from enums.enums import ParameterType, TabName, SysexType
 from midi_service import MidiService
 from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
+from model.MainEffect import MainEffect
 from model.MainModel import MainModel
 
 KNOB_SIZE = 40
@@ -49,7 +50,7 @@ class CentralWidget(QWidget):
         list_widget = QListWidget(self)
         list_widget.setFixedWidth(180)
         list_widget.insertItem(0, "OFF")
-        for idx, dsp_effect in enumerate(self.main_model.get_dsp_effects_tuple()):
+        for idx, dsp_effect in enumerate(DspEffect.get_dsp_effects_tuple()):
             item = QListWidgetItem()
             item.setText(dsp_effect.name)
             item.setData(Qt.UserRole, dsp_effect.id)
@@ -148,7 +149,7 @@ class CentralWidget(QWidget):
         left_layout = QFormLayout()
         right_layout = QFormLayout()
 
-        for idx, parameter in enumerate(self.main_model.get_main_params_tuple()):
+        for idx, parameter in enumerate(MainEffect.get_main_effects_tuple()):
             if idx < 7:
                 if parameter.type == ParameterType.COMBO:
                     left_layout.addRow(parameter.name + ":", self.create_combo_input(parameter))
