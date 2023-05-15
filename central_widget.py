@@ -40,6 +40,7 @@ class CentralWidget(QWidget):
             self.main_model.currentTabName.value + ": " + self.main_model.get_current_dsp_name(), 1000)
         if self.main_model.currentTabName == TabName.OUTPUT:
             self.output_tab_textbox.setPlainText(self.main_model.get_output_text())
+        self.redraw_help_msg()
 
     def create_dsp_page(self) -> QWidget:
         qgrid_layout = QGridLayout(self)
@@ -107,13 +108,11 @@ class CentralWidget(QWidget):
         return hbox
 
     def on_list_widget_click(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
-        item_id: int = list_widget.currentItem().data(Qt.UserRole)
-        dsp_effect: DspEffect = self.main_model.get_dsp_effect_by_id(item_id)
-        self.main_model.set_current_dsp(item_id)
-        self.parent().show_help_msg(
-            "<b>" + self.main_model.get_current_dsp_name() + "</b><br/>" + dsp_effect.description if dsp_effect is not None else "DSP module is not selected.")
+        list_item_id: int = list_widget.currentItem().data(Qt.UserRole)
+        self.main_model.set_current_dsp(list_item_id)
         self.change_dsp_module()
         self.redraw_dsp_params_panel(qgrid_layout)
+        self.redraw_help_msg()
 
     def on_combo_changed(self, combo: QComboBox, dsp_parameter: DspParameter):
         dsp_parameter.value = dsp_parameter.choices.index(combo.currentText())
@@ -175,6 +174,14 @@ class CentralWidget(QWidget):
         spacer = QWidget(self)
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         return spacer
+
+    def redraw_help_msg(self):
+        dsp_effect = self.main_model.get_current_dsp()
+        msg = ""
+        if self.main_model.get_current_block_id() is not None:
+            msg = "<b>" + self.main_model.get_current_dsp_name() + "</b><br/>" \
+                  + dsp_effect.description if dsp_effect is not None else "DSP module is not selected."
+        self.parent().show_help_msg(msg)
 
     def change_dsp_module(self):
         if self.main_model.get_current_dsp() is None:
