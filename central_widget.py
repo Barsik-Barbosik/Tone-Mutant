@@ -179,8 +179,13 @@ class CentralWidget(QWidget):
         dsp_effect = self.main_model.get_current_dsp()
         msg = ""
         if self.main_model.get_current_block_id() is not None:
-            msg = "<b>" + self.main_model.get_current_dsp_name() + "</b><br/>" \
-                  + dsp_effect.description if dsp_effect is not None else "DSP module is not selected."
+            if dsp_effect is None:
+                msg = "DSP module is not selected."
+            else:
+                msg = "<h3>" + self.main_model.get_current_dsp_name() + "</h3>" + dsp_effect.description + "<br/>"
+                for param in dsp_effect.dsp_parameter_list:
+                    msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
+
         self.parent().show_help_msg(msg)
 
     def change_dsp_module(self):
