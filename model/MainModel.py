@@ -89,8 +89,7 @@ class MainModel:
                 elif parameter.type == ParameterType.KNOB:
                     output[idx] = parameter.value - parameter.choices[0]
                 elif parameter.type == ParameterType.KNOB_2BYTES:
-                    # special case, only for "delay" DSP effect
-                    output[idx] = 0
+                    # special case, only for the "delay" DSP effect
                     output[12] = int(str(parameter.value).zfill(4)[:2])  # first 2 digits
                     output[13] = int(str(parameter.value).zfill(4)[2:])  # last 2 digits
         return output
