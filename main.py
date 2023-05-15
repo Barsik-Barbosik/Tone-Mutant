@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QCoreApplication
 from PyQt5.QtWidgets import QApplication, QStatusBar, QMainWindow, QMenu, QAction, QMenuBar, QTextBrowser, QDockWidget, \
     QWidget, QHBoxLayout, QTabWidget
 
@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
         midi_settings_action.triggered.connect(self.show_midi_settings)
         exit_action = QAction("&Exit", self)
         exit_action.setStatusTip("Exit application")
-        exit_action.triggered.connect(self.exit_call)
+        exit_action.triggered.connect(self.menu_exit_action)
 
         file_menu.addAction(open_action)
         file_menu.addAction(save_action)
@@ -97,6 +97,10 @@ class MainWindow(QMainWindow):
 
     def show_midi_settings(self):
         self.midi_settings_window = MidiSettingsWindow()
+
+    @staticmethod
+    def menu_exit_action():
+        QCoreApplication.instance().quit()
 
     def exit_call(self):
         self.central_widget.midi_service.close_midi_ports()
