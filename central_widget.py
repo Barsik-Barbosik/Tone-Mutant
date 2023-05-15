@@ -200,6 +200,7 @@ class CentralWidget(QWidget):
         print("Current DSP module id: " + str(self.main_model.get_current_block_id()))
 
         try:
-            self.midi.send_dsp_params_change_sysex(self.main_model.get_current_dsp_params_as_list())
+            self.midi.send_dsp_params_change_sysex(self.main_model.get_current_dsp_params_as_list(),
+                                                   self.main_model.get_current_block_id())
         except Exception as e:
             self.parent().show_error_msg(str(e))

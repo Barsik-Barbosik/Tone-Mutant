@@ -58,7 +58,7 @@ class MidiService:
         self.flush_input_queue()
         self.midi_out.send_message(bytearray(packet))
 
-        # wait for a correct response
+        # Wait for a correct response
         message = None
         start_time = time.time()
         while (message is None or len(message[0]) < 4) and time.time() - start_time < RESPONSE_TIMEOUT:
@@ -79,9 +79,10 @@ class MidiService:
         time.sleep(0.01)
         self.midi_in.get_message()
 
-    def send_dsp_params_change_sysex(self, params_list):
+    def send_dsp_params_change_sysex(self, params_list, block_id):
         # Array size is always 14 bytes: length is "0D"
-        msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 57 00 00 00 0D 00"
+        msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00"
+        msg_block_param_and_size = self.decimal_to_hex(block_id) + "00 57 00 00 00 0D 00"
         msg_params = ""
         msg_end = "F7"
 
@@ -90,7 +91,7 @@ class MidiService:
         msg_params = msg_params.strip()
 
         print("DSP Params: " + msg_params)
-        self.send_sysex(bytes.fromhex(msg_start + msg_params + msg_end))
+        self.send_sysex(bytes.fromhex(msg_start + msg_block_param_and_size + msg_params + msg_end))
 
     def request_dsp_params(self, block_id):
         if self.is_block_id_valid(block_id):
