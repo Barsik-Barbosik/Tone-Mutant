@@ -33,7 +33,7 @@ dsp_effects_tuple: tuple = (
                             ParameterType.KNOB, [0, 127], 0),
                DspParameter(4, "Wet Level",
                             "Adjusts the level of the effect sound.",
-                            ParameterType.KNOB, [0, 127], 100),
+                            ParameterType.KNOB, [0, 127], 0),
                DspParameter(5, "Dry Level",
                             "Adjusts the level of the direct sound.",
                             ParameterType.KNOB, [0, 127], 0)]),

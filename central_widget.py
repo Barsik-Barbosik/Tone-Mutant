@@ -84,7 +84,7 @@ class CentralWidget(QWidget):
     def create_combo_input(self, dsp_parameter: DspParameter) -> QComboBox:
         combo_box = QComboBox(self)
         combo_box.addItems(dsp_parameter.choices)
-        combo_box.setCurrentIndex(dsp_parameter.default_value)
+        combo_box.setCurrentIndex(dsp_parameter.value)
         combo_box.currentIndexChanged.connect(lambda state: self.on_combo_changed(combo_box, dsp_parameter))
         return combo_box
 
@@ -92,11 +92,11 @@ class CentralWidget(QWidget):
         knob_spinbox = QSpinBox(self)
         knob_spinbox.setMinimum(dsp_parameter.choices[0])
         knob_spinbox.setMaximum(dsp_parameter.choices[1])
-        knob_spinbox.setValue(dsp_parameter.default_value)
+        knob_spinbox.setValue(dsp_parameter.value)
         knob = QDial(self)
         knob.setMinimum(knob_spinbox.minimum())
         knob.setMaximum(knob_spinbox.maximum())
-        knob.setValue(dsp_parameter.default_value)
+        knob.setValue(dsp_parameter.value)
         knob.setFixedSize(KNOB_SIZE, KNOB_SIZE)
         knob.valueChanged.connect(lambda state: self.on_knob_changed(knob, knob_spinbox, dsp_parameter))
         knob_spinbox.valueChanged.connect(
@@ -116,20 +116,20 @@ class CentralWidget(QWidget):
         self.redraw_dsp_params_panel(qgrid_layout)
 
     def on_combo_changed(self, combo: QComboBox, dsp_parameter: DspParameter):
-        dsp_parameter.value = combo.currentText()
-        self.send_dsp_param_change_sysex(dsp_parameter)
+        dsp_parameter.value = dsp_parameter.choices.index(combo.currentText())
+        self.send_dsp_params_change_sysex()
 
     def on_knob_changed(self, knob: QDial, linked_knob_spinbox: QSpinBox, dsp_parameter: DspParameter):
         if knob.value() != linked_knob_spinbox.value():
             linked_knob_spinbox.setValue(knob.value())
             dsp_parameter.value = knob.value()
-            self.send_dsp_param_change_sysex(dsp_parameter)
+            self.send_dsp_params_change_sysex()
 
     def on_knob_spinbox_changed(self, knob_spinbox: QSpinBox, linked_knob: QDial, dsp_parameter: DspParameter):
         if knob_spinbox.value() != linked_knob.value():
             linked_knob.setValue(knob_spinbox.value())
             dsp_parameter.value = knob_spinbox.value()
-            self.send_dsp_param_change_sysex(dsp_parameter)
+            self.send_dsp_params_change_sysex()
 
     def clear_layout(self, layout):
         if layout is not None:
@@ -189,13 +189,13 @@ class CentralWidget(QWidget):
                 self.midi_service.send_dsp_module_change_sysex(self.main_model.get_current_dsp().id,
                                                                self.main_model.get_current_block_id())
                 synth_dsp_params = self.midi_service.request_dsp_params(self.main_model.get_current_block_id())
-                print("pause... " + str(len(synth_dsp_params)))
+                for idx, param in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
+                    param.value = synth_dsp_params[idx]
+                self.send_dsp_params_change_sysex()
             except Exception as e:
                 self.parent().show_error_msg(str(e))
 
-    def send_dsp_param_change_sysex(self, dsp_parameter: DspParameter):
-        print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value))
-
+    def send_dsp_params_change_sysex(self):
         try:
             self.midi_service.send_dsp_params_change_sysex(self.main_model.get_current_dsp_params_as_list(),
                                                            self.main_model.get_current_block_id())

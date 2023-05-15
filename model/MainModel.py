@@ -75,8 +75,9 @@ class MainModel:
     def get_params_info(dsp_effect: DspEffect) -> str:
         output: str = ""
         if dsp_effect is not None:
-            for parameter in dsp_effect.dsp_parameter_list:
-                output = output + "\n\t" + parameter.name + ": " + str(parameter.value)
+            for param in dsp_effect.dsp_parameter_list:
+                param_value = param.choices[param.value] if param.type == ParameterType.COMBO else str(param.value)
+                output = output + "\n\t" + param.name + ": " + param_value
         return output
 
     def get_current_dsp_params_as_list(self) -> list:
@@ -85,7 +86,7 @@ class MainModel:
         if dsp_effect is not None:
             for idx, parameter in enumerate(dsp_effect.dsp_parameter_list):
                 if parameter.type == ParameterType.COMBO:
-                    output[idx] = parameter.choices.index(parameter.value)
+                    output[idx] = parameter.value
                 elif parameter.type == ParameterType.KNOB:
                     output[idx] = parameter.value - parameter.choices[0]
                 elif parameter.type == ParameterType.KNOB_2BYTES:
