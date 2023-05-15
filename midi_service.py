@@ -40,7 +40,7 @@ class MidiService:
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
             raise Exception("Unable to open MIDI port. Please verify MIDI settings.")
 
-        print("SysEx: " + sysex_hex_str)
+        print("SysEx: " + self.format_as_nice_hex(sysex_hex_str))
         self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
         self.flush_input_queue()
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
@@ -51,7 +51,7 @@ class MidiService:
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
             raise Exception("Unable to open MIDI port. Please verify MIDI settings.")
 
-        print("SysEx:\t\t" + sysex_hex_str)
+        print("SysEx:\t\t" + self.format_as_nice_hex(sysex_hex_str))
         self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
         self.flush_input_queue()
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
@@ -71,7 +71,7 @@ class MidiService:
         response_str = ""
         for byte in response:
             response_str = response_str + " " + self.decimal_to_hex(byte)
-        print("Response:\t" + response_str.strip())
+        print("Response:\t" + self.format_as_nice_hex(response_str))
         return response
 
     def flush_input_queue(self):
@@ -87,9 +87,8 @@ class MidiService:
 
         for param_value in params_list:
             msg_params = msg_params + " " + self.decimal_to_hex(param_value)
-        msg_params = msg_params.strip()
 
-        print("DSP Params: " + msg_params)
+        print("DSP Params: " + self.format_as_nice_hex(msg_params))
         self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
 
     def request_dsp_params(self, block_id: int):
@@ -130,6 +129,11 @@ class MidiService:
             raise ValueError("Number is too big: {}".format(decimal_num))
 
         return "{:02X}".format(decimal_num % 128) + " {:02X}".format(decimal_num // 128)
+
+    @staticmethod
+    def format_as_nice_hex(input_str: str) -> str:
+        string_without_spaces = input_str.replace(" ", "")
+        return " ".join(string_without_spaces[i:i + 2] for i in range(0, len(string_without_spaces), 2))
 
     # @staticmethod
     # def decimal_to_two_bytes(decimal_num):

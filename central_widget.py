@@ -178,12 +178,10 @@ class CentralWidget(QWidget):
 
     def change_dsp_module(self):
         if self.main_model.get_current_dsp() is None:
-            print("Current DSP block id: " + str(self.main_model.get_current_block_id()))
             print("Current DSP effect id: OFF")
             # TODO: turn DSP off
             self.parent().show_status_msg("Not implemented!!", 1000)
         else:
-            print("Current DSP block id: " + str(self.main_model.get_current_block_id()))
             print("Current DSP effect id: " + str(self.main_model.get_current_dsp().id))
             print("Current DSP effect name: " + self.main_model.get_current_dsp().name)
 
@@ -197,7 +195,6 @@ class CentralWidget(QWidget):
 
     def send_dsp_param_change_sysex(self, dsp_parameter: DspParameter):
         print("Setting " + dsp_parameter.name + ": " + str(dsp_parameter.value))
-        print("Current DSP module id: " + str(self.main_model.get_current_block_id()))
 
         try:
             self.midi_service.send_dsp_params_change_sysex(self.main_model.get_current_dsp_params_as_list(),
