@@ -1,6 +1,9 @@
+import random
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
-    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QSpacerItem
+    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QSpacerItem, \
+    QPushButton
 
 from enums.enums import ParameterType, TabName
 from midi_service import MidiService
@@ -75,6 +78,10 @@ class CentralWidget(QWidget):
                     qgrid_layout.addWidget(self.create_combo_input(dsp_parameter), idx, 1)
                 elif dsp_parameter.type == ParameterType.KNOB or dsp_parameter.type == ParameterType.KNOB_2BYTES:
                     qgrid_layout.addLayout(self.create_knob_input(dsp_parameter), idx, 1)
+
+            random_button = QPushButton("Set random values", self)
+            random_button.clicked.connect(lambda state: self.on_random_button_pressed(qgrid_layout))
+            qgrid_layout.addWidget(random_button, len(self.main_model.get_current_dsp().dsp_parameter_list), 0, 2, 2)
         else:
             qgrid_layout.addWidget(self.get_spacer(), 0, 0, 1, 2)
 
@@ -129,6 +136,16 @@ class CentralWidget(QWidget):
             linked_knob.setValue(knob_spinbox.value())
             dsp_parameter.value = knob_spinbox.value()
             self.send_dsp_params_change_sysex()
+
+    def on_random_button_pressed(self, qgrid_layout):
+        for param in self.main_model.get_current_dsp().dsp_parameter_list:
+            if param.type == ParameterType.COMBO:
+                param.value = random.randint(0, len(param.choices) - 1)
+            if param.type == ParameterType.KNOB or param.type == ParameterType.KNOB_2BYTES:
+                param.value = random.randint(param.choices[0], param.choices[1])
+        self.send_dsp_params_change_sysex()
+        self.redraw_dsp_params_panel(qgrid_layout)
+        self.parent().show_status_msg("It may be necessary to correct volume levels after setting random values.", 3000)
 
     def clear_layout(self, layout):
         if layout is not None:
