@@ -16,7 +16,7 @@ class CentralWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.midi = MidiService()
+        self.midi_service = MidiService()
         self.main_model = MainModel()
         self.output_tab_textbox = QTextBrowser()
 
@@ -188,10 +188,10 @@ class CentralWidget(QWidget):
             print("Current DSP effect name: " + self.main_model.get_current_dsp().name)
 
             try:
-                self.midi.send_dsp_module_change_sysex(self.main_model.get_current_dsp().id,
-                                                       self.main_model.get_current_block_id())
-                synth_dsp_params = self.midi.request_dsp_params(self.main_model.get_current_block_id())
-                print("pause")
+                self.midi_service.send_dsp_module_change_sysex(self.main_model.get_current_dsp().id,
+                                                               self.main_model.get_current_block_id())
+                synth_dsp_params = self.midi_service.request_dsp_params(self.main_model.get_current_block_id())
+                print("pause... " + str(len(synth_dsp_params)))
             except Exception as e:
                 self.parent().show_error_msg(str(e))
 
@@ -200,7 +200,7 @@ class CentralWidget(QWidget):
         print("Current DSP module id: " + str(self.main_model.get_current_block_id()))
 
         try:
-            self.midi.send_dsp_params_change_sysex(self.main_model.get_current_dsp_params_as_list(),
-                                                   self.main_model.get_current_block_id())
+            self.midi_service.send_dsp_params_change_sysex(self.main_model.get_current_dsp_params_as_list(),
+                                                           self.main_model.get_current_block_id())
         except Exception as e:
             self.parent().show_error_msg(str(e))

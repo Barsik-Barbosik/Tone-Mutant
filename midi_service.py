@@ -1,12 +1,11 @@
 import configparser
-import struct
 import time
 
 import rtmidi
 
 from enums.enums import SysexType
 
-CONFIG_FILENAME = 'config.cfg'
+CONFIG_FILENAME = "config.cfg"
 RESPONSE_TIMEOUT = 5  # in seconds
 
 
@@ -15,9 +14,9 @@ class MidiService:
     def __init__(self):
         cfg = configparser.ConfigParser()
         cfg.read(CONFIG_FILENAME)
-        self.input_name = cfg.get('Midi', 'InPort', fallback="")
-        self.output_name = cfg.get('Midi', 'OutPort', fallback="")
-        self.channel = int(cfg.get('Midi Real-Time', 'Channel', fallback="0"))
+        self.input_name = cfg.get("Midi", "InPort", fallback="")
+        self.output_name = cfg.get("Midi", "OutPort", fallback="")
+        self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
 
         self.midi_in = rtmidi.MidiIn()
         self.midi_out = rtmidi.MidiOut()
@@ -37,26 +36,25 @@ class MidiService:
         self.midi_in.delete()
         self.midi_out.delete()
 
-    def send_sysex(self, packet):
-        print("SysEx: " + packet.hex(" ").upper())
-
+    def send_sysex(self, sysex_hex_str: str):
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
-            raise Exception("Could not find the named port. Please check MIDI settings.")
+            raise Exception("Unable to open MIDI port. Please verify MIDI settings.")
 
-        self.midi_in.ignore_types(sysex=False)
-        self.flush_input_queue()
-        self.midi_out.send_message(bytearray(packet))
-        self.flush_input_queue()
-
-    def send_sysex_and_get_response(self, packet):
-        print("SysEx:\t\t" + packet.hex(" ").upper())
-
-        if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
-            raise Exception("Could not find the named port. Please check MIDI settings.")
-
+        print("SysEx: " + sysex_hex_str)
         self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
         self.flush_input_queue()
-        self.midi_out.send_message(bytearray(packet))
+        self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
+        self.flush_input_queue()
+        self.midi_in.ignore_types(sysex=True, timing=True, active_sense=True)
+
+    def send_sysex_and_get_response(self, sysex_hex_str: str) -> list:
+        if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
+            raise Exception("Unable to open MIDI port. Please verify MIDI settings.")
+
+        print("SysEx:\t\t" + sysex_hex_str)
+        self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
+        self.flush_input_queue()
+        self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
 
         # Wait for a correct response
         message = None
@@ -68,6 +66,7 @@ class MidiService:
         if message is None:
             return None
 
+        self.midi_in.ignore_types(sysex=True, timing=True, active_sense=True)
         response, delta_time = message
         response_str = ""
         for byte in response:
@@ -79,7 +78,7 @@ class MidiService:
         time.sleep(0.01)
         self.midi_in.get_message()
 
-    def send_dsp_params_change_sysex(self, params_list, block_id):
+    def send_dsp_params_change_sysex(self, params_list: list, block_id: int):
         # Array size is always 14 bytes: length is "0D"
         msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00"
         msg_block_param_and_size = self.decimal_to_hex(block_id) + "00 57 00 00 00 0D 00"
@@ -91,47 +90,54 @@ class MidiService:
         msg_params = msg_params.strip()
 
         print("DSP Params: " + msg_params)
-        self.send_sysex(bytes.fromhex(msg_start + msg_block_param_and_size + msg_params + msg_end))
+        self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
 
-    def request_dsp_params(self, block_id):
+    def request_dsp_params(self, block_id: int):
         if self.is_block_id_valid(block_id):
             # Array size is always 14 bytes: length is "0D"
             msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
             msg_block_id = self.decimal_to_hex(block_id)
             msg_end = "00 57 00 00 00 0D 00 F7"
 
-            return self.send_sysex_and_get_response(bytes.fromhex(msg_start + msg_block_id + msg_end))
+            return self.send_sysex_and_get_response(msg_start + msg_block_id + msg_end)
 
     @staticmethod
-    def is_block_id_valid(block_id):
+    def is_block_id_valid(block_id: int):
         return isinstance(int(block_id), int) and 0 <= int(block_id) <= 3
 
-    def send_dsp_module_change_sysex(self, new_dsp_id, block_id):
+    def send_dsp_module_change_sysex(self, new_dsp_id: int, block_id: int):
         self.send_parameter_change_sysex(SysexType.SET_DSP_MODULE.value, new_dsp_id, block_id)
 
-    def send_parameter_change_sysex(self, parameter, value, block_id):
+    def send_parameter_change_sysex(self, parameter: int, value: int, block_id: int):
         sysex = self.make_sysex(parameter, value, block_id)
         self.send_sysex(sysex)
 
-    def make_sysex(self, parameter, data, block0=0):
-        return bytes.fromhex("F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00") \
-            + self.decimal_to_two_bytes(block0) \
-            + self.decimal_to_two_bytes(parameter) \
-            + bytes.fromhex("00 00 00 00") \
-            + self.decimal_to_two_bytes(data) \
-            + bytes.fromhex("F7")
+    def make_sysex(self, parameter: int, data: int, block0: int) -> str:
+        return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
+            + self.decimal_to_hex_hex(block0) \
+            + self.decimal_to_hex_hex(parameter) \
+            + "00 00 00 00" \
+            + self.decimal_to_hex_hex(data) \
+            + "F7"
 
     @staticmethod
-    def decimal_to_hex(decimal_num):
-        return '{:02X}'.format(decimal_num)
+    def decimal_to_hex(decimal_num: int) -> str:
+        return "{:02X}".format(decimal_num)
 
     @staticmethod
-    def decimal_to_two_bytes(decimal_num):
+    def decimal_to_hex_hex(decimal_num: int) -> str:
         if decimal_num > 32267:
             raise ValueError("Number is too big: {}".format(decimal_num))
 
-        return struct.pack("<BB", decimal_num % 128, decimal_num // 128)
+        return "{:02X}".format(decimal_num % 128) + " {:02X}".format(decimal_num // 128)
 
+    # @staticmethod
+    # def decimal_to_two_bytes(decimal_num):
+    #     if decimal_num > 32267:
+    #         raise ValueError("Number is too big: {}".format(decimal_num))
+    #
+    #     return struct.pack("<BB", decimal_num % 128, decimal_num // 128)
+    #
     # @staticmethod
     # def make_sys_ex(parameter, data, category=3, memory=3, parameter_set=0, block0=0):
     #     return bytes.fromhex("F0 44 19 01 7F 01") \
