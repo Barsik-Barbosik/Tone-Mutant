@@ -7,6 +7,7 @@ import rtmidi
 from enums.enums import SysexType
 
 CONFIG_FILENAME = 'config.cfg'
+RESPONSE_TIMEOUT = 5  # in seconds
 
 
 class MidiService:
@@ -47,6 +48,33 @@ class MidiService:
         self.midi_out.send_message(bytearray(packet))
         self.flush_input_queue()
 
+    def send_sysex_and_get_response(self, packet):
+        print("SysEx:\t\t" + packet.hex(" ").upper())
+
+        if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
+            raise Exception("Could not find the named port. Please check MIDI settings.")
+
+        self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
+        self.flush_input_queue()
+        self.midi_out.send_message(bytearray(packet))
+
+        # wait for a correct response
+        message = None
+        start_time = time.time()
+        while (message is None or len(message[0]) < 4) and time.time() - start_time < RESPONSE_TIMEOUT:
+            message = self.midi_in.get_message()
+            time.sleep(0.01)
+
+        if message is None:
+            return None
+
+        response, delta_time = message
+        response_str = ""
+        for byte in response:
+            response_str = response_str + " " + self.decimal_to_hex(byte)
+        print("Response:\t" + response_str.strip())
+        return response
+
     def flush_input_queue(self):
         time.sleep(0.01)
         self.midi_in.get_message()
@@ -63,6 +91,14 @@ class MidiService:
 
         print("DSP Params: " + msg_params)
         self.send_sysex(bytes.fromhex(msg_start + msg_params + msg_end))
+
+    def request_dsp_params(self, block_id):
+        # Array size is always 14 bytes: length is "0D"
+        msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 57 00 00 00 0D 00"
+        msg_params = ""
+        msg_end = "F7"
+
+        return self.send_sysex_and_get_response(bytes.fromhex(msg_start + msg_params + msg_end))
 
     def send_dsp_module_change_sysex(self, new_dsp_id, block_id):
         self.send_parameter_change_sysex(SysexType.SET_DSP_MODULE.value, new_dsp_id, block_id)
@@ -81,7 +117,7 @@ class MidiService:
 
     @staticmethod
     def decimal_to_hex(decimal_num):
-        return '{:02x}'.format(decimal_num)
+        return '{:02X}'.format(decimal_num)
 
     @staticmethod
     def decimal_to_two_bytes(decimal_num):

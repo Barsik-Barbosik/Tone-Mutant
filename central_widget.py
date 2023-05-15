@@ -112,7 +112,7 @@ class CentralWidget(QWidget):
         self.main_model.set_current_dsp(item_id)
         self.parent().show_help_msg(
             "<b>" + self.main_model.get_current_dsp_name() + "</b><br/>" + dsp_effect.description if dsp_effect is not None else "DSP module is not selected.")
-        self.send_dsp_module_change_sysex()
+        self.change_dsp_module()
         self.redraw_dsp_params_panel(qgrid_layout)
 
     def on_combo_changed(self, combo: QComboBox, dsp_parameter: DspParameter):
@@ -176,7 +176,7 @@ class CentralWidget(QWidget):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         return spacer
 
-    def send_dsp_module_change_sysex(self):
+    def change_dsp_module(self):
         if self.main_model.get_current_dsp() is None:
             print("Current DSP block id: " + str(self.main_model.get_current_block_id()))
             print("Current DSP effect id: OFF")
@@ -190,6 +190,8 @@ class CentralWidget(QWidget):
             try:
                 self.midi.send_dsp_module_change_sysex(self.main_model.get_current_dsp().id,
                                                        self.main_model.get_current_block_id())
+                synth_dsp_params = self.midi.request_dsp_params(self.main_model.get_current_block_id())
+                print("pause")
             except Exception as e:
                 self.parent().show_error_msg(str(e))
 
