@@ -68,16 +68,9 @@ class MidiService:
 
         self.midi_in.ignore_types(sysex=True, timing=True, active_sense=True)
         response, delta_time = message
-        response_str = ""
-        for byte in response:
-            response_str = response_str + " " + self.decimal_to_hex(byte)
-        print("Response:\t" + self.format_as_nice_hex(response_str))
-
         params_list = response[len(response) - 1 - required_size:len(response) - 1]
-        params_list_str = ""
-        for param_value in params_list:
-            params_list_str = params_list_str + " " + self.decimal_to_hex(param_value)
-        print("Response params list:\t" + self.format_as_nice_hex(params_list_str))
+        print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
+        print("Response params list:\t" + self.format_as_nice_hex(self.list_to_hex_str(params_list)))
 
         return params_list
 
@@ -89,11 +82,8 @@ class MidiService:
         # Array size is always 14 bytes: length is "0D"
         msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00"
         msg_block_param_and_size = self.decimal_to_hex(block_id) + "00 57 00 00 00 0D 00"
-        msg_params = ""
+        msg_params = self.list_to_hex_str(params_list)
         msg_end = "F7"
-
-        for param_value in params_list:
-            msg_params = msg_params + " " + self.decimal_to_hex(param_value)
 
         print("DSP Params: " + self.format_as_nice_hex(msg_params))
         self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
@@ -136,6 +126,12 @@ class MidiService:
             raise ValueError("Number is too big: {}".format(decimal_num))
 
         return "{:02X}".format(decimal_num % 128) + " {:02X}".format(decimal_num // 128)
+
+    def list_to_hex_str(self, int_list: list) -> str:
+        hex_str = ""
+        for int_value in int_list:
+            hex_str = hex_str + " " + self.decimal_to_hex(int_value)
+        return hex_str
 
     @staticmethod
     def format_as_nice_hex(input_str: str) -> str:
