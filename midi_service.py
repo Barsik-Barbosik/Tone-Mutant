@@ -47,7 +47,7 @@ class MidiService:
         self.flush_input_queue()
         self.midi_in.ignore_types(sysex=True, timing=True, active_sense=True)
 
-    def send_sysex_and_get_response(self, sysex_hex_str: str) -> list:
+    def send_sysex_and_get_response(self, sysex_hex_str: str, required_size: int) -> list:
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
             raise Exception("Unable to open MIDI port. Please verify MIDI settings.")
 
@@ -72,7 +72,14 @@ class MidiService:
         for byte in response:
             response_str = response_str + " " + self.decimal_to_hex(byte)
         print("Response:\t" + self.format_as_nice_hex(response_str))
-        return response
+
+        params_list = response[len(response) - 1 - required_size:len(response) - 1]
+        params_list_str = ""
+        for param_value in params_list:
+            params_list_str = params_list_str + " " + self.decimal_to_hex(param_value)
+        print("Response params list:\t" + self.format_as_nice_hex(params_list_str))
+
+        return params_list
 
     def flush_input_queue(self):
         time.sleep(0.01)
@@ -98,7 +105,7 @@ class MidiService:
             msg_block_id = self.decimal_to_hex(block_id)
             msg_end = "00 57 00 00 00 0D 00 F7"
 
-            return self.send_sysex_and_get_response(msg_start + msg_block_id + msg_end)
+            return self.send_sysex_and_get_response(msg_start + msg_block_id + msg_end, 14)
 
     @staticmethod
     def is_block_id_valid(block_id: int):
