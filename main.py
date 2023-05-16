@@ -12,7 +12,6 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("CT-X Controller")
-        self.setStyleSheet("QWidget {font-size: 11pt;}")
 
         self.menu_bar = self.init_menu_bar()
         self.setMenuBar(self.menu_bar)
@@ -82,7 +81,6 @@ class MainWindow(QMainWindow):
 
     def init_status_bar(self):
         status_bar = QStatusBar(self)
-        status_bar.setStyleSheet("background-color: white;")
         status_bar.showMessage("Hello!!", 1000)
 
         return status_bar
@@ -109,6 +107,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+
     with open("style.qss", "r") as style_file:
         style = style_file.read()
         app.setStyleSheet(style)

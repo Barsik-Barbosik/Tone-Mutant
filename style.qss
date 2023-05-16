@@ -1,3 +1,11 @@
+QStatusBar {
+    background-color: white;
+}
+
+QWidget {
+    font-size: 11pt;
+}
+
 QListWidget {
     color: #FFFFFF;
     background-color: #33373B;
