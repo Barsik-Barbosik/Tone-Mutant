@@ -2,8 +2,8 @@ import random
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
-    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QSpacerItem, \
-    QPushButton
+    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QPushButton, \
+    QSpacerItem
 
 from enums.enums import ParameterType, TabName
 from midi_service import MidiService
@@ -60,7 +60,7 @@ class CentralWidget(QWidget):
             item.setData(Qt.UserRole, dsp_effect.id)
             list_widget.insertItem(idx + 1, item)
         list_widget.setCurrentRow(0)
-        list_widget.itemClicked.connect(lambda state, lw=list_widget: self.on_list_widget_click(lw, qgrid_layout))
+        list_widget.itemSelectionChanged.connect(lambda: self.on_list_widget_changed(list_widget, qgrid_layout))
         hbox_layout.addWidget(list_widget)  # left side
 
         self.redraw_dsp_params_panel(qgrid_layout)
@@ -80,7 +80,7 @@ class CentralWidget(QWidget):
                     qgrid_layout.addLayout(self.create_knob_input(dsp_parameter), idx, 1)
 
             random_button = QPushButton("Set random values", self)
-            random_button.clicked.connect(lambda state: self.on_random_button_pressed(qgrid_layout))
+            random_button.clicked.connect(lambda: self.on_random_button_pressed(qgrid_layout))
             qgrid_layout.addWidget(random_button, len(self.main_model.get_current_dsp().dsp_parameter_list), 0, 2, 2)
         else:
             qgrid_layout.addWidget(self.get_spacer(), 0, 0, 1, 2)
@@ -93,7 +93,7 @@ class CentralWidget(QWidget):
         combo_box = QComboBox(self)
         combo_box.addItems(dsp_parameter.choices)
         combo_box.setCurrentIndex(dsp_parameter.value)
-        combo_box.currentIndexChanged.connect(lambda state: self.on_combo_changed(combo_box, dsp_parameter))
+        combo_box.currentIndexChanged.connect(lambda: self.on_combo_changed(combo_box, dsp_parameter))
         return combo_box
 
     def create_knob_input(self, dsp_parameter: DspParameter) -> QHBoxLayout:
@@ -106,17 +106,16 @@ class CentralWidget(QWidget):
         knob.setMaximum(knob_spinbox.maximum())
         knob.setValue(dsp_parameter.value)
         knob.setFixedSize(KNOB_SIZE, KNOB_SIZE)
-        knob.valueChanged.connect(lambda state: self.on_knob_changed(knob, knob_spinbox, dsp_parameter))
-        knob_spinbox.valueChanged.connect(
-            lambda state: self.on_knob_spinbox_changed(knob_spinbox, knob, dsp_parameter))
+        knob.valueChanged.connect(lambda: self.on_knob_changed(knob, knob_spinbox, dsp_parameter))
+        knob_spinbox.valueChanged.connect(lambda: self.on_knob_spinbox_changed(knob_spinbox, knob, dsp_parameter))
         hbox = QHBoxLayout(self)
         hbox.addWidget(knob_spinbox)
         hbox.addWidget(knob)
         return hbox
 
-    def on_list_widget_click(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
-        list_item_id: int = list_widget.currentItem().data(Qt.UserRole)
-        self.main_model.set_current_dsp(list_item_id)
+    def on_list_widget_changed(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
+        dsp_effect_id: int = list_widget.currentItem().data(Qt.UserRole)
+        self.main_model.set_current_dsp(dsp_effect_id)
         self.change_dsp_module()
         self.redraw_dsp_params_panel(qgrid_layout)
         self.redraw_help_msg()

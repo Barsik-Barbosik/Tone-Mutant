@@ -87,7 +87,7 @@ class MidiService:
         msg_params = self.list_to_hex_str(params_list)
         msg_end = "F7"
 
-        print("Setting DSP Params: " + self.format_as_nice_hex(msg_params))
+        print("Setting DSP Params:\t" + self.format_as_nice_hex(msg_params))
         self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
 
     def request_dsp_params(self, block_id: int):
