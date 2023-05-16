@@ -1,7 +1,7 @@
 import random
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
     QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QSpacerItem, \
     QPushButton
 

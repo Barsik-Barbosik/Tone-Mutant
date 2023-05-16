@@ -1,7 +1,8 @@
 import sys
 
-from PyQt5.QtCore import Qt, QCoreApplication
-from PyQt5.QtWidgets import QApplication, QStatusBar, QMainWindow, QMenu, QAction, QMenuBar, QTextBrowser, QDockWidget, \
+from PySide2.QtCore import Qt, QCoreApplication
+from PySide2.QtWidgets import QApplication, QStatusBar, QMainWindow, QMenu, QAction, QMenuBar, QTextBrowser, \
+    QDockWidget, \
     QWidget, QHBoxLayout, QTabWidget
 
 from central_widget import CentralWidget
@@ -116,4 +117,4 @@ if __name__ == '__main__':
     window.resize(900, 600)
     window.show()
     app.aboutToQuit.connect(window.exit_call)
-    sys.exit(app.exec())
+    sys.exit(app.exec_())
