@@ -65,6 +65,8 @@ class MainWindow(QMainWindow):
         inter_widget.setLayout(inter_layout)
 
         tab_widget = QTabWidget(self)
+        tab_widget.setMinimumHeight(400)
+        tab_widget.setMinimumWidth(300)
         tab_widget.addTab(inter_widget, "Info / Help")
 
         outer_widget = QWidget(self)
@@ -114,7 +116,7 @@ if __name__ == '__main__':
         app.setStyleSheet(style)
 
     window = MainWindow()
-    window.resize(900, 600)
+    window.resize(1000, 600)
     window.show()
     app.aboutToQuit.connect(window.exit_call)
     sys.exit(app.exec_())

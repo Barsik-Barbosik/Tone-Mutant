@@ -2,8 +2,7 @@ import random
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
-    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QPushButton, \
-    QSpacerItem
+    QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QPushButton
 
 from enums.enums import ParameterType, TabName
 from midi_service import MidiService
@@ -27,6 +26,7 @@ class CentralWidget(QWidget):
         self.setLayout(main_layout)
 
         self.tab_widget = QTabWidget(self)
+        self.tab_widget.setMinimumHeight(400)
         self.tab_widget.addTab(self.create_main_params_page(), TabName.MAIN_PARAMETERS.value)
         self.tab_widget.addTab(self.create_dsp_page(), TabName.DSP_1.value)
         self.tab_widget.addTab(self.create_dsp_page(), TabName.DSP_2.value)
@@ -47,6 +47,10 @@ class CentralWidget(QWidget):
 
     def create_dsp_page(self) -> QWidget:
         qgrid_layout = QGridLayout(self)
+        qgrid_layout.setColumnStretch(0, 1)
+        qgrid_layout.setColumnStretch(1, 2)
+        qgrid_layout.setColumnStretch(2, 1)
+        qgrid_layout.setColumnStretch(3, 2)
         dsp_page = QWidget(self)
         hbox_layout = QHBoxLayout(self)
         dsp_page.setLayout(hbox_layout)
@@ -72,21 +76,42 @@ class CentralWidget(QWidget):
         self.clear_layout(qgrid_layout)
 
         if self.main_model.get_current_dsp() is not None:
+
+            right_side_knobs = ("Input Level", "Wet Level", "Dry Level")
+            right_side_items_count = 0
+
             for idx, dsp_parameter in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
-                qgrid_layout.addWidget(QLabel(dsp_parameter.name + ":"), idx, 0)
+                column_for_label = 0
+                column_for_control = 1
+                row = idx - right_side_items_count
+                label_padding = "padding-left: 10px;"
+
+                if dsp_parameter.name in right_side_knobs:
+                    column_for_label = 2
+                    column_for_control = 3
+                    row = right_side_items_count
+                    label_padding = "padding-left: 30px;"
+                    right_side_items_count = right_side_items_count + 1
+
+                label = QLabel(dsp_parameter.name + ":")
+                label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+                label.setStyleSheet(label_padding)
+                qgrid_layout.addWidget(label, row, column_for_label)
                 if dsp_parameter.type == ParameterType.COMBO:
-                    qgrid_layout.addWidget(self.create_combo_input(dsp_parameter), idx, 1)
+                    qgrid_layout.addWidget(self.create_combo_input(dsp_parameter), row, column_for_control)
                 elif dsp_parameter.type == ParameterType.KNOB or dsp_parameter.type == ParameterType.KNOB_2BYTES:
-                    qgrid_layout.addLayout(self.create_knob_input(dsp_parameter), idx, 1)
+                    qgrid_layout.addLayout(self.create_knob_input(dsp_parameter), row, column_for_control)
 
             random_button = QPushButton("Set random values", self)
+            random_button.setStyleSheet("margin: 20px 50px 10px 50px; padding: 5px;")
             random_button.clicked.connect(lambda: self.on_random_button_pressed(qgrid_layout))
-            qgrid_layout.addWidget(random_button, len(self.main_model.get_current_dsp().dsp_parameter_list), 0, 2, 2)
+            qgrid_layout.addWidget(random_button,
+                                   len(self.main_model.get_current_dsp().dsp_parameter_list) - right_side_items_count + 1,
+                                   0, 1, 4)
         else:
-            qgrid_layout.addWidget(self.get_spacer(), 0, 0, 1, 2)
+            qgrid_layout.addWidget(self.get_spacer(), 0, 0, 1, 4)
 
         spacer = self.get_spacer()
-        spacer.setFixedWidth(250)
         qgrid_layout.addWidget(spacer)
 
     def create_combo_input(self, dsp_parameter: DspParameter) -> QComboBox:
@@ -161,8 +186,15 @@ class CentralWidget(QWidget):
         left_layout = QFormLayout()
         right_layout = QFormLayout()
 
+        list_widget = QListWidget(self)
+        list_widget.setFixedWidth(180)
+        list_widget.insertItem(0, "001 Piano 1")
+        list_widget.insertItem(1, "002 Piano 2")
+        list_widget.setCurrentRow(0)
+        left_layout.addWidget(list_widget)
+
         for idx, parameter in enumerate(MainEffect.get_main_effects_tuple()):
-            if idx < 7:
+            if idx < 3:
                 if parameter.type == ParameterType.COMBO:
                     left_layout.addRow(parameter.name + ":", self.create_combo_input(parameter))
                 elif parameter.type == ParameterType.KNOB or parameter.type == ParameterType.KNOB_2BYTES:
@@ -174,7 +206,6 @@ class CentralWidget(QWidget):
                     right_layout.addRow(parameter.name + ":", self.create_knob_input(parameter))
 
         hbox_layout.addLayout(left_layout)
-        hbox_layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Expanding, QSizePolicy.Expanding))
         hbox_layout.addLayout(right_layout)
         main_params_page.setLayout(hbox_layout)
         return main_params_page
