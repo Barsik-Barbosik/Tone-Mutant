@@ -109,6 +109,10 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    with open("style.qss", "r") as style_file:
+        style = style_file.read()
+        app.setStyleSheet(style)
+
     window = MainWindow()
     window.resize(900, 600)
     window.show()
