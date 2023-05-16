@@ -36,10 +36,14 @@ class MidiService:
         self.midi_in.delete()
         self.midi_out.delete()
 
-    def send_sysex(self, sysex_hex_str: str):
+    def verify_midi_ports(self):
+        if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
+            self.open_midi_ports()
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
             raise Exception("Unable to open MIDI port. Please verify MIDI settings.")
 
+    def send_sysex(self, sysex_hex_str: str):
+        self.verify_midi_ports()
         print("SysEx: " + self.format_as_nice_hex(sysex_hex_str))
         self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
         self.flush_input_queue()
@@ -48,9 +52,7 @@ class MidiService:
         self.midi_in.ignore_types(sysex=True, timing=True, active_sense=True)
 
     def send_sysex_and_get_response(self, sysex_hex_str: str, required_size: int) -> list:
-        if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
-            raise Exception("Unable to open MIDI port. Please verify MIDI settings.")
-
+        self.verify_midi_ports()
         print("SysEx:\t\t" + self.format_as_nice_hex(sysex_hex_str))
         self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
         self.flush_input_queue()

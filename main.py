@@ -92,7 +92,7 @@ class MainWindow(QMainWindow):
 
     def show_error_msg(self, text: str):
         self.status_bar.setStyleSheet("background-color: white; color: red")
-        self.status_bar.showMessage(text)
+        self.status_bar.showMessage(text, 5000)
 
     def show_midi_settings(self):
         self.midi_settings_window = MidiSettingsWindow()
