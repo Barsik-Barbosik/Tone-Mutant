@@ -230,6 +230,10 @@ class CentralWidget(QWidget):
                 msg = "<h2>" + self.main_model.get_current_dsp_name() + "</h2>" + dsp_effect.description + "<br/>"
                 for param in dsp_effect.dsp_parameter_list:
                     msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
+        elif self.main_model.currentTabName == TabName.MAIN_PARAMETERS:
+            msg = "<h2>Main Parameters</h2>Tone Editing Item List.<br/>"
+            for param in MainEffect.get_main_effects_tuple():
+                msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
 
         self.parent().show_help_msg(msg)
 
