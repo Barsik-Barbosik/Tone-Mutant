@@ -83,33 +83,30 @@ class CentralWidget(QWidget):
             right_side_items_count = 0
 
             for idx, dsp_param in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
-                column_for_label = 0
-                column_for_control = 1
-                row = idx - right_side_items_count
-                label_padding = "padding-left: 10px;"
-
-                if dsp_param.name in RIGHT_SIDE_KNOBS:
-                    column_for_label = 2
-                    column_for_control = 3
+                if dsp_param.name not in RIGHT_SIDE_KNOBS:
+                    row = idx - right_side_items_count
+                    column = 0
+                    label_padding = "padding-left: 10px;"
+                else:
                     row = right_side_items_count
+                    column = 2
                     label_padding = "padding-left: 30px;"
-                    right_side_items_count = right_side_items_count + 1
+                    right_side_items_count += 1
 
                 label = QLabel(dsp_param.name + ":")
                 label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
                 label.setStyleSheet(label_padding)
-                qgrid_layout.addWidget(label, row, column_for_label)
+                qgrid_layout.addWidget(label, row, column)
                 if dsp_param.type == ParameterType.COMBO:
-                    qgrid_layout.addWidget(self.create_combo_input(dsp_param), row, column_for_control)
+                    qgrid_layout.addWidget(self.create_combo_input(dsp_param), row, column + 1)
                 elif dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
-                    qgrid_layout.addLayout(self.create_knob_input(dsp_param), row, column_for_control)
+                    qgrid_layout.addLayout(self.create_knob_input(dsp_param), row, column + 1)
 
             random_button = QPushButton("Set random values", self)
             random_button.setStyleSheet("margin: 20px 50px 10px 50px; padding: 5px;")
             random_button.clicked.connect(lambda: self.on_random_button_pressed(qgrid_layout))
-            qgrid_layout.addWidget(random_button,
-                                   len(self.main_model.get_current_dsp().dsp_parameter_list) - right_side_items_count + 1,
-                                   0, 1, 4)
+            button_row = len(self.main_model.get_current_dsp().dsp_parameter_list) - right_side_items_count + 1
+            qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
         else:
             qgrid_layout.addWidget(self.get_spacer(), 0, 0, 1, 4)
 
