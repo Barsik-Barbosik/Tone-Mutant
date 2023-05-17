@@ -248,8 +248,8 @@ class CentralWidget(QWidget):
                 self.midi_service.send_dsp_module_change_sysex(self.main_model.get_current_dsp().id,
                                                                self.main_model.get_current_block_id())
                 synth_dsp_params = self.midi_service.request_dsp_params(self.main_model.get_current_block_id())
-                for idx, param in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
-                    param.value = synth_dsp_params[idx]
+                for idx, dsp_param in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
+                    dsp_param.value = synth_dsp_params[idx]
                 self.send_dsp_params_change_sysex()
             except Exception as e:
                 self.parent().show_error_msg(str(e))
