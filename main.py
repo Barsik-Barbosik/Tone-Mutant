@@ -40,8 +40,10 @@ class MainWindow(QMainWindow):
 
         open_action = QAction("&Open tone", self)
         open_action.setStatusTip("Open TON-file")
+        open_action.setEnabled(False)
         save_action = QAction("&Save tone", self)
         save_action.setStatusTip("Save TON-file")
+        save_action.setEnabled(False)
         midi_settings_action = QAction("&MIDI settings", self)
         midi_settings_action.setStatusTip("Open MIDI settings")
         midi_settings_action.triggered.connect(self.show_midi_settings)
