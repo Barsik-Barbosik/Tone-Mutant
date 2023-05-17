@@ -86,16 +86,16 @@ class CentralWidget(QWidget):
                 if dsp_param.name not in RIGHT_SIDE_KNOBS:
                     row = idx - right_side_items_count
                     column = 0
-                    label_padding = "padding-left: 10px;"
+                    label_class = "label-left-side"
                 else:
                     row = right_side_items_count
                     column = 2
-                    label_padding = "padding-left: 30px;"
+                    label_class = "label-right-side"
                     right_side_items_count += 1
 
                 label = QLabel(dsp_param.name + ":")
+                label.setObjectName(label_class)
                 label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
-                label.setStyleSheet(label_padding)
                 qgrid_layout.addWidget(label, row, column)
                 if dsp_param.type == ParameterType.COMBO:
                     qgrid_layout.addWidget(self.create_combo_input(dsp_param), row, column + 1)

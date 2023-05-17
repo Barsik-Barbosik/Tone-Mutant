@@ -17,3 +17,11 @@ QPushButton {
     margin: 20px 50px 10px 50px;
     padding: 5px;
 }
+
+#label-left-side {
+    padding-left: 10px;
+}
+
+#label-right-side {
+    padding-left: 30px;
+}
