@@ -30,6 +30,8 @@ class MainWindow(QMainWindow):
 
         self.midi_settings_window = None
 
+        self.central_widget.redraw_help_msg()
+
     def init_menu_bar(self):
         menu_bar = QMenuBar(self)
 
