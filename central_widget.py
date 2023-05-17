@@ -1,7 +1,7 @@
 import random
 
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QFormLayout, QDial, \
+from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QDial, \
     QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QPushButton
 
 from enums.enums import ParameterType, TabName
@@ -12,7 +12,9 @@ from model.MainEffect import MainEffect
 from model.MainModel import MainModel
 
 KNOB_SIZE = 40
-RIGHT_SIDE_KNOBS = (
+RIGHT_SIDE_MAIN_PARAMS = (
+    "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume")
+RIGHT_SIDE_DSP_PARAMS = (
     "Overdrive Gain", "Overdrive Level", "Dist Gain", "Dist Level", "Delay Level L", "Delay Level R", "Input Level",
     "Wet Level", "Dry Level")
 
@@ -79,27 +81,8 @@ class CentralWidget(QWidget):
         self.clear_layout(qgrid_layout)
 
         if self.main_model.get_current_dsp() is not None:
-
-            right_side_items_count = 0
-
-            for idx, dsp_param in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
-                if dsp_param.name not in RIGHT_SIDE_KNOBS:
-                    row = idx - right_side_items_count
-                    column = 0
-                    label_class = "label-left-side"
-                else:
-                    row = right_side_items_count
-                    column = 2
-                    label_class = "label-right-side"
-                    right_side_items_count += 1
-
-                label = QLabel(dsp_param.name + ":")
-                label.setObjectName(label_class)
-                qgrid_layout.addWidget(label, row, column)
-                if dsp_param.type == ParameterType.COMBO:
-                    qgrid_layout.addWidget(self.create_combo_input(dsp_param), row, column + 1)
-                elif dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
-                    qgrid_layout.addLayout(self.create_knob_input(dsp_param), row, column + 1)
+            right_side_items_count = self.fill_qgrid_with_params(
+                qgrid_layout, self.main_model.get_current_dsp().dsp_parameter_list, RIGHT_SIDE_DSP_PARAMS)
 
             random_button = QPushButton("Set random values", self)
             random_button.setObjectName("random-button")
@@ -111,6 +94,28 @@ class CentralWidget(QWidget):
 
         spacer = self.get_spacer()
         qgrid_layout.addWidget(spacer)
+
+    def fill_qgrid_with_params(self, qgrid_layout, param_list, right_side_items) -> int:
+        right_side_items_count = 0
+        for idx, dsp_param in enumerate(param_list):
+            if dsp_param.name not in right_side_items:
+                row = idx - right_side_items_count
+                column = 0
+                label_class = "label-left-side"
+            else:
+                row = right_side_items_count
+                column = 2
+                label_class = "label-right-side"
+                right_side_items_count += 1
+
+            label = QLabel(dsp_param.name + ":")
+            label.setObjectName(label_class)
+            qgrid_layout.addWidget(label, row, column)
+            if dsp_param.type == ParameterType.COMBO:
+                qgrid_layout.addWidget(self.create_combo_input(dsp_param), row, column + 1)
+            elif dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
+                qgrid_layout.addLayout(self.create_knob_input(dsp_param), row, column + 1)
+        return right_side_items_count
 
     def create_combo_input(self, dsp_parameter: DspParameter) -> QComboBox:
         combo_box = QComboBox(self)
@@ -179,33 +184,25 @@ class CentralWidget(QWidget):
                     self.clear_layout(child.layout())
 
     def create_main_params_page(self) -> QWidget:
+        qgrid_layout = QGridLayout(self)
+        qgrid_layout.setColumnStretch(0, 1)
+        qgrid_layout.setColumnStretch(1, 2)
+        qgrid_layout.setColumnStretch(2, 1)
+        qgrid_layout.setColumnStretch(3, 2)
         main_params_page = QWidget(self)
         hbox_layout = QHBoxLayout(self)
-        left_layout = QFormLayout()
-        right_layout = QFormLayout()
+        main_params_page.setLayout(hbox_layout)
 
         list_widget = QListWidget(self)
         list_widget.setFixedWidth(180)
         list_widget.insertItem(0, "001 Piano 1")
         list_widget.insertItem(1, "002 Piano 2")
         list_widget.setCurrentRow(0)
-        left_layout.addWidget(list_widget)
+        hbox_layout.addWidget(list_widget)  # left side
 
-        for idx, main_param in enumerate(MainEffect.get_main_effects_tuple()):
-            if idx < 3:
-                if main_param.type == ParameterType.COMBO:
-                    left_layout.addRow(main_param.name + ":", self.create_combo_input(main_param))
-                elif main_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
-                    left_layout.addRow(main_param.name + ":", self.create_knob_input(main_param))
-            else:
-                if main_param.type == ParameterType.COMBO:
-                    right_layout.addRow(main_param.name + ":", self.create_combo_input(main_param))
-                elif main_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
-                    right_layout.addRow(main_param.name + ":", self.create_knob_input(main_param))
+        self.fill_qgrid_with_params(qgrid_layout, MainEffect.get_main_effects_tuple(), RIGHT_SIDE_MAIN_PARAMS)
 
-        hbox_layout.addLayout(left_layout)
-        hbox_layout.addLayout(right_layout)
-        main_params_page.setLayout(hbox_layout)
+        hbox_layout.addLayout(qgrid_layout)  # right side
         return main_params_page
 
     def create_output_page(self) -> QWidget:
