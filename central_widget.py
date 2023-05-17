@@ -80,27 +80,27 @@ class CentralWidget(QWidget):
             right_side_knobs = ("Input Level", "Wet Level", "Dry Level")
             right_side_items_count = 0
 
-            for idx, dsp_parameter in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
+            for idx, dsp_param in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
                 column_for_label = 0
                 column_for_control = 1
                 row = idx - right_side_items_count
                 label_padding = "padding-left: 10px;"
 
-                if dsp_parameter.name in right_side_knobs:
+                if dsp_param.name in right_side_knobs:
                     column_for_label = 2
                     column_for_control = 3
                     row = right_side_items_count
                     label_padding = "padding-left: 30px;"
                     right_side_items_count = right_side_items_count + 1
 
-                label = QLabel(dsp_parameter.name + ":")
+                label = QLabel(dsp_param.name + ":")
                 label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
                 label.setStyleSheet(label_padding)
                 qgrid_layout.addWidget(label, row, column_for_label)
-                if dsp_parameter.type == ParameterType.COMBO:
-                    qgrid_layout.addWidget(self.create_combo_input(dsp_parameter), row, column_for_control)
-                elif dsp_parameter.type == ParameterType.KNOB or dsp_parameter.type == ParameterType.KNOB_2BYTES:
-                    qgrid_layout.addLayout(self.create_knob_input(dsp_parameter), row, column_for_control)
+                if dsp_param.type == ParameterType.COMBO:
+                    qgrid_layout.addWidget(self.create_combo_input(dsp_param), row, column_for_control)
+                elif dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
+                    qgrid_layout.addLayout(self.create_knob_input(dsp_param), row, column_for_control)
 
             random_button = QPushButton("Set random values", self)
             random_button.setStyleSheet("margin: 20px 50px 10px 50px; padding: 5px;")
@@ -162,11 +162,11 @@ class CentralWidget(QWidget):
             self.send_dsp_params_change_sysex()
 
     def on_random_button_pressed(self, qgrid_layout):
-        for param in self.main_model.get_current_dsp().dsp_parameter_list:
-            if param.type == ParameterType.COMBO:
-                param.value = random.randint(0, len(param.choices) - 1)
-            if param.type == ParameterType.KNOB or param.type == ParameterType.KNOB_2BYTES:
-                param.value = random.randint(param.choices[0], param.choices[1])
+        for dsp_param in self.main_model.get_current_dsp().dsp_parameter_list:
+            if dsp_param.type == ParameterType.COMBO:
+                dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
+            if dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
+                dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
         self.send_dsp_params_change_sysex()
         self.redraw_dsp_params_panel(qgrid_layout)
         self.parent().show_status_msg("It may be necessary to correct volume levels after setting random values.", 3000)
@@ -193,17 +193,17 @@ class CentralWidget(QWidget):
         list_widget.setCurrentRow(0)
         left_layout.addWidget(list_widget)
 
-        for idx, parameter in enumerate(MainEffect.get_main_effects_tuple()):
+        for idx, main_param in enumerate(MainEffect.get_main_effects_tuple()):
             if idx < 3:
-                if parameter.type == ParameterType.COMBO:
-                    left_layout.addRow(parameter.name + ":", self.create_combo_input(parameter))
-                elif parameter.type == ParameterType.KNOB or parameter.type == ParameterType.KNOB_2BYTES:
-                    left_layout.addRow(parameter.name + ":", self.create_knob_input(parameter))
+                if main_param.type == ParameterType.COMBO:
+                    left_layout.addRow(main_param.name + ":", self.create_combo_input(main_param))
+                elif main_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
+                    left_layout.addRow(main_param.name + ":", self.create_knob_input(main_param))
             else:
-                if parameter.type == ParameterType.COMBO:
-                    right_layout.addRow(parameter.name + ":", self.create_combo_input(parameter))
-                elif parameter.type == ParameterType.KNOB or parameter.type == ParameterType.KNOB_2BYTES:
-                    right_layout.addRow(parameter.name + ":", self.create_knob_input(parameter))
+                if main_param.type == ParameterType.COMBO:
+                    right_layout.addRow(main_param.name + ":", self.create_combo_input(main_param))
+                elif main_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
+                    right_layout.addRow(main_param.name + ":", self.create_knob_input(main_param))
 
         hbox_layout.addLayout(left_layout)
         hbox_layout.addLayout(right_layout)
