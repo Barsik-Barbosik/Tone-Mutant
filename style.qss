@@ -10,3 +10,10 @@ QPushButton {
     background-color: #1B998B;
     color: #FFFFFF;
 }
+
+#random-button {
+    background-color: #1B998B;
+    color: #FFFFFF;
+    margin: 20px 50px 10px 50px;
+    padding: 5px;
+}

@@ -103,7 +103,7 @@ class CentralWidget(QWidget):
                     qgrid_layout.addLayout(self.create_knob_input(dsp_param), row, column + 1)
 
             random_button = QPushButton("Set random values", self)
-            random_button.setStyleSheet("margin: 20px 50px 10px 50px; padding: 5px;")
+            random_button.setObjectName("random-button")
             random_button.clicked.connect(lambda: self.on_random_button_pressed(qgrid_layout))
             button_row = len(self.main_model.get_current_dsp().dsp_parameter_list) - right_side_items_count + 1
             qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
