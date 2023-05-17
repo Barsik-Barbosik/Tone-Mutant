@@ -8,6 +8,7 @@ from enums.enums import ParameterType, TabName
 from midi_service import MidiService
 from model.DspEffect import DspEffect
 from model.DspParameter import DspParameter
+from model.Instrument import Instrument
 from model.MainEffect import MainEffect
 from model.MainModel import MainModel
 
@@ -195,8 +196,11 @@ class CentralWidget(QWidget):
 
         list_widget = QListWidget(self)
         list_widget.setFixedWidth(180)
-        list_widget.insertItem(0, "001 Piano 1")
-        list_widget.insertItem(1, "002 Piano 2")
+        for idx, instrument in enumerate(Instrument.get_instruments_tuple()):
+            item = QListWidgetItem()
+            item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
+            item.setData(Qt.UserRole, instrument.id)
+            list_widget.insertItem(idx, item)
         list_widget.setCurrentRow(0)
         hbox_layout.addWidget(list_widget)  # left side
 
