@@ -12,6 +12,9 @@ from model.MainEffect import MainEffect
 from model.MainModel import MainModel
 
 KNOB_SIZE = 40
+RIGHT_SIDE_KNOBS = (
+    "Overdrive Gain", "Overdrive Level", "Dist Gain", "Dist Level", "Delay Level L", "Delay Level R", "Input Level",
+    "Wet Level", "Dry Level")
 
 
 class CentralWidget(QWidget):
@@ -77,7 +80,6 @@ class CentralWidget(QWidget):
 
         if self.main_model.get_current_dsp() is not None:
 
-            right_side_knobs = ("Input Level", "Wet Level", "Dry Level")
             right_side_items_count = 0
 
             for idx, dsp_param in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
@@ -86,7 +88,7 @@ class CentralWidget(QWidget):
                 row = idx - right_side_items_count
                 label_padding = "padding-left: 10px;"
 
-                if dsp_param.name in right_side_knobs:
+                if dsp_param.name in RIGHT_SIDE_KNOBS:
                     column_for_label = 2
                     column_for_control = 3
                     row = right_side_items_count
