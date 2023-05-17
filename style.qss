@@ -19,9 +19,11 @@ QPushButton {
 }
 
 #label-left-side {
+    qproperty-alignment: 'AlignVCenter | AlignRight';
     padding-left: 10px;
 }
 
 #label-right-side {
+    qproperty-alignment: 'AlignVCenter | AlignRight';
     padding-left: 30px;
 }

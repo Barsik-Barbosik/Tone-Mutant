@@ -95,7 +95,6 @@ class CentralWidget(QWidget):
 
                 label = QLabel(dsp_param.name + ":")
                 label.setObjectName(label_class)
-                label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
                 qgrid_layout.addWidget(label, row, column)
                 if dsp_param.type == ParameterType.COMBO:
                     qgrid_layout.addWidget(self.create_combo_input(dsp_param), row, column + 1)
