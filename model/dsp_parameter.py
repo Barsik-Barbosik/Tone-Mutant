@@ -15,10 +15,11 @@ class DspParameter:
         self.value = self.default_value
 
     def to_json(self):
-        obj = {"name": self.name, "value": self.value}
+        obj = {"name": self.name}
         if self.type == ParameterType.COMBO:
-            obj["value_on_display"] = str(self.value + 1) + " (" + self.choices[self.value] + ")"
+            obj["value"] = self.value + 1
+            obj["text"] = self.choices[self.value]
         elif self.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
-            obj["value_on_display"] = self.value
+            obj["value"] = self.value
 
         return obj

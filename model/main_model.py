@@ -67,11 +67,11 @@ class MainModel:
             self.selectedDsp4 = new_dsp_effect
 
     def get_current_tone_as_json(self) -> str:
-        obj = {"DSP modules": [
-            {"DSP 1": self.selectedDsp1,
-             "DSP 2": self.selectedDsp2,
-             "DSP 3": self.selectedDsp3,
-             "DSP 4": self.selectedDsp4
+        obj = {"DSP": [
+            {"DSP_1": self.selectedDsp1,
+             "DSP_2": self.selectedDsp2,
+             "DSP_3": self.selectedDsp3,
+             "DSP_4": self.selectedDsp4
              }
         ]}
         output = json.dumps(obj, cls=ObjectEncoder, indent=4)
