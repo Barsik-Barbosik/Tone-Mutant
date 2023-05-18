@@ -60,7 +60,7 @@ class MainModel:
             self.selectedDsp4 = new_dsp_effect
 
     def get_output_text(self) -> str:
-        output: str = "Current settings: \n" \
+        output: str = "Tone description: \n" \
                       + "\nDSP 1: " + str(self.selectedDsp1.name if self.selectedDsp1 is not None else EMPTY_DSP_NAME) \
                       + self.get_params_info(self.selectedDsp1) \
                       + "\nDSP 2: " + str(self.selectedDsp2.name if self.selectedDsp2 is not None else EMPTY_DSP_NAME) \
