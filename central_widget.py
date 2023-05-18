@@ -6,11 +6,11 @@ from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QDial, \
 
 from enums.enums import ParameterType, TabName
 from midi_service import MidiService
-from model.DspEffect import DspEffect
-from model.DspParameter import DspParameter
-from model.Instrument import Instrument
-from model.MainEffect import MainEffect
-from model.MainModel import MainModel
+from model.dsp_effect import DspEffect
+from model.dsp_parameter import DspParameter
+from model.instrument import Instrument
+from model.main_effect import MainEffect
+from model.main_model import MainModel
 
 KNOB_SIZE = 40
 RIGHT_SIDE_MAIN_PARAMS = (

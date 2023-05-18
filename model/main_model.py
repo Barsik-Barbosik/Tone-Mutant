@@ -3,8 +3,8 @@ from enum import Enum
 
 from enums.enums import ParameterType, TabName
 from external.object_encoder.object_encoder import ObjectEncoder
-from model.DspEffect import DspEffect
-from model.Instrument import Instrument
+from model.dsp_effect import DspEffect
+from model.instrument import Instrument
 
 EMPTY_DSP_NAME = "OFF"
 

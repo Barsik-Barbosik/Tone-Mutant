@@ -1,7 +1,7 @@
 from typing import List
 
 from enums.enums import ParameterType
-from model.DspParameter import DspParameter
+from model.dsp_parameter import DspParameter
 
 
 class DspEffect:
