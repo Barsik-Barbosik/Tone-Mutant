@@ -6,11 +6,11 @@ class Instrument:
         self.bank = bank
 
     @staticmethod
-    def get_instruments_tuple() -> tuple:
-        return instruments_tuple
+    def get_all_instruments() -> tuple:
+        return _all_instruments
 
 
-instruments_tuple = (
+_all_instruments = (
     Instrument(1, "StagePno", 0, 1),
     Instrument(2, "GrandPno", 0, 3),
     Instrument(3, "BrtPiano", 1, 1),

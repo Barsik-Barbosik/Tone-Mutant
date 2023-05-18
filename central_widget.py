@@ -196,7 +196,7 @@ class CentralWidget(QWidget):
 
         list_widget = QListWidget(self)
         list_widget.setFixedWidth(180)
-        for idx, instrument in enumerate(Instrument.get_instruments_tuple()):
+        for idx, instrument in enumerate(Instrument.get_all_instruments()):
             item = QListWidgetItem()
             item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
             item.setData(Qt.UserRole, instrument.id)
