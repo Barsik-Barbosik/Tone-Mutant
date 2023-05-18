@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QDial, \
 
 from enums.enums import ParameterType, TabName
 from midi_service import MidiService
-from model.dsp_effect import DspEffect
+from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.instrument import Instrument
 from model.main_effect import MainEffect
@@ -64,10 +64,10 @@ class CentralWidget(QWidget):
         list_widget = QListWidget(self)
         list_widget.setFixedWidth(180)
         list_widget.insertItem(0, "OFF")
-        for idx, dsp_effect in enumerate(DspEffect.get_dsp_effects_tuple()):
+        for idx, dsp_module in enumerate(DspModule.get_all_dsp_modules()):
             item = QListWidgetItem()
-            item.setText(dsp_effect.name)
-            item.setData(Qt.UserRole, dsp_effect.id)
+            item.setText(dsp_module.name)
+            item.setData(Qt.UserRole, dsp_module.id)
             list_widget.insertItem(idx + 1, item)
         list_widget.setCurrentRow(0)
         list_widget.itemSelectionChanged.connect(lambda: self.on_list_widget_changed(list_widget, qgrid_layout))
@@ -81,14 +81,14 @@ class CentralWidget(QWidget):
     def redraw_dsp_params_panel(self, qgrid_layout: QGridLayout):
         self.clear_layout(qgrid_layout)
 
-        if self.main_model.get_current_dsp() is not None:
+        if self.main_model.get_current_dsp_module() is not None:
             right_side_items_count = self.fill_qgrid_with_params(
-                qgrid_layout, self.main_model.get_current_dsp().dsp_parameter_list, RIGHT_SIDE_DSP_PARAMS)
+                qgrid_layout, self.main_model.get_current_dsp_module().dsp_parameter_list, RIGHT_SIDE_DSP_PARAMS)
 
             random_button = QPushButton("Set random values", self)
             random_button.setObjectName("random-button")
             random_button.clicked.connect(lambda: self.on_random_button_pressed(qgrid_layout))
-            button_row = len(self.main_model.get_current_dsp().dsp_parameter_list) - right_side_items_count + 1
+            button_row = len(self.main_model.get_current_dsp_module().dsp_parameter_list) - right_side_items_count + 1
             qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
         else:
             qgrid_layout.addWidget(self.get_spacer(), 0, 0, 1, 4)
@@ -143,8 +143,8 @@ class CentralWidget(QWidget):
         return hbox
 
     def on_list_widget_changed(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
-        dsp_effect_id: int = list_widget.currentItem().data(Qt.UserRole)
-        self.main_model.set_current_dsp(dsp_effect_id)
+        dsp_module_id: int = list_widget.currentItem().data(Qt.UserRole)
+        self.main_model.set_current_dsp_module(dsp_module_id)
         self.change_dsp_module()
         self.redraw_dsp_params_panel(qgrid_layout)
         self.redraw_help_msg()
@@ -166,7 +166,7 @@ class CentralWidget(QWidget):
             self.send_dsp_params_change_sysex()
 
     def on_random_button_pressed(self, qgrid_layout):
-        for dsp_param in self.main_model.get_current_dsp().dsp_parameter_list:
+        for dsp_param in self.main_model.get_current_dsp_module().dsp_parameter_list:
             if dsp_param.type == ParameterType.COMBO:
                 dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
             if dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
@@ -222,14 +222,14 @@ class CentralWidget(QWidget):
         return spacer
 
     def redraw_help_msg(self):
-        dsp_effect = self.main_model.get_current_dsp()
+        dsp_module = self.main_model.get_current_dsp_module()
         msg = ""
         if self.main_model.get_current_block_id() is not None:
-            if dsp_effect is None:
+            if dsp_module is None:
                 msg = "DSP module is not selected."
             else:
-                msg = "<h2>" + self.main_model.get_current_dsp_name() + "</h2>" + dsp_effect.description + "<br/>"
-                for param in dsp_effect.dsp_parameter_list:
+                msg = "<h2>" + self.main_model.get_current_dsp_name() + "</h2>" + dsp_module.description + "<br/>"
+                for param in dsp_module.dsp_parameter_list:
                     msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
         elif self.main_model.currentTabName == TabName.MAIN_PARAMETERS:
             msg = "<h2>Main Parameters</h2>List of parameters for editing tone.<br/>"
@@ -239,19 +239,19 @@ class CentralWidget(QWidget):
         self.parent().show_help_msg(msg)
 
     def change_dsp_module(self):
-        if self.main_model.get_current_dsp() is None:
-            print("Current DSP effect id: OFF")
+        if self.main_model.get_current_dsp_module() is None:
+            print("Current DSP module id: OFF")
             # TODO: turn DSP off
             self.parent().show_status_msg("Not implemented!!", 1000)
         else:
-            print("Current DSP effect id: " + str(self.main_model.get_current_dsp().id))
-            print("Current DSP effect name: " + self.main_model.get_current_dsp().name)
+            print("Current DSP module id: " + str(self.main_model.get_current_dsp_module().id))
+            print("Current DSP module name: " + self.main_model.get_current_dsp_module().name)
 
             try:
-                self.midi_service.send_dsp_module_change_sysex(self.main_model.get_current_dsp().id,
+                self.midi_service.send_dsp_module_change_sysex(self.main_model.get_current_dsp_module().id,
                                                                self.main_model.get_current_block_id())
                 synth_dsp_params = self.midi_service.request_dsp_params(self.main_model.get_current_block_id())
-                for idx, dsp_param in enumerate(self.main_model.get_current_dsp().dsp_parameter_list):
+                for idx, dsp_param in enumerate(self.main_model.get_current_dsp_module().dsp_parameter_list):
                     dsp_param.value = synth_dsp_params[idx]
                 self.send_dsp_params_change_sysex()
             except Exception as e:

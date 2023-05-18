@@ -3,7 +3,7 @@ from enum import Enum
 
 from enums.enums import ParameterType, TabName
 from external.object_encoder.object_encoder import ObjectEncoder
-from model.dsp_effect import DspEffect
+from model.dsp_module import DspModule
 from model.instrument import Instrument
 
 EMPTY_DSP_NAME = "OFF"
@@ -16,19 +16,19 @@ class MainModel:
         # TODO: make new class "CurrentTone"
 
         self.selectedInstrument: Instrument = None
-        self.selectedDsp1: DspEffect = None
-        self.selectedDsp2: DspEffect = None
-        self.selectedDsp3: DspEffect = None
-        self.selectedDsp4: DspEffect = None
+        self.selectedDsp1: DspModule = None
+        self.selectedDsp2: DspModule = None
+        self.selectedDsp3: DspModule = None
+        self.selectedDsp4: DspModule = None
 
     @staticmethod
-    def get_dsp_effect_by_id(dsp_id: int) -> DspEffect:
-        for dspEffect in DspEffect.get_dsp_effects_tuple():
-            if dspEffect.id == dsp_id:
-                return dspEffect
+    def get_dsp_module_by_id(dsp_id: int) -> DspModule:
+        for dsp_module in DspModule.get_all_dsp_modules():
+            if dsp_module.id == dsp_id:
+                return dsp_module
         return None
 
-    def get_current_dsp(self) -> DspEffect:
+    def get_current_dsp_module(self) -> DspModule:
         if self.currentTabName == TabName.DSP_1:
             return self.selectedDsp1
         elif self.currentTabName == TabName.DSP_2:
@@ -53,18 +53,18 @@ class MainModel:
             return None
 
     def get_current_dsp_name(self) -> str:
-        return self.get_current_dsp().name if self.get_current_dsp() is not None else EMPTY_DSP_NAME
+        return self.get_current_dsp_module().name if self.get_current_dsp_module() is not None else EMPTY_DSP_NAME
 
-    def set_current_dsp(self, dsp_id: int):
-        new_dsp_effect: DspEffect = self.get_dsp_effect_by_id(dsp_id)
+    def set_current_dsp_module(self, dsp_id: int):
+        current_dsp_module: DspModule = self.get_dsp_module_by_id(dsp_id)
         if self.currentTabName == TabName.DSP_1:
-            self.selectedDsp1 = new_dsp_effect
+            self.selectedDsp1 = current_dsp_module
         elif self.currentTabName == TabName.DSP_2:
-            self.selectedDsp2 = new_dsp_effect
+            self.selectedDsp2 = current_dsp_module
         elif self.currentTabName == TabName.DSP_3:
-            self.selectedDsp3 = new_dsp_effect
+            self.selectedDsp3 = current_dsp_module
         elif self.currentTabName == TabName.DSP_4:
-            self.selectedDsp4 = new_dsp_effect
+            self.selectedDsp4 = current_dsp_module
 
     def get_current_tone_as_json(self) -> str:
         obj = {"DSP": [
@@ -78,25 +78,25 @@ class MainModel:
         return output
 
     @staticmethod
-    def get_params_info(dsp_effect: DspEffect) -> str:
+    def get_params_info(dsp_module: DspModule) -> str:
         output: str = ""
-        if dsp_effect is not None:
-            for param in dsp_effect.dsp_parameter_list:
+        if dsp_module is not None:
+            for param in dsp_module.dsp_parameter_list:
                 param_value = param.choices[param.value] if param.type == ParameterType.COMBO else str(param.value)
                 output = output + "\n\t" + param.name + ": " + param_value
         return output
 
     def get_current_dsp_params_as_list(self) -> list:
         output = [0] * 14
-        dsp_effect = self.get_current_dsp()
-        if dsp_effect is not None:
-            for idx, parameter in enumerate(dsp_effect.dsp_parameter_list):
+        dsp_module = self.get_current_dsp_module()
+        if dsp_module is not None:
+            for idx, parameter in enumerate(dsp_module.dsp_parameter_list):
                 if parameter.type == ParameterType.COMBO:
                     output[idx] = parameter.value
                 elif parameter.type == ParameterType.KNOB:
                     output[idx] = parameter.value if parameter.choices[0] == 0 else parameter.value + 64
                 elif parameter.type == ParameterType.KNOB_2BYTES:
-                    # special case, only for the "delay" DSP effect
+                    # special case, only for the "delay" DSP module
                     output[12] = int(str(parameter.value).zfill(4)[:2])  # first 2 digits
                     output[13] = int(str(parameter.value).zfill(4)[2:])  # last 2 digits
         return output
