@@ -11,6 +11,9 @@ class DspEffect:
         self.description = description
         self.dsp_parameter_list = dsp_parameter_list
 
+    def to_json(self):
+        return {"name": self.name, "parameters": self.dsp_parameter_list}
+
     @staticmethod
     def get_dsp_effects_tuple() -> tuple:
         return dsp_effects_tuple
