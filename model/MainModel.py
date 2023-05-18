@@ -1,7 +1,10 @@
+import json
 from enum import Enum
 
 from enums.enums import ParameterType, TabName
+from external.object_encoder.object_encoder import ObjectEncoder
 from model.DspEffect import DspEffect
+from model.Instrument import Instrument
 
 EMPTY_DSP_NAME = "OFF"
 
@@ -9,6 +12,10 @@ EMPTY_DSP_NAME = "OFF"
 class MainModel:
     def __init__(self):
         self.currentTabName: Enum = TabName.MAIN_PARAMETERS
+
+        # TODO: make new class "CurrentTone"
+
+        self.selectedInstrument: Instrument = None
         self.selectedDsp1: DspEffect = None
         self.selectedDsp2: DspEffect = None
         self.selectedDsp3: DspEffect = None
@@ -60,15 +67,14 @@ class MainModel:
             self.selectedDsp4 = new_dsp_effect
 
     def get_output_text(self) -> str:
-        output: str = "Tone description: \n" \
-                      + "\nDSP 1: " + str(self.selectedDsp1.name if self.selectedDsp1 is not None else EMPTY_DSP_NAME) \
-                      + self.get_params_info(self.selectedDsp1) \
-                      + "\nDSP 2: " + str(self.selectedDsp2.name if self.selectedDsp2 is not None else EMPTY_DSP_NAME) \
-                      + self.get_params_info(self.selectedDsp2) \
-                      + "\nDSP 3: " + str(self.selectedDsp3.name if self.selectedDsp3 is not None else EMPTY_DSP_NAME) \
-                      + self.get_params_info(self.selectedDsp3) \
-                      + "\nDSP 4: " + str(self.selectedDsp4.name if self.selectedDsp4 is not None else EMPTY_DSP_NAME) \
-                      + self.get_params_info(self.selectedDsp4)
+        obj = {"DSP modules": [
+            {"DSP 1": self.selectedDsp1,
+             "DSP 2": self.selectedDsp2,
+             "DSP 3": self.selectedDsp3,
+             "DSP 4": self.selectedDsp4
+             }
+        ]}
+        output = json.dumps(obj, cls=ObjectEncoder, indent=4)
         return output
 
     @staticmethod
@@ -88,7 +94,7 @@ class MainModel:
                 if parameter.type == ParameterType.COMBO:
                     output[idx] = parameter.value
                 elif parameter.type == ParameterType.KNOB:
-                    output[idx] = parameter.value - parameter.choices[0]
+                    output[idx] = parameter.value if parameter.choices[0] == 0 else parameter.value + 64
                 elif parameter.type == ParameterType.KNOB_2BYTES:
                     # special case, only for the "delay" DSP effect
                     output[12] = int(str(parameter.value).zfill(4)[:2])  # first 2 digits
