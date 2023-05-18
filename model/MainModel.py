@@ -66,7 +66,7 @@ class MainModel:
         elif self.currentTabName == TabName.DSP_4:
             self.selectedDsp4 = new_dsp_effect
 
-    def get_output_text(self) -> str:
+    def get_current_tone_as_json(self) -> str:
         obj = {"DSP modules": [
             {"DSP 1": self.selectedDsp1,
              "DSP 2": self.selectedDsp2,

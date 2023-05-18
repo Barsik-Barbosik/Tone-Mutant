@@ -38,7 +38,7 @@ class CentralWidget(QWidget):
         self.tab_widget.addTab(self.create_dsp_page(), TabName.DSP_2.value)
         self.tab_widget.addTab(self.create_dsp_page(), TabName.DSP_3.value)
         self.tab_widget.addTab(self.create_dsp_page(), TabName.DSP_4.value)
-        self.tab_widget.addTab(self.create_output_page(), TabName.OUTPUT.value)
+        self.tab_widget.addTab(self.create_output_page(), TabName.JSON.value)
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
         main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
@@ -47,8 +47,8 @@ class CentralWidget(QWidget):
         self.main_model.currentTabName = TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
         self.parent().show_status_msg(
             self.main_model.currentTabName.value + ": " + self.main_model.get_current_dsp_name(), 1000)
-        if self.main_model.currentTabName == TabName.OUTPUT:
-            self.output_tab_textbox.setPlainText(self.main_model.get_output_text())
+        if self.main_model.currentTabName == TabName.JSON:
+            self.output_tab_textbox.setPlainText(self.main_model.get_current_tone_as_json())
         self.redraw_help_msg()
 
     def create_dsp_page(self) -> QWidget:

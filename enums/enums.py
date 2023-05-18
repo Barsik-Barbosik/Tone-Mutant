@@ -18,4 +18,4 @@ class TabName(Enum):
     DSP_2 = "DSP 2"
     DSP_3 = "DSP 3"
     DSP_4 = "DSP 4"
-    OUTPUT = "Output"
+    JSON = "View JSON"
