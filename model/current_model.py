@@ -4,21 +4,12 @@ from enum import Enum
 from enums.enums import ParameterType, TabName
 from external.object_encoder.object_encoder import ObjectEncoder
 from model.dsp_module import DspModule
-from model.main_parameters_module import MainParametersModule
+from model.tone import Tone
 
 EMPTY_DSP_NAME = "OFF"
 
 
-class Tone:
-    def __init__(self):
-        self.main_parameters_module: MainParametersModule = MainParametersModule()
-        self.dsp_module_1: DspModule = None
-        self.dsp_module_2: DspModule = None
-        self.dsp_module_3: DspModule = None
-        self.dsp_module_4: DspModule = None
-
-
-class MainModel:
+class CurrentModel:
     def __init__(self):
         self.current_tab_name: Enum = TabName.MAIN_PARAMETERS
         self.tone: Tone = Tone()
@@ -50,6 +41,7 @@ class MainModel:
     def get_current_dsp_name(self) -> str:
         return self.get_current_dsp_module().name if self.get_current_dsp_module() is not None else EMPTY_DSP_NAME
 
+    # TODO: set all
     def set_current_dsp_module(self, dsp_id: int):
         current_dsp_module: DspModule = DspModule.get_dsp_module_by_id(dsp_id)
         if self.current_tab_name == TabName.DSP_1:
@@ -62,26 +54,7 @@ class MainModel:
             self.tone.dsp_module_4 = current_dsp_module
 
     def get_current_tone_as_json(self) -> str:
-        obj = {
-            "main": self.tone.main_parameters_module.main_parameter_list,
-            "DSP": [
-                {"DSP_1": self.tone.dsp_module_1,
-                 "DSP_2": self.tone.dsp_module_2,
-                 "DSP_3": self.tone.dsp_module_3,
-                 "DSP_4": self.tone.dsp_module_4
-                 }
-            ]}
-        output = json.dumps(obj, cls=ObjectEncoder, indent=4)
-        return output
-
-    @staticmethod
-    def get_params_info(dsp_module: DspModule) -> str:
-        output: str = ""
-        if dsp_module is not None:
-            for param in dsp_module.dsp_parameter_list:
-                param_value = param.choices[param.value] if param.type == ParameterType.COMBO else str(param.value)
-                output = output + "\n\t" + param.name + ": " + param_value
-        return output
+        return json.dumps(self.tone, cls=ObjectEncoder, indent=4)
 
     def get_current_dsp_params_as_list(self) -> list:
         output = [0] * 14

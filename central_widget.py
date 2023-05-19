@@ -10,7 +10,7 @@ from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.instrument import Instrument
 from model.main_parameters_module import MainParametersModule
-from model.main_model import MainModel
+from model.current_model import CurrentModel
 
 KNOB_SIZE = 40
 RIGHT_SIDE_MAIN_PARAMS = (
@@ -25,7 +25,7 @@ class CentralWidget(QWidget):
         super().__init__(*args, **kwargs)
 
         self.midi_service = MidiService()
-        self.main_model = MainModel()
+        self.main_model = CurrentModel()
         self.output_tab_textbox = QTextBrowser()
 
         main_layout = QGridLayout(self)
