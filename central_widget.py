@@ -10,7 +10,7 @@ from model.current_model import CurrentModel
 from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.instrument import Instrument
-from model.main_parameters_module import MainParametersModule
+from model.tone import Tone
 
 KNOB_SIZE = 40
 RIGHT_SIDE_MAIN_PARAMS = (
@@ -47,8 +47,11 @@ class CentralWidget(QWidget):
         current_tab_name = self.get_current_tab_name()
         self.main_model.update_current_block_id(current_tab_name)
 
-        synth_dsp_module = self.midi_service.request_dsp_module(self.main_model.current_block_id)
-        self.main_model.update_current_dsp_module(synth_dsp_module[0])
+        try:
+            synth_dsp_module = self.midi_service.request_dsp_module(self.main_model.current_block_id)
+            self.main_model.update_current_dsp_module(synth_dsp_module[0])
+        except Exception as e:
+            self.parent().show_error_msg(str(e))
 
         if current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
             self.parent().show_status_msg(current_tab_name.value + ": " + self.main_model.current_dsp_name, 1000)
@@ -217,7 +220,7 @@ class CentralWidget(QWidget):
         list_widget.setCurrentRow(0)
         hbox_layout.addWidget(list_widget)  # left side
 
-        self.fill_qgrid_with_params(qgrid_layout, MainParametersModule.get_all_main_parameters(),
+        self.fill_qgrid_with_params(qgrid_layout, Tone.get_all_main_parameters(),
                                     RIGHT_SIDE_MAIN_PARAMS)
 
         hbox_layout.addLayout(qgrid_layout)  # right side
@@ -247,7 +250,7 @@ class CentralWidget(QWidget):
                     msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
         elif self.get_current_tab_name() == TabName.MAIN_PARAMETERS:
             msg = "<h2>Main Parameters</h2>List of parameters for editing tone.<br/>"
-            for param in MainParametersModule.get_all_main_parameters():
+            for param in Tone.get_all_main_parameters():
                 msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
 
         self.parent().show_help_msg(msg)
