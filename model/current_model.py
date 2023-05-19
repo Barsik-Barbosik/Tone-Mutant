@@ -1,5 +1,4 @@
 import json
-from enum import Enum
 
 from enums.enums import ParameterType, TabName
 from external.object_encoder.object_encoder import ObjectEncoder
@@ -13,30 +12,40 @@ class CurrentModel:
     def __init__(self):
         self.tone: Tone = Tone()
 
-        self.current_tab_name: Enum = TabName.MAIN_PARAMETERS
         self.current_block_id: int = None
         self.current_dsp_module: DspModule = None
         self.current_dsp_name: str = None
 
-        self.update_current_model(0)
+        self.update_current_model(0, TabName.MAIN_PARAMETERS)
 
-    def update_current_model(self, dsp_id: int):
+    # def update_current_block_id(self, current_tab_name: TabName):
+    #     if current_tab_name == TabName.DSP_1:
+    #         self.current_block_id = 0
+    #     elif current_tab_name == TabName.DSP_2:
+    #         self.current_block_id = 1
+    #     elif current_tab_name == TabName.DSP_3:
+    #         self.current_block_id = 2
+    #     elif current_tab_name == TabName.DSP_4:
+    #         self.current_block_id = 3
+
+    def update_current_model(self, dsp_id: int, current_tab_name: TabName):
+        # TODO: if dsp_id is None: then read value from synth; read all DSP-s on init?
+
         self.current_dsp_module = DspModule.get_dsp_module_by_id(dsp_id)
+        self.current_dsp_name = self.current_dsp_module.name if self.current_dsp_module is not None else EMPTY_DSP_NAME
 
-        if self.current_tab_name == TabName.DSP_1:
+        if current_tab_name == TabName.DSP_1:
             self.current_block_id = 0
             self.tone.dsp_module_1 = self.current_dsp_module
-        elif self.current_tab_name == TabName.DSP_2:
+        elif current_tab_name == TabName.DSP_2:
             self.current_block_id = 1
             self.tone.dsp_module_2 = self.current_dsp_module
-        elif self.current_tab_name == TabName.DSP_3:
+        elif current_tab_name == TabName.DSP_3:
             self.current_block_id = 2
             self.tone.dsp_module_3 = self.current_dsp_module
-        elif self.current_tab_name == TabName.DSP_4:
+        elif current_tab_name == TabName.DSP_4:
             self.current_block_id = 3
             self.tone.dsp_module_4 = self.current_dsp_module
-
-        self.current_dsp_name = self.current_dsp_module.name if self.current_dsp_module is not None else EMPTY_DSP_NAME
 
     def get_current_tone_as_json(self) -> str:
         return json.dumps(self.tone, cls=ObjectEncoder, indent=4)
