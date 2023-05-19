@@ -49,6 +49,7 @@ class CentralWidget(QWidget):
         try:
             synth_dsp_module = self.midi_service.request_dsp_module(self.main_model.current_block_id)
             self.main_model.update_current_dsp_module(synth_dsp_module[0])
+            self.load_dsp_params_from_synth_to_current_dsp()
         except Exception as e:
             self.parent().show_error_msg(str(e))
 
@@ -160,7 +161,7 @@ class CentralWidget(QWidget):
     def on_list_widget_changed(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
         dsp_module_id: int = list_widget.currentItem().data(Qt.UserRole)
         self.main_model.update_current_dsp_module(dsp_module_id)
-        self.on_dsp_module_changed()
+        self.change_dsp_module()
         self.redraw_dsp_params_panel(qgrid_layout)
         self.redraw_help_msg()
 
@@ -253,7 +254,7 @@ class CentralWidget(QWidget):
 
         self.parent().show_help_msg(msg)
 
-    def on_dsp_module_changed(self):
+    def change_dsp_module(self):
         if self.main_model.current_dsp_module is None:
             print("Current DSP module id: OFF")
             # TODO: turn DSP off
@@ -265,12 +266,18 @@ class CentralWidget(QWidget):
             try:
                 self.midi_service.send_dsp_module_change_sysex(self.main_model.current_dsp_module.id,
                                                                self.main_model.current_block_id)
-                synth_dsp_params = self.midi_service.request_dsp_params(self.main_model.current_block_id)
-                for idx, dsp_param in enumerate(self.main_model.current_dsp_module.dsp_parameter_list):
-                    dsp_param.value = synth_dsp_params[idx]
-                self.send_dsp_params_change_sysex()
             except Exception as e:
                 self.parent().show_error_msg(str(e))
+
+            self.load_dsp_params_from_synth_to_current_dsp()
+
+    def load_dsp_params_from_synth_to_current_dsp(self):
+        try:
+            synth_dsp_params = self.midi_service.request_dsp_params(self.main_model.current_block_id)
+            for idx, dsp_param in enumerate(self.main_model.current_dsp_module.dsp_parameter_list):
+                dsp_param.value = synth_dsp_params[idx]
+        except Exception as e:
+            self.parent().show_error_msg(str(e))
 
     def send_dsp_params_change_sysex(self):
         try:
