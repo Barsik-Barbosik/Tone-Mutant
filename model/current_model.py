@@ -2,7 +2,7 @@ import copy
 import json
 
 from enums.enums import ParameterType, TabName
-from external.object_encoder.object_encoder import ObjectEncoder
+from external.object_encoder import ObjectEncoder
 from model.dsp_module import DspModule
 from model.tone import Tone
 

@@ -1,10 +1,11 @@
 import random
 
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, QThreadPool
 from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QDial, \
     QLabel, QListWidget, QHBoxLayout, QSpinBox, QSizePolicy, QComboBox, QListWidgetItem, QTextBrowser, QPushButton
 
 from enums.enums import ParameterType, TabName
+from external.worker import Worker
 from midi_service import MidiService
 from model.current_model import CurrentModel
 from model.dsp_module import DspModule
@@ -22,6 +23,8 @@ RIGHT_SIDE_DSP_PARAMS = (
 class CentralWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.threadpool = QThreadPool.globalInstance()
 
         self.midi_service = MidiService()
         self.current_model = CurrentModel()
@@ -49,7 +52,9 @@ class CentralWidget(QWidget):
         try:
             synth_dsp_module = self.midi_service.request_dsp_module(self.current_model.current_block_id)
             self.current_model.update_current_dsp_module(synth_dsp_module[0])
-            self.load_dsp_params_from_synth_to_current_dsp()
+
+            worker = Worker(self.load_dsp_params_from_synth_to_current_dsp)
+            self.threadpool.start(worker)
         except Exception as e:
             self.parent().show_error_msg(str(e))
 
@@ -269,7 +274,8 @@ class CentralWidget(QWidget):
             except Exception as e:
                 self.parent().show_error_msg(str(e))
 
-            self.load_dsp_params_from_synth_to_current_dsp()
+            worker = Worker(self.load_dsp_params_from_synth_to_current_dsp)
+            self.threadpool.start(worker)
 
     def load_dsp_params_from_synth_to_current_dsp(self):
         try:
@@ -278,6 +284,7 @@ class CentralWidget(QWidget):
                 dsp_param.value = synth_dsp_params[idx]
         except Exception as e:
             self.parent().show_error_msg(str(e))
+        print("load_dsp_params_from_synth_to_current_dsp - finished")
 
     def send_dsp_params_change_sysex(self):
         try:
