@@ -53,8 +53,7 @@ class CentralWidget(QWidget):
             synth_dsp_module = self.midi_service.request_dsp_module(self.current_model.current_block_id)
             self.current_model.update_current_dsp_module(synth_dsp_module[0])
 
-            worker = Worker(self.load_dsp_params_from_synth_to_current_dsp)
-            self.threadpool.start(worker)
+            self.threadpool.start(Worker(self.load_dsp_params_from_synth_to_current_dsp))
         except Exception as e:
             self.parent().show_error_msg(str(e))
 
@@ -274,8 +273,7 @@ class CentralWidget(QWidget):
             except Exception as e:
                 self.parent().show_error_msg(str(e))
 
-            worker = Worker(self.load_dsp_params_from_synth_to_current_dsp)
-            self.threadpool.start(worker)
+            self.threadpool.start(Worker(self.load_dsp_params_from_synth_to_current_dsp))
 
     def load_dsp_params_from_synth_to_current_dsp(self):
         try:
