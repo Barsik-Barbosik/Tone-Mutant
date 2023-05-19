@@ -49,12 +49,16 @@ class CentralWidget(QWidget):
 
         synth_dsp_module = self.midi_service.request_dsp_module(self.main_model.current_block_id)
         self.main_model.update_current_dsp_module(synth_dsp_module[0])
-        self.parent().show_status_msg(current_tab_name.value + ": " + self.main_model.current_dsp_name, 1000)
-        if current_tab_name == TabName.JSON:
-            self.output_tab_textbox.setPlainText(self.main_model.get_current_tone_as_json())
-        elif current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
+
+        if current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
+            self.parent().show_status_msg(current_tab_name.value + ": " + self.main_model.current_dsp_name, 1000)
             # TODO
             print("update list item!")
+        elif current_tab_name == TabName.MAIN_PARAMETERS:
+            self.parent().show_status_msg("Main parameters for editing tone", 1000)
+        elif current_tab_name == TabName.JSON:
+            self.parent().show_status_msg("Tone information in JSON-format", 1000)
+            self.output_tab_textbox.setPlainText(self.main_model.get_current_tone_as_json())
         self.redraw_help_msg()
 
     def get_current_tab_name(self):
