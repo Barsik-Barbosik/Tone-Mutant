@@ -1,3 +1,4 @@
+import copy
 import json
 
 from enums.enums import ParameterType, TabName
@@ -31,13 +32,13 @@ class CurrentModel:
         self.current_dsp_name = self.current_dsp_module.name if self.current_dsp_module is not None else EMPTY_DSP_NAME
 
         if self.current_block_id == 0:
-            self.tone.dsp_module_1 = self.current_dsp_module
+            self.tone.dsp_module_1 = copy.deepcopy(self.current_dsp_module)
         elif self.current_block_id == 1:
-            self.tone.dsp_module_2 = self.current_dsp_module
+            self.tone.dsp_module_2 = copy.deepcopy(self.current_dsp_module)
         elif self.current_block_id == 2:
-            self.tone.dsp_module_3 = self.current_dsp_module
+            self.tone.dsp_module_3 = copy.deepcopy(self.current_dsp_module)
         elif self.current_block_id == 3:
-            self.tone.dsp_module_4 = self.current_dsp_module
+            self.tone.dsp_module_4 = copy.deepcopy(self.current_dsp_module)
 
     def get_current_tone_as_json(self) -> str:
         return json.dumps(self.tone, cls=ObjectEncoder, indent=4)
