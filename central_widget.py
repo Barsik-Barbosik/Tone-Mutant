@@ -171,19 +171,19 @@ class CentralWidget(QWidget):
 
     def on_combo_changed(self, combo: QComboBox, dsp_parameter: DspParameter):
         dsp_parameter.value = dsp_parameter.choices.index(combo.currentText())
-        self.send_dsp_params_change_sysex()
+        self.threadpool.start(Worker(self.send_dsp_params_change_sysex))
 
     def on_knob_changed(self, knob: QDial, linked_knob_spinbox: QSpinBox, dsp_parameter: DspParameter):
         if knob.value() != linked_knob_spinbox.value():
             linked_knob_spinbox.setValue(knob.value())
             dsp_parameter.value = knob.value()
-            self.send_dsp_params_change_sysex()
+            self.threadpool.start(Worker(self.send_dsp_params_change_sysex))
 
     def on_knob_spinbox_changed(self, knob_spinbox: QSpinBox, linked_knob: QDial, dsp_parameter: DspParameter):
         if knob_spinbox.value() != linked_knob.value():
             linked_knob.setValue(knob_spinbox.value())
             dsp_parameter.value = knob_spinbox.value()
-            self.send_dsp_params_change_sysex()
+            self.threadpool.start(Worker(self.send_dsp_params_change_sysex))
 
     def on_random_button_pressed(self, qgrid_layout):
         for dsp_param in self.current_model.current_dsp_module.dsp_parameter_list:
@@ -191,7 +191,7 @@ class CentralWidget(QWidget):
                 dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
             if dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
                 dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
-        self.send_dsp_params_change_sysex()
+        self.threadpool.start(Worker(self.send_dsp_params_change_sysex))
         self.redraw_dsp_params_panel(qgrid_layout)
         self.parent().show_status_msg("It may be necessary to correct volume levels after setting random values.", 3000)
 
@@ -290,3 +290,4 @@ class CentralWidget(QWidget):
                                                            self.current_model.current_block_id)
         except Exception as e:
             self.parent().show_error_msg(str(e))
+        print("send_dsp_params_change_sysex - finished")
