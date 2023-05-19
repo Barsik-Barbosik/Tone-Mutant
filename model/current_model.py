@@ -11,56 +11,40 @@ EMPTY_DSP_NAME = "OFF"
 
 class CurrentModel:
     def __init__(self):
-        self.current_tab_name: Enum = TabName.MAIN_PARAMETERS
         self.tone: Tone = Tone()
 
-    def get_current_dsp_module(self) -> DspModule:
-        if self.current_tab_name == TabName.DSP_1:
-            return self.tone.dsp_module_1
-        elif self.current_tab_name == TabName.DSP_2:
-            return self.tone.dsp_module_2
-        elif self.current_tab_name == TabName.DSP_3:
-            return self.tone.dsp_module_3
-        elif self.current_tab_name == TabName.DSP_4:
-            return self.tone.dsp_module_4
-        else:
-            return None
+        self.current_tab_name: Enum = TabName.MAIN_PARAMETERS
+        self.current_block_id: int = None
+        self.current_dsp_module: DspModule = None
+        self.current_dsp_name: str = None
 
-    def get_current_block_id(self) -> int:
-        if self.current_tab_name == TabName.DSP_1:
-            return 0
-        elif self.current_tab_name == TabName.DSP_2:
-            return 1
-        elif self.current_tab_name == TabName.DSP_3:
-            return 2
-        elif self.current_tab_name == TabName.DSP_4:
-            return 3
-        else:
-            return None
+        self.update_current_model(0)
 
-    def get_current_dsp_name(self) -> str:
-        return self.get_current_dsp_module().name if self.get_current_dsp_module() is not None else EMPTY_DSP_NAME
+    def update_current_model(self, dsp_id: int):
+        self.current_dsp_module = DspModule.get_dsp_module_by_id(dsp_id)
 
-    # TODO: set all
-    def set_current_dsp_module(self, dsp_id: int):
-        current_dsp_module: DspModule = DspModule.get_dsp_module_by_id(dsp_id)
         if self.current_tab_name == TabName.DSP_1:
-            self.tone.dsp_module_1 = current_dsp_module
+            self.current_block_id = 0
+            self.tone.dsp_module_1 = self.current_dsp_module
         elif self.current_tab_name == TabName.DSP_2:
-            self.tone.dsp_module_2 = current_dsp_module
+            self.current_block_id = 1
+            self.tone.dsp_module_2 = self.current_dsp_module
         elif self.current_tab_name == TabName.DSP_3:
-            self.tone.dsp_module_3 = current_dsp_module
+            self.current_block_id = 2
+            self.tone.dsp_module_3 = self.current_dsp_module
         elif self.current_tab_name == TabName.DSP_4:
-            self.tone.dsp_module_4 = current_dsp_module
+            self.current_block_id = 3
+            self.tone.dsp_module_4 = self.current_dsp_module
+
+        self.current_dsp_name = self.current_dsp_module.name if self.current_dsp_module is not None else EMPTY_DSP_NAME
 
     def get_current_tone_as_json(self) -> str:
         return json.dumps(self.tone, cls=ObjectEncoder, indent=4)
 
     def get_current_dsp_params_as_list(self) -> list:
         output = [0] * 14
-        dsp_module = self.get_current_dsp_module()
-        if dsp_module is not None:
-            for idx, parameter in enumerate(dsp_module.dsp_parameter_list):
+        if self.current_dsp_module is not None:
+            for idx, parameter in enumerate(self.current_dsp_module.dsp_parameter_list):
                 if parameter.type == ParameterType.COMBO:
                     output[idx] = parameter.value
                 elif parameter.type == ParameterType.KNOB:
