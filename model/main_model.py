@@ -20,7 +20,7 @@ class Tone:
 
 class MainModel:
     def __init__(self):
-        self.currentTabName: Enum = TabName.MAIN_PARAMETERS
+        self.current_tab_name: Enum = TabName.MAIN_PARAMETERS
         self.tone: Tone = Tone()
 
     @staticmethod
@@ -31,25 +31,25 @@ class MainModel:
         return None
 
     def get_current_dsp_module(self) -> DspModule:
-        if self.currentTabName == TabName.DSP_1:
+        if self.current_tab_name == TabName.DSP_1:
             return self.tone.dsp_module_1
-        elif self.currentTabName == TabName.DSP_2:
+        elif self.current_tab_name == TabName.DSP_2:
             return self.tone.dsp_module_2
-        elif self.currentTabName == TabName.DSP_3:
+        elif self.current_tab_name == TabName.DSP_3:
             return self.tone.dsp_module_3
-        elif self.currentTabName == TabName.DSP_4:
+        elif self.current_tab_name == TabName.DSP_4:
             return self.tone.dsp_module_4
         else:
             return None
 
     def get_current_block_id(self) -> int:
-        if self.currentTabName == TabName.DSP_1:
+        if self.current_tab_name == TabName.DSP_1:
             return 0
-        elif self.currentTabName == TabName.DSP_2:
+        elif self.current_tab_name == TabName.DSP_2:
             return 1
-        elif self.currentTabName == TabName.DSP_3:
+        elif self.current_tab_name == TabName.DSP_3:
             return 2
-        elif self.currentTabName == TabName.DSP_4:
+        elif self.current_tab_name == TabName.DSP_4:
             return 3
         else:
             return None
@@ -59,13 +59,13 @@ class MainModel:
 
     def set_current_dsp_module(self, dsp_id: int):
         current_dsp_module: DspModule = self.get_dsp_module_by_id(dsp_id)
-        if self.currentTabName == TabName.DSP_1:
+        if self.current_tab_name == TabName.DSP_1:
             self.tone.dsp_module_1 = current_dsp_module
-        elif self.currentTabName == TabName.DSP_2:
+        elif self.current_tab_name == TabName.DSP_2:
             self.tone.dsp_module_2 = current_dsp_module
-        elif self.currentTabName == TabName.DSP_3:
+        elif self.current_tab_name == TabName.DSP_3:
             self.tone.dsp_module_3 = current_dsp_module
-        elif self.currentTabName == TabName.DSP_4:
+        elif self.current_tab_name == TabName.DSP_4:
             self.tone.dsp_module_4 = current_dsp_module
 
     def get_current_tone_as_json(self) -> str:

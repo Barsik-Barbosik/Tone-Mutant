@@ -44,10 +44,10 @@ class CentralWidget(QWidget):
         main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
 
     def on_tab_changed(self, i):
-        self.main_model.currentTabName = TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
+        self.main_model.current_tab_name = TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
         self.parent().show_status_msg(
-            self.main_model.currentTabName.value + ": " + self.main_model.get_current_dsp_name(), 1000)
-        if self.main_model.currentTabName == TabName.JSON:
+            self.main_model.current_tab_name.value + ": " + self.main_model.get_current_dsp_name(), 1000)
+        if self.main_model.current_tab_name == TabName.JSON:
             self.output_tab_textbox.setPlainText(self.main_model.get_current_tone_as_json())
         self.redraw_help_msg()
 
@@ -231,7 +231,7 @@ class CentralWidget(QWidget):
                 msg = "<h2>" + self.main_model.get_current_dsp_name() + "</h2>" + dsp_module.description + "<br/>"
                 for param in dsp_module.dsp_parameter_list:
                     msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
-        elif self.main_model.currentTabName == TabName.MAIN_PARAMETERS:
+        elif self.main_model.current_tab_name == TabName.MAIN_PARAMETERS:
             msg = "<h2>Main Parameters</h2>List of parameters for editing tone.<br/>"
             for param in MainParametersModule.get_all_main_parameters():
                 msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
