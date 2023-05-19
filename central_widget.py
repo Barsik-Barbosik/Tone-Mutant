@@ -10,7 +10,6 @@ from model.current_model import CurrentModel
 from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.instrument import Instrument
-from model.tone import Tone
 
 KNOB_SIZE = 40
 RIGHT_SIDE_MAIN_PARAMS = (
@@ -220,8 +219,7 @@ class CentralWidget(QWidget):
         list_widget.setCurrentRow(0)
         hbox_layout.addWidget(list_widget)  # left side
 
-        self.fill_qgrid_with_params(qgrid_layout, Tone.get_all_main_parameters(),
-                                    RIGHT_SIDE_MAIN_PARAMS)
+        self.fill_qgrid_with_params(qgrid_layout, self.main_model.tone.main_parameter_list, RIGHT_SIDE_MAIN_PARAMS)
 
         hbox_layout.addLayout(qgrid_layout)  # right side
         return main_params_page
@@ -250,7 +248,7 @@ class CentralWidget(QWidget):
                     msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
         elif self.get_current_tab_name() == TabName.MAIN_PARAMETERS:
             msg = "<h2>Main Parameters</h2>List of parameters for editing tone.<br/>"
-            for param in Tone.get_all_main_parameters():
+            for param in self.main_model.tone.main_parameter_list:
                 msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
 
         self.parent().show_help_msg(msg)
