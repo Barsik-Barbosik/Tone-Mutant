@@ -4,22 +4,24 @@ from enum import Enum
 from enums.enums import ParameterType, TabName
 from external.object_encoder.object_encoder import ObjectEncoder
 from model.dsp_module import DspModule
-from model.instrument import Instrument
 from model.main_parameters_module import MainParametersModule
 
 EMPTY_DSP_NAME = "OFF"
 
 
+class Tone:
+    def __init__(self):
+        self.main_parameters_module: MainParametersModule = MainParametersModule()
+        self.dsp_module_1: DspModule = None
+        self.dsp_module_2: DspModule = None
+        self.dsp_module_3: DspModule = None
+        self.dsp_module_4: DspModule = None
+
+
 class MainModel:
     def __init__(self):
         self.currentTabName: Enum = TabName.MAIN_PARAMETERS
-
-        self.selectedInstrument: Instrument = None
-        self.main_params_module: MainParametersModule = None
-        self.selectedDsp1: DspModule = None
-        self.selectedDsp2: DspModule = None
-        self.selectedDsp3: DspModule = None
-        self.selectedDsp4: DspModule = None
+        self.tone: Tone = Tone()
 
     @staticmethod
     def get_dsp_module_by_id(dsp_id: int) -> DspModule:
@@ -30,13 +32,13 @@ class MainModel:
 
     def get_current_dsp_module(self) -> DspModule:
         if self.currentTabName == TabName.DSP_1:
-            return self.selectedDsp1
+            return self.tone.dsp_module_1
         elif self.currentTabName == TabName.DSP_2:
-            return self.selectedDsp2
+            return self.tone.dsp_module_2
         elif self.currentTabName == TabName.DSP_3:
-            return self.selectedDsp3
+            return self.tone.dsp_module_3
         elif self.currentTabName == TabName.DSP_4:
-            return self.selectedDsp4
+            return self.tone.dsp_module_4
         else:
             return None
 
@@ -58,22 +60,24 @@ class MainModel:
     def set_current_dsp_module(self, dsp_id: int):
         current_dsp_module: DspModule = self.get_dsp_module_by_id(dsp_id)
         if self.currentTabName == TabName.DSP_1:
-            self.selectedDsp1 = current_dsp_module
+            self.tone.dsp_module_1 = current_dsp_module
         elif self.currentTabName == TabName.DSP_2:
-            self.selectedDsp2 = current_dsp_module
+            self.tone.dsp_module_2 = current_dsp_module
         elif self.currentTabName == TabName.DSP_3:
-            self.selectedDsp3 = current_dsp_module
+            self.tone.dsp_module_3 = current_dsp_module
         elif self.currentTabName == TabName.DSP_4:
-            self.selectedDsp4 = current_dsp_module
+            self.tone.dsp_module_4 = current_dsp_module
 
     def get_current_tone_as_json(self) -> str:
-        obj = {"DSP": [
-            {"DSP_1": self.selectedDsp1,
-             "DSP_2": self.selectedDsp2,
-             "DSP_3": self.selectedDsp3,
-             "DSP_4": self.selectedDsp4
-             }
-        ]}
+        obj = {
+            "main": self.tone.main_parameters_module.main_parameter_list,
+            "DSP": [
+                {"DSP_1": self.tone.dsp_module_1,
+                 "DSP_2": self.tone.dsp_module_2,
+                 "DSP_3": self.tone.dsp_module_3,
+                 "DSP_4": self.tone.dsp_module_4
+                 }
+            ]}
         output = json.dumps(obj, cls=ObjectEncoder, indent=4)
         return output
 

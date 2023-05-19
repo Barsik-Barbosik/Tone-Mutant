@@ -1,19 +1,17 @@
-from typing import List
-
 from enums.enums import ParameterType
 from model.dsp_parameter import DspParameter
 
 
 class MainParametersModule:
-    def __init__(self, main_parameter_list: List[DspParameter]):
-        self.main_parameter_list = main_parameter_list
+    def __init__(self):
+        self.main_parameter_list = self.get_all_main_parameters()
 
     @staticmethod
     def get_all_main_parameters() -> tuple:
-        return _main_tone_parameters
+        return _all_main_parameters
 
 
-_main_tone_parameters: tuple = (
+_all_main_parameters: tuple = (
     DspParameter(1, "Attack Time",
                  "Adjusts the time after a key is pressed from when the note starts to sound until it reaches maximum volume. A larger value specifies a slower attack.",
                  ParameterType.KNOB, [0, 127], 0),
