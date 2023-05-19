@@ -24,7 +24,7 @@ class CentralWidget(QWidget):
         super().__init__(*args, **kwargs)
 
         self.midi_service = MidiService()
-        self.main_model = CurrentModel()
+        self.current_model = CurrentModel()
         self.output_tab_textbox = QTextBrowser()
 
         main_layout = QGridLayout(self)
@@ -44,24 +44,24 @@ class CentralWidget(QWidget):
 
     def on_tab_changed(self, i):
         current_tab_name = self.get_current_tab_name()
-        self.main_model.update_current_block_id(current_tab_name)
+        self.current_model.update_current_block_id(current_tab_name)
 
         try:
-            synth_dsp_module = self.midi_service.request_dsp_module(self.main_model.current_block_id)
-            self.main_model.update_current_dsp_module(synth_dsp_module[0])
+            synth_dsp_module = self.midi_service.request_dsp_module(self.current_model.current_block_id)
+            self.current_model.update_current_dsp_module(synth_dsp_module[0])
             self.load_dsp_params_from_synth_to_current_dsp()
         except Exception as e:
             self.parent().show_error_msg(str(e))
 
         if current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
-            self.parent().show_status_msg(current_tab_name.value + ": " + self.main_model.current_dsp_name, 1000)
+            self.parent().show_status_msg(current_tab_name.value + ": " + self.current_model.current_dsp_name, 1000)
             # TODO
             print("update list item!")
         elif current_tab_name == TabName.MAIN_PARAMETERS:
             self.parent().show_status_msg("Main parameters for editing tone", 1000)
         elif current_tab_name == TabName.JSON:
             self.parent().show_status_msg("Tone information in JSON-format", 1000)
-            self.output_tab_textbox.setPlainText(self.main_model.get_current_tone_as_json())
+            self.output_tab_textbox.setPlainText(self.current_model.get_current_tone_as_json())
         self.redraw_help_msg()
 
     def get_current_tab_name(self):
@@ -97,14 +97,14 @@ class CentralWidget(QWidget):
     def redraw_dsp_params_panel(self, qgrid_layout: QGridLayout):
         self.clear_layout(qgrid_layout)
 
-        if self.main_model.current_dsp_module is not None:
+        if self.current_model.current_dsp_module is not None:
             right_side_items_count = self.fill_qgrid_with_params(
-                qgrid_layout, self.main_model.current_dsp_module.dsp_parameter_list, RIGHT_SIDE_DSP_PARAMS)
+                qgrid_layout, self.current_model.current_dsp_module.dsp_parameter_list, RIGHT_SIDE_DSP_PARAMS)
 
             random_button = QPushButton("Set random values", self)
             random_button.setObjectName("random-button")
             random_button.clicked.connect(lambda: self.on_random_button_pressed(qgrid_layout))
-            button_row = len(self.main_model.current_dsp_module.dsp_parameter_list) - right_side_items_count + 1
+            button_row = len(self.current_model.current_dsp_module.dsp_parameter_list) - right_side_items_count + 1
             qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
         else:
             qgrid_layout.addWidget(self.get_spacer(), 0, 0, 1, 4)
@@ -160,7 +160,7 @@ class CentralWidget(QWidget):
 
     def on_list_widget_changed(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
         dsp_module_id: int = list_widget.currentItem().data(Qt.UserRole)
-        self.main_model.update_current_dsp_module(dsp_module_id)
+        self.current_model.update_current_dsp_module(dsp_module_id)
         self.change_dsp_module()
         self.redraw_dsp_params_panel(qgrid_layout)
         self.redraw_help_msg()
@@ -182,7 +182,7 @@ class CentralWidget(QWidget):
             self.send_dsp_params_change_sysex()
 
     def on_random_button_pressed(self, qgrid_layout):
-        for dsp_param in self.main_model.current_dsp_module.dsp_parameter_list:
+        for dsp_param in self.current_model.current_dsp_module.dsp_parameter_list:
             if dsp_param.type == ParameterType.COMBO:
                 dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
             if dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
@@ -220,7 +220,7 @@ class CentralWidget(QWidget):
         list_widget.setCurrentRow(0)
         hbox_layout.addWidget(list_widget)  # left side
 
-        self.fill_qgrid_with_params(qgrid_layout, self.main_model.tone.main_parameter_list, RIGHT_SIDE_MAIN_PARAMS)
+        self.fill_qgrid_with_params(qgrid_layout, self.current_model.tone.main_parameter_list, RIGHT_SIDE_MAIN_PARAMS)
 
         hbox_layout.addLayout(qgrid_layout)  # right side
         return main_params_page
@@ -238,34 +238,34 @@ class CentralWidget(QWidget):
         return spacer
 
     def redraw_help_msg(self):
-        dsp_module = self.main_model.current_dsp_module
+        dsp_module = self.current_model.current_dsp_module
         msg = ""
-        if self.main_model.current_block_id is not None:
+        if self.current_model.current_block_id is not None:
             if dsp_module is None:
                 msg = "DSP module is not selected."
             else:
-                msg = "<h2>" + self.main_model.current_dsp_name + "</h2>" + dsp_module.description + "<br/>"
+                msg = "<h2>" + self.current_model.current_dsp_name + "</h2>" + dsp_module.description + "<br/>"
                 for param in dsp_module.dsp_parameter_list:
                     msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
         elif self.get_current_tab_name() == TabName.MAIN_PARAMETERS:
             msg = "<h2>Main Parameters</h2>List of parameters for editing tone.<br/>"
-            for param in self.main_model.tone.main_parameter_list:
+            for param in self.current_model.tone.main_parameter_list:
                 msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
 
         self.parent().show_help_msg(msg)
 
     def change_dsp_module(self):
-        if self.main_model.current_dsp_module is None:
+        if self.current_model.current_dsp_module is None:
             print("Current DSP module id: OFF")
             # TODO: turn DSP off
             self.parent().show_status_msg("Not implemented!!", 1000)
         else:
-            print("Current DSP module id: " + str(self.main_model.current_dsp_module.id))
-            print("Current DSP module name: " + self.main_model.current_dsp_module.name)
+            print("Current DSP module id: " + str(self.current_model.current_dsp_module.id))
+            print("Current DSP module name: " + self.current_model.current_dsp_module.name)
 
             try:
-                self.midi_service.send_dsp_module_change_sysex(self.main_model.current_dsp_module.id,
-                                                               self.main_model.current_block_id)
+                self.midi_service.send_dsp_module_change_sysex(self.current_model.current_dsp_module.id,
+                                                               self.current_model.current_block_id)
             except Exception as e:
                 self.parent().show_error_msg(str(e))
 
@@ -273,15 +273,15 @@ class CentralWidget(QWidget):
 
     def load_dsp_params_from_synth_to_current_dsp(self):
         try:
-            synth_dsp_params = self.midi_service.request_dsp_params(self.main_model.current_block_id)
-            for idx, dsp_param in enumerate(self.main_model.current_dsp_module.dsp_parameter_list):
+            synth_dsp_params = self.midi_service.request_dsp_params(self.current_model.current_block_id)
+            for idx, dsp_param in enumerate(self.current_model.current_dsp_module.dsp_parameter_list):
                 dsp_param.value = synth_dsp_params[idx]
         except Exception as e:
             self.parent().show_error_msg(str(e))
 
     def send_dsp_params_change_sysex(self):
         try:
-            self.midi_service.send_dsp_params_change_sysex(self.main_model.get_current_dsp_params_as_list(),
-                                                           self.main_model.current_block_id)
+            self.midi_service.send_dsp_params_change_sysex(self.current_model.get_current_dsp_params_as_list(),
+                                                           self.current_model.current_block_id)
         except Exception as e:
             self.parent().show_error_msg(str(e))
