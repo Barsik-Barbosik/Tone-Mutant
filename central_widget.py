@@ -45,10 +45,10 @@ class CentralWidget(QWidget):
 
     def on_tab_changed(self, i):
         current_tab_name = self.get_current_tab_name()
-
         self.main_model.update_current_block_id(current_tab_name)
+
         synth_dsp_module = self.midi_service.request_dsp_module(self.main_model.current_block_id)
-        self.main_model.update_current_model(synth_dsp_module[0], current_tab_name)
+        self.main_model.update_current_dsp_module(synth_dsp_module[0])
         self.parent().show_status_msg(current_tab_name.value + ": " + self.main_model.current_dsp_name, 1000)
         if current_tab_name == TabName.JSON:
             self.output_tab_textbox.setPlainText(self.main_model.get_current_tone_as_json())
@@ -153,7 +153,7 @@ class CentralWidget(QWidget):
 
     def on_list_widget_changed(self, list_widget: QListWidget, qgrid_layout: QGridLayout):
         dsp_module_id: int = list_widget.currentItem().data(Qt.UserRole)
-        self.main_model.update_current_model(dsp_module_id, self.get_current_tab_name())
+        self.main_model.update_current_dsp_module(dsp_module_id)
         self.on_dsp_module_changed()
         self.redraw_dsp_params_panel(qgrid_layout)
         self.redraw_help_msg()

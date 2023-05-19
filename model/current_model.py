@@ -26,21 +26,17 @@ class CurrentModel:
         elif current_tab_name == TabName.DSP_4:
             self.current_block_id = 3
 
-    def update_current_model(self, dsp_id: int, current_tab_name: TabName):
+    def update_current_dsp_module(self, dsp_id: int):
         self.current_dsp_module = DspModule.get_dsp_module_by_id(dsp_id)
         self.current_dsp_name = self.current_dsp_module.name if self.current_dsp_module is not None else EMPTY_DSP_NAME
 
-        if current_tab_name == TabName.DSP_1:
-            self.current_block_id = 0
+        if self.current_block_id == 0:
             self.tone.dsp_module_1 = self.current_dsp_module
-        elif current_tab_name == TabName.DSP_2:
-            self.current_block_id = 1
+        elif self.current_block_id == 1:
             self.tone.dsp_module_2 = self.current_dsp_module
-        elif current_tab_name == TabName.DSP_3:
-            self.current_block_id = 2
+        elif self.current_block_id == 2:
             self.tone.dsp_module_3 = self.current_dsp_module
-        elif current_tab_name == TabName.DSP_4:
-            self.current_block_id = 3
+        elif self.current_block_id == 3:
             self.tone.dsp_module_4 = self.current_dsp_module
 
     def get_current_tone_as_json(self) -> str:
