@@ -14,9 +14,7 @@ class CurrentModel:
 
         self.current_block_id: int = None
         self.current_dsp_module: DspModule = None
-        self.current_dsp_name: str = None
-
-        self.update_current_model(None, TabName.MAIN_PARAMETERS)
+        self.current_dsp_name: str = EMPTY_DSP_NAME
 
     def update_current_block_id(self, current_tab_name: TabName):
         if current_tab_name == TabName.DSP_1:
