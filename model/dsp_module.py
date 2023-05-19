@@ -16,9 +16,13 @@ class DspModule:
 
     @staticmethod
     def get_dsp_module_by_id(dsp_module_id: int):
+        if dsp_module_id is None or dsp_module_id == 0:
+            return None
+
         for dsp_module in DspModule.get_all_dsp_modules():
             if dsp_module.id == dsp_module_id:
                 return dsp_module
+
         return None
 
     @staticmethod

@@ -16,21 +16,19 @@ class CurrentModel:
         self.current_dsp_module: DspModule = None
         self.current_dsp_name: str = None
 
-        self.update_current_model(0, TabName.MAIN_PARAMETERS)
+        self.update_current_model(None, TabName.MAIN_PARAMETERS)
 
-    # def update_current_block_id(self, current_tab_name: TabName):
-    #     if current_tab_name == TabName.DSP_1:
-    #         self.current_block_id = 0
-    #     elif current_tab_name == TabName.DSP_2:
-    #         self.current_block_id = 1
-    #     elif current_tab_name == TabName.DSP_3:
-    #         self.current_block_id = 2
-    #     elif current_tab_name == TabName.DSP_4:
-    #         self.current_block_id = 3
+    def update_current_block_id(self, current_tab_name: TabName):
+        if current_tab_name == TabName.DSP_1:
+            self.current_block_id = 0
+        elif current_tab_name == TabName.DSP_2:
+            self.current_block_id = 1
+        elif current_tab_name == TabName.DSP_3:
+            self.current_block_id = 2
+        elif current_tab_name == TabName.DSP_4:
+            self.current_block_id = 3
 
     def update_current_model(self, dsp_id: int, current_tab_name: TabName):
-        # TODO: if dsp_id is None: then read value from synth; read all DSP-s on init?
-
         self.current_dsp_module = DspModule.get_dsp_module_by_id(dsp_id)
         self.current_dsp_name = self.current_dsp_module.name if self.current_dsp_module is not None else EMPTY_DSP_NAME
 

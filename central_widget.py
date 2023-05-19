@@ -45,10 +45,16 @@ class CentralWidget(QWidget):
 
     def on_tab_changed(self, i):
         current_tab_name = self.get_current_tab_name()
-        self.main_model.update_current_model(None, current_tab_name)
+
+        self.main_model.update_current_block_id(current_tab_name)
+        synth_dsp_module = self.midi_service.request_dsp_module(self.main_model.current_block_id)
+        self.main_model.update_current_model(synth_dsp_module[0], current_tab_name)
         self.parent().show_status_msg(current_tab_name.value + ": " + self.main_model.current_dsp_name, 1000)
         if current_tab_name == TabName.JSON:
             self.output_tab_textbox.setPlainText(self.main_model.get_current_tone_as_json())
+        elif current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
+            # TODO
+            print("update list item!")
         self.redraw_help_msg()
 
     def get_current_tab_name(self):

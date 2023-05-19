@@ -90,6 +90,15 @@ class MidiService:
         print("Setting DSP Params:\t" + self.format_as_nice_hex(msg_params))
         self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
 
+    def request_dsp_module(self, block_id: int):
+        if self.is_block_id_valid(block_id):
+            # Array size is always 14 bytes: length is "0D"
+            msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
+            msg_block_id = self.decimal_to_hex(block_id)
+            msg_end = "00 55 00 00 00 00 00 F7"
+
+            return self.send_sysex_and_get_response(msg_start + msg_block_id + msg_end, 2)
+
     def request_dsp_params(self, block_id: int):
         if self.is_block_id_valid(block_id):
             # Array size is always 14 bytes: length is "0D"
