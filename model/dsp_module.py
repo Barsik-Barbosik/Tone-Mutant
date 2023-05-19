@@ -15,6 +15,13 @@ class DspModule:
         return {"name": self.name, "parameters": self.dsp_parameter_list}
 
     @staticmethod
+    def get_dsp_module_by_id(dsp_module_id: int):
+        for dsp_module in DspModule.get_all_dsp_modules():
+            if dsp_module.id == dsp_module_id:
+                return dsp_module
+        return None
+
+    @staticmethod
     def get_all_dsp_modules() -> tuple:
         return _all_dsp_modules
 

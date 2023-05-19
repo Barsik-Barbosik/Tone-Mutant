@@ -23,13 +23,6 @@ class MainModel:
         self.current_tab_name: Enum = TabName.MAIN_PARAMETERS
         self.tone: Tone = Tone()
 
-    @staticmethod
-    def get_dsp_module_by_id(dsp_id: int) -> DspModule:
-        for dsp_module in DspModule.get_all_dsp_modules():
-            if dsp_module.id == dsp_id:
-                return dsp_module
-        return None
-
     def get_current_dsp_module(self) -> DspModule:
         if self.current_tab_name == TabName.DSP_1:
             return self.tone.dsp_module_1
@@ -58,7 +51,7 @@ class MainModel:
         return self.get_current_dsp_module().name if self.get_current_dsp_module() is not None else EMPTY_DSP_NAME
 
     def set_current_dsp_module(self, dsp_id: int):
-        current_dsp_module: DspModule = self.get_dsp_module_by_id(dsp_id)
+        current_dsp_module: DspModule = DspModule.get_dsp_module_by_id(dsp_id)
         if self.current_tab_name == TabName.DSP_1:
             self.tone.dsp_module_1 = current_dsp_module
         elif self.current_tab_name == TabName.DSP_2:
