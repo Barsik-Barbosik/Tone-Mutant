@@ -5,6 +5,7 @@ from enums.enums import ParameterType, TabName
 from external.object_encoder.object_encoder import ObjectEncoder
 from model.dsp_module import DspModule
 from model.instrument import Instrument
+from model.main_parameters_module import MainParametersModule
 
 EMPTY_DSP_NAME = "OFF"
 
@@ -13,9 +14,8 @@ class MainModel:
     def __init__(self):
         self.currentTabName: Enum = TabName.MAIN_PARAMETERS
 
-        # TODO: make new class "CurrentTone"
-
         self.selectedInstrument: Instrument = None
+        self.main_params_module: MainParametersModule = None
         self.selectedDsp1: DspModule = None
         self.selectedDsp2: DspModule = None
         self.selectedDsp3: DspModule = None
