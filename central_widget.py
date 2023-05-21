@@ -57,12 +57,12 @@ class CentralWidget(QWidget):
         except Exception as e:
             self.parent().show_error_msg(str(e))
 
-        if current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
+        if current_tab_name == TabName.MAIN_PARAMETERS:
+            self.parent().show_status_msg("Main parameters for editing tone", 1000)
+        elif current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
             self.parent().show_status_msg(current_tab_name.value + ": " + self.current_model.current_dsp_name, 1000)
             # TODO
             print("update list item!")
-        elif current_tab_name == TabName.MAIN_PARAMETERS:
-            self.parent().show_status_msg("Main parameters for editing tone", 1000)
         elif current_tab_name == TabName.JSON:
             self.parent().show_status_msg("Tone information in JSON-format", 1000)
             self.output_tab_textbox.setPlainText(self.current_model.get_current_tone_as_json())
