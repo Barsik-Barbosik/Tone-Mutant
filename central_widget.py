@@ -57,11 +57,11 @@ class CentralWidget(QWidget):
             if current_tab_name == TabName.DSP_1:
                 self.current_dsp_page = self.dsp_page_1
             elif current_tab_name == TabName.DSP_2:
-                self.current_dsp_page = self.dsp_page_1
+                self.current_dsp_page = self.dsp_page_2
             elif current_tab_name == TabName.DSP_3:
-                self.current_dsp_page = self.dsp_page_1
+                self.current_dsp_page = self.dsp_page_3
             elif current_tab_name == TabName.DSP_4:
-                self.current_dsp_page = self.dsp_page_1
+                self.current_dsp_page = self.dsp_page_4
             else:
                 self.current_dsp_page = None
 
