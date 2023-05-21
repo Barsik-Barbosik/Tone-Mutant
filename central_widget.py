@@ -65,7 +65,7 @@ class CentralWidget(QWidget):
             else:
                 self.current_dsp_page = None
 
-            self.current_dsp_page.update_current_dsp()
+            self.current_dsp_page.update_dsp_module()
         elif current_tab_name == TabName.JSON:
             self.parent().show_status_msg("Tone information in JSON-format", 3000)
             self.json_view_tab_textbox.setPlainText(json.dumps(self.tone, cls=ObjectEncoder, indent=4))
