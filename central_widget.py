@@ -52,7 +52,7 @@ class CentralWidget(QWidget):
         if current_tab_name == TabName.MAIN_PARAMETERS:
             self.parent().show_status_msg("Main parameters for editing tone", 3000)
         elif current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
-            self.parent().show_status_msg("Effect parameters for " + current_tab_name.value, 3000)
+            self.parent().show_status_msg("Parameters for " + current_tab_name.value + " module", 3000)
             try:
                 synth_dsp_module = self.midi_service.request_dsp_module(self.current_model.current_block_id)
                 if synth_dsp_module is not None and len(synth_dsp_module) > 0:
