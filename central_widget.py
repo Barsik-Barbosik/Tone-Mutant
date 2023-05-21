@@ -49,22 +49,20 @@ class CentralWidget(QWidget):
         current_tab_name = self.get_current_tab_name()
         self.current_model.update_current_block_id(current_tab_name)
 
-        try:
-            synth_dsp_module = self.midi_service.request_dsp_module(self.current_model.current_block_id)
-            self.current_model.update_current_dsp_module(synth_dsp_module[0])
-
-            self.load_dsp_params_from_synth_to_current_dsp()
-        except Exception as e:
-            self.parent().show_error_msg(str(e))
-
         if current_tab_name == TabName.MAIN_PARAMETERS:
-            self.parent().show_status_msg("Main parameters for editing tone", 1000)
+            self.parent().show_status_msg("Main parameters for editing tone", 3000)
         elif current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
-            self.parent().show_status_msg(current_tab_name.value + ": " + self.current_model.current_dsp_name, 1000)
-            # TODO
-            print("update list item!")
+            self.parent().show_status_msg("Effect parameters for " + current_tab_name.value, 3000)
+            try:
+                synth_dsp_module = self.midi_service.request_dsp_module(self.current_model.current_block_id)
+                if synth_dsp_module is not None and len(synth_dsp_module) > 0:
+                    self.current_model.update_current_dsp_module(synth_dsp_module[0])
+                    self.update_current_dsp_params()  # in separate thread
+            except Exception as e:
+                self.parent().show_error_msg(str(e))
+            print("update list item!")  # TODO
         elif current_tab_name == TabName.JSON:
-            self.parent().show_status_msg("Tone information in JSON-format", 1000)
+            self.parent().show_status_msg("Tone information in JSON-format", 3000)
             self.output_tab_textbox.setPlainText(self.current_model.get_current_tone_as_json())
         self.redraw_help_msg()
 
@@ -244,17 +242,17 @@ class CentralWidget(QWidget):
     def redraw_help_msg(self):
         dsp_module = self.current_model.current_dsp_module
         msg = ""
-        if self.current_model.current_block_id is not None:
+        if self.get_current_tab_name() == TabName.MAIN_PARAMETERS:
+            msg = "<h2>Main Parameters</h2>List of parameters for editing tone.<br/>"
+            for param in self.current_model.tone.main_parameter_list:
+                msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
+        elif self.current_model.current_block_id is not None:
             if dsp_module is None:
                 msg = "DSP module is not selected."
             else:
                 msg = "<h2>" + self.current_model.current_dsp_name + "</h2>" + dsp_module.description + "<br/>"
                 for param in dsp_module.dsp_parameter_list:
                     msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
-        elif self.get_current_tab_name() == TabName.MAIN_PARAMETERS:
-            msg = "<h2>Main Parameters</h2>List of parameters for editing tone.<br/>"
-            for param in self.current_model.tone.main_parameter_list:
-                msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
 
         self.parent().show_help_msg(msg)
 
@@ -273,16 +271,17 @@ class CentralWidget(QWidget):
             except Exception as e:
                 self.parent().show_error_msg(str(e))
 
-            self.load_dsp_params_from_synth_to_current_dsp()
+            self.update_current_dsp_params()
 
-    def load_dsp_params_from_synth_to_current_dsp(self):
-        try:
-            synth_dsp_params = self.midi_service.request_dsp_params(self.current_model.current_block_id)
-            for idx, dsp_param in enumerate(self.current_model.current_dsp_module.dsp_parameter_list):
-                dsp_param.value = synth_dsp_params[idx]
-        except Exception as e:
-            self.parent().show_error_msg(str(e))
-        print("load_dsp_params_from_synth_to_current_dsp - finished")
+    def update_current_dsp_params(self):
+        if self.current_model.current_dsp_module is not None:
+            try:
+                synth_dsp_params = self.midi_service.request_dsp_params(self.current_model.current_block_id)
+                for idx, dsp_param in enumerate(self.current_model.current_dsp_module.dsp_parameter_list):
+                    dsp_param.value = synth_dsp_params[idx]
+            except Exception as e:
+                self.parent().show_error_msg(str(e))
+            print("load_dsp_params_from_synth_to_current_dsp - finished")
 
     def send_dsp_params_change_sysex(self):
         try:

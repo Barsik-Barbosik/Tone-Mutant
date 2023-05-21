@@ -26,6 +26,8 @@ class CurrentModel:
             self.current_block_id = 2
         elif current_tab_name == TabName.DSP_4:
             self.current_block_id = 3
+        else:
+            self.current_block_id = None
 
     def update_current_dsp_module(self, dsp_id: int):
         self.current_dsp_module = DspModule.get_dsp_module_by_id(dsp_id)

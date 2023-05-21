@@ -25,12 +25,12 @@ class MainWindow(QMainWindow):
         self.right_dock = self.init_right_dock(self.help_texbox)
         self.addDockWidget(Qt.RightDockWidgetArea, self.right_dock)
 
-        self.status_bar = self.init_status_bar()
+        self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
 
         self.midi_settings_window = None
 
-        self.central_widget.redraw_help_msg()
+        self.central_widget.on_tab_changed(0)
 
     def init_menu_bar(self):
         menu_bar = QMenuBar(self)
@@ -94,12 +94,6 @@ class MainWindow(QMainWindow):
 
     def show_help_msg(self, text: str):
         self.help_texbox.setHtml(text)
-
-    def init_status_bar(self):
-        status_bar = QStatusBar(self)
-        status_bar.showMessage("Hello!!", 1000)
-
-        return status_bar
 
     def show_status_msg(self, text: str, msecs: int):
         self.status_bar.setStyleSheet("background-color: white; color: black")
