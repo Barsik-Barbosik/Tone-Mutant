@@ -45,7 +45,7 @@ class CentralWidget(QWidget):
 
         main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
 
-    def on_tab_changed(self, i):
+    def on_tab_changed(self, _unused_idx):
         current_tab_name = self.get_current_tab_name()
         self.current_model.update_current_block_id(current_tab_name)
 
