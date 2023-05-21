@@ -6,7 +6,6 @@ from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QListWidget, QHB
 from dsp_page import DspPage
 from enums.enums import TabName
 from external.object_encoder import ObjectEncoder
-from external.worker import Worker
 from gui_helper import GuiHelper
 from midi_service import MidiService
 from model.instrument import Instrument
@@ -26,10 +25,10 @@ class CentralWidget(QWidget):
         self.gui_factory = GuiHelper()
 
         self.tone: Tone = Tone()
-        self.dsp_page_1 = DspPage(0, self.tone.dsp_module_1)
-        self.dsp_page_2 = DspPage(1, self.tone.dsp_module_2)
-        self.dsp_page_3 = DspPage(2, self.tone.dsp_module_3)
-        self.dsp_page_4 = DspPage(3, self.tone.dsp_module_4)
+        self.dsp_page_1 = DspPage(self.tone, 0)
+        self.dsp_page_2 = DspPage(self.tone, 1)
+        self.dsp_page_3 = DspPage(self.tone, 2)
+        self.dsp_page_4 = DspPage(self.tone, 3)
         self.current_dsp_page: DspPage = None
 
         main_layout = QGridLayout(self)
@@ -42,7 +41,7 @@ class CentralWidget(QWidget):
         self.tab_widget.addTab(self.dsp_page_2, TabName.DSP_2.value)
         self.tab_widget.addTab(self.dsp_page_3, TabName.DSP_3.value)
         self.tab_widget.addTab(self.dsp_page_4, TabName.DSP_4.value)
-        self.tab_widget.addTab(self.create_output_page(), TabName.JSON.value)
+        self.tab_widget.addTab(self.create_json_view_page(), TabName.JSON.value)
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
         main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
@@ -66,13 +65,7 @@ class CentralWidget(QWidget):
             else:
                 self.current_dsp_page = None
 
-            try:
-                synth_dsp_module = self.midi_service.request_dsp_module(self.current_dsp_page.block_id)
-                if synth_dsp_module is not None and len(synth_dsp_module) > 0:
-                    self.current_dsp_page.set_dsp_module_by_id(synth_dsp_module[0])
-                    self.current_dsp_page.update_current_dsp_params()  # TODO: in separate thread
-            except Exception as e:
-                self.parent().show_error_msg(str(e))
+            self.current_dsp_page.update_current_dsp()
         elif current_tab_name == TabName.JSON:
             self.parent().show_status_msg("Tone information in JSON-format", 3000)
             self.json_view_tab_textbox.setPlainText(json.dumps(self.tone, cls=ObjectEncoder, indent=4))
@@ -102,18 +95,20 @@ class CentralWidget(QWidget):
         list_widget.setCurrentRow(0)
         hbox_layout.addWidget(list_widget)  # left side
 
-        self.gui_factory.fill_qgrid_with_params(qgrid_layout, self.tone.main_parameter_list, RIGHT_SIDE_MAIN_PARAMS,
-                                                self.thread_complete)
+        self.gui_factory.fill_qgrid_with_params(qgrid_layout,
+                                                self.tone.main_parameter_list,
+                                                RIGHT_SIDE_MAIN_PARAMS,
+                                                self.do_nothing)
 
         hbox_layout.addLayout(qgrid_layout)  # right side
         return main_params_page
 
-    def create_output_page(self) -> QWidget:
-        output_page = QWidget(self)
+    def create_json_view_page(self) -> QWidget:
+        json_view_page = QWidget(self)
         hbox_layout = QHBoxLayout(self)
         hbox_layout.addWidget(self.json_view_tab_textbox)
-        output_page.setLayout(hbox_layout)
-        return output_page
+        json_view_page.setLayout(hbox_layout)
+        return json_view_page
 
     def redraw_help_msg(self):
         msg = ""
@@ -132,14 +127,15 @@ class CentralWidget(QWidget):
 
         self.parent().show_help_msg(msg)
 
-    def aaa(self):
-        worker = Worker(self.send_dsp_params_change_sysex)
-        worker.signals.result.connect(self.print_output)
-        worker.signals.finished.connect(self.thread_complete)
-        self.threadpool.start(worker)
+    # def aaa(self):
+    #     worker = Worker(self.send_dsp_params_change_sysex)
+    #     worker.signals.result.connect(self.print_output)
+    #     worker.signals.finished.connect(self.thread_complete)
+    #     self.threadpool.start(worker)
+    #
+    # def print_output(self, s):
+    #     print(s)
 
-    def print_output(self, s):
-        print(s)
-
-    def thread_complete(self):
-        print("THREAD COMPLETE!")
+    @staticmethod
+    def do_nothing():
+        print("...")

@@ -1,3 +1,4 @@
+import copy
 import random
 
 from PySide2.QtCore import Qt
@@ -7,6 +8,7 @@ from enums.enums import ParameterType
 from gui_helper import GuiHelper
 from midi_service import MidiService
 from model.dsp_module import DspModule
+from model.tone import Tone
 
 EMPTY_DSP_NAME = "OFF"
 RIGHT_SIDE_DSP_PARAMS = (
@@ -15,10 +17,11 @@ RIGHT_SIDE_DSP_PARAMS = (
 
 
 class DspPage(QWidget):
-    def __init__(self, block_id: int, dsp_module: DspModule):
+    def __init__(self, tone: Tone, block_id: int):
         super().__init__()
+        self.tone: Tone = tone
         self.block_id: int = block_id
-        self.dsp_module: DspModule = dsp_module
+        self.dsp_module: DspModule = None
         self.midi_service = MidiService.get_instance()
 
         hbox_layout = QHBoxLayout(self)
@@ -32,7 +35,7 @@ class DspPage(QWidget):
 
         self.list_widget = QListWidget(self)
         self.list_widget.setFixedWidth(180)
-        self.list_widget.insertItem(0, "OFF")
+        self.list_widget.insertItem(0, EMPTY_DSP_NAME)
         for idx, dsp_module in enumerate(DspModule.get_all_dsp_modules()):
             item = QListWidgetItem()
             item.setText(dsp_module.name)
@@ -73,19 +76,32 @@ class DspPage(QWidget):
     def get_module_name(self):
         return self.dsp_module.name if self.dsp_module is not None else EMPTY_DSP_NAME
 
+    def update_current_dsp(self):
+        try:
+            synth_dsp_module = self.midi_service.request_dsp_module(self.block_id)
+            if synth_dsp_module is not None and len(synth_dsp_module) > 0:
+                self.set_dsp_module_by_id(synth_dsp_module[0])
+        except Exception as e:
+            self.parent().parent().parent().parent().show_error_msg(str(e))
+
     def set_dsp_module_by_id(self, dsp_module_id):
-        self.dsp_module = DspModule.get_dsp_module_by_id(dsp_module_id)
-        # if self.current_block_id == 0:
-        #     self.tone.dsp_module_1 = copy.deepcopy(self.current_dsp_module)
-        # elif self.current_block_id == 1:
-        #     self.tone.dsp_module_2 = copy.deepcopy(self.current_dsp_module)
-        # elif self.current_block_id == 2:
-        #     self.tone.dsp_module_3 = copy.deepcopy(self.current_dsp_module)
-        # elif self.current_block_id == 3:
-        #     self.tone.dsp_module_4 = copy.deepcopy(self.current_dsp_module)
-        self.change_dsp_module()
+        if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
+            self.dsp_module = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
+            self.update_tone()
+            self.change_dsp_module()
+        self.update_current_dsp_params()
         self.redraw_dsp_params_panel()
         self.parent().parent().parent().redraw_help_msg()
+
+    def update_tone(self):
+        if self.block_id == 0:
+            self.tone.dsp_module_1 = self.dsp_module
+        elif self.block_id == 1:
+            self.tone.dsp_module_2 = self.dsp_module
+        elif self.block_id == 2:
+            self.tone.dsp_module_3 = self.dsp_module
+        elif self.block_id == 3:
+            self.tone.dsp_module_4 = self.dsp_module
 
     def on_random_button_pressed(self):
         for dsp_param in self.dsp_module.dsp_parameter_list:
@@ -139,8 +155,6 @@ class DspPage(QWidget):
                 self.midi_service.send_dsp_module_change_sysex(self.dsp_module.id, self.block_id)
             except Exception as e:
                 self.parent().parent().parent().parent().show_error_msg(str(e))
-
-            self.update_current_dsp_params()
 
     def update_current_dsp_params(self):
         if self.dsp_module is not None:
