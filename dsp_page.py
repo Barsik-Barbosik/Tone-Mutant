@@ -95,15 +95,17 @@ class DspPage(QWidget):
     def get_module_name(self):
         return self.dsp_module.name if self.dsp_module is not None else EMPTY_DSP_NAME
 
-    def update_dsp_module(self):
-        try:
-            synth_dsp_module = self.midi_service.request_dsp_module(self.block_id)
-            if synth_dsp_module is not None and len(synth_dsp_module) > 0:
-                self.update_tone_dsp_module_by_dsp_id(synth_dsp_module[0])
-        except Exception as e:
-            self.parent().parent().parent().parent().show_error_msg(str(e))
-
     def update_tone_dsp_module_by_dsp_id(self, dsp_module_id):
+        synth_dsp_module_id = None
+        if dsp_module_id is None:
+            try:
+                synth_dsp_module = self.midi_service.request_dsp_module(self.block_id)
+                synth_dsp_module_id = synth_dsp_module[0]
+                if synth_dsp_module is not None and len(synth_dsp_module) > 0:
+                    dsp_module_id = synth_dsp_module_id
+            except Exception as e:
+                self.parent().parent().parent().parent().show_error_msg(str(e))
+
         if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
             if self.block_id == 0:
                 self.tone.dsp_module_1 = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
@@ -118,7 +120,9 @@ class DspPage(QWidget):
                 self.tone.dsp_module_4 = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
                 self.dsp_module = self.tone.dsp_module_4
 
-            self.midi_set_synth_dsp_module()
+            if synth_dsp_module_id is None or synth_dsp_module_id != dsp_module_id:
+                self.midi_set_synth_dsp_module()
+
             self.midi_get_synth_dsp_params()
             self.redraw_dsp_params_panel()
             self.parent().parent().parent().redraw_help_msg()
