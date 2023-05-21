@@ -108,9 +108,9 @@ class DspPage(QWidget):
             self.dsp_module = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
             self.update_tone()
             self.change_dsp_module()
-        self.update_current_dsp_params()
-        self.redraw_dsp_params_panel()
-        self.parent().parent().parent().redraw_help_msg()
+            self.update_current_dsp_params()
+            self.redraw_dsp_params_panel()
+            self.parent().parent().parent().redraw_help_msg()
 
     def update_tone(self):
         if self.block_id == 0:
