@@ -53,7 +53,7 @@ class CentralWidget(QWidget):
             synth_dsp_module = self.midi_service.request_dsp_module(self.current_model.current_block_id)
             self.current_model.update_current_dsp_module(synth_dsp_module[0])
 
-            self.threadpool.start(Worker(self.load_dsp_params_from_synth_to_current_dsp))
+            self.load_dsp_params_from_synth_to_current_dsp()
         except Exception as e:
             self.parent().show_error_msg(str(e))
 
@@ -171,19 +171,19 @@ class CentralWidget(QWidget):
 
     def on_combo_changed(self, combo: QComboBox, dsp_parameter: DspParameter):
         dsp_parameter.value = dsp_parameter.choices.index(combo.currentText())
-        self.threadpool.start(Worker(self.send_dsp_params_change_sysex))
+        self.send_dsp_params_change_sysex()
 
     def on_knob_changed(self, knob: QDial, linked_knob_spinbox: QSpinBox, dsp_parameter: DspParameter):
         if knob.value() != linked_knob_spinbox.value():
             linked_knob_spinbox.setValue(knob.value())
             dsp_parameter.value = knob.value()
-            self.threadpool.start(Worker(self.send_dsp_params_change_sysex))
+            self.send_dsp_params_change_sysex()
 
     def on_knob_spinbox_changed(self, knob_spinbox: QSpinBox, linked_knob: QDial, dsp_parameter: DspParameter):
         if knob_spinbox.value() != linked_knob.value():
             linked_knob.setValue(knob_spinbox.value())
             dsp_parameter.value = knob_spinbox.value()
-            self.threadpool.start(Worker(self.send_dsp_params_change_sysex))
+            self.send_dsp_params_change_sysex()
 
     def on_random_button_pressed(self, qgrid_layout):
         for dsp_param in self.current_model.current_dsp_module.dsp_parameter_list:
@@ -191,7 +191,7 @@ class CentralWidget(QWidget):
                 dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
             if dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
                 dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
-        self.threadpool.start(Worker(self.send_dsp_params_change_sysex))
+        self.send_dsp_params_change_sysex()
         self.redraw_dsp_params_panel(qgrid_layout)
         self.parent().show_status_msg("It may be necessary to correct volume levels after setting random values.", 3000)
 
@@ -273,7 +273,7 @@ class CentralWidget(QWidget):
             except Exception as e:
                 self.parent().show_error_msg(str(e))
 
-            self.threadpool.start(Worker(self.load_dsp_params_from_synth_to_current_dsp))
+            self.load_dsp_params_from_synth_to_current_dsp()
 
     def load_dsp_params_from_synth_to_current_dsp(self):
         try:
@@ -291,3 +291,16 @@ class CentralWidget(QWidget):
         except Exception as e:
             self.parent().show_error_msg(str(e))
         print("send_dsp_params_change_sysex - finished")
+
+    def aaa(self):
+        worker = Worker(self.send_dsp_params_change_sysex)
+        worker.signals.result.connect(self.print_output)
+        worker.signals.finished.connect(self.thread_complete)
+        # worker.signals.progress.connect(self.progress_fn)
+        self.threadpool.start(worker)
+
+    def print_output(self, s):
+        print(s)
+
+    def thread_complete(self):
+        print("THREAD COMPLETE!")
