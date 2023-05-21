@@ -116,7 +116,7 @@ class CentralWidget(QWidget):
             msg = "<h2>Main Parameters</h2>List of parameters for editing tone.<br/>"
             for param in self.tone.main_parameter_list:
                 msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
-        elif self.current_dsp_page.block_id is not None:
+        elif self.current_dsp_page is not None and self.current_dsp_page.block_id is not None:
             if self.current_dsp_page.dsp_module is None:
                 msg = "DSP module is not selected."
             else:
