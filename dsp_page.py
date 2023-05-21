@@ -8,6 +8,7 @@ from enums.enums import ParameterType
 from gui_helper import GuiHelper
 from midi_service import MidiService
 from model.dsp_module import DspModule
+from model.dsp_parameter import DspParameter
 from model.tone import Tone
 
 EMPTY_DSP_NAME = "OFF"
@@ -141,6 +142,18 @@ class DspPage(QWidget):
                     output[13] = int(str(parameter.value).zfill(4)[2:])  # last 2 digits
         return output
 
+    @staticmethod
+    def decode_param_value(value: int, dsp_param: DspParameter):
+        if dsp_param.type == ParameterType.KNOB:
+            if dsp_param.choices[0] == 0:
+                return value
+            elif dsp_param.choices[0] == -64:
+                return value - 64
+        # TODO
+        # elif parameter.type == ParameterType.KNOB_2BYTES:
+        #     return value
+        return value
+
     def midi_set_synth_dsp_module(self):
         if self.dsp_module is None:
             # TODO: turn DSP off
@@ -156,7 +169,9 @@ class DspPage(QWidget):
             try:
                 synth_dsp_params = self.midi_service.request_dsp_params(self.block_id)
                 for idx, dsp_param in enumerate(self.dsp_module.dsp_parameter_list):
-                    dsp_param.value = synth_dsp_params[idx]
+                    print("Param before: " + str(synth_dsp_params[idx]) + ", after: " + str(
+                        self.decode_param_value(synth_dsp_params[idx], dsp_param)))
+                    dsp_param.value = self.decode_param_value(synth_dsp_params[idx], dsp_param)
             except Exception as e:
                 self.parent().parent().parent().parent().show_error_msg(str(e))
 
