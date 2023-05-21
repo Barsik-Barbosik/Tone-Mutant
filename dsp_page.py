@@ -15,13 +15,11 @@ RIGHT_SIDE_DSP_PARAMS = (
 
 
 class DspPage(QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
+    def __init__(self, block_id: int, dsp_module: DspModule):
+        super().__init__()
+        self.block_id: int = block_id
+        self.dsp_module: DspModule = dsp_module
         self.midi_service = MidiService.get_instance()
-
-        self.block_id: int = None
-        self.dsp_module: DspModule = None
 
         hbox_layout = QHBoxLayout(self)
         self.setLayout(hbox_layout)

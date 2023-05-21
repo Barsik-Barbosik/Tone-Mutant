@@ -26,10 +26,10 @@ class CentralWidget(QWidget):
         self.gui_factory = GuiHelper()
 
         self.tone: Tone = Tone()
-        self.dsp_page_1 = DspPage(self)
-        self.dsp_page_2 = DspPage(self)
-        self.dsp_page_3 = DspPage(self)
-        self.dsp_page_4 = DspPage(self)
+        self.dsp_page_1 = DspPage(0, self.tone.dsp_module_1)
+        self.dsp_page_2 = DspPage(1, self.tone.dsp_module_2)
+        self.dsp_page_3 = DspPage(2, self.tone.dsp_module_3)
+        self.dsp_page_4 = DspPage(3, self.tone.dsp_module_4)
         self.current_dsp_page: DspPage = None
 
         main_layout = QGridLayout(self)
@@ -57,19 +57,14 @@ class CentralWidget(QWidget):
 
             if current_tab_name == TabName.DSP_1:
                 self.current_dsp_page = self.dsp_page_1
-                self.current_dsp_page.block_id = 0  # TODO: setup block_id during init()
             elif current_tab_name == TabName.DSP_2:
                 self.current_dsp_page = self.dsp_page_1
-                self.current_dsp_page.block_id = 1
             elif current_tab_name == TabName.DSP_3:
                 self.current_dsp_page = self.dsp_page_1
-                self.current_dsp_page.block_id = 2
             elif current_tab_name == TabName.DSP_4:
                 self.current_dsp_page = self.dsp_page_1
-                self.current_dsp_page.block_id = 3
             else:
                 self.current_dsp_page = None
-                # self.current_dsp_page.block_id = None
 
             try:
                 synth_dsp_module = self.midi_service.request_dsp_module(self.current_dsp_page.block_id)
@@ -127,12 +122,12 @@ class CentralWidget(QWidget):
             for param in self.tone.main_parameter_list:
                 msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
         elif self.current_dsp_page.block_id is not None:
-            dsp_module = self.current_dsp_page.dsp_module
-            if dsp_module is None:
+            if self.current_dsp_page.dsp_module is None:
                 msg = "DSP module is not selected."
             else:
-                msg = "<h2>" + self.current_dsp_page.get_module_name() + "</h2>" + dsp_module.description + "<br/>"
-                for param in dsp_module.dsp_parameter_list:
+                msg = "<h2>" + self.current_dsp_page.get_module_name() + "</h2>" \
+                      + self.current_dsp_page.dsp_module.description + "<br/>"
+                for param in self.current_dsp_page.dsp_module.dsp_parameter_list:
                     msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
 
         self.parent().show_help_msg(msg)
