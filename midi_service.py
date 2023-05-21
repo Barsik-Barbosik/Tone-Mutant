@@ -1,4 +1,5 @@
 import configparser
+import threading
 import time
 
 import rtmidi
@@ -10,17 +11,32 @@ RESPONSE_TIMEOUT = 5  # in seconds
 
 
 class MidiService:
+    __instance = None
+    __lock = threading.Lock()
+
+    @staticmethod
+    def get_instance():
+        if MidiService.__instance is None:
+            with MidiService.__lock:
+                if MidiService.__instance is None:
+                    MidiService()
+        return MidiService.__instance
 
     def __init__(self):
-        cfg = configparser.ConfigParser()
-        cfg.read(CONFIG_FILENAME)
-        self.input_name = cfg.get("Midi", "InPort", fallback="")
-        self.output_name = cfg.get("Midi", "OutPort", fallback="")
-        self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
+        if MidiService.__instance is not None:
+            raise Exception("This class is a singleton!")
+        else:
+            MidiService.__instance = self
 
-        self.midi_in = rtmidi.MidiIn()
-        self.midi_out = rtmidi.MidiOut()
-        self.open_midi_ports()
+            cfg = configparser.ConfigParser()
+            cfg.read(CONFIG_FILENAME)
+            self.input_name = cfg.get("Midi", "InPort", fallback="")
+            self.output_name = cfg.get("Midi", "OutPort", fallback="")
+            self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
+
+            self.midi_in = rtmidi.MidiIn()
+            self.midi_out = rtmidi.MidiOut()
+            self.open_midi_ports()
 
     def open_midi_ports(self):
         for i in range(self.midi_out.get_port_count()):
