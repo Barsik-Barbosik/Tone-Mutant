@@ -2,7 +2,7 @@ import copy
 import random
 
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QListWidgetItem, QPushButton, QSizePolicy
+from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QListWidgetItem, QPushButton
 
 from enums.enums import ParameterType
 from gui_helper import GuiHelper
@@ -63,15 +63,34 @@ class DspPage(QWidget):
             button_row = len(self.dsp_module.dsp_parameter_list) - right_side_items_count + 1
             self.qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
         else:
-            self.qgrid_layout.addWidget(self.get_spacer(), 0, 0, 1, 4)
+            self.qgrid_layout.addWidget(GuiHelper.get_spacer(), 0, 0, 1, 4)
 
-        spacer = self.get_spacer()
-        self.qgrid_layout.addWidget(spacer)
+        self.qgrid_layout.addWidget(GuiHelper.get_spacer())
+
+    def clear_layout(self, layout):
+        if layout is not None:
+            while layout.count():
+                child = layout.takeAt(0)
+                if child.widget() is not None:
+                    child.widget().deleteLater()
+                elif child.layout() is not None:
+                    self.clear_layout(child.layout())
 
     def on_list_widget_changed(self, list_widget: QListWidget):
         dsp_module_id: int = list_widget.currentItem().data(Qt.UserRole)
 
         self.set_dsp_module_by_id(dsp_module_id)
+
+    def on_random_button_pressed(self):
+        for dsp_param in self.dsp_module.dsp_parameter_list:
+            if dsp_param.type == ParameterType.COMBO:
+                dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
+            if dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
+                dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
+        self.send_dsp_params_change_sysex()
+        self.redraw_dsp_params_panel()
+        self.parent().parent().parent().parent().show_status_msg(
+            "It may be necessary to correct volume levels after setting random values.", 3000)
 
     def get_module_name(self):
         return self.dsp_module.name if self.dsp_module is not None else EMPTY_DSP_NAME
@@ -102,31 +121,6 @@ class DspPage(QWidget):
             self.tone.dsp_module_3 = self.dsp_module
         elif self.block_id == 3:
             self.tone.dsp_module_4 = self.dsp_module
-
-    def on_random_button_pressed(self):
-        for dsp_param in self.dsp_module.dsp_parameter_list:
-            if dsp_param.type == ParameterType.COMBO:
-                dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
-            if dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
-                dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
-        self.send_dsp_params_change_sysex()
-        self.redraw_dsp_params_panel()
-        self.parent().parent().parent().parent().show_status_msg(
-            "It may be necessary to correct volume levels after setting random values.", 3000)
-
-    def clear_layout(self, layout):
-        if layout is not None:
-            while layout.count():
-                child = layout.takeAt(0)
-                if child.widget() is not None:
-                    child.widget().deleteLater()
-                elif child.layout() is not None:
-                    self.clear_layout(child.layout())
-
-    def get_spacer(self):
-        spacer = QWidget(self)
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        return spacer
 
     def get_current_dsp_params_as_list(self) -> list:
         output = [0] * 14

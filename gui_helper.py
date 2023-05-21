@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QDial, \
-    QHBoxLayout, QSpinBox, QComboBox
+    QHBoxLayout, QSpinBox, QComboBox, QWidget, QSizePolicy
 from PySide2.QtWidgets import QLabel
 
 from enums.enums import ParameterType
@@ -80,3 +80,9 @@ class GuiHelper:
             linked_knob.setValue(knob_spinbox.value())
             dsp_parameter.value = knob_spinbox.value()
             function_to_run()  # send_dsp_params_change_sysex()
+
+    @staticmethod
+    def get_spacer():
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        return spacer
