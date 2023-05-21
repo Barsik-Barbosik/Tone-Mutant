@@ -79,7 +79,7 @@ class DspPage(QWidget):
     def on_list_widget_changed(self, list_widget: QListWidget):
         dsp_module_id: int = list_widget.currentItem().data(Qt.UserRole)
 
-        self.set_dsp_module_by_id(dsp_module_id)
+        self.set_tone_dsp_module_by_dsp_id(dsp_module_id)
 
     def on_random_button_pressed(self):
         for dsp_param in self.dsp_module.dsp_parameter_list:
@@ -99,28 +99,29 @@ class DspPage(QWidget):
         try:
             synth_dsp_module = self.midi_service.request_dsp_module(self.block_id)
             if synth_dsp_module is not None and len(synth_dsp_module) > 0:
-                self.set_dsp_module_by_id(synth_dsp_module[0])
+                self.set_tone_dsp_module_by_dsp_id(synth_dsp_module[0])
         except Exception as e:
             self.parent().parent().parent().parent().show_error_msg(str(e))
 
-    def set_dsp_module_by_id(self, dsp_module_id):
+    def set_tone_dsp_module_by_dsp_id(self, dsp_module_id):
         if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
-            self.dsp_module = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
-            self.update_tone()
+            if self.block_id == 0:
+                self.tone.dsp_module_1 = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
+                self.dsp_module = self.tone.dsp_module_1
+            elif self.block_id == 1:
+                self.tone.dsp_module_2 = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
+                self.dsp_module = self.tone.dsp_module_2
+            elif self.block_id == 2:
+                self.tone.dsp_module_3 = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
+                self.dsp_module = self.tone.dsp_module_3
+            elif self.block_id == 3:
+                self.tone.dsp_module_4 = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
+                self.dsp_module = self.tone.dsp_module_4
+
             self.change_dsp_module()
             self.update_current_dsp_params()
             self.redraw_dsp_params_panel()
             self.parent().parent().parent().redraw_help_msg()
-
-    def update_tone(self):
-        if self.block_id == 0:
-            self.tone.dsp_module_1 = self.dsp_module
-        elif self.block_id == 1:
-            self.tone.dsp_module_2 = self.dsp_module
-        elif self.block_id == 2:
-            self.tone.dsp_module_3 = self.dsp_module
-        elif self.block_id == 3:
-            self.tone.dsp_module_4 = self.dsp_module
 
     def get_current_dsp_params_as_list(self) -> list:
         output = [0] * 14
