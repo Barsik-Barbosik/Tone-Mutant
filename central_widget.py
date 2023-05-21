@@ -58,9 +58,11 @@ class CentralWidget(QWidget):
                 if synth_dsp_module is not None and len(synth_dsp_module) > 0:
                     self.current_model.update_current_dsp_module(synth_dsp_module[0])
                     self.update_current_dsp_params()  # in separate thread
+                    # self.list_widget.setCurrentRow(8)
+                # else:
+                # self.list_widget.setCurrentRow(0)
             except Exception as e:
                 self.parent().show_error_msg(str(e))
-            print("update list item!")  # TODO
         elif current_tab_name == TabName.JSON:
             self.parent().show_status_msg("Tone information in JSON-format", 3000)
             self.output_tab_textbox.setPlainText(self.current_model.get_current_tone_as_json())
