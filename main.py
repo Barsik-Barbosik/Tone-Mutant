@@ -30,6 +30,11 @@ class MainWindow(QMainWindow):
 
         self.midi_settings_window = None
 
+        # load current DSP from synth
+        self.central_widget.dsp_page_1.update_tone_dsp_module_by_dsp_id(None)
+        self.central_widget.dsp_page_2.update_tone_dsp_module_by_dsp_id(None)
+        self.central_widget.dsp_page_3.update_tone_dsp_module_by_dsp_id(None)
+        self.central_widget.dsp_page_4.update_tone_dsp_module_by_dsp_id(None)
         self.central_widget.on_tab_changed(0)
 
     def init_menu_bar(self):
