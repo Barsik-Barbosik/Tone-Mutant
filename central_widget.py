@@ -8,7 +8,7 @@ from enums.enums import TabName
 from external.object_encoder import ObjectEncoder
 from gui_helper import GuiHelper
 from midi_service import MidiService
-from model.instrument import Instrument
+from model import constants
 from model.tone import Tone
 from status_bar import StatusBar
 
@@ -88,7 +88,7 @@ class CentralWidget(QWidget):
         main_params_page.setLayout(hbox_layout)
 
         self.instrument_list.setFixedWidth(180)
-        for idx, instrument in enumerate(Instrument.get_all_instruments()):
+        for idx, instrument in enumerate(constants.ALL_INSTRUMENTS):
             item = QListWidgetItem()
             item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
             item.setData(Qt.UserRole, instrument.id)
@@ -111,7 +111,7 @@ class CentralWidget(QWidget):
 
     @staticmethod
     def change_instrument_by_id(instrument_id):
-        instrument = Instrument.get_instrument_by_id(instrument_id)
+        instrument = Tone.get_instrument_by_id(instrument_id)
         print("Instrument id: " + str(instrument_id) + " " + instrument.name)
 
     def create_json_view_page(self) -> QWidget:

@@ -1,4 +1,5 @@
 from enums.enums import ParameterType
+from model import constants
 from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.instrument import Instrument
@@ -53,6 +54,9 @@ class Tone:
                          "Specifies how much delay is applied to a tone.",
                          ParameterType.KNOB, [0, 127], 0)]
 
+        # Advanced parameters:
+        # reverb params, chorus params, delay params, pitch bend wheel, modulation wheel, sustain pedal
+
         self.dsp_module_1: DspModule = None
         self.dsp_module_2: DspModule = None
         self.dsp_module_3: DspModule = None
@@ -72,5 +76,13 @@ class Tone:
             ]}
         return obj
 
-# MORE:
-# reverb params, chorus params, delay params, pitch bend wheel, modulation wheel, sustain pedal
+    @staticmethod
+    def get_instrument_by_id(instrument_id: int):
+        if instrument_id is None or instrument_id == 0:
+            return None
+
+        for instrument in constants.ALL_INSTRUMENTS:
+            if instrument.id == instrument_id:
+                return instrument
+
+        return None
