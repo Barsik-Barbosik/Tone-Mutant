@@ -6,6 +6,17 @@ class Instrument:
         self.bank = bank
 
     @staticmethod
+    def get_instrument_by_id(instrument_id: int):
+        if instrument_id is None or instrument_id == 0:
+            return None
+
+        for instrument in Instrument.get_all_instruments():
+            if instrument.id == instrument_id:
+                return instrument
+
+        return None
+
+    @staticmethod
     def get_all_instruments() -> tuple:
         return _all_instruments
 
