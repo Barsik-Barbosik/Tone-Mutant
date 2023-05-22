@@ -1,11 +1,13 @@
 from enums.enums import ParameterType
 from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
+from model.instrument import Instrument
 
 
 class Tone:
     def __init__(self):
         self.name: str = None
+        self.base: Instrument = None
 
         self.main_parameter_list: list[DspParameter] = [
             DspParameter(1, "Attack Time",
@@ -58,6 +60,8 @@ class Tone:
 
     def to_json(self):
         obj = {
+            "name": self.name,
+            "base": self.base,
             "main": self.main_parameter_list,
             "DSP": [
                 {"DSP_1": self.dsp_module_1,
