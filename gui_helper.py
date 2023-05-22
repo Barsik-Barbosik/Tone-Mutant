@@ -1,5 +1,7 @@
+from typing import Callable
+
 from PySide2.QtWidgets import QDial, \
-    QHBoxLayout, QSpinBox, QComboBox, QWidget, QSizePolicy
+    QHBoxLayout, QSpinBox, QComboBox, QWidget, QSizePolicy, QGridLayout
 from PySide2.QtWidgets import QLabel
 
 from enums.enums import ParameterType
@@ -11,7 +13,8 @@ KNOB_SIZE = 40
 class GuiHelper:
 
     @staticmethod
-    def fill_qgrid_with_params(qgrid_layout, param_list, right_side_items, function_to_run) -> int:
+    def fill_qgrid_with_params(qgrid_layout: QGridLayout, param_list: list, right_side_items: tuple,
+                               function_to_run: Callable) -> int:
         right_side_items_count = 0
         for idx, dsp_param in enumerate(param_list):
             if dsp_param.name not in right_side_items:
@@ -34,7 +37,7 @@ class GuiHelper:
         return right_side_items_count
 
     @staticmethod
-    def create_combo_input(dsp_parameter: DspParameter, function_to_run) -> QComboBox:
+    def create_combo_input(dsp_parameter: DspParameter, function_to_run: Callable) -> QComboBox:
         combo_box = QComboBox()
         combo_box.addItems(dsp_parameter.choices)
         combo_box.setCurrentIndex(dsp_parameter.value)
@@ -43,7 +46,7 @@ class GuiHelper:
         return combo_box
 
     @staticmethod
-    def create_knob_input(dsp_parameter: DspParameter, function_to_run) -> QHBoxLayout:
+    def create_knob_input(dsp_parameter: DspParameter, function_to_run: Callable) -> QHBoxLayout:
         knob_spinbox = QSpinBox()
         knob_spinbox.setMinimum(dsp_parameter.choices[0])
         knob_spinbox.setMaximum(dsp_parameter.choices[1])
@@ -62,12 +65,13 @@ class GuiHelper:
         return hbox
 
     @staticmethod
-    def on_combo_changed(combo: QComboBox, dsp_parameter: DspParameter, function_to_run):
+    def on_combo_changed(combo: QComboBox, dsp_parameter: DspParameter, function_to_run: Callable):
         dsp_parameter.value = dsp_parameter.choices.index(combo.currentText())
         function_to_run()  # send_dsp_params_change_sysex()
 
     @staticmethod
-    def on_knob_changed(knob: QDial, linked_knob_spinbox: QSpinBox, dsp_parameter: DspParameter, function_to_run):
+    def on_knob_changed(knob: QDial, linked_knob_spinbox: QSpinBox, dsp_parameter: DspParameter,
+                        function_to_run: Callable):
         if knob.value() != linked_knob_spinbox.value():
             linked_knob_spinbox.setValue(knob.value())
             dsp_parameter.value = knob.value()
@@ -75,14 +79,14 @@ class GuiHelper:
 
     @staticmethod
     def on_knob_spinbox_changed(knob_spinbox: QSpinBox, linked_knob: QDial, dsp_parameter: DspParameter,
-                                function_to_run):
+                                function_to_run: Callable):
         if knob_spinbox.value() != linked_knob.value():
             linked_knob.setValue(knob_spinbox.value())
             dsp_parameter.value = knob_spinbox.value()
             function_to_run()  # send_dsp_params_change_sysex()
 
     @staticmethod
-    def get_spacer():
+    def get_spacer() -> QWidget:
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         return spacer
