@@ -106,10 +106,11 @@ class CentralWidget(QWidget):
         instrument_id: int = instrument_list.currentItem().data(Qt.UserRole)
         self.change_instrument_by_id(instrument_id)
 
-    @staticmethod
-    def change_instrument_by_id(instrument_id):
+    def change_instrument_by_id(self, instrument_id):
         instrument = Tone.get_instrument_by_id(instrument_id)
-        print("Instrument id: " + str(instrument_id) + " " + instrument.name)
+        self.tone.name = instrument.name  # TODO: read from synth
+        self.tone.base_tone = instrument
+        print("Instrument id: " + str(instrument_id) + " " + self.tone.base_tone.name)
 
     def create_json_view_page(self) -> QWidget:
         json_view_page = QWidget(self)

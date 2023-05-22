@@ -4,3 +4,6 @@ class Instrument:
         self.name = name
         self.program_change = program_change
         self.bank = bank
+
+    def to_json(self):
+        return {"id": self.id, "name": self.name}

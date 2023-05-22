@@ -8,7 +8,7 @@ from model.instrument import Instrument
 class Tone:
     def __init__(self):
         self.name: str = None
-        self.base: Instrument = None
+        self.base_tone: Instrument = None
 
         self.main_parameter_list: list[DspParameter] = [
             DspParameter(1, "Attack Time",
@@ -65,13 +65,13 @@ class Tone:
     def to_json(self):
         obj = {
             "name": self.name,
-            "base": self.base,
-            "main": self.main_parameter_list,
-            "DSP": [
-                {"DSP_1": self.dsp_module_1,
-                 "DSP_2": self.dsp_module_2,
-                 "DSP_3": self.dsp_module_3,
-                 "DSP_4": self.dsp_module_4
+            "base_tone": self.base_tone,
+            "parameters": self.main_parameter_list,
+            "dsp_modules": [
+                {"dsp_1": self.dsp_module_1,
+                 "dsp_2": self.dsp_module_2,
+                 "dsp_3": self.dsp_module_3,
+                 "dsp_4": self.dsp_module_4
                  }
             ]}
         return obj
