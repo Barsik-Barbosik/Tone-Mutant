@@ -9,6 +9,9 @@ KNOB_SIZE: Final[int] = 40
 
 EMPTY_DSP_NAME: Final[str] = "OFF"
 
+RIGHT_SIDE_MAIN_PARAMS: Final[tuple] = (
+    "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume")
+
 RIGHT_SIDE_DSP_PARAMS: Final[tuple] = (
     "Overdrive Gain", "Overdrive Level", "Dist Gain", "Dist Level", "Delay Level L", "Delay Level R", "Input Level",
     "Wet Level", "Dry Level")

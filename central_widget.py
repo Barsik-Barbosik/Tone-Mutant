@@ -12,9 +12,6 @@ from model import constants
 from model.tone import Tone
 from status_bar import StatusBar
 
-RIGHT_SIDE_MAIN_PARAMS = (
-    "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume")
-
 
 class CentralWidget(QWidget):
     def __init__(self, *args, **kwargs):
@@ -99,7 +96,7 @@ class CentralWidget(QWidget):
 
         GuiHelper.fill_qgrid_with_params(qgrid_layout,
                                          self.tone.main_parameter_list,
-                                         RIGHT_SIDE_MAIN_PARAMS,
+                                         constants.RIGHT_SIDE_MAIN_PARAMS,
                                          self.do_nothing)
 
         hbox_layout.addLayout(qgrid_layout)  # right side
