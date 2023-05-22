@@ -23,7 +23,6 @@ class CentralWidget(QWidget):
         self.threadpool = QThreadPool.globalInstance()
         self.json_view_tab_textbox = QTextBrowser()
         self.midi_service = MidiService.get_instance()
-        self.gui_factory = GuiHelper()
 
         self.tone: Tone = Tone()
         self.dsp_page_1 = DspPage(self.tone, 0)
@@ -34,6 +33,8 @@ class CentralWidget(QWidget):
 
         main_layout = QGridLayout(self)
         self.setLayout(main_layout)
+
+        self.instrument_list = QListWidget(self)
 
         self.tab_widget = QTabWidget(self)
         self.tab_widget.setMinimumHeight(400)
@@ -86,20 +87,19 @@ class CentralWidget(QWidget):
         hbox_layout = QHBoxLayout(self)
         main_params_page.setLayout(hbox_layout)
 
-        list_widget = QListWidget(self)
-        list_widget.setFixedWidth(180)
+        self.instrument_list.setFixedWidth(180)
         for idx, instrument in enumerate(Instrument.get_all_instruments()):
             item = QListWidgetItem()
             item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
             item.setData(Qt.UserRole, instrument.id)
-            list_widget.insertItem(idx, item)
-        list_widget.setCurrentRow(0)
-        hbox_layout.addWidget(list_widget)  # left side
+            self.instrument_list.insertItem(idx, item)
+        self.instrument_list.setCurrentRow(0)
+        hbox_layout.addWidget(self.instrument_list)  # left side
 
-        self.gui_factory.fill_qgrid_with_params(qgrid_layout,
-                                                self.tone.main_parameter_list,
-                                                RIGHT_SIDE_MAIN_PARAMS,
-                                                self.do_nothing)
+        GuiHelper.fill_qgrid_with_params(qgrid_layout,
+                                         self.tone.main_parameter_list,
+                                         RIGHT_SIDE_MAIN_PARAMS,
+                                         self.do_nothing)
 
         hbox_layout.addLayout(qgrid_layout)  # right side
         return main_params_page
