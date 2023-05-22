@@ -13,11 +13,6 @@ from model.dsp_parameter import DspParameter
 from model.tone import Tone
 from status_bar import StatusBar
 
-EMPTY_DSP_NAME = "OFF"
-RIGHT_SIDE_DSP_PARAMS = (
-    "Overdrive Gain", "Overdrive Level", "Dist Gain", "Dist Level", "Delay Level L", "Delay Level R", "Input Level",
-    "Wet Level", "Dry Level")
-
 
 class DspPage(QWidget):
     def __init__(self, tone: Tone, block_id: int):
@@ -38,7 +33,7 @@ class DspPage(QWidget):
 
         self.list_widget = QListWidget(self)
         self.list_widget.setFixedWidth(180)
-        self.list_widget.insertItem(0, EMPTY_DSP_NAME)
+        self.list_widget.insertItem(0, constants.EMPTY_DSP_NAME)
         for idx, dsp_module in enumerate(constants.ALL_DSP_MODULES):
             item = QListWidgetItem()
             item.setText(dsp_module.name)
@@ -57,7 +52,7 @@ class DspPage(QWidget):
         if self.dsp_module is not None:
             right_side_items_count = GuiHelper.fill_qgrid_with_params(self.qgrid_layout,
                                                                       self.dsp_module.dsp_parameter_list,
-                                                                      RIGHT_SIDE_DSP_PARAMS,
+                                                                      constants.RIGHT_SIDE_DSP_PARAMS,
                                                                       self.midi_set_synth_dsp_params)
 
             random_button = QPushButton("Set random values", self)
@@ -96,7 +91,7 @@ class DspPage(QWidget):
             "It may be necessary to correct volume levels after setting random values.", 3000)
 
     def get_module_name(self):
-        return self.dsp_module.name if self.dsp_module is not None else EMPTY_DSP_NAME
+        return self.dsp_module.name if self.dsp_module is not None else constants.EMPTY_DSP_NAME
 
     def update_tone_dsp_module_by_dsp_id(self, dsp_module_id):
         synth_dsp_module_id = None

@@ -5,7 +5,13 @@ from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.instrument import Instrument
 
-KNOB_SIZE = 40
+KNOB_SIZE: Final[int] = 40
+
+EMPTY_DSP_NAME: Final[str] = "OFF"
+
+RIGHT_SIDE_DSP_PARAMS: Final[tuple] = (
+    "Overdrive Gain", "Overdrive Level", "Dist Gain", "Dist Level", "Delay Level L", "Delay Level R", "Input Level",
+    "Wet Level", "Dry Level")
 
 ALL_INSTRUMENTS: Final[tuple] = (
     Instrument(1, "StagePno", 0, 1),

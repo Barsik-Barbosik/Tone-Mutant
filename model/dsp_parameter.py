@@ -21,5 +21,4 @@ class DspParameter:
             obj["text"] = self.choices[self.value]
         elif self.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
             obj["value"] = self.value
-
         return obj
