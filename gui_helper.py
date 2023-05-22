@@ -5,7 +5,7 @@ from PySide2.QtWidgets import QLabel
 from enums.enums import ParameterType
 from model.dsp_parameter import DspParameter
 
-KNOB_SIZE = 40  # TODO: move size into style qss
+KNOB_SIZE = 40
 
 
 class GuiHelper:
