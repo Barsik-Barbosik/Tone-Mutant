@@ -7,6 +7,7 @@ from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QL
 from enums.enums import ParameterType
 from gui_helper import GuiHelper
 from midi_service import MidiService
+from model import constants
 from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.tone import Tone
@@ -38,7 +39,7 @@ class DspPage(QWidget):
         self.list_widget = QListWidget(self)
         self.list_widget.setFixedWidth(180)
         self.list_widget.insertItem(0, EMPTY_DSP_NAME)
-        for idx, dsp_module in enumerate(DspModule.get_all_dsp_modules()):
+        for idx, dsp_module in enumerate(constants.ALL_DSP_MODULES):
             item = QListWidgetItem()
             item.setText(dsp_module.name)
             item.setData(Qt.UserRole, dsp_module.id)
@@ -110,16 +111,16 @@ class DspPage(QWidget):
 
         if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
             if self.block_id == 0:
-                self.tone.dsp_module_1 = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
+                self.tone.dsp_module_1 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
                 self.dsp_module = self.tone.dsp_module_1
             elif self.block_id == 1:
-                self.tone.dsp_module_2 = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
+                self.tone.dsp_module_2 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
                 self.dsp_module = self.tone.dsp_module_2
             elif self.block_id == 2:
-                self.tone.dsp_module_3 = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
+                self.tone.dsp_module_3 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
                 self.dsp_module = self.tone.dsp_module_3
             elif self.block_id == 3:
-                self.tone.dsp_module_4 = copy.deepcopy(DspModule.get_dsp_module_by_id(dsp_module_id))
+                self.tone.dsp_module_4 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
                 self.dsp_module = self.tone.dsp_module_4
 
             if synth_dsp_module_id is None or synth_dsp_module_id != dsp_module_id:

@@ -86,3 +86,14 @@ class Tone:
                 return instrument
 
         return None
+
+    @staticmethod
+    def get_dsp_module_by_id(dsp_module_id: int):
+        if dsp_module_id is None or dsp_module_id == 0:
+            return None
+
+        for dsp_module in constants.ALL_DSP_MODULES:
+            if dsp_module.id == dsp_module_id:
+                return dsp_module
+
+        return None
