@@ -2,6 +2,8 @@ from typing import Final
 
 from model.instrument import Instrument
 
+KNOB_SIZE = 40
+
 ALL_INSTRUMENTS: Final[tuple] = (
     Instrument(1, "StagePno", 0, 1),
     Instrument(2, "GrandPno", 0, 3),

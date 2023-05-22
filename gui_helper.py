@@ -5,9 +5,8 @@ from PySide2.QtWidgets import QDial, \
 from PySide2.QtWidgets import QLabel
 
 from enums.enums import ParameterType
+from model import constants
 from model.dsp_parameter import DspParameter
-
-KNOB_SIZE = 40
 
 
 class GuiHelper:
@@ -55,7 +54,7 @@ class GuiHelper:
         knob.setMinimum(knob_spinbox.minimum())
         knob.setMaximum(knob_spinbox.maximum())
         knob.setValue(dsp_parameter.value)
-        knob.setFixedSize(KNOB_SIZE, KNOB_SIZE)
+        knob.setFixedSize(constants.KNOB_SIZE, constants.KNOB_SIZE)
         knob.valueChanged.connect(lambda: GuiHelper.on_knob_changed(knob, knob_spinbox, dsp_parameter, function_to_run))
         knob_spinbox.valueChanged.connect(
             lambda: GuiHelper.on_knob_spinbox_changed(knob_spinbox, knob, dsp_parameter, function_to_run))
