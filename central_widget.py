@@ -10,6 +10,7 @@ from gui_helper import GuiHelper
 from midi_service import MidiService
 from model.instrument import Instrument
 from model.tone import Tone
+from status_bar import StatusBar
 
 RIGHT_SIDE_MAIN_PARAMS = (
     "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume")
@@ -50,9 +51,9 @@ class CentralWidget(QWidget):
         current_tab_name = self.get_current_tab_name()
 
         if current_tab_name == TabName.MAIN_PARAMETERS:
-            self.parent().show_status_msg("Main parameters for editing tone", 3000)
+            StatusBar.get_instance().show_status_msg("Main parameters for editing tone", 3000)
         elif current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
-            self.parent().show_status_msg("Parameters for " + current_tab_name.value + " module", 3000)
+            StatusBar.get_instance().show_status_msg("Parameters for " + current_tab_name.value + " module", 3000)
 
             if current_tab_name == TabName.DSP_1:
                 self.current_dsp_page = self.dsp_page_1
@@ -67,7 +68,7 @@ class CentralWidget(QWidget):
 
             self.current_dsp_page.update_tone_dsp_module_by_dsp_id(None)
         elif current_tab_name == TabName.JSON:
-            self.parent().show_status_msg("Tone information in JSON-format", 3000)
+            StatusBar.get_instance().show_status_msg("Tone information in JSON-format", 3000)
             self.json_view_tab_textbox.setPlainText(json.dumps(self.tone, cls=ObjectEncoder, indent=4))
 
         self.redraw_help_msg()
