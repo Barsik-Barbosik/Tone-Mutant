@@ -14,10 +14,10 @@ from widgets.gui_helper import GuiHelper
 
 
 class DspPage(QWidget):
-    def __init__(self, main_window, tone: Tone, block_id: int):
+    def __init__(self, main_window, block_id: int):
         super().__init__()
         self.main = main_window
-        self.tone: Tone = tone
+        self.tone: Tone = self.main.tone
         self.block_id: int = block_id
         self.dsp_module: DspModule = None
         self.midi_service = MidiService.get_instance()

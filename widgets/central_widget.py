@@ -16,16 +16,15 @@ class CentralWidget(QWidget):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.main = parent
-
+        self.tone: Tone = self.main.tone
         self.threadpool = QThreadPool.globalInstance()
         self.json_view_tab_textbox = QTextBrowser()
         self.midi_service = MidiService.get_instance()
 
-        self.tone: Tone = Tone()
-        self.dsp_page_1 = DspPage(self.main, self.tone, 0)
-        self.dsp_page_2 = DspPage(self.main, self.tone, 1)
-        self.dsp_page_3 = DspPage(self.main, self.tone, 2)
-        self.dsp_page_4 = DspPage(self.main, self.tone, 3)
+        self.dsp_page_1 = DspPage(self.main, 0)
+        self.dsp_page_2 = DspPage(self.main, 1)
+        self.dsp_page_3 = DspPage(self.main, 2)
+        self.dsp_page_4 = DspPage(self.main, 3)
         self.current_dsp_page: DspPage = None
 
         main_layout = QGridLayout(self)

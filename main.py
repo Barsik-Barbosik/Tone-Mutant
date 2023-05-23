@@ -5,6 +5,7 @@ from PySide2.QtWidgets import QApplication, QMainWindow, QMenu, QAction, QMenuBa
     QDockWidget, \
     QWidget, QHBoxLayout, QTabWidget, QFrame, QStatusBar
 
+from model.tone import Tone
 from widgets.central_widget import CentralWidget
 from widgets.midi_settings_window import MidiSettingsWindow
 from widgets.top_widget import TopWidget
@@ -14,6 +15,8 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("CT-X Controller")
+
+        self.tone: Tone = Tone()
 
         self.menu_bar = self.init_menu_bar()
         self.setMenuBar(self.menu_bar)

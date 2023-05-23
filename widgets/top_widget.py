@@ -1,5 +1,6 @@
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton, QListWidget
 
+from model.tone import Tone
 from services.midi_service import MidiService
 from widgets.gui_helper import GuiHelper
 
@@ -12,6 +13,7 @@ class TopWidget(QWidget):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.main = parent
+        self.tone: Tone = self.main.tone
         self.midi_service = MidiService.get_instance()
 
         self.channel = 0
@@ -63,6 +65,6 @@ class TopWidget(QWidget):
     def on_synchronize_button(self):
         print("Synchronize tone!")
         try:
-            self.midi_service.send_change_tone_msg(self.main.central_widget.tone.base_tone)
+            self.midi_service.send_change_tone_msg(self.tone.base_tone)
         except Exception as e:
             self.main.show_error_msg(str(e))
