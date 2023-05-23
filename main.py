@@ -3,7 +3,7 @@ import sys
 from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtWidgets import QApplication, QMainWindow, QMenu, QAction, QMenuBar, QTextBrowser, \
     QDockWidget, \
-    QWidget, QHBoxLayout, QTabWidget
+    QWidget, QHBoxLayout, QTabWidget, QLabel, QFrame
 
 from central_widget import CentralWidget
 from midi_settings_window import MidiSettingsWindow
@@ -23,6 +23,10 @@ class MainWindow(QMainWindow):
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)  # remove right margin
 
         self.help_texbox = QTextBrowser()
+
+        # self.top_dock = self.init_top_dock()
+        # self.addDockWidget(Qt.TopDockWidgetArea, self.top_dock)
+
         self.right_dock = self.init_right_dock(self.help_texbox)
         self.addDockWidget(Qt.RightDockWidgetArea, self.right_dock)
 
@@ -71,6 +75,28 @@ class MainWindow(QMainWindow):
         file_menu.addAction(exit_action)
 
         return menu_bar
+
+    def init_top_dock(self):
+        top_dock = QDockWidget("Top Dock", self)
+        top_dock.setTitleBarWidget(QWidget())
+        top_dock.setFloating(False)
+
+        qframe = QFrame(self)
+        qframe.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
+        qframe.setStyleSheet("background-color: white;")
+        inter_layout = QHBoxLayout(self)
+        inter_layout.addWidget(QLabel("Channel: [UPPER 1]            Tone name: [StagePno]            Mute: [OFF]            [SYNCHRONIZE]"))
+        qframe.setLayout(inter_layout)
+
+        outer_widget = QWidget(self)
+        outer_layout = QHBoxLayout(self)
+        outer_layout.setContentsMargins(10, 10, 10, 0)  # remove bottom margin
+        outer_layout.addWidget(qframe)
+        outer_widget.setLayout(outer_layout)
+
+        top_dock.setWidget(outer_widget)
+
+        return top_dock
 
     def init_right_dock(self, help_texbox):
         right_dock = QDockWidget("Right Dock", self)
