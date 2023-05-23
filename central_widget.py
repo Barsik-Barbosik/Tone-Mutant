@@ -111,6 +111,10 @@ class CentralWidget(QWidget):
         self.tone.name = instrument.name  # TODO: read from synth
         self.tone.base_tone = instrument
         print("Instrument id: " + str(instrument_id) + " " + self.tone.base_tone.name)
+        try:
+            self.midi_service.send_change_tone_msg(self.tone.base_tone)
+        except Exception as e:
+            StatusBar.get_instance().show_error_msg(str(e))
 
     def create_json_view_page(self) -> QWidget:
         json_view_page = QWidget(self)

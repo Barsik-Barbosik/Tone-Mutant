@@ -1,10 +1,12 @@
 import configparser
+import struct
 import threading
 import time
 
 import rtmidi
 
 from enums.enums import SysexType
+from model.instrument import Instrument
 
 CONFIG_FILENAME = "config.cfg"
 RESPONSE_TIMEOUT = 5  # in seconds
@@ -96,6 +98,62 @@ class MidiService:
         time.sleep(0.01)
         self.midi_in.get_message()
 
+    def send_change_tone_msg(self, instrument: Instrument):
+        print("...")
+        # note_on = [0x90, 60, 112]  # channel 1, middle C, velocity 112
+        # note_off = [0x80, 60, 0]
+        # self.midi_out.send_message(note_on)
+        # time.sleep(0.5)
+        # self.midi_out.send_message(note_off)
+        # time.sleep(0.1)
+        #
+        # cc_01 = [0xB0, 0x00,instrument.bank]
+        # cc_02 = [0xB0, 0x20, 0x00]
+        # pc = [0xC0, instrument.program_change]
+        # self.midi_out.send_message(cc_01)
+        # time.sleep(0.1)
+        # self.midi_out.send_message(cc_02)
+        # time.sleep(0.1)
+        # self.midi_out.send_message(pc)
+        # time.sleep(0.1)
+        #
+        # aaa = self.make_program_change(19, 35, bankLSB=0, channel=0)
+        # bbb = aaa.hex(' ').upper()
+        # self.send_sysex(bbb)
+        # s1 = "B0 00 04"
+        # s2 = "B0 20 00"
+        # s3 = "C0 04"
+        # self.flush_input_queue()
+        # self.midi_out.send_message(bytearray(bytes.fromhex(s2)))
+        # time.sleep(0.5)
+        # self.midi_out.send_message(bytearray(bytes.fromhex(s1)))
+        # time.sleep(0.5)
+        # self.midi_out.send_message(bytearray(bytes.fromhex(s3)))
+        # time.sleep(0.5)
+        #
+        # s1 = "B1 00 04"
+        # s2 = "B1 20 00"
+        # s3 = "C1 04"
+        # self.flush_input_queue()
+        # self.midi_out.send_message(bytearray(bytes.fromhex(s2)))
+        # time.sleep(0.5)
+        # self.midi_out.send_message(bytearray(bytes.fromhex(s1)))
+        # time.sleep(0.5)
+        # self.midi_out.send_message(bytearray(bytes.fromhex(s3)))
+        # time.sleep(0.5)
+        #
+        # s1 = "B2 00 04"
+        # s2 = "B2 20 00"
+        # s3 = "C2 04"
+        # self.flush_input_queue()
+        # self.midi_out.send_message(bytearray(bytes.fromhex(s1)))
+        # time.sleep(0.5)
+        # self.midi_out.send_message(bytearray(bytes.fromhex(s2)))
+        # time.sleep(0.5)
+        # self.midi_out.send_message(bytearray(bytes.fromhex(s3)))
+        # time.sleep(0.5)
+
+
     def send_dsp_params_change_sysex(self, params_list: list, block_id: int):
         # Array size is always 14 bytes: length is "0D"
         msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00"
@@ -177,8 +235,8 @@ class MidiService:
     #     return bytes.fromhex("F0 44 19 01 7F 01") \
     #         + struct.pack("<BBHHHHHHHH", category, memory, parameter_set, 0, 0, 0, block0, parameter, 0, 0) \
     #         + data + bytes.fromhex("F7")
-    #
-    # @staticmethod
-    # def make_program_change(prgm, bankMSB, bankLSB=0, channel=0):
-    #     return struct.pack("<BBBBBBBB", 0xB0 + channel, 0x00, bankMSB, 0xB0 + channel, 0x20, bankLSB, 0xC0 + channel,
-    #                        prgm)
+
+    @staticmethod
+    def make_program_change(prgm, bankMSB, bankLSB=0, channel=0):
+        return struct.pack("<BBBBBBBB", 0xB0 + channel, 0x00, bankMSB, 0xB0 + channel, 0x20, bankLSB, 0xC0 + channel,
+                           prgm)
