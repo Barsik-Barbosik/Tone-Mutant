@@ -6,6 +6,7 @@ from PySide2.QtWidgets import QApplication, QMainWindow, QMenu, QAction, QMenuBa
     QWidget, QHBoxLayout, QTabWidget, QFrame, QStatusBar
 
 from model.tone import Tone
+from services.midi_service import MidiService
 from widgets.central_widget import CentralWidget
 from widgets.midi_settings_window import MidiSettingsWindow
 from widgets.top_widget import TopWidget
@@ -17,6 +18,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("CT-X Controller")
 
         self.tone: Tone = Tone()
+        self.midi_service = MidiService.get_instance()
 
         self.menu_bar = self.init_menu_bar()
         self.setMenuBar(self.menu_bar)
@@ -43,6 +45,12 @@ class MainWindow(QMainWindow):
     def synchronize_tone_with_synth(self):
         print("Synchronizing tone!")
         self.tone = Tone()  # TODO: fix -> tone is initialized twice during the application startup
+
+        try:
+            self.midi_service.send_change_tone_msg(self.tone.base_tone)
+        except Exception as e:
+            self.main.show_error_msg(str(e))
+
         self.reload_dsp_page(self.central_widget.dsp_page_1)
         self.reload_dsp_page(self.central_widget.dsp_page_2)
         self.reload_dsp_page(self.central_widget.dsp_page_3)

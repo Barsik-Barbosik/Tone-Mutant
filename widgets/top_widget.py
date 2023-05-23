@@ -1,7 +1,6 @@
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton, QListWidget
 
 from model.tone import Tone
-from services.midi_service import MidiService
 from widgets.gui_helper import GuiHelper
 
 DEFAULT_NAME = "001 StagePno"
@@ -14,7 +13,7 @@ class TopWidget(QWidget):
         super().__init__(parent, *args, **kwargs)
         self.main = parent
         self.tone: Tone = self.main.tone
-        self.midi_service = MidiService.get_instance()
+        # self.midi_service = MidiService.get_instance()
 
         self.channel = 0
         self.layout = QHBoxLayout(self)
@@ -61,11 +60,3 @@ class TopWidget(QWidget):
             else:
                 instrument_list.setEnabled(False)
                 instrument_list.clearSelection()
-
-    # def on_synchronize_button(self):
-    #     print("Synchronize tone!")
-    #     try:
-    #         self.midi_service.send_change_tone_msg(self.tone.base_tone)
-    #     except Exception as e:
-    #         self.main.show_error_msg(str(e))
-    #     self.main.load_current_dsp_modules_from_synth()
