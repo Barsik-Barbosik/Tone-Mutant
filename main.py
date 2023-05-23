@@ -19,13 +19,14 @@ class MainWindow(QMainWindow):
         self.menu_bar = self.init_menu_bar()
         self.setMenuBar(self.menu_bar)
 
-        self.top_widget = TopWidget()
-        self.top_dock = self.init_top_dock()
-        self.addDockWidget(Qt.TopDockWidgetArea, self.top_dock)
-
         self.central_widget = CentralWidget()
         self.setCentralWidget(self.central_widget)
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)  # remove right margin
+
+        self.top_widget = TopWidget()
+        self.top_widget.central_widget = self.central_widget
+        self.top_dock = self.init_top_dock()
+        self.addDockWidget(Qt.TopDockWidgetArea, self.top_dock)
 
         self.help_texbox = QTextBrowser()
         self.right_dock = self.init_right_dock()
