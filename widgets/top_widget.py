@@ -1,7 +1,8 @@
-from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton
+from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton, QListWidget
 
 from widgets.gui_helper import GuiHelper
 
+DEFAULT_NAME = "001 StagePno"
 ALL_CHANNELS = ["Upper keyboard", "MIDI Channel 1"]
 CHANNEL_ENABLE_DISABLE_ITEMS = ["ENABLED", "DISABLED"]
 
@@ -29,7 +30,7 @@ class TopWidget(QWidget):
 
         self.layout.addWidget(GuiHelper.get_spacer())
 
-        self.tone_name_label = QLabel("001 StagePno")
+        self.tone_name_label = QLabel(DEFAULT_NAME)
         self.tone_name_label.setObjectName("tone-name-label")
         self.layout.addWidget(self.tone_name_label)
 
@@ -48,8 +49,9 @@ class TopWidget(QWidget):
             self.channel = 32 if self.channel_combo.currentIndex() == 1 else 0
             print("Channel: " + str(self.channel))
 
-            instrument_list = self.parent().parent().parent().parent().central_widget.instrument_list
+            instrument_list: QListWidget = self.parent().parent().parent().parent().central_widget.instrument_list
             if self.channel == 32:
                 instrument_list.setEnabled(True)
             else:
                 instrument_list.setEnabled(False)
+                instrument_list.clearSelection()
