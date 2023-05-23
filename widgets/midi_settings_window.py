@@ -54,7 +54,7 @@ class MidiSettingsWindow(QWidget):
 
     def ok_button_action(self):
         cfg = configparser.ConfigParser()
-        cfg.read(CONFIG_FILENAME)
+        cfg.read(constants.CONFIG_FILENAME)
 
         if self.input_port_combo.currentIndex() != -1:
             self.input_name = self.input_port_combo.currentText()
@@ -68,7 +68,7 @@ class MidiSettingsWindow(QWidget):
                 cfg.add_section("Midi")
             cfg.set('Midi', 'OutPort', self.output_name)
 
-        with open(CONFIG_FILENAME, 'w') as cfg_file:
+        with open(constants.CONFIG_FILENAME, 'w') as cfg_file:
             cfg.write(cfg_file)
 
         self.close()
