@@ -23,8 +23,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)  # remove right margin
 
-        self.top_widget = TopWidget()
-        self.top_widget.central_widget = self.central_widget
+        self.top_widget = TopWidget(self)
         self.top_dock = self.init_top_dock()
         self.addDockWidget(Qt.TopDockWidgetArea, self.top_dock)
 

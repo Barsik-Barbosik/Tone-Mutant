@@ -1,7 +1,6 @@
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton, QListWidget
 
 from services.midi_service import MidiService
-from widgets.central_widget import CentralWidget
 from widgets.gui_helper import GuiHelper
 from widgets.status_bar import StatusBar
 
@@ -11,10 +10,9 @@ CHANNEL_ENABLE_DISABLE_ITEMS = ["ENABLED", "DISABLED"]
 
 
 class TopWidget(QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.central_widget: CentralWidget = None
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.main = parent
         self.midi_service = MidiService.get_instance()
 
         self.channel = 0
@@ -56,7 +54,7 @@ class TopWidget(QWidget):
             self.channel = 32 if self.channel_combo.currentIndex() == 1 else 0
             print("Channel: " + str(self.channel))
 
-            instrument_list: QListWidget = self.central_widget.instrument_list
+            instrument_list: QListWidget = self.main.central_widget.instrument_list
             if self.channel == 32:
                 instrument_list.setEnabled(True)
             else:
@@ -66,6 +64,6 @@ class TopWidget(QWidget):
     def on_synchronize_button(self):
         print("Synchronize tone!")
         try:
-            self.midi_service.send_change_tone_msg(self.central_widget.tone.base_tone)
+            self.midi_service.send_change_tone_msg(self.main.central_widget.tone.base_tone)
         except Exception as e:
             StatusBar.get_instance().show_error_msg(str(e))
