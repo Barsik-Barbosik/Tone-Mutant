@@ -11,7 +11,6 @@ from model.dsp_parameter import DspParameter
 from model.tone import Tone
 from services.midi_service import MidiService
 from widgets.gui_helper import GuiHelper
-from widgets.status_bar import StatusBar
 
 
 class DspPage(QWidget):
@@ -88,7 +87,7 @@ class DspPage(QWidget):
                 dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
         self.midi_set_synth_dsp_params()
         self.redraw_dsp_params_panel()
-        StatusBar.get_instance().show_status_msg(
+        self.main.show_status_msg(
             "It may be necessary to correct volume levels after setting random values.", 3000)
 
     def get_module_name(self):
@@ -103,7 +102,7 @@ class DspPage(QWidget):
                 if synth_dsp_module is not None and len(synth_dsp_module) > 0:
                     dsp_module_id = synth_dsp_module_id
             except Exception as e:
-                StatusBar.get_instance().show_error_msg(str(e))
+                self.main.show_error_msg(str(e))
 
         if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
             if self.block_id == 0:
@@ -155,12 +154,12 @@ class DspPage(QWidget):
     def midi_set_synth_dsp_module(self):
         if self.dsp_module is None:
             # TODO: turn DSP off
-            StatusBar.get_instance().show_status_msg("Not implemented!!", 1000)
+            self.main.show_status_msg("Not implemented!!", 1000)
         else:
             try:
                 self.midi_service.send_dsp_module_change_sysex(self.dsp_module.id, self.block_id)
             except Exception as e:
-                StatusBar.get_instance().show_error_msg(str(e))
+                self.main.show_error_msg(str(e))
 
     def midi_get_synth_dsp_params(self):
         if self.dsp_module is not None:
@@ -171,7 +170,7 @@ class DspPage(QWidget):
                         self.decode_param_value(synth_dsp_params[idx], dsp_param)))
                     dsp_param.value = self.decode_param_value(synth_dsp_params[idx], dsp_param)
             except Exception as e:
-                StatusBar.get_instance().show_error_msg(str(e))
+                self.main.show_error_msg(str(e))
 
             current_row = self.get_list_item_by_dsp_id(self.dsp_module.id)
             self.list_widget.setCurrentItem(current_row)
@@ -181,7 +180,7 @@ class DspPage(QWidget):
         try:
             self.midi_service.send_dsp_params_change_sysex(self.get_dsp_params_as_list(), self.block_id)
         except Exception as e:
-            StatusBar.get_instance().show_error_msg(str(e))
+            self.main.show_error_msg(str(e))
         print("midi_set_synth_dsp_params - finished")
 
     def get_list_item_by_dsp_id(self, dsp_module_id):

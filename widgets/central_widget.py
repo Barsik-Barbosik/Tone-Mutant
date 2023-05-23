@@ -10,7 +10,6 @@ from model.tone import Tone
 from services.midi_service import MidiService
 from widgets.dsp_page import DspPage
 from widgets.gui_helper import GuiHelper
-from widgets.status_bar import StatusBar
 
 
 class CentralWidget(QWidget):
@@ -50,9 +49,9 @@ class CentralWidget(QWidget):
         current_tab_name = self.get_current_tab_name()
 
         if current_tab_name == TabName.MAIN_PARAMETERS:
-            StatusBar.get_instance().show_status_msg("Main parameters for editing tone", 3000)
+            self.main.show_status_msg("Main parameters for editing tone", 3000)
         elif current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
-            StatusBar.get_instance().show_status_msg("Parameters for " + current_tab_name.value + " module", 3000)
+            self.main.show_status_msg("Parameters for " + current_tab_name.value + " module", 3000)
 
             if current_tab_name == TabName.DSP_1:
                 self.current_dsp_page = self.dsp_page_1
@@ -67,7 +66,7 @@ class CentralWidget(QWidget):
 
             self.current_dsp_page.update_tone_dsp_module_by_dsp_id(None)
         elif current_tab_name == TabName.JSON:
-            StatusBar.get_instance().show_status_msg("Tone information in JSON-format", 3000)
+            self.main.show_status_msg("Tone information in JSON-format", 3000)
             self.json_view_tab_textbox.setPlainText(json.dumps(self.tone, cls=ObjectEncoder, indent=4))
 
         self.redraw_help_msg()
@@ -116,7 +115,7 @@ class CentralWidget(QWidget):
         try:
             self.midi_service.send_change_tone_msg(self.tone.base_tone)
         except Exception as e:
-            StatusBar.get_instance().show_error_msg(str(e))
+            self.main.show_error_msg(str(e))
 
     def create_json_view_page(self) -> QWidget:
         json_view_page = QWidget(self)

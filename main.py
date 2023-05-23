@@ -3,11 +3,10 @@ import sys
 from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtWidgets import QApplication, QMainWindow, QMenu, QAction, QMenuBar, QTextBrowser, \
     QDockWidget, \
-    QWidget, QHBoxLayout, QTabWidget, QFrame
+    QWidget, QHBoxLayout, QTabWidget, QFrame, QStatusBar
 
 from widgets.central_widget import CentralWidget
 from widgets.midi_settings_window import MidiSettingsWindow
-from widgets.status_bar import StatusBar
 from widgets.top_widget import TopWidget
 
 
@@ -31,7 +30,8 @@ class MainWindow(QMainWindow):
         self.right_dock = self.init_right_dock()
         self.addDockWidget(Qt.RightDockWidgetArea, self.right_dock)
 
-        self.setStatusBar(StatusBar.get_instance())
+        self.status_bar = QStatusBar(self)
+        self.setStatusBar(self.status_bar)
 
         self.midi_settings_window = None
 
@@ -127,6 +127,14 @@ class MainWindow(QMainWindow):
 
     def show_help_msg(self, text: str):
         self.help_texbox.setHtml(text)
+
+    def show_status_msg(self, text: str, msecs: int):
+        self.status_bar.setStyleSheet("background-color: white; color: black")
+        self.status_bar.showMessage(text, msecs)
+
+    def show_error_msg(self, text: str):
+        self.status_bar.setStyleSheet("background-color: white; color: red")
+        self.status_bar.showMessage(text, 5000)
 
     def show_midi_settings(self):
         self.midi_settings_window = MidiSettingsWindow()

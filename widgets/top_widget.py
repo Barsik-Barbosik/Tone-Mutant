@@ -2,7 +2,6 @@ from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButt
 
 from services.midi_service import MidiService
 from widgets.gui_helper import GuiHelper
-from widgets.status_bar import StatusBar
 
 DEFAULT_NAME = "001 StagePno"
 ALL_CHANNELS = ["Upper keyboard", "MIDI Channel 1"]
@@ -66,4 +65,4 @@ class TopWidget(QWidget):
         try:
             self.midi_service.send_change_tone_msg(self.main.central_widget.tone.base_tone)
         except Exception as e:
-            StatusBar.get_instance().show_error_msg(str(e))
+            self.main.show_error_msg(str(e))
