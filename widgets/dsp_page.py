@@ -15,8 +15,9 @@ from widgets.status_bar import StatusBar
 
 
 class DspPage(QWidget):
-    def __init__(self, tone: Tone, block_id: int):
+    def __init__(self, main_window, tone: Tone, block_id: int):
         super().__init__()
+        self.main = main_window
         self.tone: Tone = tone
         self.block_id: int = block_id
         self.dsp_module: DspModule = None
@@ -123,7 +124,7 @@ class DspPage(QWidget):
 
             self.midi_get_synth_dsp_params()
             self.redraw_dsp_params_panel()
-            self.parent().parent().parent().redraw_help_msg()
+            self.main.central_widget.redraw_help_msg()
 
     def get_dsp_params_as_list(self) -> list:
         output = [0] * 14

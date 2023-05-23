@@ -23,10 +23,10 @@ class CentralWidget(QWidget):
         self.midi_service = MidiService.get_instance()
 
         self.tone: Tone = Tone()
-        self.dsp_page_1 = DspPage(self.tone, 0)
-        self.dsp_page_2 = DspPage(self.tone, 1)
-        self.dsp_page_3 = DspPage(self.tone, 2)
-        self.dsp_page_4 = DspPage(self.tone, 3)
+        self.dsp_page_1 = DspPage(self.main, self.tone, 0)
+        self.dsp_page_2 = DspPage(self.main, self.tone, 1)
+        self.dsp_page_3 = DspPage(self.main, self.tone, 2)
+        self.dsp_page_4 = DspPage(self.main, self.tone, 3)
         self.current_dsp_page: DspPage = None
 
         main_layout = QGridLayout(self)
