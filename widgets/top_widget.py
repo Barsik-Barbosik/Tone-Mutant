@@ -47,3 +47,9 @@ class TopWidget(QWidget):
         if self.channel_combo.currentIndex() != -1:
             self.channel = 32 if self.channel_combo.currentIndex() == 1 else 0
             print("Channel: " + str(self.channel))
+
+            instrument_list = self.parent().parent().parent().parent().central_widget.instrument_list
+            if self.channel == 32:
+                instrument_list.setEnabled(True)
+            else:
+                instrument_list.setEnabled(False)
