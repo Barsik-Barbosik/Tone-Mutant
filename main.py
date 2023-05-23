@@ -86,6 +86,7 @@ class MainWindow(QMainWindow):
         qframe.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
         qframe.setObjectName("top-widget")
         inner_layout = QHBoxLayout(self)
+        inner_layout.setContentsMargins(0, 0, 0, 0)
         inner_layout.addWidget(self.top_widget)
         qframe.setLayout(inner_layout)
 

@@ -30,7 +30,6 @@ class TopWidget(QWidget):
         self.layout.addWidget(GuiHelper.get_spacer())
 
         self.tone_name_label = QLabel("001 StagePno")
-        self.tone_name_label.setMinimumWidth(500)
         self.tone_name_label.setObjectName("tone-name-label")
         self.layout.addWidget(self.tone_name_label)
 
