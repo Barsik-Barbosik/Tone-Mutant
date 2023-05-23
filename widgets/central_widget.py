@@ -14,8 +14,9 @@ from widgets.status_bar import StatusBar
 
 
 class CentralWidget(QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.main = parent
 
         self.threadpool = QThreadPool.globalInstance()
         self.json_view_tab_textbox = QTextBrowser()
@@ -141,7 +142,7 @@ class CentralWidget(QWidget):
                 for param in self.current_dsp_page.dsp_module.dsp_parameter_list:
                     msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
 
-        self.parent().show_help_msg(msg)
+        self.main.show_help_msg(msg)
 
     # def aaa(self):
     #     worker = Worker(self.send_dsp_params_change_sysex)

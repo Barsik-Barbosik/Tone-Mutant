@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         self.menu_bar = self.init_menu_bar()
         self.setMenuBar(self.menu_bar)
 
-        self.central_widget = CentralWidget()
+        self.central_widget = CentralWidget(self)
         self.setCentralWidget(self.central_widget)
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)  # remove right margin
 
