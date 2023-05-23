@@ -16,10 +16,9 @@ QPushButton {
 }
 
 #tone-name-label {
-    background-color: #f0f0f0;
-    margin: 0px;
-    padding: 1px 10px 1px 10px;
-    font-size: 16px;
+    qproperty-alignment: 'AlignVCenter | AlignCenter';
+    font-size: 30px;
+    font-weight: bold;
 }
 
 #top-widget-button {

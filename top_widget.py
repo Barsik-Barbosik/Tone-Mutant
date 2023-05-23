@@ -1,9 +1,9 @@
-from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton, QFrame
+from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton
 
 from gui_helper import GuiHelper
 
-CHANNELS = ["Upper keyboard 1", "MIDI 1"]
-MUTE = ["OFF", "ON"]
+ALL_CHANNELS = ["Upper keyboard", "MIDI Channel 1"]
+CHANNEL_ENABLE_DISABLE_ITEMS = ["ENABLED", "DISABLED"]
 
 
 class TopWidget(QWidget):
@@ -13,18 +13,27 @@ class TopWidget(QWidget):
         self.channel = 0
         self.layout = QHBoxLayout(self)
 
-        self.layout.addWidget(QLabel("Tone name:"))
-        self.name_label = QLabel("StagePno")
-        self.name_label.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
-        self.layout.addWidget(self.name_label)
-        self.layout.addWidget(GuiHelper.get_spacer())
+        selection = ALL_CHANNELS[1] if self.channel == 32 else ALL_CHANNELS[0]
+        self.layout.addWidget(QLabel("Channel:"))
 
-        selection = CHANNELS[1] if self.channel == 32 else CHANNELS[0]
-        self.channel_combo = self.create_combo_box("Channel:", CHANNELS, selection)
+        self.channel_combo = QComboBox(self)
+        self.channel_combo.addItems(ALL_CHANNELS)
+        self.channel_combo.setCurrentText(selection)
         self.channel_combo.currentIndexChanged.connect(lambda: self.on_channel_change())
+        self.layout.addWidget(self.channel_combo)
+
+        mute_combo = QComboBox(self)
+        mute_combo.addItems(CHANNEL_ENABLE_DISABLE_ITEMS)
+        mute_combo.setCurrentIndex(0)
+        self.layout.addWidget(mute_combo)
+
         self.layout.addWidget(GuiHelper.get_spacer())
 
-        self.channel_combo = self.create_combo_box("Mute:", MUTE, MUTE[0])
+        self.tone_name_label = QLabel("001 StagePno")
+        self.tone_name_label.setMinimumWidth(500)
+        self.tone_name_label.setObjectName("tone-name-label")
+        self.layout.addWidget(self.tone_name_label)
+
         self.layout.addWidget(GuiHelper.get_spacer())
 
         synchronize_tone_button = QPushButton("Synchronize tone", self)
@@ -39,11 +48,3 @@ class TopWidget(QWidget):
         if self.channel_combo.currentIndex() != -1:
             self.channel = 32 if self.channel_combo.currentIndex() == 1 else 0
             print("Channel: " + str(self.channel))
-
-    def create_combo_box(self, label, items, selection):
-        self.layout.addWidget(QLabel(label))
-        combo_box = QComboBox(self)
-        combo_box.addItems(items)
-        combo_box.setCurrentText(selection)
-        self.layout.addWidget(combo_box)
-        return combo_box
