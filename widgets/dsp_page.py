@@ -4,14 +4,14 @@ import random
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QListWidgetItem, QPushButton
 
-from constants.enums import ParameterType
-from gui_helper import GuiHelper
-from midi_service import MidiService
 from constants import constants
+from constants.enums import ParameterType
 from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.tone import Tone
-from status_bar import StatusBar
+from services.midi_service import MidiService
+from widgets.gui_helper import GuiHelper
+from widgets.status_bar import StatusBar
 
 
 class DspPage(QWidget):

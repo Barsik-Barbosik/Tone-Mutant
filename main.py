@@ -5,10 +5,10 @@ from PySide2.QtWidgets import QApplication, QMainWindow, QMenu, QAction, QMenuBa
     QDockWidget, \
     QWidget, QHBoxLayout, QTabWidget, QFrame
 
-from central_widget import CentralWidget
-from midi_settings_window import MidiSettingsWindow
-from status_bar import StatusBar
-from top_widget import TopWidget
+from widgets.central_widget import CentralWidget
+from widgets.midi_settings_window import MidiSettingsWindow
+from widgets.status_bar import StatusBar
+from widgets.top_widget import TopWidget
 
 
 class MainWindow(QMainWindow):

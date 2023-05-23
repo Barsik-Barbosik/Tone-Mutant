@@ -3,7 +3,7 @@ import configparser
 import rtmidi
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QGridLayout, QHBoxLayout, QPushButton, QSizePolicy
 
-CONFIG_FILENAME = 'config.cfg'
+CONFIG_FILENAME = '../config.cfg'
 
 
 class MidiSettingsWindow(QWidget):

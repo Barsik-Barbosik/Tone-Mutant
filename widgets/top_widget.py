@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton
 
-from gui_helper import GuiHelper
+from widgets.gui_helper import GuiHelper
 
 ALL_CHANNELS = ["Upper keyboard", "MIDI Channel 1"]
 CHANNEL_ENABLE_DISABLE_ITEMS = ["ENABLED", "DISABLED"]

@@ -4,8 +4,8 @@ from PySide2.QtWidgets import QDial, \
     QHBoxLayout, QSpinBox, QComboBox, QWidget, QSizePolicy, QGridLayout
 from PySide2.QtWidgets import QLabel
 
-from constants.enums import ParameterType
 from constants import constants
+from constants.enums import ParameterType
 from model.dsp_parameter import DspParameter
 
 

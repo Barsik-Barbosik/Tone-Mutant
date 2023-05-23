@@ -3,14 +3,14 @@ import json
 from PySide2.QtCore import Qt, QThreadPool
 from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QListWidget, QHBoxLayout, QListWidgetItem, QTextBrowser
 
-from dsp_page import DspPage
+from constants import constants
 from constants.enums import TabName
 from external.object_encoder import ObjectEncoder
-from gui_helper import GuiHelper
-from midi_service import MidiService
-from constants import constants
 from model.tone import Tone
-from status_bar import StatusBar
+from services.midi_service import MidiService
+from widgets.dsp_page import DspPage
+from widgets.gui_helper import GuiHelper
+from widgets.status_bar import StatusBar
 
 
 class CentralWidget(QWidget):

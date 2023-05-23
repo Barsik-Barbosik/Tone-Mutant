@@ -8,7 +8,7 @@ import rtmidi
 from constants.enums import SysexType
 from model.instrument import Instrument
 
-CONFIG_FILENAME = "config.cfg"
+CONFIG_FILENAME = "../config.cfg"
 RESPONSE_TIMEOUT = 5  # in seconds
 
 
