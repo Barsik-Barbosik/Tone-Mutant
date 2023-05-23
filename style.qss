@@ -17,7 +17,7 @@ QPushButton {
 
 #tone-name-label {
     qproperty-alignment: 'AlignVCenter | AlignCenter';
-    font-size: 30px;
+    font-size: 28px;
     font-weight: bold;
 }
 
