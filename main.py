@@ -3,11 +3,12 @@ import sys
 from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtWidgets import QApplication, QMainWindow, QMenu, QAction, QMenuBar, QTextBrowser, \
     QDockWidget, \
-    QWidget, QHBoxLayout, QTabWidget, QLabel, QFrame
+    QWidget, QHBoxLayout, QTabWidget, QFrame
 
 from central_widget import CentralWidget
 from midi_settings_window import MidiSettingsWindow
 from status_bar import StatusBar
+from top_widget import TopWidget
 
 
 class MainWindow(QMainWindow):
@@ -18,16 +19,16 @@ class MainWindow(QMainWindow):
         self.menu_bar = self.init_menu_bar()
         self.setMenuBar(self.menu_bar)
 
+        self.top_widget = TopWidget()
+        self.top_dock = self.init_top_dock()
+        self.addDockWidget(Qt.TopDockWidgetArea, self.top_dock)
+
         self.central_widget = CentralWidget()
         self.setCentralWidget(self.central_widget)
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)  # remove right margin
 
         self.help_texbox = QTextBrowser()
-
-        # self.top_dock = self.init_top_dock()
-        # self.addDockWidget(Qt.TopDockWidgetArea, self.top_dock)
-
-        self.right_dock = self.init_right_dock(self.help_texbox)
+        self.right_dock = self.init_right_dock()
         self.addDockWidget(Qt.RightDockWidgetArea, self.right_dock)
 
         self.setStatusBar(StatusBar.get_instance())
@@ -84,9 +85,9 @@ class MainWindow(QMainWindow):
         qframe = QFrame(self)
         qframe.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
         qframe.setStyleSheet("background-color: white;")
-        inter_layout = QHBoxLayout(self)
-        inter_layout.addWidget(QLabel("Channel: [UPPER 1]            Tone name: [StagePno]            Mute: [OFF]            [SYNCHRONIZE]"))
-        qframe.setLayout(inter_layout)
+        inner_layout = QHBoxLayout(self)
+        inner_layout.addWidget(self.top_widget)
+        qframe.setLayout(inner_layout)
 
         outer_widget = QWidget(self)
         outer_layout = QHBoxLayout(self)
@@ -98,20 +99,20 @@ class MainWindow(QMainWindow):
 
         return top_dock
 
-    def init_right_dock(self, help_texbox):
+    def init_right_dock(self):
         right_dock = QDockWidget("Right Dock", self)
         right_dock.setTitleBarWidget(QWidget())
         right_dock.setFloating(False)
 
-        inter_widget = QWidget(self)
-        inter_layout = QHBoxLayout(self)
-        inter_layout.addWidget(help_texbox)
-        inter_widget.setLayout(inter_layout)
+        inner_widget = QWidget(self)
+        inner_layout = QHBoxLayout(self)
+        inner_layout.addWidget(self.help_texbox)
+        inner_widget.setLayout(inner_layout)
 
         tab_widget = QTabWidget(self)
         tab_widget.setMinimumHeight(400)
         tab_widget.setMinimumWidth(300)
-        tab_widget.addTab(inter_widget, "Info / Help")
+        tab_widget.addTab(inner_widget, "Info / Help")
 
         outer_widget = QWidget(self)
         outer_layout = QHBoxLayout(self)
