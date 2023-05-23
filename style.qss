@@ -18,15 +18,15 @@ QPushButton {
 #top-widget-button {
     background-color: #1B998B;
     color: #FFFFFF;
-    margin: 5px;
-    padding: 5px 20px 5px 20px;
+    margin: 0px;
+    padding: 8px 20px 8px 20px;
 }
 
 #random-button {
     background-color: #1B998B;
     color: #FFFFFF;
     margin: 20px 50px 10px 50px;
-    padding: 5px;
+    padding: 8px 20px 8px 20px;
 }
 
 #label-left-side {

@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton
+from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton, QFrame
 
 from gui_helper import GuiHelper
 
@@ -13,7 +13,10 @@ class TopWidget(QWidget):
         self.channel = 0
         self.layout = QHBoxLayout(self)
 
-        self.layout.addWidget(QLabel("Tone name: [StagePno]"))
+        self.layout.addWidget(QLabel("Tone name:"))
+        self.name_label = QLabel("StagePno")
+        self.name_label.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
+        self.layout.addWidget(self.name_label)
         self.layout.addWidget(GuiHelper.get_spacer())
 
         selection = CHANNELS[1] if self.channel == 32 else CHANNELS[0]

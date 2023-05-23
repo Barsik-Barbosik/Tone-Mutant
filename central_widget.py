@@ -34,7 +34,7 @@ class CentralWidget(QWidget):
         self.instrument_list = QListWidget(self)
 
         self.tab_widget = QTabWidget(self)
-        self.tab_widget.setMinimumHeight(400)
+        self.tab_widget.setMinimumHeight(500)
         self.tab_widget.addTab(self.create_main_params_page(), TabName.MAIN_PARAMETERS.value)
         self.tab_widget.addTab(self.dsp_page_1, TabName.DSP_1.value)
         self.tab_widget.addTab(self.dsp_page_2, TabName.DSP_2.value)

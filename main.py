@@ -110,7 +110,7 @@ class MainWindow(QMainWindow):
         inner_widget.setLayout(inner_layout)
 
         tab_widget = QTabWidget(self)
-        tab_widget.setMinimumHeight(400)
+        tab_widget.setMinimumHeight(500)
         tab_widget.setMinimumWidth(300)
         tab_widget.addTab(inner_widget, "Info / Help")
 
