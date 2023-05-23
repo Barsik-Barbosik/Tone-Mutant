@@ -38,6 +38,7 @@ class TopWidget(QWidget):
 
         synchronize_tone_button = QPushButton("Synchronize tone", self)
         synchronize_tone_button.setObjectName("top-widget-button")
+        synchronize_tone_button.clicked.connect(lambda: self.on_synchronize_button())
         self.layout.addWidget(synchronize_tone_button)
 
         randomize_tone_button = QPushButton("Randomize tone", self)
@@ -55,3 +56,6 @@ class TopWidget(QWidget):
             else:
                 instrument_list.setEnabled(False)
                 instrument_list.clearSelection()
+
+    def on_synchronize_button(self):
+        print("Synchronize tone!")
