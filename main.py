@@ -38,12 +38,22 @@ class MainWindow(QMainWindow):
 
         self.midi_settings_window = None
 
-        # load current DSP from synth
-        self.central_widget.dsp_page_1.update_tone_dsp_module_by_dsp_id(None)
-        self.central_widget.dsp_page_2.update_tone_dsp_module_by_dsp_id(None)
-        self.central_widget.dsp_page_3.update_tone_dsp_module_by_dsp_id(None)
-        self.central_widget.dsp_page_4.update_tone_dsp_module_by_dsp_id(None)
+        self.synchronize_tone_with_synth()
+
+    def synchronize_tone_with_synth(self):
+        print("Synchronizing tone!")
+        self.tone = Tone()  # TODO: fix -> tone is initialized twice during the application startup
+        self.reload_dsp_page(self.central_widget.dsp_page_1)
+        self.reload_dsp_page(self.central_widget.dsp_page_2)
+        self.reload_dsp_page(self.central_widget.dsp_page_3)
+        self.reload_dsp_page(self.central_widget.dsp_page_4)
         self.central_widget.on_tab_changed(0)
+
+    @staticmethod
+    def reload_dsp_page(dsp_page):
+        dsp_page.update_tone_dsp_module_by_dsp_id(None)
+        if dsp_page.dsp_module is not None:
+            dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_page.dsp_module.id))
 
     def init_menu_bar(self):
         menu_bar = QMenuBar(self)

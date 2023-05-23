@@ -43,7 +43,7 @@ class TopWidget(QWidget):
 
         synchronize_tone_button = QPushButton("Synchronize tone", self)
         synchronize_tone_button.setObjectName("top-widget-button")
-        synchronize_tone_button.clicked.connect(lambda: self.on_synchronize_button())
+        synchronize_tone_button.clicked.connect(lambda: self.main.synchronize_tone_with_synth())
         self.layout.addWidget(synchronize_tone_button)
 
         randomize_tone_button = QPushButton("Randomize tone", self)
@@ -62,9 +62,10 @@ class TopWidget(QWidget):
                 instrument_list.setEnabled(False)
                 instrument_list.clearSelection()
 
-    def on_synchronize_button(self):
-        print("Synchronize tone!")
-        try:
-            self.midi_service.send_change_tone_msg(self.tone.base_tone)
-        except Exception as e:
-            self.main.show_error_msg(str(e))
+    # def on_synchronize_button(self):
+    #     print("Synchronize tone!")
+    #     try:
+    #         self.midi_service.send_change_tone_msg(self.tone.base_tone)
+    #     except Exception as e:
+    #         self.main.show_error_msg(str(e))
+    #     self.main.load_current_dsp_modules_from_synth()
