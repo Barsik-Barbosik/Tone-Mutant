@@ -4,10 +4,10 @@ import random
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QListWidgetItem, QPushButton
 
-from enums.enums import ParameterType
+from constants.enums import ParameterType
 from gui_helper import GuiHelper
 from midi_service import MidiService
-from model import constants
+from constants import constants
 from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.tone import Tone

@@ -5,7 +5,7 @@ import time
 
 import rtmidi
 
-from enums.enums import SysexType
+from constants.enums import SysexType
 from model.instrument import Instrument
 
 CONFIG_FILENAME = "config.cfg"

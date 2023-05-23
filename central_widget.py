@@ -4,11 +4,11 @@ from PySide2.QtCore import Qt, QThreadPool
 from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QListWidget, QHBoxLayout, QListWidgetItem, QTextBrowser
 
 from dsp_page import DspPage
-from enums.enums import TabName
+from constants.enums import TabName
 from external.object_encoder import ObjectEncoder
 from gui_helper import GuiHelper
 from midi_service import MidiService
-from model import constants
+from constants import constants
 from model.tone import Tone
 from status_bar import StatusBar
 

@@ -1,6 +1,6 @@
 from typing import List
 
-from enums.enums import ParameterType
+from constants.enums import ParameterType
 
 
 class DspParameter:

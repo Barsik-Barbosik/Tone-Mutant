@@ -1,6 +1,6 @@
 from typing import Final
 
-from enums.enums import ParameterType
+from constants.enums import ParameterType
 from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.instrument import Instrument
