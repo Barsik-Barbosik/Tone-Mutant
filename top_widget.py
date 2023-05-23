@@ -1,8 +1,9 @@
-from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QSizePolicy, QPushButton
+from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton
 
 from gui_helper import GuiHelper
 
-CHANNELS = ["Upper keyboard 1", "MIDI In 1"]
+CHANNELS = ["Upper keyboard 1", "MIDI 1"]
+MUTE = ["OFF", "ON"]
 
 
 class TopWidget(QWidget):
@@ -20,15 +21,15 @@ class TopWidget(QWidget):
         self.channel_combo.currentIndexChanged.connect(lambda: self.on_channel_change())
         self.layout.addWidget(GuiHelper.get_spacer())
 
-        self.layout.addWidget(QLabel("Mute: [OFF]"))
+        self.channel_combo = self.create_combo_box("Mute:", MUTE, MUTE[0])
         self.layout.addWidget(GuiHelper.get_spacer())
 
-        synchronize_tone_button = QPushButton("SYNCHRONIZE", self)
-        # synchronize_tone_button.setObjectName("random-button")
+        synchronize_tone_button = QPushButton("Synchronize tone", self)
+        synchronize_tone_button.setObjectName("top-widget-button")
         self.layout.addWidget(synchronize_tone_button)
 
-        randomize_tone_button = QPushButton("RANDOMIZE", self)
-        # randomize_tone_button.setObjectName("random-button")
+        randomize_tone_button = QPushButton("Randomize tone", self)
+        randomize_tone_button.setObjectName("top-widget-button")
         self.layout.addWidget(randomize_tone_button)
 
     def on_channel_change(self):

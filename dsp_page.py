@@ -55,7 +55,7 @@ class DspPage(QWidget):
                                                                       constants.RIGHT_SIDE_DSP_PARAMS,
                                                                       self.midi_set_synth_dsp_params)
 
-            random_button = QPushButton("Set random values", self)
+            random_button = QPushButton("Randomize DSP values", self)
             random_button.setObjectName("random-button")
             random_button.clicked.connect(lambda: self.on_random_button_pressed())
             button_row = len(self.dsp_module.dsp_parameter_list) - right_side_items_count + 1

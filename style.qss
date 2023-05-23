@@ -15,6 +15,13 @@ QPushButton {
     background-color: white;
 }
 
+#top-widget-button {
+    background-color: #1B998B;
+    color: #FFFFFF;
+    margin: 5px;
+    padding: 5px 20px 5px 20px;
+}
+
 #random-button {
     background-color: #1B998B;
     color: #FFFFFF;
