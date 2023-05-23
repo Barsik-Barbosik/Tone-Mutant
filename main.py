@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
 
         qframe = QFrame(self)
         qframe.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
-        qframe.setStyleSheet("background-color: white;")
+        qframe.setObjectName("top-widget")
         inner_layout = QHBoxLayout(self)
         inner_layout.addWidget(self.top_widget)
         qframe.setLayout(inner_layout)
