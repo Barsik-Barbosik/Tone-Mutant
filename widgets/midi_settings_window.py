@@ -3,17 +3,16 @@ import configparser
 import rtmidi
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QGridLayout, QHBoxLayout, QPushButton, QSizePolicy
 
-CONFIG_FILENAME = '../config.cfg'
+from constants import constants
 
 
 class MidiSettingsWindow(QWidget):
-
     def __init__(self):
         super().__init__()
         self.setWindowTitle("MIDI Settings")
 
         cfg = configparser.ConfigParser()
-        cfg.read(CONFIG_FILENAME)
+        cfg.read(constants.CONFIG_FILENAME)
         self.input_name = cfg.get('Midi', 'InPort', fallback="")
         self.output_name = cfg.get('Midi', 'OutPort', fallback="")
 

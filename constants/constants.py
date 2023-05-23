@@ -5,6 +5,8 @@ from model.dsp_module import DspModule
 from model.dsp_parameter import DspParameter
 from model.instrument import Instrument
 
+CONFIG_FILENAME = '../config.cfg'
+
 KNOB_SIZE: Final[int] = 40
 
 EMPTY_DSP_NAME: Final[str] = "OFF"

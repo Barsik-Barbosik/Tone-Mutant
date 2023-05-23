@@ -5,10 +5,10 @@ import time
 
 import rtmidi
 
+from constants import constants
 from constants.enums import SysexType
 from model.instrument import Instrument
 
-CONFIG_FILENAME = "../config.cfg"
 RESPONSE_TIMEOUT = 5  # in seconds
 
 
@@ -31,7 +31,7 @@ class MidiService:
             MidiService.__instance = self
 
             cfg = configparser.ConfigParser()
-            cfg.read(CONFIG_FILENAME)
+            cfg.read(constants.CONFIG_FILENAME)
             self.input_name = cfg.get("Midi", "InPort", fallback="")
             self.output_name = cfg.get("Midi", "OutPort", fallback="")
             self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
@@ -152,7 +152,6 @@ class MidiService:
         # time.sleep(0.5)
         # self.midi_out.send_message(bytearray(bytes.fromhex(s3)))
         # time.sleep(0.5)
-
 
     def send_dsp_params_change_sysex(self, params_list: list, block_id: int):
         # Array size is always 14 bytes: length is "0D"
