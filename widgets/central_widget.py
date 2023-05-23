@@ -85,12 +85,13 @@ class CentralWidget(QWidget):
         main_params_page.setLayout(hbox_layout)
 
         self.instrument_list.setFixedWidth(180)
+        self.instrument_list.setEnabled(False)
         for idx, instrument in enumerate(constants.ALL_INSTRUMENTS):
             item = QListWidgetItem()
             item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
             item.setData(Qt.UserRole, instrument.id)
             self.instrument_list.insertItem(idx, item)
-        self.instrument_list.setCurrentRow(0)
+        # self.instrument_list.setCurrentRow(0)
         self.instrument_list.itemSelectionChanged.connect(lambda: self.on_instrument_list_changed(self.instrument_list))
         hbox_layout.addWidget(self.instrument_list)  # left side
 
