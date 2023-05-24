@@ -140,7 +140,7 @@ class CentralWidget(QWidget):
                 for param in self.current_dsp_page.dsp_module.dsp_parameter_list:
                     msg = msg + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
 
-        self.main.show_help_msg(msg)
+        self.main.show_help_text(msg)
 
     # def aaa(self):
     #     worker = Worker(self.send_dsp_params_change_sysex)
