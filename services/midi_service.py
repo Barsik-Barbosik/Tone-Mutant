@@ -9,6 +9,7 @@ from constants import constants
 from constants.enums import SysexType
 from model.instrument import Instrument
 
+SYSTEM_EXCLUSIVE = 0xF0
 RESPONSE_TIMEOUT = 5  # in seconds
 
 
@@ -98,25 +99,18 @@ class MidiService:
         time.sleep(0.01)
         self.midi_in.get_message()
 
+    def request_tone_name(self):
+        msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0F 00 F7"
+        return self.send_sysex_and_get_response(msg, 16)
+
     def send_change_tone_msg(self, instrument: Instrument):
-        print("...")
-        # note_on = [0x90, 60, 112]  # channel 1, middle C, velocity 112
-        # note_off = [0x80, 60, 0]
-        # self.midi_out.send_message(note_on)
-        # time.sleep(0.5)
-        # self.midi_out.send_message(note_off)
-        # time.sleep(0.1)
-        #
-        # cc_01 = [0xB0, 0x00,instrument.bank]
-        # cc_02 = [0xB0, 0x20, 0x00]
-        # pc = [0xC0, instrument.program_change]
-        # self.midi_out.send_message(cc_01)
-        # time.sleep(0.1)
-        # self.midi_out.send_message(cc_02)
-        # time.sleep(0.1)
-        # self.midi_out.send_message(pc)
-        # time.sleep(0.1)
-        #
+        self.midi_out.send_message([0xB0, 0x00, instrument.bank])
+        time.sleep(0.1)
+        self.midi_out.send_message([0xB0, 0x20, 0x00])
+        time.sleep(0.1)
+        self.midi_out.send_message([0xC0, instrument.program_change])
+        time.sleep(0.1)
+
         # aaa = self.make_program_change(19, 35, bankLSB=0, channel=0)
         # bbb = aaa.hex(' ').upper()
         # self.send_sysex(bbb)
@@ -127,28 +121,6 @@ class MidiService:
         # self.midi_out.send_message(bytearray(bytes.fromhex(s2)))
         # time.sleep(0.5)
         # self.midi_out.send_message(bytearray(bytes.fromhex(s1)))
-        # time.sleep(0.5)
-        # self.midi_out.send_message(bytearray(bytes.fromhex(s3)))
-        # time.sleep(0.5)
-        #
-        # s1 = "B1 00 04"
-        # s2 = "B1 20 00"
-        # s3 = "C1 04"
-        # self.flush_input_queue()
-        # self.midi_out.send_message(bytearray(bytes.fromhex(s2)))
-        # time.sleep(0.5)
-        # self.midi_out.send_message(bytearray(bytes.fromhex(s1)))
-        # time.sleep(0.5)
-        # self.midi_out.send_message(bytearray(bytes.fromhex(s3)))
-        # time.sleep(0.5)
-        #
-        # s1 = "B2 00 04"
-        # s2 = "B2 20 00"
-        # s3 = "C2 04"
-        # self.flush_input_queue()
-        # self.midi_out.send_message(bytearray(bytes.fromhex(s1)))
-        # time.sleep(0.5)
-        # self.midi_out.send_message(bytearray(bytes.fromhex(s2)))
         # time.sleep(0.5)
         # self.midi_out.send_message(bytearray(bytes.fromhex(s3)))
         # time.sleep(0.5)

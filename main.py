@@ -47,9 +47,10 @@ class MainWindow(QMainWindow):
         self.tone = Tone()  # TODO: fix -> tone is initialized twice during the application startup
 
         try:
-            self.midi_service.send_change_tone_msg(self.tone.base_tone)
+            tone_name = self.midi_service.request_tone_name()
+            print(tone_name)
         except Exception as e:
-            self.main.show_error_msg(str(e))
+            self.show_error_msg(str(e))
 
         self.reload_dsp_page(self.central_widget.dsp_page_1)
         self.reload_dsp_page(self.central_widget.dsp_page_2)
