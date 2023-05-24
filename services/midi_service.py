@@ -1,5 +1,4 @@
 import configparser
-import struct
 import threading
 import time
 
@@ -13,6 +12,7 @@ from model.instrument import Instrument
 
 SYSEX_FIRST_BYTE = 0xF0
 SYSEX_TYPE_INDEX = 18
+TONE_NAME_SIZE = 16  # TODO: replace 0F in sysex
 
 
 class MidiService:
@@ -32,6 +32,7 @@ class MidiService:
             raise Exception("This class is a singleton!")
         else:
             MidiService.__instance = self
+            self.main = None
 
             cfg = configparser.ConfigParser()
             cfg.read(constants.CONFIG_FILENAME)
@@ -73,9 +74,12 @@ class MidiService:
         message, deltatime = message
         print("incoming midi: " + self.format_as_nice_hex(self.list_to_hex_str(message)))
         if len(message) > 3 and message[0] == SYSEX_FIRST_BYTE:
-            print("SysEx response type (in hex): " + self.decimal_to_hex(message[18]))
+            print("SysEx response type (in hex): " + self.decimal_to_hex(message[SYSEX_TYPE_INDEX]))
             if message[SYSEX_TYPE_INDEX] == SysexType.TONE_NAME.value:
                 print("Set tone name callback!")
+                response = message[len(message) - 1 - TONE_NAME_SIZE:len(message) - 1]
+                print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
+                self.main.update_tone_name(response)
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
                 print("Set DSP module callback!")
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
@@ -219,8 +223,8 @@ class MidiService:
     #     return bytes.fromhex("F0 44 19 01 7F 01") \
     #         + struct.pack("<BBHHHHHHHH", category, memory, parameter_set, 0, 0, 0, block0, parameter, 0, 0) \
     #         + data + bytes.fromhex("F7")
-
-    @staticmethod
-    def make_program_change(prgm, bankMSB, bankLSB=0, channel=0):
-        return struct.pack("<BBBBBBBB", 0xB0 + channel, 0x00, bankMSB, 0xB0 + channel, 0x20, bankLSB, 0xC0 + channel,
-                           prgm)
+    #
+    # @staticmethod
+    # def make_program_change(prgm, bankMSB, bankLSB=0, channel=0):
+    #     return struct.pack("<BBBBBBBB", 0xB0 + channel, 0x00, bankMSB, 0xB0 + channel, 0x20, bankLSB, 0xC0 + channel,
+    #                        prgm)

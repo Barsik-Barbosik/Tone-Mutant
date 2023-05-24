@@ -1,9 +1,8 @@
 import sys
 
 from PySide2.QtCore import Qt, QCoreApplication
-from PySide2.QtWidgets import QApplication, QMainWindow, QMenu, QAction, QMenuBar, QTextBrowser, \
-    QDockWidget, \
-    QWidget, QHBoxLayout, QTabWidget, QFrame, QStatusBar
+from PySide2.QtWidgets import QApplication, QMainWindow, QTextBrowser, \
+    QStatusBar
 
 from model.tone import Tone
 from services.midi_service import MidiService
@@ -20,6 +19,7 @@ class MainWindow(QMainWindow):
 
         self.tone: Tone = Tone()
         self.midi_service = MidiService.get_instance()
+        self.midi_service.main = self
 
         self.menu_bar = GuiHelper.init_menu_bar(self)
         self.setMenuBar(self.menu_bar)
@@ -57,6 +57,15 @@ class MainWindow(QMainWindow):
         self.reload_dsp_page(self.central_widget.dsp_page_3)
         self.reload_dsp_page(self.central_widget.dsp_page_4)
         self.central_widget.on_tab_changed(0)
+
+    def update_tone_name(self, message):
+        tone_name = ''.join(chr(i) for i in message if chr(i).isprintable())
+        print("Synth tone name: " + tone_name)
+        if tone_name is not None and len(tone_name.strip()) > 0:
+            self.tone.name = tone_name
+        else:
+            self.tone.name = "Unknown Tone"
+        self.top_widget.tone_name_label.setText(self.tone.name)
 
     @staticmethod
     def reload_dsp_page(dsp_page):
