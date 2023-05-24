@@ -63,7 +63,7 @@ class Worker(QRunnable):
 
         # Retrieve args/kwargs here; and fire processing using them
         try:
-            print("Starting new thread...")
+            # print("Starting new thread...")
             result = self.fn(*self.args, **self.kwargs)
         except:
             traceback.print_exc()
