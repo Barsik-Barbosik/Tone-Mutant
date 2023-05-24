@@ -4,13 +4,15 @@ import threading
 import time
 
 import rtmidi
+from PySide2.QtCore import QThreadPool
 
 from constants import constants
 from constants.enums import SysexType
+from external.worker import Worker
 from model.instrument import Instrument
 
-SYSTEM_EXCLUSIVE = 0xF0
-RESPONSE_TIMEOUT = 5  # in seconds
+SYSEX_FIRST_BYTE = 0xF0
+SYSEX_TYPE_INDEX = 18
 
 
 class MidiService:
@@ -37,6 +39,7 @@ class MidiService:
             self.output_name = cfg.get("Midi", "OutPort", fallback="")
             self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
 
+            self.threadpool = QThreadPool()
             self.midi_in = rtmidi.MidiIn()
             self.midi_out = rtmidi.MidiOut()
             self.open_midi_ports()
@@ -47,7 +50,9 @@ class MidiService:
                 self.midi_out.open_port(port=i)
         for i in range(self.midi_in.get_port_count()):
             if self.input_name == self.midi_in.get_port_name(i):
+                self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
                 self.midi_in.open_port(port=i)
+                self.midi_in.set_callback(self.run_midi_in_worker)
 
     def close_midi_ports(self):
         self.midi_in.close_port()
@@ -61,47 +66,55 @@ class MidiService:
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
             raise Exception("Unable to open MIDI port. Please verify MIDI settings.")
 
+    def run_midi_in_worker(self, incoming_message, _):
+        self.threadpool.start(Worker(self.process_message, incoming_message))
+
+    def process_message(self, message):
+        message, deltatime = message
+        print("incoming midi: " + self.format_as_nice_hex(self.list_to_hex_str(message)))
+        if len(message) > 3 and message[0] == SYSEX_FIRST_BYTE:
+            print("SysEx response type (in hex): " + self.decimal_to_hex(message[18]))
+            if message[SYSEX_TYPE_INDEX] == SysexType.TONE_NAME.value:
+                print("Set tone name callback!")
+            elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
+                print("Set DSP module callback!")
+            elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
+                print("Set DSP params callback!")
+
     def send_sysex(self, sysex_hex_str: str):
         self.verify_midi_ports()
         print("SysEx: " + self.format_as_nice_hex(sysex_hex_str))
-        self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
-        self.flush_input_queue()
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
-        self.flush_input_queue()
-        self.midi_in.ignore_types(sysex=True, timing=True, active_sense=True)
+        time.sleep(0.01)
 
     def send_sysex_and_get_response(self, sysex_hex_str: str, required_size: int) -> list:
         self.verify_midi_ports()
         print("SysEx:\t\t" + self.format_as_nice_hex(sysex_hex_str))
-        self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
-        self.flush_input_queue()
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
 
+        # FIXME
+        return None
         # Wait for a correct response
-        message = None
-        start_time = time.time()
-        while (message is None or len(message[0]) < 4) and time.time() - start_time < RESPONSE_TIMEOUT:
-            message = self.midi_in.get_message()
-            time.sleep(0.01)
-
-        if message is None:
-            return None
-
-        self.midi_in.ignore_types(sysex=True, timing=True, active_sense=True)
-        response, delta_time = message
-        params_list = response[len(response) - 1 - required_size:len(response) - 1]
-        print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
-        print("Response params list:\t" + self.format_as_nice_hex(self.list_to_hex_str(params_list)))
-
-        return params_list
-
-    def flush_input_queue(self):
-        time.sleep(0.01)
-        self.midi_in.get_message()
+        # message = None
+        # start_time = time.time()
+        # while (message is None or len(message[0]) < 4) and time.time() - start_time < RESPONSE_TIMEOUT:
+        #     message = self.midi_in.get_message()
+        #     time.sleep(0.01)
+        #
+        # if message is None:
+        #     return None
+        #
+        # self.midi_in.ignore_types(sysex=True, timing=True, active_sense=True)
+        # response, delta_time = message
+        # params_list = response[len(response) - 1 - required_size:len(response) - 1]
+        # print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
+        # print("Response params list:\t" + self.format_as_nice_hex(self.list_to_hex_str(params_list)))
+        #
+        # return params_list
 
     def request_tone_name(self):
         msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0F 00 F7"
-        return self.send_sysex_and_get_response(msg, 16)
+        return self.send_sysex(msg)
 
     def send_change_tone_msg(self, instrument: Instrument):
         self.midi_out.send_message([0xB0, 0x00, instrument.bank])
@@ -158,7 +171,7 @@ class MidiService:
         return isinstance(int(block_id), int) and 0 <= int(block_id) <= 3
 
     def send_dsp_module_change_sysex(self, new_dsp_id: int, block_id: int):
-        self.send_parameter_change_sysex(SysexType.SET_DSP_MODULE.value, new_dsp_id, block_id)
+        self.send_parameter_change_sysex(SysexType.DSP_MODULE.value, new_dsp_id, block_id)
 
     def send_parameter_change_sysex(self, parameter: int, value: int, block_id: int):
         sysex = self.make_sysex(parameter, value, block_id)
