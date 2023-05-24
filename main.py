@@ -58,8 +58,8 @@ class MainWindow(QMainWindow):
         self.reload_dsp_page(self.central_widget.dsp_page_4)
         self.central_widget.on_tab_changed(0)
 
-    def update_tone_name(self, message):
-        tone_name = ''.join(chr(i) for i in message if chr(i).isprintable())
+    def update_tone_name(self, response):
+        tone_name = ''.join(chr(i) for i in response if chr(i).isprintable())
         print("Synth tone name: " + tone_name)
         if tone_name is not None and len(tone_name.strip()) > 0:
             self.tone.name = tone_name
