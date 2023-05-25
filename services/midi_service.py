@@ -46,6 +46,9 @@ class MidiService:
             self.midi_out = rtmidi.MidiOut()
             self.open_midi_ports()
 
+    def run_midi_in_worker(self, incoming_message, _):
+        self.threadpool.start(Worker(self.process_message, incoming_message))
+
     def open_midi_ports(self):
         for i in range(self.midi_out.get_port_count()):
             if self.output_name == self.midi_out.get_port_name(i):
@@ -68,8 +71,33 @@ class MidiService:
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
             raise Exception("Unable to open MIDI port. Please verify MIDI settings.")
 
-    def run_midi_in_worker(self, incoming_message, _):
-        self.threadpool.start(Worker(self.process_message, incoming_message))
+    def send_sysex(self, sysex_hex_str: str):
+        self.verify_midi_ports()
+        print("SysEx: " + self.format_as_nice_hex(sysex_hex_str))
+        self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
+        time.sleep(0.01)
+
+    def request_tone_name(self):
+        msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0F 00 F7"
+        self.send_sysex(msg)
+
+    def request_dsp_module(self, block_id: int):
+        if self.is_block_id_valid(block_id):
+            # Array size is always 14 bytes: length is "0D"
+            msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
+            msg_block_id = self.decimal_to_hex(block_id)
+            msg_end = "00 55 00 00 00 00 00 F7"
+
+            self.send_sysex(msg_start + msg_block_id + msg_end)
+
+    def request_dsp_params(self, block_id: int):
+        if self.is_block_id_valid(block_id):
+            # Array size is always 14 bytes: length is "0D"
+            msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
+            msg_block_id = self.decimal_to_hex(block_id)
+            msg_end = "00 57 00 00 00 0D 00 F7"
+
+            return self.send_sysex(msg_start + msg_block_id + msg_end)
 
     def process_message(self, message):
         message, deltatime = message
@@ -90,15 +118,25 @@ class MidiService:
                 print("Set DSP params callback!")
                 self.core.request_dsp_module_parameters_response(message)
 
-    def send_sysex(self, sysex_hex_str: str):
-        self.verify_midi_ports()
-        print("SysEx: " + self.format_as_nice_hex(sysex_hex_str))
-        self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
-        time.sleep(0.01)
+    # TODO: change parameter order
+    def send_dsp_module_change_sysex(self, new_dsp_id: int, block_id: int):
+        self.send_parameter_change_sysex(SysexType.DSP_MODULE.value, new_dsp_id, block_id)
 
-    def request_tone_name(self):
-        msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0F 00 F7"
-        self.send_sysex(msg)
+    # TODO: change parameter order
+    def send_dsp_params_change_sysex(self, params_list: list, block_id: int):
+        # Array size is always 14 bytes: length is "0D"
+        msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00"
+        msg_block_param_and_size = self.decimal_to_hex(block_id) + "00 57 00 00 00 0D 00"
+        msg_params = self.list_to_hex_str(params_list)
+        msg_end = "F7"
+
+        print("Setting DSP Params:\t" + self.format_as_nice_hex(msg_params))
+        self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
+
+    # TODO: change parameter order
+    def send_parameter_change_sysex(self, parameter: int, value: int, block_id: int):
+        sysex = self.make_sysex(parameter, value, block_id)
+        self.send_sysex(sysex)
 
     def send_change_tone_msg(self, instrument: Instrument):
         self.midi_out.send_message([0xB0, 0x00, instrument.bank])
@@ -122,52 +160,17 @@ class MidiService:
         # self.midi_out.send_message(bytearray(bytes.fromhex(s3)))
         # time.sleep(0.5)
 
-    def send_dsp_params_change_sysex(self, params_list: list, block_id: int):
-        # Array size is always 14 bytes: length is "0D"
-        msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00"
-        msg_block_param_and_size = self.decimal_to_hex(block_id) + "00 57 00 00 00 0D 00"
-        msg_params = self.list_to_hex_str(params_list)
-        msg_end = "F7"
-
-        print("Setting DSP Params:\t" + self.format_as_nice_hex(msg_params))
-        self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
-
-    def request_dsp_module(self, block_id: int):
-        if self.is_block_id_valid(block_id):
-            # Array size is always 14 bytes: length is "0D"
-            msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
-            msg_block_id = self.decimal_to_hex(block_id)
-            msg_end = "00 55 00 00 00 00 00 F7"
-
-            self.send_sysex(msg_start + msg_block_id + msg_end)
-
-    def request_dsp_params(self, block_id: int):
-        if self.is_block_id_valid(block_id):
-            # Array size is always 14 bytes: length is "0D"
-            msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
-            msg_block_id = self.decimal_to_hex(block_id)
-            msg_end = "00 57 00 00 00 0D 00 F7"
-
-            return self.send_sysex(msg_start + msg_block_id + msg_end)
-
     @staticmethod
     def is_block_id_valid(block_id: int):
         return isinstance(int(block_id), int) and 0 <= int(block_id) <= 3
 
-    # TODO: change parameter order
-    def send_dsp_module_change_sysex(self, new_dsp_id: int, block_id: int):
-        self.send_parameter_change_sysex(SysexType.DSP_MODULE.value, new_dsp_id, block_id)
-
-    def send_parameter_change_sysex(self, parameter: int, value: int, block_id: int):
-        sysex = self.make_sysex(parameter, value, block_id)
-        self.send_sysex(sysex)
-
-    def make_sysex(self, parameter: int, data: int, block0: int) -> str:
+    @staticmethod
+    def make_sysex(parameter: int, data: int, block0: int) -> str:
         return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
-            + self.decimal_to_hex_hex(block0) \
-            + self.decimal_to_hex_hex(parameter) \
+            + MidiService.decimal_to_hex_hex(block0) \
+            + MidiService.decimal_to_hex_hex(parameter) \
             + "00 00 00 00" \
-            + self.decimal_to_hex_hex(data) \
+            + MidiService.decimal_to_hex_hex(data) \
             + "F7"
 
     @staticmethod
@@ -181,31 +184,14 @@ class MidiService:
 
         return "{:02X}".format(decimal_num % 128) + " {:02X}".format(decimal_num // 128)
 
-    def list_to_hex_str(self, int_list: list) -> str:
+    @staticmethod
+    def list_to_hex_str(int_list: list) -> str:
         hex_str = ""
         for int_value in int_list:
-            hex_str = hex_str + " " + self.decimal_to_hex(int_value)
+            hex_str = hex_str + " " + MidiService.decimal_to_hex(int_value)
         return hex_str
 
     @staticmethod
     def format_as_nice_hex(input_str: str) -> str:
         string_without_spaces = input_str.replace(" ", "")
         return " ".join(string_without_spaces[i:i + 2] for i in range(0, len(string_without_spaces), 2))
-
-    # @staticmethod
-    # def decimal_to_two_bytes(decimal_num):
-    #     if decimal_num > 32267:
-    #         raise ValueError("Number is too big: {}".format(decimal_num))
-    #
-    #     return struct.pack("<BB", decimal_num % 128, decimal_num // 128)
-    #
-    # @staticmethod
-    # def make_sys_ex(parameter, data, category=3, memory=3, parameter_set=0, block0=0):
-    #     return bytes.fromhex("F0 44 19 01 7F 01") \
-    #         + struct.pack("<BBHHHHHHHH", category, memory, parameter_set, 0, 0, 0, block0, parameter, 0, 0) \
-    #         + data + bytes.fromhex("F7")
-    #
-    # @staticmethod
-    # def make_program_change(prgm, bankMSB, bankLSB=0, channel=0):
-    #     return struct.pack("<BBBBBBBB", 0xB0 + channel, 0x00, bankMSB, 0xB0 + channel, 0x20, bankLSB, 0xC0 + channel,
-    #                        prgm)
