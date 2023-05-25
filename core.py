@@ -89,7 +89,8 @@ class Core:
         dsp_page.list_widget.blockSignals(False)
 
         dsp_page.redraw_dsp_params_panel()
-        self.main_window.central_widget.update_help_text_panel()
+        if dsp_page == self.main_window.central_widget.current_dsp_page:
+            self.main_window.central_widget.update_help_text_panel()
 
     # Request DSP module parameters from synth
     def request_dsp_module_parameters(self, block_id, dsp_module_id):
