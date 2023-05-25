@@ -127,8 +127,14 @@ class Core:
             self.main_window.show_error_msg(str(e))
 
     # Intercept instrument change messages from synth
-    def process_instrument_select_response(self, bank, nr):
-        print("Instrument: " + str(bank) + ", " + str(nr))
+    def process_instrument_select_response(self, bank, program_change):
+        print("Instrument: " + str(bank) + ", " + str(program_change))
+        self.tone.name = "Unknown Tone"
+        for instrument in constants.ALL_INSTRUMENTS:
+            if instrument.bank == bank and instrument.program_change == program_change:
+                self.tone.name = instrument.name
+                break
+        self.main_window.top_widget.tone_name_label.setText(self.tone.name)
 
     # Close midi ports
     def close_midi_ports(self):
