@@ -112,7 +112,7 @@ class MidiService:
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]
                 print("\tDSP module response (first byte as hex): " + self.decimal_to_hex(response[0]))
-                self.core.process_dsp_module_by_block_id_response(block_id, response[0])
+                self.core.process_dsp_module_response(block_id, response[0])
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_PARAMS_RESPONSE_SIZE:len(message) - 1]

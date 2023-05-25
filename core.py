@@ -8,7 +8,7 @@ from model.tone import Tone
 from services.midi_service import MidiService
 
 
-# Class for managing tone state and handling all communication with the Midi Service
+# Class for managing tone state and handling all communication between GUI and Midi Service
 # NB! Use int values as its method parameters, all required byte/hex conversions make in the Midi Service!
 class Core:
     def __init__(self, main_window):
@@ -23,10 +23,10 @@ class Core:
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
         self.request_tone_name()
-        self.request_dsp_module_by_block_id(0)
-        self.request_dsp_module_by_block_id(1)
-        self.request_dsp_module_by_block_id(2)
-        self.request_dsp_module_by_block_id(3)
+        self.request_dsp_module(0)
+        self.request_dsp_module(1)
+        self.request_dsp_module(2)
+        self.request_dsp_module(3)
 
         self.main_window.central_widget.on_tab_changed(0)
 
@@ -48,18 +48,18 @@ class Core:
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
 
     # Request DSP module from synth
-    def request_dsp_module_by_block_id(self, block_id):
+    def request_dsp_module(self, block_id):
         try:
             self.midi_service.request_dsp_module(block_id)
         except Exception as e:
             self.main_window.show_error_msg(str(e))
 
     # Process DSP module from synth response
-    def process_dsp_module_by_block_id_response(self, block_id: int, dsp_module_id: int):
+    def process_dsp_module_response(self, block_id: int, dsp_module_id: int):
         self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
         self.request_dsp_module_parameters(block_id, dsp_module_id)
 
-    # On list widget changed: update tone dsp and send sysex
+    # On list widget changed: update tone dsp and send module change sysex
     def update_dsp_module_from_list(self, block_id, dsp_module_id):
         self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
 
@@ -73,6 +73,7 @@ class Core:
             except Exception as e:
                 self.main_window.show_error_msg(str(e))
 
+    # Update tone dsp module and refresh GUI
     def update_tone_dsp_module_and_refresh_gui(self, block_id, dsp_module_id):
         dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
         setattr(self.tone, dsp_module_attr, copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id)))
@@ -125,5 +126,6 @@ class Core:
         except Exception as e:
             self.main_window.show_error_msg(str(e))
 
+    # Close midi ports
     def close_midi_ports(self):
         self.midi_service.close_midi_ports()
