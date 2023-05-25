@@ -1,6 +1,7 @@
 import configparser
 import threading
 import time
+from collections import deque
 
 import rtmidi
 from PySide2.QtCore import QThreadPool
@@ -10,12 +11,18 @@ from constants.enums import SysexType
 from external.worker import Worker
 from model.instrument import Instrument
 
+# TODO: group all params into enums
 SYSEX_FIRST_BYTE = 0xF0
+BANK_SELECT1_FIRST_BYTE = 0xB0
+BANK_SELECT2 = [0xB0, 0x20, 0x00]
+INSTRUMENT_SELECT_FIRST_BYTE = 0xC0
+
 BLOCK_INDEX = 16
 SYSEX_TYPE_INDEX = 18
+
 TONE_NAME_RESPONSE_SIZE = 16  # TODO: replace 0F in sysex
 DSP_MODULE_RESPONSE_SIZE = 2
-DSP_PARAMS_RESPONSE_SIZE = 14
+DSP_PARAMS_RESPONSE_SIZE = 14  # TODO: replace 0D in sysex
 
 
 class MidiService:
@@ -42,6 +49,8 @@ class MidiService:
             self.input_name = cfg.get("Midi", "InPort", fallback="")
             self.output_name = cfg.get("Midi", "OutPort", fallback="")
             self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
+
+            self.queue = deque()
 
             self.threadpool = QThreadPool()
             self.midi_in = rtmidi.MidiIn()
@@ -118,6 +127,22 @@ class MidiService:
                 response = message[len(message) - 1 - DSP_PARAMS_RESPONSE_SIZE:len(message) - 1]
                 print("\tDSP params response: " + self.format_as_nice_hex(self.list_to_hex_str(response)))
                 self.core.process_dsp_module_parameters_response(block_id, response)
+        elif message[0] == BANK_SELECT1_FIRST_BYTE:
+            self.queue.append(message)
+        elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE:
+            bank1_msg = self.get_message()
+            bank2_msg = self.get_message()
+            if bank2_msg == BANK_SELECT2:
+                print("Bank msg 1: " + self.format_as_nice_hex(self.list_to_hex_str(bank1_msg)))
+                print("Bank msg 2: " + self.format_as_nice_hex(self.list_to_hex_str(bank2_msg)))
+                print("Instrument select msg: " + self.format_as_nice_hex(self.list_to_hex_str(message)))
+                self.core.process_instrument_select_response(bank1_msg[2], message[1])
+
+    def get_message(self):
+        try:
+            return self.queue.popleft()
+        except IndexError:
+            return None
 
     def send_dsp_module_change_sysex(self, block_id: int, new_dsp_id: int):
         self.send_parameter_change_sysex(block_id, SysexType.DSP_MODULE.value, new_dsp_id)

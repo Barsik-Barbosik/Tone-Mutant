@@ -126,6 +126,10 @@ class Core:
         except Exception as e:
             self.main_window.show_error_msg(str(e))
 
+    # Intercept instrument change messages from synth
+    def process_instrument_select_response(self, bank, nr):
+        print("Instrument: " + str(bank) + ", " + str(nr))
+
     # Close midi ports
     def close_midi_ports(self):
         self.midi_service.close_midi_ports()
