@@ -1,9 +1,14 @@
 import copy
 
-from constants.enums import ParameterType
-from model.dsp_parameter import DspParameter
 from model.tone import Tone
 from services.midi_service import MidiService
+
+BLOCK_MAPPING = {
+    0: ('dsp_module_1', 'dsp_page_1'),
+    1: ('dsp_module_2', 'dsp_page_2'),
+    2: ('dsp_module_3', 'dsp_page_3'),
+    3: ('dsp_module_4', 'dsp_page_4')
+}
 
 
 # Class for managing tone state and handling all communication with the Midi Service
@@ -74,35 +79,21 @@ class Core:
         # self.core.request_dsp_module_parameters(self.block_id)
 
     def common_part(self, block_id, dsp_module_id):
-        if block_id == 0:
-            self.tone.dsp_module_1 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
-            dsp_page = self.main_window.central_widget.dsp_page_1
-            dsp_page.dsp_module = self.tone.dsp_module_1
-            # dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
-            dsp_page.redraw_dsp_params_panel()
-        elif block_id == 1:
-            self.tone.dsp_module_2 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
-            dsp_page = self.main_window.central_widget.dsp_page_2
-            dsp_page.dsp_module = self.tone.dsp_module_2
-            # dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
-            dsp_page.redraw_dsp_params_panel()
-        elif block_id == 2:
-            self.tone.dsp_module_3 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
-            dsp_page = self.main_window.central_widget.dsp_page_3
-            dsp_page.dsp_module = self.tone.dsp_module_3
-            # dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
-            dsp_page.redraw_dsp_params_panel()
-        elif block_id == 3:
-            self.tone.dsp_module_4 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
-            dsp_page = self.main_window.central_widget.dsp_page_4
-            dsp_page.dsp_module = self.tone.dsp_module_4
-            # dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
-            dsp_page.redraw_dsp_params_panel()
+        dsp_module_attr, dsp_page_attr = BLOCK_MAPPING[block_id]
+        setattr(self.tone, dsp_module_attr, copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id)))
+        dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
+        dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
+
+        dsp_page.list_widget.blockSignals(True)
+        dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
+        dsp_page.list_widget.blockSignals(False)
+
+        dsp_page.redraw_dsp_params_panel()
         self.main_window.central_widget.update_help_text_panel()
 
     # Request DSP module parameters from synth
     def request_dsp_module_parameters(self, block_id, dsp_module_id):
-        pass
+        print("request_dsp_module_parameters...")
         # if self.dsp_module is not None:
         #     try:
         #         synth_dsp_params = self.midi_service.request_dsp_params(block_id)
@@ -118,7 +109,7 @@ class Core:
 
     # Process DSP module parameters from synth response
     def process_dsp_module_parameters_response(self, response):
-        pass
+        print("process_dsp_module_parameters_response...")
 
     # Send message to update synth's DSP parameters
     def set_synth_dsp_params(self):

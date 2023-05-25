@@ -35,8 +35,8 @@ class DspPage(QWidget):
             item.setText(dsp_module.name)
             item.setData(Qt.UserRole, dsp_module.id)
             self.list_widget.insertItem(idx + 1, item)
-        self.list_widget.setCurrentRow(0)
-        self.list_widget.itemSelectionChanged.connect(lambda: self.on_list_widget_changed(self.list_widget))
+        # self.list_widget.setCurrentRow(0)
+        self.list_widget.itemSelectionChanged.connect(self.on_list_widget_changed)
         hbox_layout.addWidget(self.list_widget)  # left side
 
         self.redraw_dsp_params_panel()
@@ -53,7 +53,7 @@ class DspPage(QWidget):
 
             random_button = QPushButton("Randomize DSP values", self)
             random_button.setObjectName("random-button")
-            random_button.clicked.connect(lambda: self.on_random_button_pressed())
+            random_button.clicked.connect(self.on_random_button_pressed)
             button_row = len(self.dsp_module.dsp_parameter_list) - right_side_items_count + 1
             self.qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
         else:
@@ -70,11 +70,11 @@ class DspPage(QWidget):
                 elif child.layout() is not None:
                     self.clear_layout(child.layout())
 
-    def on_list_widget_changed(self, list_widget: QListWidget):
-        if list_widget.currentItem() is None:
-            list_widget.setCurrentRow(0)
+    def on_list_widget_changed(self):
+        if self.list_widget.currentItem() is None:
+            self.list_widget.setCurrentRow(0)
         else:
-            dsp_module_id: int = list_widget.currentItem().data(Qt.UserRole)
+            dsp_module_id: int = self.list_widget.currentItem().data(Qt.UserRole)
             if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
                 self.core.update_dsp_module_from_list(self.block_id, dsp_module_id)
 

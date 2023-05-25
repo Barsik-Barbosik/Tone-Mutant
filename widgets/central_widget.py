@@ -60,7 +60,7 @@ class CentralWidget(QWidget):
             item.setData(Qt.UserRole, instrument.id)
             self.instrument_list.insertItem(idx, item)
         # self.instrument_list.setCurrentRow(0)
-        self.instrument_list.itemSelectionChanged.connect(lambda: self.on_instrument_list_changed(self.instrument_list))
+        self.instrument_list.itemSelectionChanged.connect(self.on_instrument_list_changed)
         hbox_layout.addWidget(self.instrument_list)  # left side
 
         GuiHelper.fill_qgrid_with_params(qgrid_layout,
@@ -100,8 +100,8 @@ class CentralWidget(QWidget):
 
         self.update_help_text_panel()
 
-    def on_instrument_list_changed(self, instrument_list: QListWidget):
-        instrument_id: int = instrument_list.currentItem().data(Qt.UserRole)
+    def on_instrument_list_changed(self):
+        instrument_id: int = self.instrument_list.currentItem().data(Qt.UserRole)
         self.core.change_instrument_by_id_from_list(instrument_id)
 
     def create_json_view_page(self) -> QWidget:

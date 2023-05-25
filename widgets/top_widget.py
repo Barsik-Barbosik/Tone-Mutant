@@ -22,7 +22,7 @@ class TopWidget(QWidget):
         self.channel_combo = QComboBox(self)
         self.channel_combo.addItems(ALL_CHANNELS)
         self.channel_combo.setCurrentText(selection)
-        self.channel_combo.currentIndexChanged.connect(lambda: self.on_channel_change())
+        self.channel_combo.currentIndexChanged.connect(self.on_channel_change)
         self.layout.addWidget(self.channel_combo)
 
         mute_combo = QComboBox(self)
@@ -40,7 +40,7 @@ class TopWidget(QWidget):
 
         synchronize_tone_button = QPushButton("Synchronize tone", self)
         synchronize_tone_button.setObjectName("top-widget-button")
-        synchronize_tone_button.clicked.connect(lambda: self.core.synchronize_tone_with_synth())
+        synchronize_tone_button.clicked.connect(self.core.synchronize_tone_with_synth)
         self.layout.addWidget(synchronize_tone_button)
 
         randomize_tone_button = QPushButton("Randomize tone", self)
