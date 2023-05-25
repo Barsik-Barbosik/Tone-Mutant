@@ -35,7 +35,7 @@ class DspPage(QWidget):
             item.setText(dsp_module.name)
             item.setData(Qt.UserRole, dsp_module.id)
             self.list_widget.insertItem(idx + 1, item)
-        # self.list_widget.setCurrentRow(0)
+        self.list_widget.setCurrentRow(0)
         self.list_widget.itemSelectionChanged.connect(self.on_list_widget_changed)
         hbox_layout.addWidget(self.list_widget)  # left side
 

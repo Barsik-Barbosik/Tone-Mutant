@@ -75,13 +75,13 @@ class CentralWidget(QWidget):
         return TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
 
     def on_tab_changed(self, _unused_idx):
+        self.current_dsp_page = None
         current_tab_name = self.get_current_tab_name()
 
         if current_tab_name == TabName.MAIN_PARAMETERS:
             self.main_window.show_status_msg("Main parameters for editing tone", 3000)
         elif current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
             self.main_window.show_status_msg("Parameters for " + current_tab_name.value + " module", 3000)
-
             if current_tab_name == TabName.DSP_1:
                 self.current_dsp_page = self.dsp_page_1
             elif current_tab_name == TabName.DSP_2:
@@ -90,9 +90,6 @@ class CentralWidget(QWidget):
                 self.current_dsp_page = self.dsp_page_3
             elif current_tab_name == TabName.DSP_4:
                 self.current_dsp_page = self.dsp_page_4
-            else:
-                self.current_dsp_page = None
-
             self.current_dsp_page.redraw_dsp_params_panel()
         elif current_tab_name == TabName.JSON:
             self.main_window.show_status_msg("Tone information in JSON-format", 3000)
