@@ -71,9 +71,12 @@ class DspPage(QWidget):
                     self.clear_layout(child.layout())
 
     def on_list_widget_changed(self, list_widget: QListWidget):
-        dsp_module_id: int = list_widget.currentItem().data(Qt.UserRole)
-        if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
-            self.core.update_dsp_module_from_list(self.block_id, dsp_module_id)
+        if list_widget.currentItem() is None:
+            list_widget.setCurrentRow(0)
+        else:
+            dsp_module_id: int = list_widget.currentItem().data(Qt.UserRole)
+            if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
+                self.core.update_dsp_module_from_list(self.block_id, dsp_module_id)
 
     def on_random_button_pressed(self):
         for dsp_param in self.dsp_module.dsp_parameter_list:

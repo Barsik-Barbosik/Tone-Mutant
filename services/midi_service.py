@@ -11,6 +11,7 @@ from external.worker import Worker
 from model.instrument import Instrument
 
 SYSEX_FIRST_BYTE = 0xF0
+BLOCK_INDEX = 16
 SYSEX_TYPE_INDEX = 18
 TONE_NAME_RESPONSE_SIZE = 16  # TODO: replace 0F in sysex
 DSP_MODULE_RESPONSE_SIZE = 2
@@ -111,12 +112,14 @@ class MidiService:
                 self.core.process_tone_name_response(response)
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
                 print("Set DSP module callback!")
+                block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]
                 print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
-                self.core.process_dsp_module_by_block_id_response(response)
+                print("Block: " + str(block_id))
+                self.core.process_dsp_module_by_block_id_response(block_id, response)
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
                 print("Set DSP params callback!")
-                self.core.request_dsp_module_parameters_response(message)
+                self.core.process_dsp_module_parameters_response(message)
 
     def send_dsp_module_change_sysex(self, block_id: int, new_dsp_id: int):
         self.send_parameter_change_sysex(block_id, SysexType.DSP_MODULE.value, new_dsp_id)
