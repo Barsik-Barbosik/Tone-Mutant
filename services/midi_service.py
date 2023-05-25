@@ -114,9 +114,10 @@ class MidiService:
                 print("\tDSP module response (first byte as hex): " + self.decimal_to_hex(response[0]))
                 self.core.process_dsp_module_by_block_id_response(block_id, response[0])
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
+                block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_PARAMS_RESPONSE_SIZE:len(message) - 1]
                 print("\tDSP params response: " + self.format_as_nice_hex(self.list_to_hex_str(response)))
-                self.core.process_dsp_module_parameters_response(response)
+                self.core.process_dsp_module_parameters_response(block_id, response)
 
     def send_dsp_module_change_sysex(self, block_id: int, new_dsp_id: int):
         self.send_parameter_change_sysex(block_id, SysexType.DSP_MODULE.value, new_dsp_id)

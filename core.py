@@ -2,6 +2,7 @@ import copy
 
 from PySide2.QtCore import QTimer
 
+from model.dsp_module import DspModule
 from model.tone import Tone
 from services.midi_service import MidiService
 
@@ -102,16 +103,14 @@ class Core:
                 self.main_window.show_error_msg(str(e))
 
     # Process DSP module parameters from synth response
-    def process_dsp_module_parameters_response(self, response):
-        synth_dsp_params = response
-
-        # for idx, dsp_param in enumerate(self.dsp_module.dsp_parameter_list):
-        #     print("Param before: " + str(synth_dsp_params[idx]) + ", after: " + str(
-        #         DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)))
-        #     dsp_param.value = DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)
-
-        #     current_row = self.get_list_item_by_dsp_id(self.dsp_module.id)
-        #     self.list_widget.setCurrentItem(current_row)
+    def process_dsp_module_parameters_response(self, block_id, synth_dsp_params):
+        dsp_module_attr, dsp_page_attr = BLOCK_MAPPING[block_id]
+        dsp_module = getattr(self.tone, dsp_module_attr)
+        if dsp_module is not None:
+            for idx, dsp_param in enumerate(dsp_module.dsp_parameter_list):
+                print("Param before: " + str(synth_dsp_params[idx]) + ", after: " + str(
+                    DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)))
+                dsp_param.value = DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)
 
     # Send message to update synth's DSP parameters
     def set_synth_dsp_params(self):
@@ -131,17 +130,6 @@ class Core:
             self.midi_service.send_change_tone_msg(self.tone.base_tone)
         except Exception as e:
             self.main_window.show_error_msg(str(e))
-
-    # def get_dsp_page_by_block_id(self, block_id):
-    #     if block_id == 0:
-    #         return self.main_window.central_widget.dsp_page_1
-    #     elif block_id == 1:
-    #         return self.main_window.central_widget.dsp_page_2
-    #     elif block_id == 2:
-    #         return self.main_window.central_widget.dsp_page_3
-    #     elif block_id == 3:
-    #         return self.main_window.central_widget.dsp_page_4
-    #     return None  # impossible
 
     def close_midi_ports(self):
         self.midi_service.close_midi_ports()
