@@ -15,6 +15,7 @@ BLOCK_INDEX = 16
 SYSEX_TYPE_INDEX = 18
 TONE_NAME_RESPONSE_SIZE = 16  # TODO: replace 0F in sysex
 DSP_MODULE_RESPONSE_SIZE = 2
+DSP_PARAMS_RESPONSE_SIZE = 14
 
 
 class MidiService:
@@ -74,7 +75,7 @@ class MidiService:
 
     def send_sysex(self, sysex_hex_str: str):
         self.verify_midi_ports()
-        print("SysEx: " + self.format_as_nice_hex(sysex_hex_str))
+        print("Outgoing SysEx:\t\t" + self.format_as_nice_hex(sysex_hex_str))
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
         time.sleep(0.01)
 
@@ -88,7 +89,6 @@ class MidiService:
             msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
             msg_block_id = self.decimal_to_hex(block_id)
             msg_end = "00 55 00 00 00 00 00 F7"
-
             self.send_sysex(msg_start + msg_block_id + msg_end)
 
     def request_dsp_params(self, block_id: int):
@@ -97,28 +97,26 @@ class MidiService:
             msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
             msg_block_id = self.decimal_to_hex(block_id)
             msg_end = "00 57 00 00 00 0D 00 F7"
-
-            return self.send_sysex(msg_start + msg_block_id + msg_end)
+            self.send_sysex(msg_start + msg_block_id + msg_end)
 
     def process_message(self, message):
         message, deltatime = message
-        print("incoming midi: " + self.format_as_nice_hex(self.list_to_hex_str(message)))
+        print("Incoming midi msg:\t" + self.format_as_nice_hex(self.list_to_hex_str(message)))
         if len(message) > 3 and message[0] == SYSEX_FIRST_BYTE:
-            print("SysEx response type (in hex): " + self.decimal_to_hex(message[SYSEX_TYPE_INDEX]))
+            print("\tSysEx response type (as hex): " + self.decimal_to_hex(message[SYSEX_TYPE_INDEX]))
             if message[SYSEX_TYPE_INDEX] == SysexType.TONE_NAME.value:
-                print("Set tone name callback!")
                 response = message[len(message) - 1 - TONE_NAME_RESPONSE_SIZE:len(message) - 1]
-                print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
+                print("\tTone name response: " + self.format_as_nice_hex(self.list_to_hex_str(response)))
                 self.core.process_tone_name_response(response)
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
-                print("Set DSP module callback!")
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]
-                print("Response (first byte):\t" + self.decimal_to_hex(response[0]))
+                print("\tDSP module response (first byte as hex): " + self.decimal_to_hex(response[0]))
                 self.core.process_dsp_module_by_block_id_response(block_id, response[0])
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
-                print("Set DSP params callback!")
-                self.core.process_dsp_module_parameters_response(message)
+                response = message[len(message) - 1 - DSP_PARAMS_RESPONSE_SIZE:len(message) - 1]
+                print("\tDSP params response: " + self.format_as_nice_hex(self.list_to_hex_str(response)))
+                self.core.process_dsp_module_parameters_response(response)
 
     def send_dsp_module_change_sysex(self, block_id: int, new_dsp_id: int):
         self.send_parameter_change_sysex(block_id, SysexType.DSP_MODULE.value, new_dsp_id)
@@ -129,8 +127,6 @@ class MidiService:
         msg_block_param_and_size = self.decimal_to_hex(block_id) + "00 57 00 00 00 0D 00"
         msg_params = self.list_to_hex_str(params_list)
         msg_end = "F7"
-
-        print("Setting DSP Params:\t" + self.format_as_nice_hex(msg_params))
         self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
 
     def send_parameter_change_sysex(self, block_id: int, parameter: int, value: int):

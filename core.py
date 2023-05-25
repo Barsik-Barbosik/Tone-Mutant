@@ -45,7 +45,7 @@ class Core:
     # Process tone name from synth response
     def process_tone_name_response(self, response):
         tone_name = ''.join(chr(i) for i in response if chr(i).isprintable())
-        print("Synth tone name: " + tone_name)
+        print("\tSynth tone name: " + tone_name)
         if tone_name is not None and len(tone_name.strip()) > 0:
             self.tone.name = tone_name
         else:
@@ -74,11 +74,9 @@ class Core:
         else:
             try:
                 self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
+                self.request_dsp_module_parameters(block_id, dsp_module_id)
             except Exception as e:
                 self.main_window.show_error_msg(str(e))
-
-        # TODO: then...
-        # self.core.request_dsp_module_parameters(self.block_id)
 
     def update_tone_dsp_module_and_refresh_gui(self, block_id, dsp_module_id):
         dsp_module_attr, dsp_page_attr = BLOCK_MAPPING[block_id]
@@ -97,22 +95,23 @@ class Core:
     # Request DSP module parameters from synth
     def request_dsp_module_parameters(self, block_id, dsp_module_id):
         print("request_dsp_module_parameters...")
-        # if self.dsp_module is not None:
-        #     try:
-        #         synth_dsp_params = self.midi_service.request_dsp_params(block_id)
-        #         for idx, dsp_param in enumerate(self.dsp_module.dsp_parameter_list):
-        #             print("Param before: " + str(synth_dsp_params[idx]) + ", after: " + str(
-        #                 DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)))
-        #             dsp_param.value = DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)
-        #     except Exception as e:
-        #         self.main_window.show_error_msg(str(e))
-        #
-        #     current_row = self.get_list_item_by_dsp_id(self.dsp_module.id)
-        #     self.list_widget.setCurrentItem(current_row)
+        if dsp_module_id is not None:
+            try:
+                self.midi_service.request_dsp_params(block_id)
+            except Exception as e:
+                self.main_window.show_error_msg(str(e))
 
     # Process DSP module parameters from synth response
     def process_dsp_module_parameters_response(self, response):
-        print("process_dsp_module_parameters_response...")
+        synth_dsp_params = response
+
+        # for idx, dsp_param in enumerate(self.dsp_module.dsp_parameter_list):
+        #     print("Param before: " + str(synth_dsp_params[idx]) + ", after: " + str(
+        #         DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)))
+        #     dsp_param.value = DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)
+
+        #     current_row = self.get_list_item_by_dsp_id(self.dsp_module.id)
+        #     self.list_widget.setCurrentItem(current_row)
 
     # Send message to update synth's DSP parameters
     def set_synth_dsp_params(self):
