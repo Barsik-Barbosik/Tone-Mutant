@@ -12,6 +12,7 @@ BLOCK_MAPPING = {
 
 
 # Class for managing tone state and handling all communication with the Midi Service
+# NB! Use int values as its method parameters, all required byte/hex conversions make in the Midi Service!
 class Core:
     def __init__(self, main_window):
         self.main_window = main_window
@@ -57,13 +58,11 @@ class Core:
             self.main_window.show_error_msg(str(e))
 
     # Process DSP module from synth response
-    def process_dsp_module_by_block_id_response(self, block_id: int, response):
-        if response is not None and len(response) > 0:
-            dsp_module_id = response[0]
-            self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
-            self.request_dsp_module_parameters(block_id, dsp_module_id)
+    def process_dsp_module_by_block_id_response(self, block_id: int, dsp_module_id: int):
+        self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
+        self.request_dsp_module_parameters(block_id, dsp_module_id)
 
-    # On list widget changed: update tone dsp
+    # On list widget changed: update tone dsp and send sysex
     def update_dsp_module_from_list(self, block_id, dsp_module_id):
         self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
 

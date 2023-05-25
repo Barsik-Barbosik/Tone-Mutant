@@ -114,9 +114,8 @@ class MidiService:
                 print("Set DSP module callback!")
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]
-                print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
-                print("Block: " + str(block_id))
-                self.core.process_dsp_module_by_block_id_response(block_id, response)
+                print("Response (first byte):\t" + self.format_as_nice_hex(self.list_to_hex_str(response[0])))
+                self.core.process_dsp_module_by_block_id_response(block_id, response[0])
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
                 print("Set DSP params callback!")
                 self.core.process_dsp_module_parameters_response(message)
