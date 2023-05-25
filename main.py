@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
         self.help_texbox.setHtml(text)
 
     def show_status_msg(self, text: str, msecs: int):
-        self.status_bar.setStyleSheet("background-color: white; color: black")  # TODO: change class
+        self.status_bar.setStyleSheet("background-color: white; color: black")
         self.status_bar.showMessage(text, msecs)
 
     def show_error_msg(self, text: str):
