@@ -2,7 +2,7 @@ from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButt
 
 from widgets.gui_helper import GuiHelper
 
-DEFAULT_NAME = "001 StagePno"
+DEFAULT_NAME = "001 StagePno?"
 ALL_CHANNELS = ["Upper keyboard", "MIDI Channel 1"]
 CHANNEL_ENABLE_DISABLE_ITEMS = ["ENABLED", "DISABLED"]
 

@@ -43,8 +43,9 @@ class Core:
         print("\tSynth tone name: " + tone_name)
         if tone_name is not None and len(tone_name.strip()) > 0:
             self.tone.name = tone_name
-        else:
-            self.tone.name = "Unknown Tone"
+        elif not self.tone.name.endswith('?'):
+            self.tone.name += '?'
+
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
 
     # Request DSP module from synth
@@ -128,11 +129,12 @@ class Core:
 
     # Intercept instrument change messages from synth
     def process_instrument_select_response(self, bank, program_change):
-        print("Instrument: " + str(bank) + ", " + str(program_change))
+        print("\tInstrument: " + str(bank) + ", " + str(program_change))
         self.tone.name = "Unknown Tone"
         for instrument in constants.ALL_INSTRUMENTS:
             if instrument.bank == bank and instrument.program_change == program_change:
-                self.tone.name = instrument.name
+                self.tone.name = "{:03}".format(instrument.id) + " " + instrument.name
+                self.tone.base_tone = instrument
                 break
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
 
