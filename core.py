@@ -2,16 +2,10 @@ import copy
 
 from PySide2.QtCore import QTimer
 
+from constants import constants
 from model.dsp_module import DspModule
 from model.tone import Tone
 from services.midi_service import MidiService
-
-BLOCK_MAPPING = {
-    0: ('dsp_module_1', 'dsp_page_1'),
-    1: ('dsp_module_2', 'dsp_page_2'),
-    2: ('dsp_module_3', 'dsp_page_3'),
-    3: ('dsp_module_4', 'dsp_page_4')
-}
 
 
 # Class for managing tone state and handling all communication with the Midi Service
@@ -80,7 +74,7 @@ class Core:
                 self.main_window.show_error_msg(str(e))
 
     def update_tone_dsp_module_and_refresh_gui(self, block_id, dsp_module_id):
-        dsp_module_attr, dsp_page_attr = BLOCK_MAPPING[block_id]
+        dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
         setattr(self.tone, dsp_module_attr, copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id)))
         dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
         dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
@@ -104,7 +98,7 @@ class Core:
 
     # Process DSP module parameters from synth response
     def process_dsp_module_parameters_response(self, block_id, synth_dsp_params):
-        dsp_module_attr, dsp_page_attr = BLOCK_MAPPING[block_id]
+        dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
         dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_module is not None:
             for idx, dsp_param in enumerate(dsp_module.dsp_parameter_list):

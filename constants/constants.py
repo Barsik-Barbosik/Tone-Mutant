@@ -11,6 +11,13 @@ KNOB_SIZE: Final[int] = 40
 
 EMPTY_DSP_NAME: Final[str] = "OFF"
 
+BLOCK_MAPPING = {
+    0: ('dsp_module_1', 'dsp_page_1'),
+    1: ('dsp_module_2', 'dsp_page_2'),
+    2: ('dsp_module_3', 'dsp_page_3'),
+    3: ('dsp_module_4', 'dsp_page_4')
+}
+
 RIGHT_SIDE_MAIN_PARAMS: Final[tuple] = (
     "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume")
 
