@@ -1,6 +1,5 @@
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton, QListWidget
 
-from model.tone import Tone
 from widgets.gui_helper import GuiHelper
 
 DEFAULT_NAME = "001 StagePno"
@@ -11,9 +10,8 @@ CHANNEL_ENABLE_DISABLE_ITEMS = ["ENABLED", "DISABLED"]
 class TopWidget(QWidget):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        self.main = parent
-        self.tone: Tone = self.main.tone
-        # self.midi_service = MidiService.get_instance()
+        self.core = parent.core
+        self.main_window = self.core.main_window
 
         self.channel = 0
         self.layout = QHBoxLayout(self)
@@ -42,7 +40,7 @@ class TopWidget(QWidget):
 
         synchronize_tone_button = QPushButton("Synchronize tone", self)
         synchronize_tone_button.setObjectName("top-widget-button")
-        synchronize_tone_button.clicked.connect(lambda: self.main.synchronize_tone_with_synth())
+        synchronize_tone_button.clicked.connect(lambda: self.core.synchronize_tone_with_synth())
         self.layout.addWidget(synchronize_tone_button)
 
         randomize_tone_button = QPushButton("Randomize tone", self)
@@ -54,7 +52,7 @@ class TopWidget(QWidget):
             self.channel = 32 if self.channel_combo.currentIndex() == 1 else 0
             print("Channel: " + str(self.channel))
 
-            instrument_list: QListWidget = self.main.central_widget.instrument_list
+            instrument_list: QListWidget = self.main_window.central_widget.instrument_list
             if self.channel == 32:
                 instrument_list.setEnabled(True)
             else:

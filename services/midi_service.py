@@ -12,7 +12,8 @@ from model.instrument import Instrument
 
 SYSEX_FIRST_BYTE = 0xF0
 SYSEX_TYPE_INDEX = 18
-TONE_NAME_SIZE = 16  # TODO: replace 0F in sysex
+TONE_NAME_RESPONSE_SIZE = 16  # TODO: replace 0F in sysex
+DSP_MODULE_RESPONSE_SIZE = 2
 
 
 class MidiService:
@@ -32,7 +33,7 @@ class MidiService:
             raise Exception("This class is a singleton!")
         else:
             MidiService.__instance = self
-            self.main = None
+            self.core = None
 
             cfg = configparser.ConfigParser()
             cfg.read(constants.CONFIG_FILENAME)
@@ -77,11 +78,14 @@ class MidiService:
             print("SysEx response type (in hex): " + self.decimal_to_hex(message[SYSEX_TYPE_INDEX]))
             if message[SYSEX_TYPE_INDEX] == SysexType.TONE_NAME.value:
                 print("Set tone name callback!")
-                response = message[len(message) - 1 - TONE_NAME_SIZE:len(message) - 1]
+                response = message[len(message) - 1 - TONE_NAME_RESPONSE_SIZE:len(message) - 1]
                 print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
-                self.main.update_tone_name(response)
+                self.core.update_tone_name(response)
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
                 print("Set DSP module callback!")
+                response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]
+                print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
+                self.core.process_dsp_module_by_block_id_response(response)
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
                 print("Set DSP params callback!")
 
@@ -118,7 +122,7 @@ class MidiService:
 
     def request_tone_name(self):
         msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0F 00 F7"
-        return self.send_sysex(msg)
+        self.send_sysex(msg)
 
     def send_change_tone_msg(self, instrument: Instrument):
         self.midi_out.send_message([0xB0, 0x00, instrument.bank])
@@ -159,7 +163,7 @@ class MidiService:
             msg_block_id = self.decimal_to_hex(block_id)
             msg_end = "00 55 00 00 00 00 00 F7"
 
-            return self.send_sysex_and_get_response(msg_start + msg_block_id + msg_end, 2)
+            self.send_sysex(msg_start + msg_block_id + msg_end)
 
     def request_dsp_params(self, block_id: int):
         if self.is_block_id_valid(block_id):
@@ -174,6 +178,7 @@ class MidiService:
     def is_block_id_valid(block_id: int):
         return isinstance(int(block_id), int) and 0 <= int(block_id) <= 3
 
+    # TODO: change parameter order
     def send_dsp_module_change_sysex(self, new_dsp_id: int, block_id: int):
         self.send_parameter_change_sysex(SysexType.DSP_MODULE.value, new_dsp_id, block_id)
 
