@@ -60,11 +60,12 @@ class Core:
     def process_dsp_module_by_block_id_response(self, block_id: int, response):
         if response is not None and len(response) > 0:
             dsp_module_id = response[0]
-            self.common_part(block_id, dsp_module_id)
+            self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
             self.request_dsp_module_parameters(block_id, dsp_module_id)
 
+    # On list widget changed: update tone dsp
     def update_dsp_module_from_list(self, block_id, dsp_module_id):
-        self.common_part(block_id, dsp_module_id)
+        self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
 
         if dsp_module_id is None:
             # TODO: turn DSP off
@@ -78,7 +79,7 @@ class Core:
         # TODO: then...
         # self.core.request_dsp_module_parameters(self.block_id)
 
-    def common_part(self, block_id, dsp_module_id):
+    def update_tone_dsp_module_and_refresh_gui(self, block_id, dsp_module_id):
         dsp_module_attr, dsp_page_attr = BLOCK_MAPPING[block_id]
         setattr(self.tone, dsp_module_attr, copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id)))
         dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
