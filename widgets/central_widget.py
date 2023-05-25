@@ -93,7 +93,7 @@ class CentralWidget(QWidget):
             else:
                 self.current_dsp_page = None
 
-            # self.core.midi_request_dsp_module_by_block_id(None)
+            # self.core.request_dsp_module_by_block_id(None)
         elif current_tab_name == TabName.JSON:
             self.main_window.show_status_msg("Tone information in JSON-format", 3000)
             self.json_view_tab_textbox.setPlainText(json.dumps(self.core.tone, cls=ObjectEncoder, indent=4))
@@ -102,7 +102,7 @@ class CentralWidget(QWidget):
 
     def on_instrument_list_changed(self, instrument_list: QListWidget):
         instrument_id: int = instrument_list.currentItem().data(Qt.UserRole)
-        self.core.change_instrument_by_id(instrument_id)
+        self.core.change_instrument_by_id_from_list(instrument_id)
 
     def create_json_view_page(self) -> QWidget:
         json_view_page = QWidget(self)

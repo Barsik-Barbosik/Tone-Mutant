@@ -89,7 +89,7 @@ class Tone:
 
     @staticmethod
     def get_dsp_module_by_id(dsp_module_id: int):
-        if dsp_module_id is None or dsp_module_id == 0:
+        if dsp_module_id is None or dsp_module_id == 0 or dsp_module_id == 0x7F:
             return None
 
         for dsp_module in constants.ALL_DSP_MODULES:

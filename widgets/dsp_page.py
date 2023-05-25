@@ -49,7 +49,7 @@ class DspPage(QWidget):
             right_side_items_count = GuiHelper.fill_qgrid_with_params(self.qgrid_layout,
                                                                       self.dsp_module.dsp_parameter_list,
                                                                       constants.RIGHT_SIDE_DSP_PARAMS,
-                                                                      self.core.midi_set_synth_dsp_params)
+                                                                      self.core.set_synth_dsp_params)
 
             random_button = QPushButton("Randomize DSP values", self)
             random_button.setObjectName("random-button")
@@ -73,7 +73,7 @@ class DspPage(QWidget):
     def on_list_widget_changed(self, list_widget: QListWidget):
         dsp_module_id: int = list_widget.currentItem().data(Qt.UserRole)
         if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
-            self.core.update_dsp_module(self.block_id, dsp_module_id)
+            self.core.update_dsp_module_from_list(self.block_id, dsp_module_id)
 
     def on_random_button_pressed(self):
         for dsp_param in self.dsp_module.dsp_parameter_list:
@@ -81,7 +81,7 @@ class DspPage(QWidget):
                 dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
             if dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
                 dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
-        self.core.midi_set_synth_dsp_params()
+        self.core.set_synth_dsp_params()
         self.redraw_dsp_params_panel()
         self.main_window.show_status_msg("It may be necessary to correct volume levels after setting random values.",
                                          3000)

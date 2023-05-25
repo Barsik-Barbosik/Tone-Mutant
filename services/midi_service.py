@@ -80,7 +80,7 @@ class MidiService:
                 print("Set tone name callback!")
                 response = message[len(message) - 1 - TONE_NAME_RESPONSE_SIZE:len(message) - 1]
                 print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
-                self.core.update_tone_name(response)
+                self.core.process_tone_name_response(response)
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
                 print("Set DSP module callback!")
                 response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]
@@ -88,37 +88,13 @@ class MidiService:
                 self.core.process_dsp_module_by_block_id_response(response)
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
                 print("Set DSP params callback!")
+                self.core.request_dsp_module_parameters_response(message)
 
     def send_sysex(self, sysex_hex_str: str):
         self.verify_midi_ports()
         print("SysEx: " + self.format_as_nice_hex(sysex_hex_str))
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
         time.sleep(0.01)
-
-    def send_sysex_and_get_response(self, sysex_hex_str: str, required_size: int) -> list:
-        self.verify_midi_ports()
-        print("SysEx:\t\t" + self.format_as_nice_hex(sysex_hex_str))
-        self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
-
-        # FIXME
-        return None
-        # Wait for a correct response
-        # message = None
-        # start_time = time.time()
-        # while (message is None or len(message[0]) < 4) and time.time() - start_time < RESPONSE_TIMEOUT:
-        #     message = self.midi_in.get_message()
-        #     time.sleep(0.01)
-        #
-        # if message is None:
-        #     return None
-        #
-        # self.midi_in.ignore_types(sysex=True, timing=True, active_sense=True)
-        # response, delta_time = message
-        # params_list = response[len(response) - 1 - required_size:len(response) - 1]
-        # print("Response:\t" + self.format_as_nice_hex(self.list_to_hex_str(response)))
-        # print("Response params list:\t" + self.format_as_nice_hex(self.list_to_hex_str(params_list)))
-        #
-        # return params_list
 
     def request_tone_name(self):
         msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0F 00 F7"
@@ -172,7 +148,7 @@ class MidiService:
             msg_block_id = self.decimal_to_hex(block_id)
             msg_end = "00 57 00 00 00 0D 00 F7"
 
-            return self.send_sysex_and_get_response(msg_start + msg_block_id + msg_end, 14)
+            return self.send_sysex(msg_start + msg_block_id + msg_end)
 
     @staticmethod
     def is_block_id_valid(block_id: int):
