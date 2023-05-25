@@ -46,7 +46,7 @@ class MidiService:
             self.midi_out = rtmidi.MidiOut()
             self.open_midi_ports()
 
-    def run_midi_in_worker(self, incoming_message, _):
+    def start_midi_worker(self, incoming_message, _):
         self.threadpool.start(Worker(self.process_message, incoming_message))
 
     def open_midi_ports(self):
@@ -57,7 +57,7 @@ class MidiService:
             if self.input_name == self.midi_in.get_port_name(i):
                 self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
                 self.midi_in.open_port(port=i)
-                self.midi_in.set_callback(self.run_midi_in_worker)
+                self.midi_in.set_callback(self.start_midi_worker)
 
     def close_midi_ports(self):
         self.midi_in.close_port()
@@ -118,12 +118,10 @@ class MidiService:
                 print("Set DSP params callback!")
                 self.core.request_dsp_module_parameters_response(message)
 
-    # TODO: change parameter order
-    def send_dsp_module_change_sysex(self, new_dsp_id: int, block_id: int):
-        self.send_parameter_change_sysex(SysexType.DSP_MODULE.value, new_dsp_id, block_id)
+    def send_dsp_module_change_sysex(self, block_id: int, new_dsp_id: int):
+        self.send_parameter_change_sysex(block_id, SysexType.DSP_MODULE.value, new_dsp_id)
 
-    # TODO: change parameter order
-    def send_dsp_params_change_sysex(self, params_list: list, block_id: int):
+    def send_dsp_params_change_sysex(self, block_id: int, params_list: list):
         # Array size is always 14 bytes: length is "0D"
         msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00"
         msg_block_param_and_size = self.decimal_to_hex(block_id) + "00 57 00 00 00 0D 00"
@@ -133,44 +131,34 @@ class MidiService:
         print("Setting DSP Params:\t" + self.format_as_nice_hex(msg_params))
         self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
 
-    # TODO: change parameter order
-    def send_parameter_change_sysex(self, parameter: int, value: int, block_id: int):
-        sysex = self.make_sysex(parameter, value, block_id)
+    def send_parameter_change_sysex(self, block_id: int, parameter: int, value: int):
+        sysex = self.make_sysex(block_id, parameter, value)
         self.send_sysex(sysex)
 
     def send_change_tone_msg(self, instrument: Instrument):
         self.midi_out.send_message([0xB0, 0x00, instrument.bank])
-        time.sleep(0.1)
+        time.sleep(0.01)
         self.midi_out.send_message([0xB0, 0x20, 0x00])
-        time.sleep(0.1)
+        time.sleep(0.01)
         self.midi_out.send_message([0xC0, instrument.program_change])
-        time.sleep(0.1)
 
-        # aaa = self.make_program_change(19, 35, bankLSB=0, channel=0)
-        # bbb = aaa.hex(' ').upper()
-        # self.send_sysex(bbb)
-        # s1 = "B0 00 04"
-        # s2 = "B0 20 00"
-        # s3 = "C0 04"
-        # self.flush_input_queue()
-        # self.midi_out.send_message(bytearray(bytes.fromhex(s2)))
-        # time.sleep(0.5)
-        # self.midi_out.send_message(bytearray(bytes.fromhex(s1)))
-        # time.sleep(0.5)
-        # self.midi_out.send_message(bytearray(bytes.fromhex(s3)))
-        # time.sleep(0.5)
+        # self.midi_out.send_message(bytearray(bytes.fromhex("B0 00 04")))
+        # time.sleep(0.01)
+        # self.midi_out.send_message(bytearray(bytes.fromhex("B0 20 00")))
+        # time.sleep(0.01)
+        # self.midi_out.send_message(bytearray(bytes.fromhex("C0 04")))
 
     @staticmethod
     def is_block_id_valid(block_id: int):
         return isinstance(int(block_id), int) and 0 <= int(block_id) <= 3
 
     @staticmethod
-    def make_sysex(parameter: int, data: int, block0: int) -> str:
+    def make_sysex(block_id: int, parameter: int, value: int) -> str:
         return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
-            + MidiService.decimal_to_hex_hex(block0) \
+            + MidiService.decimal_to_hex_hex(block_id) \
             + MidiService.decimal_to_hex_hex(parameter) \
             + "00 00 00 00" \
-            + MidiService.decimal_to_hex_hex(data) \
+            + MidiService.decimal_to_hex_hex(value) \
             + "F7"
 
     @staticmethod

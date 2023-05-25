@@ -82,7 +82,7 @@ class Core:
             self.main_window.show_status_msg("Not implemented!!", 1000)
         else:
             try:
-                self.midi_service.send_dsp_module_change_sysex(dsp_module_id, block_id)
+                self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
             except Exception as e:
                 self.main_window.show_error_msg(str(e))
 
@@ -128,7 +128,7 @@ class Core:
     def set_synth_dsp_params(self):
         try:
             dsp_page = self.main_window.central_widget.current_dsp_page
-            self.midi_service.send_dsp_params_change_sysex(dsp_page.get_dsp_params_as_list(), dsp_page.block_id)
+            self.midi_service.send_dsp_params_change_sysex(dsp_page.block_id, dsp_page.get_dsp_params_as_list())
         except Exception as e:
             self.main_window.show_error_msg(str(e))
 

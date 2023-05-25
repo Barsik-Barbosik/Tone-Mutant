@@ -153,7 +153,7 @@ class GuiHelper:
     @staticmethod
     def on_combo_changed(combo: QComboBox, dsp_parameter: DspParameter, function_to_run: Callable):
         dsp_parameter.value = dsp_parameter.choices.index(combo.currentText())
-        function_to_run()  # send_dsp_params_change_sysex()
+        function_to_run()  # send dsp params change sysex
 
     @staticmethod
     def on_knob_changed(knob: QDial, linked_knob_spinbox: QSpinBox, dsp_parameter: DspParameter,
@@ -161,7 +161,7 @@ class GuiHelper:
         if knob.value() != linked_knob_spinbox.value():
             linked_knob_spinbox.setValue(knob.value())
             dsp_parameter.value = knob.value()
-            function_to_run()  # send_dsp_params_change_sysex()
+            function_to_run()  # send dsp params change sysex
 
     @staticmethod
     def on_knob_spinbox_changed(knob_spinbox: QSpinBox, linked_knob: QDial, dsp_parameter: DspParameter,
@@ -169,7 +169,7 @@ class GuiHelper:
         if knob_spinbox.value() != linked_knob.value():
             linked_knob.setValue(knob_spinbox.value())
             dsp_parameter.value = knob_spinbox.value()
-            function_to_run()  # send_dsp_params_change_sysex()
+            function_to_run()  # send dsp params change sysex
 
     @staticmethod
     def get_spacer() -> QWidget:
