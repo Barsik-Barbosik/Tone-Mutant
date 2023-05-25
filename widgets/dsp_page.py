@@ -38,8 +38,6 @@ class DspPage(QWidget):
         self.list_widget.setCurrentRow(0)
         self.list_widget.itemSelectionChanged.connect(self.on_list_widget_changed)
         hbox_layout.addWidget(self.list_widget)  # left side
-
-        self.redraw_dsp_params_panel()
         hbox_layout.addLayout(self.qgrid_layout)  # right side
 
     def redraw_dsp_params_panel(self):

@@ -1,5 +1,7 @@
 import copy
 
+from PySide2.QtCore import QTimer
+
 from model.tone import Tone
 from services.midi_service import MidiService
 
@@ -88,9 +90,9 @@ class Core:
         dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
         dsp_page.list_widget.blockSignals(False)
 
-        dsp_page.redraw_dsp_params_panel()
         if dsp_page == self.main_window.central_widget.current_dsp_page:
-            self.main_window.central_widget.update_help_text_panel()
+            QTimer().singleShot(0, dsp_page.redraw_dsp_params_panel)
+            QTimer().singleShot(0, self.main_window.central_widget.update_help_text_panel)
 
     # Request DSP module parameters from synth
     def request_dsp_module_parameters(self, block_id, dsp_module_id):
