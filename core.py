@@ -78,22 +78,26 @@ class Core:
             self.tone.dsp_module_1 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
             dsp_page = self.main_window.central_widget.dsp_page_1
             dsp_page.dsp_module = self.tone.dsp_module_1
-            dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
+            # dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
+            dsp_page.redraw_dsp_params_panel()
         elif block_id == 1:
             self.tone.dsp_module_2 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
             dsp_page = self.main_window.central_widget.dsp_page_2
             dsp_page.dsp_module = self.tone.dsp_module_2
-            dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
+            # dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
+            dsp_page.redraw_dsp_params_panel()
         elif block_id == 2:
             self.tone.dsp_module_3 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
             dsp_page = self.main_window.central_widget.dsp_page_3
             dsp_page.dsp_module = self.tone.dsp_module_3
-            dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
+            # dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
+            dsp_page.redraw_dsp_params_panel()
         elif block_id == 3:
             self.tone.dsp_module_4 = copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id))
             dsp_page = self.main_window.central_widget.dsp_page_4
             dsp_page.dsp_module = self.tone.dsp_module_4
-            dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
+            # dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
+            dsp_page.redraw_dsp_params_panel()
         self.main_window.central_widget.update_help_text_panel()
 
     # Request DSP module parameters from synth
@@ -104,8 +108,8 @@ class Core:
         #         synth_dsp_params = self.midi_service.request_dsp_params(block_id)
         #         for idx, dsp_param in enumerate(self.dsp_module.dsp_parameter_list):
         #             print("Param before: " + str(synth_dsp_params[idx]) + ", after: " + str(
-        #                 self.decode_param_value(synth_dsp_params[idx], dsp_param)))
-        #             dsp_param.value = self.decode_param_value(synth_dsp_params[idx], dsp_param)
+        #                 DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)))
+        #             dsp_param.value = DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)
         #     except Exception as e:
         #         self.main_window.show_error_msg(str(e))
         #
@@ -115,20 +119,6 @@ class Core:
     # Process DSP module parameters from synth response
     def process_dsp_module_parameters_response(self, response):
         pass
-        # self.get_dsp_page_by_block_id(block_id).redraw_dsp_params_panel()
-
-    # TODO: move to DspParameter class
-    @staticmethod
-    def decode_param_value(value: int, dsp_param: DspParameter):
-        if dsp_param.type == ParameterType.KNOB:
-            if dsp_param.choices[0] == 0:
-                return value
-            elif dsp_param.choices[0] == -64:
-                return value - 64
-        # TODO
-        # elif parameter.type == ParameterType.KNOB_2BYTES:
-        #     return value
-        return value
 
     # Send message to update synth's DSP parameters
     def set_synth_dsp_params(self):

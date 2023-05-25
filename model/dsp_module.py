@@ -1,5 +1,6 @@
 from typing import List
 
+from constants.enums import ParameterType
 from model.dsp_parameter import DspParameter
 
 
@@ -12,3 +13,15 @@ class DspModule:
 
     def to_json(self):
         return {"name": self.name, "parameters": self.dsp_parameter_list}
+
+    @staticmethod
+    def decode_param_value(value: int, dsp_param: DspParameter):
+        if dsp_param.type == ParameterType.KNOB:
+            if dsp_param.choices[0] == 0:
+                return value
+            elif dsp_param.choices[0] == -64:
+                return value - 64
+        # TODO
+        # elif parameter.type == ParameterType.KNOB_2BYTES:
+        #     return value
+        return value
