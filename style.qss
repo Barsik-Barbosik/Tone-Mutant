@@ -44,3 +44,12 @@ QPushButton {
     qproperty-alignment: 'AlignVCenter | AlignRight';
     padding-left: 30px;
 }
+
+#midi-settings-label {
+    qproperty-alignment: 'AlignVCenter | AlignRight';
+    margin-left: 5px;
+}
+
+#midi-settings-combo {
+    margin-right: 10px;
+}

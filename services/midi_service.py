@@ -127,25 +127,23 @@ class MidiService:
                 response = message[len(message) - 1 - DSP_PARAMS_RESPONSE_SIZE:len(message) - 1]
                 print("\tDSP params response: " + self.format_as_nice_hex(self.list_to_hex_str(response)))
                 self.core.process_dsp_module_parameters_response(block_id, response)
-        elif message[0] == BANK_SELECT1_FIRST_BYTE:
+        elif message[0] == BANK_SELECT1_FIRST_BYTE and message != BANK_SELECT2:
             self.queue.append(message)
         elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE:
-            bank1_msg = self.get_message()
-            bank2_msg = self.get_message()
-            if bank1_msg == BANK_SELECT2:
-                # New try
-                bank1_msg = self.get_message()
-                bank2_msg = BANK_SELECT2
-
-                # Swap
-                # temp = bank1_msg
-                # bank1_msg = bank2_msg
-                # bank2_msg = temp
-            if bank1_msg is not None and bank2_msg == BANK_SELECT2:
+            bank1_msg = self.get_message_until_none()
+            if bank1_msg is not None:
                 print("\tBank msg 1: " + self.format_as_nice_hex(self.list_to_hex_str(bank1_msg)))
-                print("\tBank msg 2: " + self.format_as_nice_hex(self.list_to_hex_str(bank2_msg)))
                 print("\tInstrument select msg: " + self.format_as_nice_hex(self.list_to_hex_str(message)))
                 self.core.process_instrument_select_response(bank1_msg[2], message[1])
+
+    def get_message_until_none(self):
+        last_message = None
+        while True:
+            try:
+                last_message = self.queue.popleft()
+            except IndexError:
+                return last_message
+        return last_message  # should exit before
 
     def get_message(self):
         try:

@@ -44,9 +44,12 @@ class MidiSettingsWindow(QWidget):
 
         self.show()
 
-    def create_combo_box(self, label, items, selection):
-        self.layout.addWidget(QLabel(label), self.layout.rowCount(), 0)
+    def create_combo_box(self, label_text, items, selection):
+        label = QLabel(label_text)
+        label.setObjectName("midi-settings-label")
+        self.layout.addWidget(label, self.layout.rowCount(), 0)
         combo_box = QComboBox(self)
+        combo_box.setObjectName("midi-settings-combo")
         combo_box.addItems(items)
         combo_box.setCurrentText(selection)
         self.layout.addWidget(combo_box, self.layout.rowCount() - 1, 1)
