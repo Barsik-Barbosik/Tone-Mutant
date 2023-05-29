@@ -43,7 +43,7 @@ class Core:
         print("\tSynth tone name: " + tone_name)
         if tone_name is not None and len(tone_name.strip()) > 0:
             self.tone.name = tone_name
-        elif not self.tone.name.endswith('?'):
+        elif self.tone.name is not None and not self.tone.name.endswith('?'):
             self.tone.name += '?'
 
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)

@@ -129,6 +129,7 @@ class MidiService:
                 self.core.process_dsp_module_parameters_response(block_id, response)
         elif message[0] == BANK_SELECT1_FIRST_BYTE and message != BANK_SELECT2:
             self.queue.append(message)
+            time.sleep(0.01)
         elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE:
             bank1_msg = self.get_message_until_none()
             if bank1_msg is not None:

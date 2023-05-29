@@ -4,7 +4,8 @@ import traceback
 from PySide2.QtCore import Slot, QRunnable, QObject, Signal
 
 
-# https://www.pythonguis.com/tutorials/multithreading-pyside-applications-qthreadpool/
+# Custom QRunnable worker together with the worker & progress signals
+# Author: Martin Fitzpatrick; https://www.pythonguis.com/tutorials/multithreading-pyside-applications-qthreadpool/
 class WorkerSignals(QObject):
     """
     Defines the signals available from a running worker thread.
