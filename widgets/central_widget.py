@@ -1,6 +1,6 @@
 import json
 
-from PySide2.QtCore import Qt, QThreadPool
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QListWidget, QHBoxLayout, QListWidgetItem, QTextBrowser
 
 from constants import constants
@@ -16,7 +16,6 @@ class CentralWidget(QWidget):
         self.core = parent.core
         self.main_window = self.core.main_window
 
-        self.threadpool = QThreadPool.globalInstance()
         self.json_view_tab_textbox = QTextBrowser()
 
         self.dsp_page_1 = DspPage(self, 0)
