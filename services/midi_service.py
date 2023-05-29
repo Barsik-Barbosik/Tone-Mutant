@@ -8,13 +8,12 @@ from PySide2.QtCore import QThreadPool
 
 from constants import constants
 from constants.enums import SysexType
-from external.worker import Worker
 from model.instrument import Instrument
 
 # TODO: group all params into enums
 SYSEX_FIRST_BYTE = 0xF0
-BANK_SELECT1_FIRST_BYTE = 0xB0
-BANK_SELECT2 = [0xB0, 0x20, 0x00]
+BANK_SELECT_PART1_FIRST_BYTE = 0xB0
+BANK_SELECT_PART2 = [0xB0, 0x20, 0x00]
 INSTRUMENT_SELECT_FIRST_BYTE = 0xC0
 
 BLOCK_INDEX = 16
@@ -50,15 +49,15 @@ class MidiService:
             self.output_name = cfg.get("Midi", "OutPort", fallback="")
             self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
 
-            self.queue = deque()
+            self.bank_select_msg_queue = deque()
 
             self.threadpool = QThreadPool()
             self.midi_in = rtmidi.MidiIn()
             self.midi_out = rtmidi.MidiOut()
             self.open_midi_ports()
 
-    def start_midi_worker(self, incoming_message, _):
-        self.threadpool.start(Worker(self.process_message, incoming_message))
+    # def start_midi_worker(self, incoming_message, _):
+    #     self.threadpool.start(Worker(self.process_message, incoming_message))
 
     def open_midi_ports(self):
         for i in range(self.midi_out.get_port_count()):
@@ -68,7 +67,7 @@ class MidiService:
             if self.input_name == self.midi_in.get_port_name(i):
                 self.midi_in.ignore_types(sysex=False, timing=True, active_sense=True)
                 self.midi_in.open_port(port=i)
-                self.midi_in.set_callback(self.start_midi_worker)
+                self.midi_in.set_callback(self.process_message)
 
     def close_midi_ports(self):
         self.midi_in.close_port()
@@ -108,7 +107,7 @@ class MidiService:
             msg_end = "00 57 00 00 00 0D 00 F7"
             self.send_sysex(msg_start + msg_block_id + msg_end)
 
-    def process_message(self, message):
+    def process_message(self, message, _):
         message, deltatime = message
         print("Incoming midi msg:\t" + self.format_as_nice_hex(self.list_to_hex_str(message)))
         if len(message) > 3 and message[0] == SYSEX_FIRST_BYTE:
@@ -127,28 +126,28 @@ class MidiService:
                 response = message[len(message) - 1 - DSP_PARAMS_RESPONSE_SIZE:len(message) - 1]
                 print("\tDSP params response: " + self.format_as_nice_hex(self.list_to_hex_str(response)))
                 self.core.process_dsp_module_parameters_response(block_id, response)
-        elif message[0] == BANK_SELECT1_FIRST_BYTE and message != BANK_SELECT2:
-            self.queue.append(message)
+        elif message[0] == BANK_SELECT_PART1_FIRST_BYTE and message != BANK_SELECT_PART2:
+            self.bank_select_msg_queue.append(message)
             time.sleep(0.01)
         elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE:
-            bank1_msg = self.get_message_until_none()
-            if bank1_msg is not None:
-                print("\tBank msg 1: " + self.format_as_nice_hex(self.list_to_hex_str(bank1_msg)))
+            bank_select_msg = self.get_last_bank_select_message()
+            if bank_select_msg is not None:
+                print("\tBank select msg: " + self.format_as_nice_hex(self.list_to_hex_str(bank_select_msg)))
                 print("\tInstrument select msg: " + self.format_as_nice_hex(self.list_to_hex_str(message)))
-                self.core.process_instrument_select_response(bank1_msg[2], message[1])
+                self.core.process_instrument_select_response(bank_select_msg[2], message[1])
 
-    def get_message_until_none(self):
+    def get_last_bank_select_message(self):
         last_message = None
         while True:
             try:
-                last_message = self.queue.popleft()
+                last_message = self.bank_select_msg_queue.popleft()
             except IndexError:
                 return last_message
         return last_message  # should exit before
 
     def get_message(self):
         try:
-            return self.queue.popleft()
+            return self.bank_select_msg_queue.popleft()
         except IndexError:
             return None
 
