@@ -1,6 +1,6 @@
 import sys
 
-from PySide2.QtCore import Qt, QCoreApplication
+from PySide2.QtCore import Qt, QCoreApplication, Signal, Slot
 from PySide2.QtWidgets import QApplication, QMainWindow, QTextBrowser, \
     QStatusBar
 
@@ -12,6 +12,8 @@ from widgets.top_widget import TopWidget
 
 
 class MainWindow(QMainWindow):
+    status_msg_signal = Signal(str, int)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("CT-X Controller")
@@ -38,11 +40,14 @@ class MainWindow(QMainWindow):
 
         self.midi_settings_window = None
 
+        self.status_msg_signal.connect(self.show_status_msg)
+
         self.core.synchronize_tone_with_synth()
 
     def show_help_text(self, text: str):
         self.help_texbox.setHtml(text)
 
+    @Slot(str, int)
     def show_status_msg(self, text: str, msecs: int):
         self.status_bar.setStyleSheet("background-color: white; color: black")
         self.status_bar.showMessage(text, msecs)

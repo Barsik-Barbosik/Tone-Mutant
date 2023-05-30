@@ -1,6 +1,7 @@
 import copy
+import time
 
-from PySide2.QtCore import QTimer
+from PySide2.QtCore import QTimer, QReadWriteLock
 
 from constants import constants
 from model.dsp_module import DspModule
@@ -16,9 +17,12 @@ class Core:
         self.tone: Tone = Tone()
         self.midi_service = MidiService.get_instance()
         self.midi_service.core = self
+        self.lock = QReadWriteLock()
+        self.timeout = 0
 
     # Synchronize all Tone data: name, main params, DSP modules and their params
     def synchronize_tone_with_synth(self):
+        self.lock.lockForWrite()
         print("Synchronizing tone!")
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
@@ -29,6 +33,7 @@ class Core:
         self.request_dsp_module(3)
 
         self.main_window.central_widget.on_tab_changed(0)
+        self.lock.unlock()
 
     # Request tone name from synth
     def request_tone_name(self):
@@ -39,6 +44,7 @@ class Core:
 
     # Process tone name from synth response
     def process_tone_name_response(self, response):
+        self.lock.lockForWrite()
         tone_name = ''.join(chr(i) for i in response if chr(i).isprintable())
         print("\tSynth tone name: " + tone_name)
         if tone_name is not None and len(tone_name.strip()) > 0:
@@ -47,6 +53,7 @@ class Core:
             self.tone.name += '?'
 
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
+        self.lock.unlock()
 
     # Request DSP module from synth
     def request_dsp_module(self, block_id):
@@ -57,8 +64,10 @@ class Core:
 
     # Process DSP module from synth response
     def process_dsp_module_response(self, block_id: int, dsp_module_id: int):
+        self.lock.lockForWrite()
         self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
         self.request_dsp_module_parameters(block_id, dsp_module_id)
+        self.lock.unlock()
 
     # On list widget changed: update tone dsp and send module change sysex
     def update_dsp_module_from_list(self, block_id, dsp_module_id):
@@ -100,6 +109,7 @@ class Core:
 
     # Process DSP module parameters from synth response
     def process_dsp_module_parameters_response(self, block_id, synth_dsp_params):
+        self.lock.lockForWrite()
         dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
         dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_module is not None:
@@ -107,6 +117,7 @@ class Core:
                 print("Param before: " + str(synth_dsp_params[idx]) + ", after: " + str(
                     DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)))
                 dsp_param.value = DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)
+        self.lock.unlock()
 
     # Send message to update synth's DSP parameters
     def set_synth_dsp_params(self):
@@ -129,6 +140,7 @@ class Core:
 
     # Intercept instrument change messages from synth
     def process_instrument_select_response(self, bank, program_change):
+        self.lock.lockForWrite()
         print("\tInstrument: " + str(bank) + ", " + str(program_change))
         self.tone.name = "Unknown Tone"
         for instrument in constants.ALL_INSTRUMENTS:
@@ -137,6 +149,43 @@ class Core:
                 self.tone.base_tone = instrument
                 break
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
+        self.lock.unlock()
+
+    def countdown_and_autosynchronize(self, timeout):
+        self.lock.lockForWrite()
+        is_active = self.timeout > 0
+        self.lock.unlock()
+
+        if is_active:
+            # worker exists: reset timer and exit
+            self.lock.lockForWrite()
+            self.timeout = timeout
+            self.lock.unlock()
+        else:
+            # start countdown
+            self.lock.lockForWrite()
+            self.timeout = timeout
+            self.lock.unlock()
+            while True:
+                self.lock.lockForWrite()
+                is_active = self.timeout > 0
+                self.lock.unlock()
+
+                if is_active:
+                    self.lock.lockForWrite()
+                    text = "Time before autosynchronize: " + str(self.timeout)
+                    print(text)
+                    self.main_window.status_msg_signal.emit(text, 1000)
+                    self.timeout = self.timeout - 1
+                    self.lock.unlock()
+                    time.sleep(1)
+                else:
+                    break
+
+            self.lock.lockForWrite()
+            print("Synchronize!!")
+            self.main_window.status_msg_signal.emit("Synchronize!!", 1000)
+            self.lock.unlock()
 
     # Close midi ports
     def close_midi_ports(self):

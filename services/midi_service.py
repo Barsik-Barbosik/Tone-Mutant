@@ -8,6 +8,7 @@ from PySide2.QtCore import QThreadPool
 
 from constants import constants
 from constants.enums import SysexType
+from external.worker import Worker
 from model.instrument import Instrument
 
 # TODO: group all params into enums
@@ -135,6 +136,7 @@ class MidiService:
                 print("\tBank select msg: " + self.format_as_nice_hex(self.list_to_hex_str(bank_select_msg)))
                 print("\tInstrument select msg: " + self.format_as_nice_hex(self.list_to_hex_str(message)))
                 self.core.process_instrument_select_response(bank_select_msg[2], message[1])
+                self.threadpool.start(Worker(self.core.countdown_and_autosynchronize, 3))
 
     def get_last_bank_select_message(self):
         last_message = None
