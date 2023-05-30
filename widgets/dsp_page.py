@@ -89,7 +89,7 @@ class DspPage(QWidget):
                 dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
             if dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
                 dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
-        self.core.set_synth_dsp_params()
+        self.core.set_synth_dsp_params(None)
         self.redraw_dsp_params_panel()
         self.main_window.show_status_msg("It may be necessary to correct volume levels after setting random values.",
                                          3000)

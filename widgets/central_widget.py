@@ -69,7 +69,7 @@ class CentralWidget(QWidget):
         GuiHelper.fill_qgrid_with_params(qgrid_layout,
                                          self.core.tone.main_parameter_list,
                                          constants.RIGHT_SIDE_MAIN_PARAMS,
-                                         self.do_nothing)
+                                         self.set_synth_parameter)
 
         hbox_layout.addLayout(qgrid_layout)  # right side
         return main_params_page
@@ -131,6 +131,8 @@ class CentralWidget(QWidget):
 
         self.main_window.show_help_text(text)
 
-    @staticmethod
-    def do_nothing():
-        pass
+    # Send message to update synth's main parameter
+    def set_synth_parameter(self, parameter):
+        # TODO: Fix "Cutoff F" incorrect values -> 64 vs 127, maybe use hex_hex()
+        print("Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
+        self.core.send_parameter_change_sysex(0, parameter.action_number, parameter.value)
