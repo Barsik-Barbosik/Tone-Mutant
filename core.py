@@ -1,7 +1,7 @@
 import copy
 import time
 
-from PySide2.QtCore import QTimer, QReadWriteLock
+from PySide2.QtCore import QTimer, QReadWriteLock, Signal, Slot, QObject
 
 from constants import constants
 from model.dsp_module import DspModule
@@ -11,19 +11,25 @@ from services.midi_service import MidiService
 
 # Class for managing tone state and handling all communication between GUI and Midi Service
 # NB! Use int values as its method parameters, all required byte/hex conversions make in the Midi Service!
-class Core:
+class Core(QObject):
+    synchronize_tone_signal = Signal()
+
     def __init__(self, main_window):
+        super().__init__()
         self.main_window = main_window
         self.tone: Tone = Tone()
         self.midi_service = MidiService.get_instance()
         self.midi_service.core = self
         self.lock = QReadWriteLock()
         self.timeout = 0
+        self.synchronize_tone_signal.connect(self.synchronize_tone_with_synth)
 
     # Synchronize all Tone data: name, main params, DSP modules and their params
+    @Slot()
     def synchronize_tone_with_synth(self):
         self.lock.lockForWrite()
         print("Synchronizing tone!")
+        # self.main_window.status_msg_signal.emit("Synchronizing tone...", 1000)
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
         self.request_tone_name()
@@ -177,7 +183,7 @@ class Core:
 
                 if is_active:
                     self.lock.lockForWrite()
-                    text = "Time before autosynchronize: " + str(self.timeout)
+                    text = "Autosynchronize countdown: " + str(self.timeout)
                     print(text)
                     self.main_window.status_msg_signal.emit(text, 1000)
                     self.timeout = self.timeout - 1
@@ -187,8 +193,7 @@ class Core:
                     break
 
             self.lock.lockForWrite()
-            print("Synchronize!!")
-            self.main_window.status_msg_signal.emit("Synchronize!!", 1000)
+            self.synchronize_tone_signal.emit()
             self.lock.unlock()
 
     # Close midi ports
