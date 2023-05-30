@@ -4,9 +4,9 @@ import time
 from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
 
 from constants import constants
-from model.dsp_module import DspModule
 from model.tone import Tone
 from services.midi_service import MidiService
+from utils.utils import decode_param_value
 
 
 # Class for managing tone state and handling all communication between GUI and Midi Service
@@ -120,9 +120,9 @@ class Core(QObject):
         dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_module is not None:
             for idx, dsp_param in enumerate(dsp_module.dsp_parameter_list):
-                print("Param before: " + str(synth_dsp_params[idx]) + ", after: " + str(
-                    DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)))
-                dsp_param.value = DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)
+                print("Param before: " + str(synth_dsp_params[idx]) +
+                      ", after: " + str(decode_param_value(synth_dsp_params[idx], dsp_param)))
+                dsp_param.value = decode_param_value(synth_dsp_params[idx], dsp_param)
 
         if self.main_window.central_widget.current_dsp_page:
             self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()

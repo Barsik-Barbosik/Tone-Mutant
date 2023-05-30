@@ -133,4 +133,4 @@ class CentralWidget(QWidget):
 
     @staticmethod
     def do_nothing():
-        print("...")
+        pass
