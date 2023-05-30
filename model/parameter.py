@@ -3,7 +3,7 @@ from typing import List
 from constants.enums import ParameterType
 
 
-class DspParameter:
+class Parameter:
     def __init__(self, id: int, name: str, description: str, type: ParameterType, choices: List, default_value: int):
         self.id = id
         self.name = name
@@ -22,3 +22,13 @@ class DspParameter:
         elif self.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
             obj["value"] = self.value
         return obj
+
+
+class MainParameter(Parameter):
+    def __init__(self, id: int, name: str, description: str, type: ParameterType, choices: List, default_value: int):
+        super().__init__(id, name, description, type, choices, default_value)
+
+
+class DspParameter(Parameter):
+    def __init__(self, id: int, name: str, description: str, type: ParameterType, choices: List, default_value: int):
+        super().__init__(id, name, description, type, choices, default_value)

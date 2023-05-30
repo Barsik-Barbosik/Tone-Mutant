@@ -7,7 +7,7 @@ from PySide2.QtWidgets import QLabel
 
 from constants import constants
 from constants.enums import ParameterType
-from model.dsp_parameter import DspParameter
+from model.parameter import Parameter
 
 
 class GuiHelper:
@@ -123,52 +123,51 @@ class GuiHelper:
         return right_side_items_count
 
     @staticmethod
-    def create_combo_input(dsp_parameter: DspParameter, function_to_run: Callable) -> QComboBox:
+    def create_combo_input(parameter: Parameter, function_to_run: Callable) -> QComboBox:
         combo_box = QComboBox()
-        combo_box.addItems(dsp_parameter.choices)
-        combo_box.setCurrentIndex(dsp_parameter.value)
+        combo_box.addItems(parameter.choices)
+        combo_box.setCurrentIndex(parameter.value)
         combo_box.currentIndexChanged.connect(
-            lambda: GuiHelper.on_combo_changed(combo_box, dsp_parameter, function_to_run))
+            lambda: GuiHelper.on_combo_changed(combo_box, parameter, function_to_run))
         return combo_box
 
     @staticmethod
-    def create_knob_input(dsp_parameter: DspParameter, function_to_run: Callable) -> QHBoxLayout:
+    def create_knob_input(parameter: Parameter, function_to_run: Callable) -> QHBoxLayout:
         knob_spinbox = QSpinBox()
-        knob_spinbox.setMinimum(dsp_parameter.choices[0])
-        knob_spinbox.setMaximum(dsp_parameter.choices[1])
-        knob_spinbox.setValue(dsp_parameter.value)
+        knob_spinbox.setMinimum(parameter.choices[0])
+        knob_spinbox.setMaximum(parameter.choices[1])
+        knob_spinbox.setValue(parameter.value)
         knob = QDial()
         knob.setMinimum(knob_spinbox.minimum())
         knob.setMaximum(knob_spinbox.maximum())
-        knob.setValue(dsp_parameter.value)
+        knob.setValue(parameter.value)
         knob.setFixedSize(constants.KNOB_SIZE, constants.KNOB_SIZE)
-        knob.valueChanged.connect(lambda: GuiHelper.on_knob_changed(knob, knob_spinbox, dsp_parameter, function_to_run))
+        knob.valueChanged.connect(lambda: GuiHelper.on_knob_changed(knob, knob_spinbox, parameter, function_to_run))
         knob_spinbox.valueChanged.connect(
-            lambda: GuiHelper.on_knob_spinbox_changed(knob_spinbox, knob, dsp_parameter, function_to_run))
+            lambda: GuiHelper.on_knob_spinbox_changed(knob_spinbox, knob, parameter, function_to_run))
         hbox = QHBoxLayout()
         hbox.addWidget(knob_spinbox)
         hbox.addWidget(knob)
         return hbox
 
     @staticmethod
-    def on_combo_changed(combo: QComboBox, dsp_parameter: DspParameter, function_to_run: Callable):
-        dsp_parameter.value = dsp_parameter.choices.index(combo.currentText())
+    def on_combo_changed(combo: QComboBox, parameter: Parameter, function_to_run: Callable):
+        parameter.value = parameter.choices.index(combo.currentText())
         function_to_run()  # send dsp params change sysex
 
     @staticmethod
-    def on_knob_changed(knob: QDial, linked_knob_spinbox: QSpinBox, dsp_parameter: DspParameter,
-                        function_to_run: Callable):
+    def on_knob_changed(knob: QDial, linked_knob_spinbox: QSpinBox, parameter: Parameter, function_to_run: Callable):
         if knob.value() != linked_knob_spinbox.value():
             linked_knob_spinbox.setValue(knob.value())
-            dsp_parameter.value = knob.value()
+            parameter.value = knob.value()
             function_to_run()  # send dsp params change sysex
 
     @staticmethod
-    def on_knob_spinbox_changed(knob_spinbox: QSpinBox, linked_knob: QDial, dsp_parameter: DspParameter,
+    def on_knob_spinbox_changed(knob_spinbox: QSpinBox, linked_knob: QDial, parameter: Parameter,
                                 function_to_run: Callable):
         if knob_spinbox.value() != linked_knob.value():
             linked_knob.setValue(knob_spinbox.value())
-            dsp_parameter.value = knob_spinbox.value()
+            parameter.value = knob_spinbox.value()
             function_to_run()  # send dsp params change sysex
 
     @staticmethod

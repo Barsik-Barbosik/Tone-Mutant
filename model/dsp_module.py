@@ -1,7 +1,7 @@
 from typing import List
 
 from constants.enums import ParameterType
-from model.dsp_parameter import DspParameter
+from model.parameter import DspParameter
 
 
 class DspModule:
