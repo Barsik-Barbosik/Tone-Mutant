@@ -1,8 +1,8 @@
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton, QListWidget
 
+from constants import constants
 from widgets.gui_helper import GuiHelper
 
-DEFAULT_NAME = "001 StagePno?"
 ALL_CHANNELS = ["Upper keyboard", "MIDI Channel 1"]
 CHANNEL_ENABLE_DISABLE_ITEMS = ["ENABLED", "DISABLED"]
 
@@ -32,7 +32,7 @@ class TopWidget(QWidget):
 
         self.layout.addWidget(GuiHelper.get_spacer())
 
-        self.tone_name_label = QLabel(DEFAULT_NAME)
+        self.tone_name_label = QLabel(constants.DEFAULT_TONE_NAME)
         self.tone_name_label.setObjectName("tone-name-label")
         self.layout.addWidget(self.tone_name_label)
 

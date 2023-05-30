@@ -45,12 +45,16 @@ class Core:
     # Process tone name from synth response
     def process_tone_name_response(self, response):
         self.lock.lockForWrite()
-        tone_name = ''.join(chr(i) for i in response if chr(i).isprintable())
+        tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
         print("\tSynth tone name: " + tone_name)
-        if tone_name is not None and len(tone_name.strip()) > 0:
+        if tone_name and self.tone.base_tone:
+            self.tone.name = f"{self.tone.base_tone.id} {tone_name}"
+        elif tone_name and self.tone.base_tone is None:
             self.tone.name = tone_name
-        elif self.tone.name is not None and not self.tone.name.endswith('?'):
-            self.tone.name += '?'
+        elif self.tone.name and not self.tone.name.endswith('*'):
+            self.tone.name += '*'
+        else:
+            self.tone.name = constants.DEFAULT_TONE_NAME
 
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
         self.lock.unlock()

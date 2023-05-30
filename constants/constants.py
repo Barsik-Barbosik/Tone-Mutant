@@ -9,6 +9,8 @@ CONFIG_FILENAME: Final[str] = '../config.cfg'
 
 KNOB_SIZE: Final[int] = 40
 
+DEFAULT_TONE_NAME = "Unknown Tone"
+
 EMPTY_DSP_NAME: Final[str] = "OFF"
 
 BLOCK_MAPPING = {
