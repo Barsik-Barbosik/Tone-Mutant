@@ -10,6 +10,7 @@ from constants import constants
 from constants.enums import SysexType
 from external.worker import Worker
 from model.instrument import Instrument
+from utils.utils import decimal_to_hex, decimal_to_hex_hex, format_as_nice_hex, list_to_hex_str
 
 # TODO: group all params into enums
 SYSEX_FIRST_BYTE = 0xF0
@@ -84,7 +85,7 @@ class MidiService:
 
     def send_sysex(self, sysex_hex_str: str):
         self.verify_midi_ports()
-        print("Outgoing SysEx:\t\t" + self.format_as_nice_hex(sysex_hex_str))
+        print("Outgoing SysEx:\t\t" + format_as_nice_hex(sysex_hex_str))
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
         time.sleep(0.01)
 
@@ -96,7 +97,7 @@ class MidiService:
         if self.is_block_id_valid(block_id):
             # Array size is always 14 bytes: length is "0D"
             msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
-            msg_block_id = self.decimal_to_hex(block_id)
+            msg_block_id = decimal_to_hex(block_id)
             msg_end = "00 55 00 00 00 00 00 F7"
             self.send_sysex(msg_start + msg_block_id + msg_end)
 
@@ -104,28 +105,28 @@ class MidiService:
         if self.is_block_id_valid(block_id):
             # Array size is always 14 bytes: length is "0D"
             msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
-            msg_block_id = self.decimal_to_hex(block_id)
+            msg_block_id = decimal_to_hex(block_id)
             msg_end = "00 57 00 00 00 0D 00 F7"
             self.send_sysex(msg_start + msg_block_id + msg_end)
 
     def process_message(self, message, _):
         message, deltatime = message
-        print("Incoming midi msg:\t" + self.format_as_nice_hex(self.list_to_hex_str(message)))
+        print("Incoming midi msg:\t" + format_as_nice_hex(list_to_hex_str(message)))
         if len(message) > 3 and message[0] == SYSEX_FIRST_BYTE:
-            print("\tSysEx response type (as hex): " + self.decimal_to_hex(message[SYSEX_TYPE_INDEX]))
+            print("\tSysEx response type (as hex): " + decimal_to_hex(message[SYSEX_TYPE_INDEX]))
             if message[SYSEX_TYPE_INDEX] == SysexType.TONE_NAME.value:
                 response = message[len(message) - 1 - TONE_NAME_RESPONSE_SIZE:len(message) - 1]
-                print("\tTone name response: " + self.format_as_nice_hex(self.list_to_hex_str(response)))
+                print("\tTone name response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_tone_name_response(response)
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]
-                print("\tDSP module response (first byte as hex): " + self.decimal_to_hex(response[0]))
+                print("\tDSP module response (first byte as hex): " + decimal_to_hex(response[0]))
                 self.core.process_dsp_module_response(block_id, response[0])
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_PARAMS_RESPONSE_SIZE:len(message) - 1]
-                print("\tDSP params response: " + self.format_as_nice_hex(self.list_to_hex_str(response)))
+                print("\tDSP params response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_dsp_module_parameters_response(block_id, response)
         elif message[0] == BANK_SELECT_PART1_FIRST_BYTE and message != BANK_SELECT_PART2:
             self.bank_select_msg_queue.append(message)
@@ -133,8 +134,8 @@ class MidiService:
         elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE:
             bank_select_msg = self.get_last_bank_select_message()
             if bank_select_msg is not None:
-                print("\tBank select msg: " + self.format_as_nice_hex(self.list_to_hex_str(bank_select_msg)))
-                print("\tInstrument select msg: " + self.format_as_nice_hex(self.list_to_hex_str(message)))
+                print("\tBank select msg: " + format_as_nice_hex(list_to_hex_str(bank_select_msg)))
+                print("\tInstrument select msg: " + format_as_nice_hex(list_to_hex_str(message)))
                 self.core.process_instrument_select_response(bank_select_msg[2], message[1])
                 self.threadpool.start(Worker(self.core.countdown_and_autosynchronize, 2))
 
@@ -145,7 +146,6 @@ class MidiService:
                 last_message = self.bank_select_msg_queue.popleft()
             except IndexError:
                 return last_message
-        return last_message  # should exit before
 
     def get_message(self):
         try:
@@ -159,8 +159,8 @@ class MidiService:
     def send_dsp_params_change_sysex(self, block_id: int, params_list: list):
         # Array size is always 14 bytes: length is "0D"
         msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00"
-        msg_block_param_and_size = self.decimal_to_hex(block_id) + "00 57 00 00 00 0D 00"
-        msg_params = self.list_to_hex_str(params_list)
+        msg_block_param_and_size = decimal_to_hex(block_id) + "00 57 00 00 00 0D 00"
+        msg_params = list_to_hex_str(params_list)
         msg_end = "F7"
         self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
 
@@ -188,31 +188,8 @@ class MidiService:
     @staticmethod
     def make_sysex(block_id: int, parameter: int, value: int) -> str:
         return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
-            + MidiService.decimal_to_hex_hex(block_id) \
-            + MidiService.decimal_to_hex_hex(parameter) \
+            + decimal_to_hex_hex(block_id) \
+            + decimal_to_hex_hex(parameter) \
             + "00 00 00 00" \
-            + MidiService.decimal_to_hex_hex(value) \
+            + decimal_to_hex_hex(value) \
             + "F7"
-
-    @staticmethod
-    def decimal_to_hex(decimal_num: int) -> str:
-        return "{:02X}".format(decimal_num)
-
-    @staticmethod
-    def decimal_to_hex_hex(decimal_num: int) -> str:
-        if decimal_num > 32267:
-            raise ValueError("Number is too big: {}".format(decimal_num))
-
-        return "{:02X}".format(decimal_num % 128) + " {:02X}".format(decimal_num // 128)
-
-    @staticmethod
-    def list_to_hex_str(int_list: list) -> str:
-        hex_str = ""
-        for int_value in int_list:
-            hex_str = hex_str + " " + MidiService.decimal_to_hex(int_value)
-        return hex_str
-
-    @staticmethod
-    def format_as_nice_hex(input_str: str) -> str:
-        string_without_spaces = input_str.replace(" ", "")
-        return " ".join(string_without_spaces[i:i + 2] for i in range(0, len(string_without_spaces), 2))
