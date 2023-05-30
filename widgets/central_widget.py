@@ -73,7 +73,7 @@ class CentralWidget(QWidget):
     def get_current_tab_name(self):
         return TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
 
-    def on_tab_changed(self, _unused_idx):
+    def on_tab_changed(self, _):
         self.current_dsp_page = None
         current_tab_name = self.get_current_tab_name()
 
