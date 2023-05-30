@@ -1,6 +1,6 @@
 import json
 
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, Slot, Signal
 from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QListWidget, QHBoxLayout, QListWidgetItem, QTextBrowser
 
 from constants import constants
@@ -11,6 +11,8 @@ from widgets.gui_helper import GuiHelper
 
 
 class CentralWidget(QWidget):
+    update_help_text_panel_signal = Signal()
+
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.core = parent.core
@@ -40,6 +42,8 @@ class CentralWidget(QWidget):
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
         main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
+
+        self.update_help_text_panel_signal.connect(self.update_help_text_panel)
 
     def create_main_params_page(self) -> QWidget:
         qgrid_layout = QGridLayout(self)
@@ -107,6 +111,7 @@ class CentralWidget(QWidget):
         json_view_page.setLayout(hbox_layout)
         return json_view_page
 
+    @Slot()
     def update_help_text_panel(self):
         text = ""
         if self.get_current_tab_name() == TabName.MAIN_PARAMETERS:

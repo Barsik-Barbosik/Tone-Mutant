@@ -1,7 +1,7 @@
 import copy
 import time
 
-from PySide2.QtCore import QTimer, QReadWriteLock, Signal, Slot, QObject
+from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
 
 from constants import constants
 from model.dsp_module import DspModule
@@ -38,7 +38,7 @@ class Core(QObject):
         self.request_dsp_module(2)
         self.request_dsp_module(3)
 
-        self.main_window.central_widget.on_tab_changed(0)
+        self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
         self.lock.unlock()
 
     # Request tone name from synth
@@ -103,8 +103,7 @@ class Core(QObject):
         dsp_page.list_widget.blockSignals(False)
 
         if dsp_page == self.main_window.central_widget.current_dsp_page:
-            QTimer().singleShot(0, dsp_page.redraw_dsp_params_panel)
-            QTimer().singleShot(0, self.main_window.central_widget.update_help_text_panel)
+            self.main_window.central_widget.update_help_text_panel_signal.emit()
 
     # Request DSP module parameters from synth
     def request_dsp_module_parameters(self, block_id, dsp_module_id):
@@ -117,7 +116,6 @@ class Core(QObject):
 
     # Process DSP module parameters from synth response
     def process_dsp_module_parameters_response(self, block_id, synth_dsp_params):
-        self.lock.lockForWrite()
         dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
         dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_module is not None:
@@ -125,7 +123,9 @@ class Core(QObject):
                 print("Param before: " + str(synth_dsp_params[idx]) + ", after: " + str(
                     DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)))
                 dsp_param.value = DspModule.decode_param_value(synth_dsp_params[idx], dsp_param)
-        self.lock.unlock()
+
+        if self.main_window.central_widget.current_dsp_page:
+            self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
 
     # Send message to update synth's DSP parameters
     def set_synth_dsp_params(self):

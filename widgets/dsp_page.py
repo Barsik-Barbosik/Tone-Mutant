@@ -1,6 +1,6 @@
 import random
 
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, Slot, Signal
 from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QListWidgetItem, QPushButton
 
 from constants import constants
@@ -10,6 +10,8 @@ from widgets.gui_helper import GuiHelper
 
 
 class DspPage(QWidget):
+    redraw_dsp_params_panel_signal = Signal()
+
     def __init__(self, parent, block_id: int):
         super().__init__(parent)
         self.core = parent.core
@@ -40,6 +42,9 @@ class DspPage(QWidget):
         hbox_layout.addWidget(self.list_widget)  # left side
         hbox_layout.addLayout(self.qgrid_layout)  # right side
 
+        self.redraw_dsp_params_panel_signal.connect(self.redraw_dsp_params_panel)
+
+    @Slot()
     def redraw_dsp_params_panel(self):
         self.clear_layout(self.qgrid_layout)
 
@@ -70,7 +75,9 @@ class DspPage(QWidget):
 
     def on_list_widget_changed(self):
         if self.list_widget.currentItem() is None:
+            self.list_widget.blockSignals(True)
             self.list_widget.setCurrentRow(0)
+            self.list_widget.blockSignals(False)
         else:
             dsp_module_id: int = self.list_widget.currentItem().data(Qt.UserRole)
             if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
