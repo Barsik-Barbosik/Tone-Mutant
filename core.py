@@ -53,13 +53,11 @@ class Core(QObject):
         self.lock.lockForWrite()
         tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
         print("\tSynth tone name: " + tone_name)
-        if tone_name and self.tone.base_tone:
+        if self.tone.base_tone and tone_name:
             self.tone.name = f"{self.tone.base_tone.id} {tone_name}"
-        elif tone_name and self.tone.base_tone is None:
+        elif self.tone.base_tone is None and tone_name:
             self.tone.name = tone_name
-        elif self.tone.name and not self.tone.name.endswith('*'):
-            self.tone.name += '*'
-        else:
+        elif self.tone.name is None:
             self.tone.name = constants.DEFAULT_TONE_NAME
 
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
