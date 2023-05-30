@@ -17,7 +17,7 @@ class Tone:
             MainParameter(2, None, "Release Time",
                           "Adjusts how long notes linger after keyboard keys are released. A larger values specifies a longer release.",
                           ParameterType.KNOB, [0, 127], 0),
-            MainParameter(3, None, "Cutoff Frequency",
+            MainParameter(3, 14, "Cutoff Frequency",
                           "Adjusts timbre by attenuating the components of a note’s frequency characteristics that are higher than a certain frequency (cutoff frequency). A larger value specifies a brighter, harder sound, while a lower value specifies a mellower, softer sound.",
                           ParameterType.KNOB, [0, 127], 0),
             MainParameter(4, None, "Resonance",

@@ -7,7 +7,7 @@ from PySide2.QtWidgets import QLabel
 
 from constants import constants
 from constants.enums import ParameterType
-from model.parameter import Parameter
+from model.parameter import Parameter, MainParameter
 
 
 class GuiHelper:
@@ -129,6 +129,10 @@ class GuiHelper:
         combo_box.setCurrentIndex(parameter.value)
         combo_box.currentIndexChanged.connect(
             lambda: GuiHelper.on_combo_changed(combo_box, parameter, function_to_run))
+
+        if isinstance(parameter, MainParameter):
+            combo_box.setEnabled(False)
+
         return combo_box
 
     @staticmethod
@@ -137,6 +141,7 @@ class GuiHelper:
         knob_spinbox.setMinimum(parameter.choices[0])
         knob_spinbox.setMaximum(parameter.choices[1])
         knob_spinbox.setValue(parameter.value)
+
         knob = QDial()
         knob.setMinimum(knob_spinbox.minimum())
         knob.setMaximum(knob_spinbox.maximum())
@@ -145,6 +150,12 @@ class GuiHelper:
         knob.valueChanged.connect(lambda: GuiHelper.on_knob_changed(knob, knob_spinbox, parameter, function_to_run))
         knob_spinbox.valueChanged.connect(
             lambda: GuiHelper.on_knob_spinbox_changed(knob_spinbox, knob, parameter, function_to_run))
+
+        if isinstance(parameter, MainParameter):
+            if parameter.action_number is None:
+                knob_spinbox.setEnabled(False)
+                knob.setEnabled(False)
+
         hbox = QHBoxLayout()
         hbox.addWidget(knob_spinbox)
         hbox.addWidget(knob)
