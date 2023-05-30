@@ -20,7 +20,7 @@ class Tone:
             MainParameter(3, 14, "Cutoff Frequency",
                           "Adjusts timbre by attenuating the components of a note’s frequency characteristics that are higher than a certain frequency (cutoff frequency). A larger value specifies a brighter, harder sound, while a lower value specifies a mellower, softer sound.",
                           ParameterType.KNOB, [0, 127], 0),
-            MainParameter(4, None, "Resonance",
+            MainParameter(4, 15, "Resonance",
                           "Adjusts the gain of harmonic tones in the vicinity of the cutoff frequency specified above. A larger value creates a more unusual sound.",
                           ParameterType.KNOB, [0, 127], 0),
             MainParameter(5, None, "Vibrato Type",
