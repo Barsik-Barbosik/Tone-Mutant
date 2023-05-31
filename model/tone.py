@@ -22,7 +22,7 @@ class Tone:
                           ParameterType.KNOB, [0, 127], 0),
             MainParameter(4, 15, "Resonance",
                           "Adjusts the gain of harmonic tones in the vicinity of the cutoff frequency specified above. A larger value creates a more unusual sound.",
-                          ParameterType.KNOB, [0, 127], 0),
+                          ParameterType.KNOB, [0, 255], 0),
             MainParameter(5, None, "Vibrato Type",
                           "Selects the vibrato waveform.",
                           ParameterType.COMBO, ["Sine", "Triangle", "Sawtooth", "Square"], 0),

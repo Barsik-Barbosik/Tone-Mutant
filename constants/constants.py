@@ -1461,7 +1461,7 @@ ALL_DSP_MODULES: Final[tuple] = (
               "Delays the input signal and feeds it back to create a repeating effect.",
               [DspParameter(1, "Delay Time",
                             "Adjusts the total delay time in 1 ms units.",
-                            ParameterType.KNOB_2BYTES, [1, 1099], 1),
+                            ParameterType.SPECIAL_DELAY_KNOB, [1, 1099], 1),
                DspParameter(2, "Delay Ratio L",
                             "Adjusts the ratio of the left channel relative to the total delay time.",
                             ParameterType.KNOB, [0, 127], 0),

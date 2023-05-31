@@ -32,6 +32,6 @@ def decode_param_value(value: int, dsp_param: Parameter):
         elif dsp_param.choices[0] == -64:
             return value - 64
     # TODO
-    # elif parameter.type == ParameterType.KNOB_2BYTES:
+    # elif parameter.type == ParameterType.SPECIAL_DELAY_KNOB:
     #     return value
     return value

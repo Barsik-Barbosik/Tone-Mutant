@@ -87,7 +87,7 @@ class DspPage(QWidget):
         for dsp_param in self.dsp_module.dsp_parameter_list:
             if dsp_param.type == ParameterType.COMBO:
                 dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
-            if dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_2BYTES]:
+            if dsp_param.type in [ParameterType.KNOB, ParameterType.SPECIAL_DELAY_KNOB]:
                 dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
         self.core.set_synth_dsp_params(None)
         self.redraw_dsp_params_panel()
@@ -111,7 +111,7 @@ class DspPage(QWidget):
                     output[idx] = parameter.value
                 elif parameter.type == ParameterType.KNOB:
                     output[idx] = parameter.value if parameter.choices[0] == 0 else parameter.value + 64
-                elif parameter.type == ParameterType.KNOB_2BYTES:
+                elif parameter.type == ParameterType.SPECIAL_DELAY_KNOB:
                     # special case, only for the "delay" DSP module
                     output[12] = int(str(parameter.value).zfill(4)[:2])  # first 2 digits
                     output[13] = int(str(parameter.value).zfill(4)[2:])  # last 2 digits
