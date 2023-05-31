@@ -181,6 +181,7 @@ class MidiService:
         # time.sleep(0.01)
         # self.midi_out.send_message(bytearray(bytes.fromhex("C0 04")))
 
+    # TODO: more validations
     @staticmethod
     def is_block_id_valid(block_id: int):
         return isinstance(int(block_id), int) and 0 <= int(block_id) <= 3
