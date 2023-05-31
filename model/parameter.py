@@ -16,7 +16,7 @@ class Parameter:
 
     def to_json(self):
         obj = {"name": self.name}
-        if self.type == ParameterType.COMBO:
+        if self.type in [ParameterType.COMBO, ParameterType.SPECIAL_VIBRATO_COMBO]:
             obj["value"] = self.value + 1
             obj["text"] = self.choices[self.value]
         elif self.type in [ParameterType.KNOB, ParameterType.KNOB_255, ParameterType.SPECIAL_DELAY_KNOB]:

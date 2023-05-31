@@ -201,10 +201,17 @@ class Core(QObject):
         self.midi_service.close_midi_ports()
 
     def send_parameter_change_sysex(self, parameter: MainParameter):
-        value = parameter.value * 2 if parameter.type == ParameterType.KNOB_255 else parameter.value
-        print("Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(value))
-
-        try:
-            self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.action_number, value)
-        except Exception as e:
-            self.main_window.show_error_msg(str(e))
+        print("Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
+        value = parameter.value
+        if parameter.type == ParameterType.SPECIAL_VIBRATO_COMBO:
+            try:
+                self.midi_service.send_vibrato_type_change_sysex(parameter.block_id, parameter.action_number, value)
+            except Exception as e:
+                self.main_window.show_error_msg(str(e))
+        else:
+            if parameter.type == ParameterType.KNOB_255:
+                value = parameter.value * 2
+            try:
+                self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.action_number, value)
+            except Exception as e:
+                self.main_window.show_error_msg(str(e))

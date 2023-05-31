@@ -168,6 +168,10 @@ class MidiService:
         sysex = self.make_sysex(block_id, parameter, value)
         self.send_sysex(sysex)
 
+    def send_vibrato_type_change_sysex(self, block_id: int, parameter: int, value: int):
+        sysex = self.make_short_sysex(block_id, parameter, value)
+        self.send_sysex(sysex)
+
     def send_change_tone_msg(self, instrument: Instrument):
         self.midi_out.send_message([0xB0, 0x00, instrument.bank])
         time.sleep(0.01)
@@ -193,4 +197,14 @@ class MidiService:
             + decimal_to_hex_hex(parameter) \
             + "00 00 00 00" \
             + decimal_to_hex_hex(value) \
+            + "F7"
+
+    # Special case for "Vibrato type" parameter
+    @staticmethod
+    def make_short_sysex(block_id: int, parameter: int, value: int) -> str:
+        return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
+            + decimal_to_hex_hex(block_id) \
+            + decimal_to_hex_hex(parameter) \
+            + "00 00 00 00" \
+            + decimal_to_hex(value) \
             + "F7"
