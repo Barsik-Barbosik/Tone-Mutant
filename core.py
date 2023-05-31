@@ -4,6 +4,7 @@ import time
 from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
 
 from constants import constants
+from constants.enums import ParameterType
 from model.tone import Tone
 from services.midi_service import MidiService
 from utils.utils import decode_param_value
@@ -198,8 +199,11 @@ class Core(QObject):
     def close_midi_ports(self):
         self.midi_service.close_midi_ports()
 
-    def send_parameter_change_sysex(self, block_id, action_number, value):
+    def send_parameter_change_sysex(self, parameter):
+        value = parameter.value * 2 if parameter.type == ParameterType.KNOB_255 else parameter.value
+        print("Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(value))
+
         try:
-            self.midi_service.send_parameter_change_sysex(block_id, action_number, value)
+            self.midi_service.send_parameter_change_sysex(0, parameter.action_number, value)
         except Exception as e:
             self.main_window.show_error_msg(str(e))

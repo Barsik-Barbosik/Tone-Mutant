@@ -4,7 +4,8 @@ from enum import Enum
 class ParameterType(Enum):
     COMBO = 1
     KNOB = 2
-    SPECIAL_DELAY_KNOB = 3
+    KNOB_255 = 3
+    SPECIAL_DELAY_KNOB = 4
 
 
 class SysexType(Enum):

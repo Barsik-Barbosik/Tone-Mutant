@@ -133,6 +133,4 @@ class CentralWidget(QWidget):
 
     # Send message to update synth's main parameter
     def set_synth_parameter(self, parameter):
-        # TODO: Fix "Cutoff F" incorrect values -> 64 vs 127, maybe use hex_hex()
-        print("Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
-        self.core.send_parameter_change_sysex(0, parameter.action_number, parameter.value)
+        self.core.send_parameter_change_sysex(parameter)

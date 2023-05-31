@@ -19,7 +19,7 @@ class Parameter:
         if self.type == ParameterType.COMBO:
             obj["value"] = self.value + 1
             obj["text"] = self.choices[self.value]
-        elif self.type in [ParameterType.KNOB, ParameterType.SPECIAL_DELAY_KNOB]:
+        elif self.type in [ParameterType.KNOB, ParameterType.KNOB_255, ParameterType.SPECIAL_DELAY_KNOB]:
             obj["value"] = self.value
         return obj
 
