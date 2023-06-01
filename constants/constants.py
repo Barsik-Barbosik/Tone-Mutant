@@ -21,7 +21,8 @@ BLOCK_MAPPING = {
 }
 
 SHORT_PARAMS: Final[tuple] = (
-    "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume")
+    "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume", "Velocity Sense",
+    "Reverb Send", "Chorus Send", "Delay Send")
 
 RIGHT_SIDE_MAIN_PARAMS: Final[tuple] = (
     "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume")
