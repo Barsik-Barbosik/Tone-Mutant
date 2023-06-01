@@ -20,7 +20,7 @@ BLOCK_MAPPING = {
     3: ('dsp_module_4', 'dsp_page_4')
 }
 
-VIBRATO_PARAMS: Final[tuple] = ("Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay")
+SHORT_PARAMS: Final[tuple] = ("Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift")
 
 RIGHT_SIDE_MAIN_PARAMS: Final[tuple] = (
     "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume")

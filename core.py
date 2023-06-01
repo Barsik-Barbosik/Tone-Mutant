@@ -206,9 +206,9 @@ class Core(QObject):
 
         # TODO: Remove "SPECIAL_VIBRATO_TYPE"!
         try:
-            if parameter.name in constants.VIBRATO_PARAMS:
-                self.midi_service.send_vibrato_parameter_change_sysex(parameter.block_id,
-                                                                      parameter.action_number, value)
+            if parameter.name in constants.SHORT_PARAMS:
+                self.midi_service.send_parameter_change_short_sysex(parameter.block_id,
+                                                                    parameter.action_number, value)
             else:
                 if parameter.type == ParameterType.KNOB_255:
                     value = parameter.value * 2
