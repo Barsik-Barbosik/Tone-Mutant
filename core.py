@@ -203,15 +203,15 @@ class Core(QObject):
     def send_parameter_change_sysex(self, parameter: MainParameter):
         print("Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
         value = parameter.value
-        if parameter.type == ParameterType.SPECIAL_VIBRATO_COMBO:
-            try:
-                self.midi_service.send_vibrato_type_change_sysex(parameter.block_id, parameter.action_number, value)
-            except Exception as e:
-                self.main_window.show_error_msg(str(e))
-        else:
-            if parameter.type == ParameterType.KNOB_255:
-                value = parameter.value * 2
-            try:
-                self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.action_number, value)
-            except Exception as e:
-                self.main_window.show_error_msg(str(e))
+
+        # TODO: Remove "SPECIAL_VIBRATO_TYPE"!
+        try:
+            if parameter.name in constants.VIBRATO_PARAMS:
+                self.midi_service.send_vibrato_parameter_change_sysex(parameter.block_id,
+                                                                      parameter.action_number, value)
+            else:
+                if parameter.type == ParameterType.KNOB_255:
+                    value = parameter.value * 2
+                    self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.action_number, value)
+        except Exception as e:
+            self.main_window.show_error_msg(str(e))

@@ -168,7 +168,7 @@ class MidiService:
         sysex = self.make_sysex(block_id, parameter, value)
         self.send_sysex(sysex)
 
-    def send_vibrato_type_change_sysex(self, block_id: int, parameter: int, value: int):
+    def send_vibrato_parameter_change_sysex(self, block_id: int, parameter: int, value: int):
         sysex = self.make_short_sysex(block_id, parameter, value)
         self.send_sysex(sysex)
 
