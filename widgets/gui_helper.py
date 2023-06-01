@@ -116,7 +116,7 @@ class GuiHelper:
             label = QLabel(dsp_param.name + ":")
             label.setObjectName(label_class)
             qgrid_layout.addWidget(label, row, column)
-            if dsp_param.type in [ParameterType.COMBO, ParameterType.SPECIAL_VIBRATO_COMBO]:
+            if dsp_param.type == ParameterType.COMBO:
                 qgrid_layout.addWidget(GuiHelper.create_combo_input(dsp_param, function_to_run), row, column + 1)
             elif dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_255, ParameterType.SPECIAL_DELAY_KNOB]:
                 qgrid_layout.addLayout(GuiHelper.create_knob_input(dsp_param, function_to_run), row, column + 1)

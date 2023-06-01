@@ -37,7 +37,7 @@ class Tone:
                           ParameterType.KNOB, [0, 127], 0),
             MainParameter(9, 43, 0, "Octave Shift",
                           "Shifts the pitch upwards or downwards in octave steps.",
-                          ParameterType.KNOB, [1, 7], 4),
+                          ParameterType.KNOB, [-3, 3], 0),
             MainParameter(10, 45, 0, "Volume",
                           "Specifies the volume level of a tone. A larger value sets a higher volume level.",
                           ParameterType.KNOB, [0, 127], 0),

@@ -4,10 +4,10 @@ import time
 from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
 
 from constants import constants
-from constants.enums import ParameterType
 from model.parameter import MainParameter
 from model.tone import Tone
 from services.midi_service import MidiService
+from utils import utils
 from utils.utils import decode_param_value
 
 
@@ -202,16 +202,12 @@ class Core(QObject):
 
     def send_parameter_change_sysex(self, parameter: MainParameter):
         print("Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
-        value = parameter.value
-
-        # TODO: Remove "SPECIAL_VIBRATO_TYPE"!
+        value = utils.encode_value_by_type(parameter)
         try:
             if parameter.name in constants.SHORT_PARAMS:
                 self.midi_service.send_parameter_change_short_sysex(parameter.block_id,
                                                                     parameter.action_number, value)
             else:
-                if parameter.type == ParameterType.KNOB_255:
-                    value = parameter.value * 2
-                    self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.action_number, value)
+                self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.action_number, value)
         except Exception as e:
             self.main_window.show_error_msg(str(e))

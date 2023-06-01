@@ -6,6 +6,7 @@ from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QL
 from constants import constants
 from constants.enums import ParameterType
 from model.dsp_module import DspModule
+from utils import utils
 from widgets.gui_helper import GuiHelper
 
 
@@ -107,12 +108,11 @@ class DspPage(QWidget):
         output = [0] * 14
         if self.dsp_module is not None:
             for idx, parameter in enumerate(self.dsp_module.dsp_parameter_list):
-                if parameter.type == ParameterType.COMBO:
-                    output[idx] = parameter.value
-                elif parameter.type == ParameterType.KNOB:
-                    output[idx] = parameter.value if parameter.choices[0] == 0 else parameter.value + 64
-                elif parameter.type == ParameterType.SPECIAL_DELAY_KNOB:
+                if parameter.type == ParameterType.SPECIAL_DELAY_KNOB:
                     # special case, only for the "delay" DSP module
                     output[12] = int(str(parameter.value).zfill(4)[:2])  # first 2 digits
                     output[13] = int(str(parameter.value).zfill(4)[2:])  # last 2 digits
+                else:
+                    output[idx] = utils.encode_value_by_type(parameter)
+
         return output
