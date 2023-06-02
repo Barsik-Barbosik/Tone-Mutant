@@ -36,6 +36,7 @@ class Core(QObject):
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
         self.request_tone_name()
+        self.request_main_parameters()
         self.request_dsp_module(0)
         self.request_dsp_module(1)
         self.request_dsp_module(2)
@@ -65,6 +66,14 @@ class Core(QObject):
 
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
         self.lock.unlock()
+
+    def request_main_parameters(self):
+        for parameter in self.tone.main_parameter_list:
+            print("P " + parameter.name)
+            try:
+                self.midi_service.request_parameter_value(parameter.block_id, parameter.action_number)
+            except Exception as e:
+                self.main_window.show_error_msg(str(e))
 
     # Request DSP module from synth
     def request_dsp_module(self, block_id):

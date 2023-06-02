@@ -25,6 +25,8 @@ TONE_NAME_RESPONSE_SIZE = 16  # TODO: replace 0F in sysex
 DSP_MODULE_RESPONSE_SIZE = 2
 DSP_PARAMS_RESPONSE_SIZE = 14  # TODO: replace 0D in sysex
 
+MAIN_PARAMETER_ACTION_NUMBERS = [20, 14, 15, 59, 63, 60, 61, 43, 45, 5, 57, 56, 58]
+
 
 class MidiService:
     __instance = None
@@ -93,6 +95,12 @@ class MidiService:
         msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0F 00 F7"
         self.send_sysex(msg)
 
+    def request_parameter_value(self, block_id: int, parameter: int):
+        msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00" \
+              + decimal_to_hex(block_id) + "00" + decimal_to_hex_hex(parameter) + "00 00 00 00 F7"
+        self.send_sysex(msg)
+        time.sleep(0.1)
+
     def request_dsp_module(self, block_id: int):
         if self.is_block_id_valid(block_id):
             # Array size is always 14 bytes: length is "0D"
@@ -118,6 +126,12 @@ class MidiService:
                 response = message[len(message) - 1 - TONE_NAME_RESPONSE_SIZE:len(message) - 1]
                 print("\tTone name response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_tone_name_response(response)
+            elif message[SYSEX_TYPE_INDEX] in MAIN_PARAMETER_ACTION_NUMBERS:
+                response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]  # FIXME
+                print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
+
+                # ...
+
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]
