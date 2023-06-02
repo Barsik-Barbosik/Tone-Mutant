@@ -56,6 +56,7 @@ def encode_value_by_type(parameter):
 
 
 def decode_param_value(value: int, parameter: Parameter):
+    # DO NOT USE parameter.value here!
     if parameter.type == ParameterType.KNOB:
         if parameter.choices[1] == 127:  # 0...127
             return value
@@ -69,4 +70,6 @@ def decode_param_value(value: int, parameter: Parameter):
     #     return 1023 - round(value / 4)  # FIXME
     # elif parameter.type == ParameterType.SPECIAL_DELAY_KNOB:
     #     return value
+    elif parameter.name == "Vibrato Type" and value == 0x0F:
+        return 0  # Why synth returns "0F" instead of "00"?
     return value

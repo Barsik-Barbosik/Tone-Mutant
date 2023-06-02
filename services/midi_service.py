@@ -133,12 +133,12 @@ class MidiService:
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - MAIN_PARAMETER_RESPONSE_SIZE:len(message) - 1]
                 print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
-                self.core.process_main_parameter_response(message[SYSEX_TYPE_INDEX], block_id, response)
+                self.core.process_main_parameter_response(message[SYSEX_TYPE_INDEX], block_id, response[0])  # FIXME!!!
             elif message[SYSEX_TYPE_INDEX] in MAIN_SHORT_PARAMETER_NUMBERS:
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - MAIN_SHORT_PARAMETER_RESPONSE_SIZE:len(message) - 1]
                 print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
-                self.core.process_main_parameter_response(message[SYSEX_TYPE_INDEX], block_id, response)
+                self.core.process_main_parameter_response(message[SYSEX_TYPE_INDEX], block_id, response[0])
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]

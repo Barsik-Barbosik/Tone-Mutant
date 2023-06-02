@@ -77,9 +77,13 @@ class Core(QObject):
                 self.main_window.show_error_msg(str(e))
 
     # Process main parameter value response
-    def process_main_parameter_response(self, param_number, block_id, response):
-        print("PP " + str(param_number) + ", " + str(block_id) + ", " + str(response))
-        pass
+    def process_main_parameter_response(self, param_number, block_id, value):
+        print("PP " + str(param_number) + ", " + str(block_id) + ", " + str(value))
+        for parameter in self.tone.main_parameter_list:
+            if parameter.action_number == param_number and parameter.block_id == block_id:
+                print("This is: " + parameter.name)
+                parameter.value = decode_param_value(value, parameter)
+                break
 
     # Request DSP module from synth
     def request_dsp_module(self, block_id):
