@@ -56,9 +56,9 @@ class Core(QObject):
         self.lock.lockForWrite()
         tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
         print("\tSynth tone name: " + tone_name)
-        if self.tone.base_tone and tone_name:
-            self.tone.name = f"{self.tone.base_tone.id} {tone_name}"
-        elif self.tone.base_tone is None and tone_name:
+        if self.tone.parent_tone and tone_name:
+            self.tone.name = f"{self.tone.parent_tone.id} {tone_name}"
+        elif self.tone.parent_tone is None and tone_name:
             self.tone.name = tone_name
         elif self.tone.name is None:
             self.tone.name = constants.DEFAULT_TONE_NAME
@@ -142,10 +142,10 @@ class Core(QObject):
     def change_instrument_by_id_from_list(self, instrument_id):
         instrument = Tone.get_instrument_by_id(instrument_id)
         self.tone.name = instrument.name  # TODO: read from synth
-        self.tone.base_tone = instrument
-        print("Instrument id: " + str(instrument_id) + " " + self.tone.base_tone.name)
+        self.tone.parent_tone = instrument
+        print("Instrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
         try:
-            self.midi_service.send_change_tone_msg(self.tone.base_tone)
+            self.midi_service.send_change_tone_msg(self.tone.parent_tone)
         except Exception as e:
             self.main_window.show_error_msg(str(e))
 
@@ -157,7 +157,7 @@ class Core(QObject):
         for instrument in constants.ALL_INSTRUMENTS:
             if instrument.bank == bank and instrument.program_change == program_change:
                 self.tone.name = "{:03}".format(instrument.id) + " " + instrument.name
-                self.tone.base_tone = instrument
+                self.tone.parent_tone = instrument
                 break
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
         self.lock.unlock()

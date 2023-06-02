@@ -8,7 +8,7 @@ from model.parameter import MainParameter
 class Tone:
     def __init__(self):
         self.name: str = None
-        self.base_tone: Instrument = None
+        self.parent_tone: Instrument = None
 
         self.main_parameter_list: list[MainParameter] = [
             MainParameter(1, 20, 1, "Attack Time",
@@ -65,7 +65,7 @@ class Tone:
     def to_json(self):
         obj = {
             "name": self.name,
-            "base_tone": self.base_tone,
+            "parent_tone": self.parent_tone,
             "parameters": self.main_parameter_list,
             "dsp_modules": [
                 {"dsp_1": self.dsp_module_1,
