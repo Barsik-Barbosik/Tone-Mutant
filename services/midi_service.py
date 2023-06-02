@@ -22,10 +22,13 @@ BLOCK_INDEX = 16
 SYSEX_TYPE_INDEX = 18
 
 TONE_NAME_RESPONSE_SIZE = 16  # TODO: replace 0F in sysex
+MAIN_PARAMETER_RESPONSE_SIZE = 2
+MAIN_SHORT_PARAMETER_RESPONSE_SIZE = 1
 DSP_MODULE_RESPONSE_SIZE = 2
 DSP_PARAMS_RESPONSE_SIZE = 14  # TODO: replace 0D in sysex
 
-MAIN_PARAMETER_ACTION_NUMBERS = [20, 14, 15, 59, 63, 60, 61, 43, 45, 5, 57, 56, 58]
+MAIN_PARAMETER_NUMBERS = [20, 14, 15]  # TODO: get numbers automatically from main list
+MAIN_SHORT_PARAMETER_NUMBERS = [59, 63, 60, 61, 43, 45, 5, 57, 56, 58]
 
 
 class MidiService:
@@ -126,12 +129,16 @@ class MidiService:
                 response = message[len(message) - 1 - TONE_NAME_RESPONSE_SIZE:len(message) - 1]
                 print("\tTone name response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_tone_name_response(response)
-            elif message[SYSEX_TYPE_INDEX] in MAIN_PARAMETER_ACTION_NUMBERS:
-                response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]  # FIXME
+            elif message[SYSEX_TYPE_INDEX] in MAIN_PARAMETER_NUMBERS:
+                block_id = message[BLOCK_INDEX]
+                response = message[len(message) - 1 - MAIN_PARAMETER_RESPONSE_SIZE:len(message) - 1]
                 print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
-
-                # ...
-
+                self.core.process_main_parameter_response(message[SYSEX_TYPE_INDEX], block_id, response)
+            elif message[SYSEX_TYPE_INDEX] in MAIN_SHORT_PARAMETER_NUMBERS:
+                block_id = message[BLOCK_INDEX]
+                response = message[len(message) - 1 - MAIN_SHORT_PARAMETER_RESPONSE_SIZE:len(message) - 1]
+                print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
+                self.core.process_main_parameter_response(message[SYSEX_TYPE_INDEX], block_id, response)
             elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
                 block_id = message[BLOCK_INDEX]
                 response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]

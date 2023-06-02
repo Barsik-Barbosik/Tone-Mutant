@@ -28,7 +28,7 @@ class MainParameter(Parameter):
     def __init__(self, id: int, action_number: int, block_id: int, name: str, description: str, type: ParameterType, choices: List,
                  default_value: int):
         super().__init__(id, name, description, type, choices, default_value)
-        self.action_number: int = action_number
+        self.action_number: int = action_number  # TODO: rename to param_number
         self.block_id: int = block_id
 
 

@@ -67,6 +67,7 @@ class Core(QObject):
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
         self.lock.unlock()
 
+    # Request main parameter value from synth
     def request_main_parameters(self):
         for parameter in self.tone.main_parameter_list:
             print("P " + parameter.name)
@@ -74,6 +75,11 @@ class Core(QObject):
                 self.midi_service.request_parameter_value(parameter.block_id, parameter.action_number)
             except Exception as e:
                 self.main_window.show_error_msg(str(e))
+
+    # Process main parameter value response
+    def process_main_parameter_response(self, param_number, block_id, response):
+        print("PP " + str(param_number) + ", " + str(block_id) + ", " + str(response))
+        pass
 
     # Request DSP module from synth
     def request_dsp_module(self, block_id):
