@@ -10,7 +10,7 @@ from constants import constants
 from constants.enums import SysexType
 from external.worker import Worker
 from model.instrument import Instrument
-from utils.utils import decimal_to_hex, decimal_to_hex_hex, format_as_nice_hex, list_to_hex_str
+from utils.utils import decimal_to_hex, decimal_to_hex_hex, format_as_nice_hex, list_to_hex_str, decimal_to_hex_hex_8bit
 
 # TODO: group all params into enums
 SYSEX_FIRST_BYTE = 0xF0
@@ -169,7 +169,11 @@ class MidiService:
         self.send_sysex(sysex)
 
     def send_parameter_change_short_sysex(self, block_id: int, parameter: int, value: int):
-        sysex = self.make_short_sysex(block_id, parameter, value)
+        sysex = self.make_sysex_short_value(block_id, parameter, value)
+        self.send_sysex(sysex)
+
+    def send_atk_rel_parameter_change_sysex(self, block_id: int, parameter: int, value: int):
+        sysex = self.make_sysex_8bit_value(block_id, parameter, value)
         self.send_sysex(sysex)
 
     def send_change_tone_msg(self, instrument: Instrument):
@@ -199,12 +203,22 @@ class MidiService:
             + decimal_to_hex_hex(value) \
             + "F7"
 
-    # Special case for "Vibrato type" parameter
+    # Special case for "SHORT_PARAMS" list parameters
     @staticmethod
-    def make_short_sysex(block_id: int, parameter: int, value: int) -> str:
+    def make_sysex_short_value(block_id: int, parameter: int, value: int) -> str:
         return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
             + decimal_to_hex_hex(block_id) \
             + decimal_to_hex_hex(parameter) \
             + "00 00 00 00" \
             + decimal_to_hex(value) \
+            + "F7"
+
+    # Special case for "Attack time" and "Release time" parameters
+    @staticmethod
+    def make_sysex_8bit_value(block_id: int, parameter: int, value: int) -> str:
+        return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
+            + decimal_to_hex_hex(block_id) \
+            + decimal_to_hex_hex(parameter) \
+            + "00 00 00 00" \
+            + decimal_to_hex_hex_8bit(value) \
             + "F7"

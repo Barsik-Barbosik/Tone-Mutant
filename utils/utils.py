@@ -7,10 +7,17 @@ def decimal_to_hex(decimal_num: int) -> str:
     return "{:02X}".format(decimal_num)
 
 
+# 7-bit (default)
 def decimal_to_hex_hex(decimal_num: int) -> str:
     if decimal_num > 32267:
         raise ValueError("Number is too big: {}".format(decimal_num))
+    return "{:02X}".format(decimal_num % 128) + " {:02X}".format(decimal_num // 128)
 
+
+# 8-bit (for attack/release time)
+def decimal_to_hex_hex_8bit(decimal_num: int) -> str:
+    if decimal_num > 32267:
+        raise ValueError("Number is too big: {}".format(decimal_num))
     return "{:02X}".format(decimal_num % 256) + " {:02X}".format(decimal_num // 256)
 
 
