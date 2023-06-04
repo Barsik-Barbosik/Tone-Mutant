@@ -1741,7 +1741,7 @@ ALL_DSP_MODULES: Final[tuple] = (
                                 "MK-T501:\tMarkbass TA501 [B]",
                                 "SW-PB20:\tSWR PB-200 [B]",
                                 "SW-SM50:\tSWR SM-500 [B]",
-                                "RL-CBKB:\tRoland CUBE Keyboard [G, B, KBD)",
+                                "RL-CBKB:\tRoland CUBE Keyboard [G, B, KBD]",
                                 "LY-3C-AC:\tLaney LA30C Acoustic Cube [Acoustic G]",
                                 "AC-SIM:\tAcoustic Sim [G Preamp]", ], 0),
                DspParameter(2, "Variation",
