@@ -126,7 +126,7 @@ class GuiHelper:
     @staticmethod
     def create_combo_input(parameter: Parameter, function_to_run: Callable) -> QComboBox:
         combo_box = QComboBox()
-        if len(parameter.choices[0]) > 30:
+        if parameter.choices[1] is not None and len(parameter.choices[1]) > 30:
             # amp cabinet types
             combo_box.setObjectName("fat-combo-box")
             combo_box.setMaximumWidth(150)

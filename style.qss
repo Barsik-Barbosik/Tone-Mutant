@@ -56,5 +56,5 @@ QPushButton {
 
 #fat-combo-box QAbstractItemView
 {
-    min-width: 390px;
+    min-width: 370px;
 }
