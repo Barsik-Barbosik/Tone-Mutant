@@ -53,3 +53,8 @@ QPushButton {
 #midi-settings-combo {
     margin-right: 10px;
 }
+
+#fat-combo-box QAbstractItemView
+{
+    min-width: 300px;
+}
