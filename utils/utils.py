@@ -21,6 +21,10 @@ def decimal_to_hex_hex_8bit(decimal_num: int) -> str:
     return "{:02X}".format(decimal_num % 256) + " {:02X}".format(decimal_num // 256)
 
 
+def hex_hex_to_decimal(a: int, b: int):
+    return b * 128 + a
+
+
 def list_to_hex_str(int_list: list) -> str:
     hex_str = ""
     for int_value in int_list:
