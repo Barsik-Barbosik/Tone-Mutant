@@ -32,7 +32,7 @@ class Core(QObject):
     @Slot()
     def synchronize_tone_with_synth(self):
         self.lock.lockForWrite()
-        print("Synchronizing tone!")
+        print("\tSynchronizing tone!")
         self.midi_service.active_sync_job_count = 0
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
@@ -83,7 +83,7 @@ class Core(QObject):
     # Request main parameter value from synth
     def request_main_parameters(self):
         for parameter in self.tone.main_parameter_list:
-            print("P " + parameter.name)
+            print("\tRequesting parameter: " + parameter.name)
             try:
                 self.midi_service.request_parameter_value(parameter.block_id, parameter.action_number)
             except Exception as e:
@@ -91,22 +91,19 @@ class Core(QObject):
 
     # Process main parameter value response
     def process_main_parameter_response(self, param_number, block_id, response):
-        print("PP " + str(param_number) + ", " + str(block_id) + ", " + str(response))
         for parameter in self.tone.main_parameter_list:
             if parameter.action_number == param_number and parameter.block_id == block_id:
-                print("This is: " + parameter.name)
-
+                print("\tProcessing parameter: " + parameter.name + ", " + str(param_number) + ", " + str(block_id) + ", " + str(response))
                 if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
                     value = int(decimal_to_hex(response[1]) + decimal_to_hex(response[0]), 16)
                 else:
                     value = response[0]
-
                 parameter.value = decode_param_value(value, parameter)
                 break
 
     # Send message to update synth's main parameter
     def send_parameter_change_sysex(self, parameter: MainParameter):
-        print("Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
+        print("\tParam " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
         value = utils.encode_value_by_type(parameter)
         try:
             if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
@@ -164,7 +161,6 @@ class Core(QObject):
 
     # Request DSP module parameters from synth
     def request_dsp_module_parameters(self, block_id, dsp_module_id):
-        print("request_dsp_module_parameters...")
         if dsp_module_id is not None:
             try:
                 self.midi_service.request_dsp_params(block_id)
@@ -177,7 +173,7 @@ class Core(QObject):
         dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_module is not None:
             for idx, dsp_param in enumerate(dsp_module.dsp_parameter_list):
-                print("Param before: " + str(synth_dsp_params[idx]) +
+                print("\tParam before: " + str(synth_dsp_params[idx]) +
                       ", after: " + str(decode_param_value(synth_dsp_params[idx], dsp_param)))
                 dsp_param.value = decode_param_value(synth_dsp_params[idx], dsp_param)
 
@@ -197,7 +193,7 @@ class Core(QObject):
         instrument = Tone.get_instrument_by_id(instrument_id)
         self.tone.name = instrument.name  # TODO: read from synth
         self.tone.parent_tone = instrument
-        print("Instrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
+        print("\tInstrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
         try:
             self.midi_service.send_change_tone_msg(self.tone.parent_tone)
         except Exception as e:
