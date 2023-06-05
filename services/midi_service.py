@@ -4,7 +4,7 @@ import time
 from collections import deque
 
 import rtmidi
-from PySide2.QtCore import QThreadPool
+from PySide2.QtCore import QThreadPool, QReadWriteLock
 
 from constants import constants
 from constants.enums import SysexType
@@ -56,6 +56,8 @@ class MidiService:
             self.output_name = cfg.get("Midi", "OutPort", fallback="")
             self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
 
+            self.lock = QReadWriteLock()
+            self.active_sync_job_count = 0
             self.bank_select_msg_queue = deque()
 
             self.threadpool = QThreadPool()
@@ -91,7 +93,10 @@ class MidiService:
     def send_sysex(self, sysex_hex_str: str):
         self.verify_midi_ports()
         print("Outgoing SysEx:\t\t" + format_as_nice_hex(sysex_hex_str))
+        self.lock.lockForWrite()
+        self.active_sync_job_count = self.active_sync_job_count + 1
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
+        self.lock.unlock()
         time.sleep(0.01)
 
     def request_tone_name(self):
@@ -123,6 +128,9 @@ class MidiService:
     def process_message(self, message, _):
         message, deltatime = message
         print("Incoming midi msg:\t" + format_as_nice_hex(list_to_hex_str(message)))
+        self.lock.lockForWrite()
+        self.active_sync_job_count = self.active_sync_job_count - 1 if self.active_sync_job_count > 0 else 0
+        self.lock.unlock()
         if len(message) > 3 and message[0] == SYSEX_FIRST_BYTE:
             print("\tSysEx response type (as hex): " + decimal_to_hex(message[SYSEX_TYPE_INDEX]))
             if message[SYSEX_TYPE_INDEX] == SysexType.TONE_NAME.value:

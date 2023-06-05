@@ -12,6 +12,7 @@ from widgets.gui_helper import GuiHelper
 
 class CentralWidget(QWidget):
     update_help_text_panel_signal = Signal()
+    redraw_main_params_panel_signal = Signal()
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -31,6 +32,7 @@ class CentralWidget(QWidget):
 
         self.instrument_list = QListWidget(self)
 
+        self.qgrid_layout = QGridLayout(self)
         self.tab_widget = QTabWidget(self)
         self.tab_widget.setMinimumHeight(500)
         self.tab_widget.addTab(self.create_main_params_page(), TabName.MAIN_PARAMETERS.value)
@@ -44,13 +46,13 @@ class CentralWidget(QWidget):
         main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
 
         self.update_help_text_panel_signal.connect(self.update_help_text_panel)
+        self.redraw_main_params_panel_signal.connect(self.redraw_main_params_panel)
 
     def create_main_params_page(self) -> QWidget:
-        qgrid_layout = QGridLayout(self)
-        qgrid_layout.setColumnStretch(0, 1)
-        qgrid_layout.setColumnStretch(1, 2)
-        qgrid_layout.setColumnStretch(2, 1)
-        qgrid_layout.setColumnStretch(3, 2)
+        self.qgrid_layout.setColumnStretch(0, 1)
+        self.qgrid_layout.setColumnStretch(1, 2)
+        self.qgrid_layout.setColumnStretch(2, 1)
+        self.qgrid_layout.setColumnStretch(3, 2)
         main_params_page = QWidget(self)
         hbox_layout = QHBoxLayout(self)
         main_params_page.setLayout(hbox_layout)
@@ -66,13 +68,22 @@ class CentralWidget(QWidget):
         self.instrument_list.itemSelectionChanged.connect(self.on_instrument_list_changed)
         hbox_layout.addWidget(self.instrument_list)  # left side
 
-        GuiHelper.fill_qgrid_with_params(qgrid_layout,
+        GuiHelper.fill_qgrid_with_params(self.qgrid_layout,
                                          self.core.tone.main_parameter_list,
                                          constants.RIGHT_SIDE_MAIN_PARAMS,
                                          self.set_synth_parameter)
 
-        hbox_layout.addLayout(qgrid_layout)  # right side
+        hbox_layout.addLayout(self.qgrid_layout)  # right side
         return main_params_page
+
+    @Slot()
+    def redraw_main_params_panel(self):
+        GuiHelper.clear_layout(self.qgrid_layout)
+        GuiHelper.fill_qgrid_with_params(self.qgrid_layout,
+                                         self.core.tone.main_parameter_list,
+                                         constants.RIGHT_SIDE_MAIN_PARAMS,
+                                         self.set_synth_parameter)
+        print("redraw_main_params_panel: done")
 
     def get_current_tab_name(self):
         return TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))

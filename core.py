@@ -1,10 +1,11 @@
 import copy
 import time
 
-from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
+from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject, QThreadPool
 
 from constants import constants
 from constants.enums import ParameterType
+from external.worker import Worker
 from model.parameter import MainParameter
 from model.tone import Tone
 from services.midi_service import MidiService
@@ -32,7 +33,7 @@ class Core(QObject):
     def synchronize_tone_with_synth(self):
         self.lock.lockForWrite()
         print("Synchronizing tone!")
-        # self.main_window.status_msg_signal.emit("Synchronizing tone...", 1000)
+        self.midi_service.active_sync_job_count = 0
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
         self.request_tone_name()
@@ -44,6 +45,18 @@ class Core(QObject):
 
         self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
         self.lock.unlock()
+
+        QThreadPool().start(Worker(self.update_main_params_page))
+
+    def update_main_params_page(self):
+        for i in range(0, 10):
+            self.lock.lockForWrite()
+            if self.midi_service.active_sync_job_count == 0:
+                self.lock.unlock()
+                self.main_window.central_widget.redraw_main_params_panel_signal.emit()
+                break
+            self.lock.unlock()
+            time.sleep(0.5)
 
     # Request tone name from synth
     def request_tone_name(self):
