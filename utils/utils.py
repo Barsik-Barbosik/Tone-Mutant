@@ -66,8 +66,17 @@ def decode_param_value(value: int, parameter: Parameter):
             return value - 64
     elif parameter.type == ParameterType.KNOB_X2:
         return round(value / 2)
-    # elif parameter.type == ParameterType.KNOB_X4:
-    #     return 1023 - round(value / 4)  # FIXME
+    elif parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
+        # print("value before: " + str(value))
+        for idx in range(len(constants.ATTACK_AND_RELEASE_TIME)):
+            item = constants.ATTACK_AND_RELEASE_TIME[idx]
+            if value == item[2]:
+                # print("value after: " + str(item[0]))
+                return item[0]
+            if value > item[2]:
+                # print("value after: " + str(item[0]))
+                return item[0] - 1
+        return 0
     # elif parameter.type == ParameterType.SPECIAL_DELAY_KNOB:
     #     return value
     elif parameter.name == "Vibrato Type" and value == 0x0F:

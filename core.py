@@ -10,7 +10,7 @@ from model.parameter import MainParameter
 from model.tone import Tone
 from services.midi_service import MidiService
 from utils import utils
-from utils.utils import decode_param_value
+from utils.utils import decode_param_value, decimal_to_hex
 
 
 # Class for managing tone state and handling all communication between GUI and Midi Service
@@ -90,11 +90,17 @@ class Core(QObject):
                 self.main_window.show_error_msg(str(e))
 
     # Process main parameter value response
-    def process_main_parameter_response(self, param_number, block_id, value):
-        print("PP " + str(param_number) + ", " + str(block_id) + ", " + str(value))
+    def process_main_parameter_response(self, param_number, block_id, response):
+        print("PP " + str(param_number) + ", " + str(block_id) + ", " + str(response))
         for parameter in self.tone.main_parameter_list:
             if parameter.action_number == param_number and parameter.block_id == block_id:
                 print("This is: " + parameter.name)
+
+                if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
+                    value = int(decimal_to_hex(response[1]) + decimal_to_hex(response[0]), 16)
+                else:
+                    value = response[0]
+
                 parameter.value = decode_param_value(value, parameter)
                 break
 
