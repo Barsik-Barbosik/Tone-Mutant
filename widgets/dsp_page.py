@@ -47,7 +47,7 @@ class DspPage(QWidget):
 
     @Slot()
     def redraw_dsp_params_panel(self):
-        self.clear_layout(self.qgrid_layout)
+        GuiHelper.clear_layout(self.qgrid_layout)
 
         if self.dsp_module is not None:
             right_side_items_count = GuiHelper.fill_qgrid_with_params(self.qgrid_layout,
@@ -64,15 +64,6 @@ class DspPage(QWidget):
             self.qgrid_layout.addWidget(GuiHelper.get_spacer(), 0, 0, 1, 4)
 
         self.qgrid_layout.addWidget(GuiHelper.get_spacer())
-
-    def clear_layout(self, layout):
-        if layout is not None:
-            while layout.count():
-                child = layout.takeAt(0)
-                if child.widget() is not None:
-                    child.widget().deleteLater()
-                elif child.layout() is not None:
-                    self.clear_layout(child.layout())
 
     def on_list_widget_changed(self):
         if self.list_widget.currentItem() is None:
