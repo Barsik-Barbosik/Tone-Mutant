@@ -98,6 +98,22 @@ class Core(QObject):
                 parameter.value = decode_param_value(value, parameter)
                 break
 
+    # Send message to update synth's main parameter
+    def send_parameter_change_sysex(self, parameter: MainParameter):
+        print("Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
+        value = utils.encode_value_by_type(parameter)
+        try:
+            if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
+                self.midi_service.send_atk_rel_parameter_change_sysex(parameter.block_id,
+                                                                      parameter.action_number, value)
+            elif parameter.name in constants.SHORT_PARAMS:
+                self.midi_service.send_parameter_change_short_sysex(parameter.block_id,
+                                                                    parameter.action_number, value)
+            else:
+                self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.action_number, value)
+        except Exception as e:
+            self.main_window.show_error_msg(str(e))
+
     # Request DSP module from synth
     def request_dsp_module(self, block_id):
         try:
@@ -232,18 +248,3 @@ class Core(QObject):
     # Close midi ports
     def close_midi_ports(self):
         self.midi_service.close_midi_ports()
-
-    def send_parameter_change_sysex(self, parameter: MainParameter):
-        print("Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
-        value = utils.encode_value_by_type(parameter)
-        try:
-            if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
-                self.midi_service.send_atk_rel_parameter_change_sysex(parameter.block_id,
-                                                                      parameter.action_number, value)
-            elif parameter.name in constants.SHORT_PARAMS:
-                self.midi_service.send_parameter_change_short_sysex(parameter.block_id,
-                                                                    parameter.action_number, value)
-            else:
-                self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.action_number, value)
-        except Exception as e:
-            self.main_window.show_error_msg(str(e))
