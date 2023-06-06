@@ -93,7 +93,8 @@ class Core(QObject):
     def process_main_parameter_response(self, param_number, block_id, response):
         for parameter in self.tone.main_parameter_list:
             if parameter.action_number == param_number and parameter.block_id == block_id:
-                print("\tProcessing parameter: " + parameter.name + ", " + str(param_number) + ", " + str(block_id) + ", " + str(response))
+                print("\tProcessing parameter: " + parameter.name + ", " + str(param_number) + ", "
+                      + str(block_id) + ", " + str(response))
                 if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
                     value = int(decimal_to_hex(response[1]) + decimal_to_hex(response[0]), 16)
                 elif len(response) == 1:
@@ -212,6 +213,9 @@ class Core(QObject):
                 self.tone.parent_tone = instrument
                 break
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
+        self.main_window.central_widget.instrument_list.blockSignals(True)
+        self.main_window.central_widget.instrument_list.setCurrentRow(self.tone.parent_tone.id - 1)
+        self.main_window.central_widget.instrument_list.blockSignals(False)
         self.lock.unlock()
 
     def countdown_and_autosynchronize(self, timeout):
