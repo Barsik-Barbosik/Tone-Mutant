@@ -31,6 +31,7 @@ RIGHT_SIDE_DSP_PARAMS: Final[tuple] = (
     "Overdrive Gain", "Overdrive Level", "Dist Gain", "Dist Level", "Delay Level L", "Delay Level R", "Input Level",
     "Wet Level", "Dry Level")
 
+# CT-X 3000 and 5000
 ALL_INSTRUMENTS: Final[tuple] = (
     Instrument(1, "StagePno", 1, 0),
     Instrument(2, "GrandPno", 3, 0),

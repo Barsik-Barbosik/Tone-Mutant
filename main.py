@@ -2,7 +2,7 @@ import sys
 
 from PySide2.QtCore import Qt, QCoreApplication, Signal, Slot
 from PySide2.QtWidgets import QApplication, QMainWindow, QTextBrowser, \
-    QStatusBar
+    QStatusBar, QFileDialog
 
 from core import Core
 from widgets.central_widget import CentralWidget
@@ -58,6 +58,21 @@ class MainWindow(QMainWindow):
 
     def show_midi_settings(self):
         self.midi_settings_window = MidiSettingsWindow()
+
+    def show_save_json_dialog(self):
+        options = QFileDialog.Options()
+        file_dialog = QFileDialog()
+        file_dialog.setOptions(options)
+        file_dialog.setAcceptMode(QFileDialog.AcceptSave)
+        file_dialog.setDefaultSuffix("json")
+
+        # Run the dialog and get the selected file name and filter
+        file_name, _ = file_dialog.getSaveFileName(self, "Save File", "", "JSON Files (*.json);;All Files (*)",
+                                                   options=options)
+        if file_name:
+            print("Saving file:", file_name)
+            with open(file_name, 'w') as file:
+                file.write(self.central_widget.get_json())
 
     @staticmethod
     def menu_exit_action():

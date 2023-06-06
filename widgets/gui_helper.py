@@ -29,6 +29,7 @@ class GuiHelper:
         open_json_action.setStatusTip("Read tone information from JSON-formatted file")
         save_json_action = QAction("Save Tone (JSON)", main_window)
         save_json_action.setStatusTip("Save tone information as JSON-formatted file")
+        save_json_action.triggered.connect(main_window.show_save_json_dialog)
         midi_settings_action = QAction("&MIDI settings", main_window)
         midi_settings_action.setStatusTip("Open MIDI settings")
         midi_settings_action.triggered.connect(main_window.show_midi_settings)

@@ -1,7 +1,7 @@
 import json
 
 from PySide2.QtCore import Qt, Slot, Signal
-from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QListWidget, QHBoxLayout, QListWidgetItem, QTextBrowser
+from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QListWidgetItem, QTextBrowser
 
 from constants import constants
 from constants.enums import TabName
@@ -109,9 +109,12 @@ class CentralWidget(QWidget):
             self.current_dsp_page.redraw_dsp_params_panel()
         elif current_tab_name == TabName.JSON:
             self.main_window.show_status_msg("Tone information in JSON-format", 3000)
-            self.json_view_tab_textbox.setPlainText(json.dumps(self.core.tone, cls=ObjectEncoder, indent=4))
+            self.json_view_tab_textbox.setPlainText(self.get_json())
 
         self.update_help_text_panel()
+
+    def get_json(self):
+        return json.dumps(self.core.tone, cls=ObjectEncoder, indent=4)
 
     def on_instrument_list_changed(self):
         instrument_id: int = self.instrument_list.currentItem().data(Qt.UserRole)
