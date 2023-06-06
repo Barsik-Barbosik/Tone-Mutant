@@ -1,3 +1,4 @@
+import json
 import sys
 
 from PySide2.QtCore import Qt, QCoreApplication, Signal, Slot
@@ -71,7 +72,7 @@ class MainWindow(QMainWindow):
 
         if file_name:
             with open(file_name, 'r') as file:
-                self.core.load_tone_from_json(file.read())
+                self.core.load_tone_from_json(json.load(file))
 
     def show_save_json_dialog(self):
         options = QFileDialog.Options()
