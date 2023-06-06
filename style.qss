@@ -54,7 +54,11 @@ QPushButton {
     margin-right: 10px;
 }
 
-#fat-combo-box QAbstractItemView
-{
+#fat-combo-box QAbstractItemView {
     min-width: 370px;
 }
+
+#inactive-list {
+    background-color: #f0f0f0;
+}
+

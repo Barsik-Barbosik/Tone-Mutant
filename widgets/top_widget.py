@@ -30,6 +30,8 @@ class TopWidget(QWidget):
         mute_combo.setCurrentIndex(0)
         self.layout.addWidget(mute_combo)
 
+        # TODO: Volume knob (200, 0)
+
         self.layout.addWidget(GuiHelper.get_spacer())
 
         self.tone_name_label = QLabel(constants.DEFAULT_TONE_NAME)
@@ -52,9 +54,9 @@ class TopWidget(QWidget):
             self.channel = 32 if self.channel_combo.currentIndex() == 1 else 0
             print("Channel: " + str(self.channel))
 
-            instrument_list: QListWidget = self.main_window.central_widget.instrument_list
-            if self.channel == 32:
-                instrument_list.setEnabled(True)
-            else:
-                instrument_list.setEnabled(False)
-                instrument_list.clearSelection()
+            # instrument_list: QListWidget = self.main_window.central_widget.instrument_list
+            # if self.channel == 32:
+            #     instrument_list.setEnabled(True)
+            # else:
+            #     instrument_list.setEnabled(False)
+            #     instrument_list.clearSelection()

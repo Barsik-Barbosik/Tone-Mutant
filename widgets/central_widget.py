@@ -8,6 +8,7 @@ from constants.enums import TabName
 from external.object_encoder import ObjectEncoder
 from widgets.dsp_page import DspPage
 from widgets.gui_helper import GuiHelper
+from widgets.inactive_list_widget import InactiveListWidget
 
 
 class CentralWidget(QWidget):
@@ -30,7 +31,8 @@ class CentralWidget(QWidget):
         main_layout = QGridLayout(self)
         self.setLayout(main_layout)
 
-        self.instrument_list = QListWidget(self)
+        self.instrument_list = InactiveListWidget(self)
+        self.instrument_list.setObjectName("inactive-list")
 
         self.qgrid_layout = QGridLayout(self)
         self.tab_widget = QTabWidget(self)
@@ -58,7 +60,7 @@ class CentralWidget(QWidget):
         main_params_page.setLayout(hbox_layout)
 
         self.instrument_list.setFixedWidth(180)
-        self.instrument_list.setEnabled(False)
+        # self.instrument_list.setEnabled(False)
         for idx, instrument in enumerate(constants.ALL_INSTRUMENTS):
             item = QListWidgetItem()
             item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
