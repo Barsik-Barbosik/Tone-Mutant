@@ -71,9 +71,7 @@ class MainWindow(QMainWindow):
 
         if file_name:
             with open(file_name, 'r') as file:
-                content = file.read()
-                print("File content:")
-                print(content)
+                self.core.load_tone_from_json(file.read())
 
     def show_save_json_dialog(self):
         options = QFileDialog.Options()

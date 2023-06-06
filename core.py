@@ -256,3 +256,7 @@ class Core(QObject):
     # Close midi ports
     def close_midi_ports(self):
         self.midi_service.close_midi_ports()
+
+    def load_tone_from_json(self, json):
+        print("JSON:")
+        print(json)
