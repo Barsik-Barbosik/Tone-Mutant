@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("CT-X Controller")
+        self.setWindowTitle("Tone MUTANT 1.00")
 
         self.core: Core = Core(self)
 
