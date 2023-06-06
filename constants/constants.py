@@ -25,7 +25,7 @@ SHORT_PARAMS: Final[tuple] = (
     "Reverb Send", "Chorus Send", "Delay Send")
 
 RIGHT_SIDE_MAIN_PARAMS: Final[tuple] = (
-    "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume")
+    "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Reverb Send", "Chorus Send", "Delay Send")
 
 RIGHT_SIDE_DSP_PARAMS: Final[tuple] = (
     "Overdrive Gain", "Overdrive Level", "Dist Gain", "Dist Level", "Delay Level L", "Delay Level R", "Input Level",
