@@ -81,7 +81,7 @@ class Tone:
         if instrument_id is None or instrument_id == 0:
             return None
 
-        for instrument in constants.ALL_INSTRUMENTS:
+        for instrument in constants.ALL_INSTRUMENTS_3000_5000:
             if instrument.id == instrument_id:
                 return instrument
 

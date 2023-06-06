@@ -61,7 +61,7 @@ class CentralWidget(QWidget):
 
         self.instrument_list.setFixedWidth(180)
         # self.instrument_list.setEnabled(False)
-        for idx, instrument in enumerate(constants.ALL_INSTRUMENTS):
+        for idx, instrument in enumerate(constants.ALL_INSTRUMENTS_3000_5000):
             item = QListWidgetItem()
             item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
             item.setData(Qt.UserRole, instrument.id)

@@ -207,7 +207,7 @@ class Core(QObject):
         self.lock.lockForWrite()
         print("\tInstrument: " + str(bank) + ", " + str(program_change))
         self.tone.name = "Unknown Tone"
-        for instrument in constants.ALL_INSTRUMENTS:
+        for instrument in constants.ALL_INSTRUMENTS_3000_5000:
             if instrument.bank == bank and instrument.program_change == program_change:
                 self.tone.name = "{:03}".format(instrument.id) + " " + instrument.name
                 self.tone.parent_tone = instrument
