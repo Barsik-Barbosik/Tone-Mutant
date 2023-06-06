@@ -205,16 +205,23 @@ class Core(QObject):
     # Intercept instrument change messages from synth
     def process_instrument_select_response(self, bank, program_change):
         self.lock.lockForWrite()
+        self.main_window.central_widget.instrument_list.blockSignals(True)
         print("\tInstrument: " + str(bank) + ", " + str(program_change))
-        self.tone.name = "Unknown Tone"
+        is_found = False
         for instrument in constants.ALL_INSTRUMENTS_3000_5000:
             if instrument.bank == bank and instrument.program_change == program_change:
+                is_found = True
                 self.tone.name = "{:03}".format(instrument.id) + " " + instrument.name
                 self.tone.parent_tone = instrument
+                self.main_window.central_widget.instrument_list.setCurrentRow(self.tone.parent_tone.id - 1)
                 break
+
+        if not is_found:
+            self.tone.name = "Unknown Tone"
+            self.tone.parent_tone = None
+            self.main_window.central_widget.instrument_list.clearSelection()
+
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)
-        self.main_window.central_widget.instrument_list.blockSignals(True)
-        self.main_window.central_widget.instrument_list.setCurrentRow(self.tone.parent_tone.id - 1)
         self.main_window.central_widget.instrument_list.blockSignals(False)
         self.lock.unlock()
 
