@@ -27,6 +27,7 @@ class GuiHelper:
         save_action.setEnabled(False)
         open_json_action = QAction("Open Tone (JSON)", main_window)
         open_json_action.setStatusTip("Read tone information from JSON-formatted file")
+        open_json_action.triggered.connect(main_window.show_open_json_dialog)
         save_json_action = QAction("Save Tone (JSON)", main_window)
         save_json_action.setStatusTip("Save tone information as JSON-formatted file")
         save_json_action.triggered.connect(main_window.show_save_json_dialog)

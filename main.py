@@ -59,6 +59,22 @@ class MainWindow(QMainWindow):
     def show_midi_settings(self):
         self.midi_settings_window = MidiSettingsWindow()
 
+    def show_open_json_dialog(self):
+        options = QFileDialog.Options()
+        file_dialog = QFileDialog()
+        file_dialog.setOptions(options)
+        file_dialog.setFileMode(QFileDialog.ExistingFile)
+
+        # Run the dialog and get the selected file name and filter
+        file_name, _ = file_dialog.getOpenFileName(self, "Open File", "", "JSON Files (*.json);;All Files (*)",
+                                                   options=options)
+
+        if file_name:
+            with open(file_name, 'r') as file:
+                content = file.read()
+                print("File content:")
+                print(content)
+
     def show_save_json_dialog(self):
         options = QFileDialog.Options()
         file_dialog = QFileDialog()
