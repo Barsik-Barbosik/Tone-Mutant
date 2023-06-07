@@ -127,34 +127,36 @@ class MidiService:
 
     def process_message(self, message, _):
         message, deltatime = message
-        print("Incoming midi msg:\t" + format_as_nice_hex(list_to_hex_str(message)))
+        print("Incoming MIDI msg:\t" + format_as_nice_hex(list_to_hex_str(message)))
+
         self.lock.lockForWrite()
-        self.active_sync_job_count = self.active_sync_job_count - 1 if self.active_sync_job_count > 0 else 0
+        self.active_sync_job_count = max(0, self.active_sync_job_count - 1)  # count-- until 0
         self.lock.unlock()
+
         if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO:
-            print("\tSysEx response type (as hex): " + decimal_to_hex(message[SYSEX_TYPE_INDEX]))
-            if message[SYSEX_TYPE_INDEX] == SysexType.TONE_NAME.value:
-                response = message[len(message) - 1 - TONE_NAME_RESPONSE_SIZE:len(message) - 1]
+            sysex_type = message[SYSEX_TYPE_INDEX]
+            if sysex_type == SysexType.TONE_NAME.value:
+                response = message[-1 - TONE_NAME_RESPONSE_SIZE:-1]
                 print("\tTone name response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_tone_name_response(response)
-            elif message[SYSEX_TYPE_INDEX] in MAIN_PARAMETER_NUMBERS:
+            elif sysex_type in MAIN_PARAMETER_NUMBERS:
                 block_id = message[BLOCK_INDEX]
-                response = message[len(message) - 1 - MAIN_PARAMETER_RESPONSE_SIZE:len(message) - 1]
+                response = message[-1 - MAIN_PARAMETER_RESPONSE_SIZE:-1]
                 print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
-                self.core.process_main_parameter_response(message[SYSEX_TYPE_INDEX], block_id, response)  # 2 bytes
-            elif message[SYSEX_TYPE_INDEX] in MAIN_SHORT_PARAMETER_NUMBERS:
+                self.core.process_main_parameter_response(sysex_type, block_id, response)  # 2 bytes
+            elif sysex_type in MAIN_SHORT_PARAMETER_NUMBERS:
                 block_id = message[BLOCK_INDEX]
-                response = message[len(message) - 1 - MAIN_SHORT_PARAMETER_RESPONSE_SIZE:len(message) - 1]
+                response = message[-1 - MAIN_SHORT_PARAMETER_RESPONSE_SIZE:-1]
                 print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
-                self.core.process_main_parameter_response(message[SYSEX_TYPE_INDEX], block_id, response[:1])  # 1 byte
-            elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_MODULE.value:
+                self.core.process_main_parameter_response(sysex_type, block_id, response[:1])  # 1 byte
+            elif sysex_type == SysexType.DSP_MODULE.value:
                 block_id = message[BLOCK_INDEX]
-                response = message[len(message) - 1 - DSP_MODULE_RESPONSE_SIZE:len(message) - 1]
+                response = message[-1 - DSP_MODULE_RESPONSE_SIZE:-1]
                 print("\tDSP module response (first byte as hex): " + decimal_to_hex(response[0]))
                 self.core.process_dsp_module_response(block_id, response[0])
-            elif message[SYSEX_TYPE_INDEX] == SysexType.DSP_PARAMS.value:
+            elif sysex_type == SysexType.DSP_PARAMS.value:
                 block_id = message[BLOCK_INDEX]
-                response = message[len(message) - 1 - DSP_PARAMS_RESPONSE_SIZE:len(message) - 1]
+                response = message[-1 - DSP_PARAMS_RESPONSE_SIZE:-1]
                 print("\tDSP params response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_dsp_module_parameters_response(block_id, response)
         elif message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.REAL_TIME:
