@@ -5,6 +5,7 @@ from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QLi
 
 from constants import constants
 from constants.enums import TabName
+from external.json_highlighter import JsonHighlighter
 from external.object_encoder import ObjectEncoder
 from widgets.dsp_page import DspPage
 from widgets.gui_helper import GuiHelper
@@ -21,6 +22,7 @@ class CentralWidget(QWidget):
         self.main_window = self.core.main_window
 
         self.json_view_tab_textbox = QTextBrowser()
+        JsonHighlighter(self.json_view_tab_textbox.document())
 
         self.dsp_page_1 = DspPage(self, 0)
         self.dsp_page_2 = DspPage(self, 1)
