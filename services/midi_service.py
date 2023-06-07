@@ -7,7 +7,7 @@ import rtmidi
 from PySide2.QtCore import QThreadPool, QReadWriteLock
 
 from constants import constants
-from constants.enums import SysexType, SysexId
+from constants.enums import SysexType, SysexId, Size
 from external.worker import Worker
 from model.instrument import Instrument
 from utils.utils import decimal_to_hex, decimal_to_hex_hex, format_as_nice_hex, list_to_hex_str, decimal_to_hex_hex_8bit
@@ -20,12 +20,6 @@ INSTRUMENT_SELECT_FIRST_BYTE = 0xC0
 
 BLOCK_INDEX = 16
 SYSEX_TYPE_INDEX = 18
-
-TONE_NAME_RESPONSE_SIZE = 16  # TODO: replace 0F in sysex
-MAIN_PARAMETER_RESPONSE_SIZE = 2
-MAIN_SHORT_PARAMETER_RESPONSE_SIZE = 1
-DSP_MODULE_RESPONSE_SIZE = 2
-DSP_PARAMS_RESPONSE_SIZE = 14  # TODO: replace 0D in sysex
 
 MAIN_PARAMETER_NUMBERS = [20, 14, 15]  # TODO: get numbers automatically from main list
 MAIN_SHORT_PARAMETER_NUMBERS = [59, 63, 60, 61, 43, 45, 5, 57, 56, 58]
@@ -136,27 +130,27 @@ class MidiService:
         if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO:
             sysex_type = message[SYSEX_TYPE_INDEX]
             if sysex_type == SysexType.TONE_NAME.value:
-                response = message[-1 - TONE_NAME_RESPONSE_SIZE:-1]
+                response = message[-1 - Size.TONE_NAME:-1]
                 print("\tTone name response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_tone_name_response(response)
             elif sysex_type in MAIN_PARAMETER_NUMBERS:
                 block_id = message[BLOCK_INDEX]
-                response = message[-1 - MAIN_PARAMETER_RESPONSE_SIZE:-1]
+                response = message[-1 - Size.MAIN_PARAMETER:-1]
                 print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_main_parameter_response(sysex_type, block_id, response)  # 2 bytes
             elif sysex_type in MAIN_SHORT_PARAMETER_NUMBERS:
                 block_id = message[BLOCK_INDEX]
-                response = message[-1 - MAIN_SHORT_PARAMETER_RESPONSE_SIZE:-1]
+                response = message[-1 - Size.MAIN_PARAMETER_SHORT:-1]
                 print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_main_parameter_response(sysex_type, block_id, response[:1])  # 1 byte
             elif sysex_type == SysexType.DSP_MODULE.value:
                 block_id = message[BLOCK_INDEX]
-                response = message[-1 - DSP_MODULE_RESPONSE_SIZE:-1]
+                response = message[-1 - Size.DSP_MODULE:-1]
                 print("\tDSP module response (first byte as hex): " + decimal_to_hex(response[0]))
                 self.core.process_dsp_module_response(block_id, response[0])
             elif sysex_type == SysexType.DSP_PARAMS.value:
                 block_id = message[BLOCK_INDEX]
-                response = message[-1 - DSP_PARAMS_RESPONSE_SIZE:-1]
+                response = message[-1 - Size.DSP_PARAMS:-1]
                 print("\tDSP params response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_dsp_module_parameters_response(block_id, response)
         elif message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.REAL_TIME:
