@@ -7,7 +7,7 @@ import rtmidi
 from PySide2.QtCore import QThreadPool, QReadWriteLock
 
 from constants import constants
-from constants.enums import SysexType
+from constants.enums import SysexType, SysexId
 from external.worker import Worker
 from model.instrument import Instrument
 from utils.utils import decimal_to_hex, decimal_to_hex_hex, format_as_nice_hex, list_to_hex_str, decimal_to_hex_hex_8bit
@@ -131,7 +131,7 @@ class MidiService:
         self.lock.lockForWrite()
         self.active_sync_job_count = self.active_sync_job_count - 1 if self.active_sync_job_count > 0 else 0
         self.lock.unlock()
-        if len(message) > 3 and message[0] == SYSEX_FIRST_BYTE:
+        if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO:
             print("\tSysEx response type (as hex): " + decimal_to_hex(message[SYSEX_TYPE_INDEX]))
             if message[SYSEX_TYPE_INDEX] == SysexType.TONE_NAME.value:
                 response = message[len(message) - 1 - TONE_NAME_RESPONSE_SIZE:len(message) - 1]
@@ -157,6 +157,8 @@ class MidiService:
                 response = message[len(message) - 1 - DSP_PARAMS_RESPONSE_SIZE:len(message) - 1]
                 print("\tDSP params response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_dsp_module_parameters_response(block_id, response)
+        elif message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.REAL_TIME:
+            print("\tThis is a Real Time System Exclusive Message!")
         elif message[0] == BANK_SELECT_PART1_FIRST_BYTE and message != BANK_SELECT_PART2:
             self.bank_select_msg_queue.append(message)
             time.sleep(0.01)
