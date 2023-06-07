@@ -3,7 +3,7 @@ import sys
 
 from PySide2.QtCore import Qt, QCoreApplication, Signal, Slot
 from PySide2.QtWidgets import QApplication, QMainWindow, QTextBrowser, \
-    QStatusBar, QFileDialog
+    QStatusBar, QFileDialog, QSplitter
 
 from core import Core
 from widgets.central_widget import CentralWidget
@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         self.setMenuBar(self.menu_bar)
 
         self.central_widget = CentralWidget(self)
-        self.setCentralWidget(self.central_widget)
+        # self.setCentralWidget(self.central_widget)
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)  # remove right margin
 
         self.top_widget = TopWidget(self)
@@ -34,7 +34,14 @@ class MainWindow(QMainWindow):
 
         self.help_texbox = QTextBrowser()
         self.right_dock = GuiHelper.init_right_dock(self)
-        self.addDockWidget(Qt.RightDockWidgetArea, self.right_dock)
+        # self.addDockWidget(Qt.RightDockWidgetArea, self.right_dock)
+
+        splitter = QSplitter(self)
+        splitter.addWidget(self.central_widget)
+        splitter.addWidget(self.right_dock)
+        splitter.setStretchFactor(0, 1)  # central_widget
+        splitter.setStretchFactor(1, 2)  # right_dock
+        self.setCentralWidget(splitter)
 
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
