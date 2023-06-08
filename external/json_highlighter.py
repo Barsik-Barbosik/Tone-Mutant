@@ -30,7 +30,6 @@ class JsonHighlighter(QSyntaxHighlighter):
         # Rule for highlighting property values
         value_format = QTextCharFormat()
         value_format.setForeground(Qt.darkGreen)
-        # value_pattern = QRegExp(r'\s*("[^"]*"|\.\d+|[Tt]rue|[Ff]alse|null)(?:,|$)')
         value_pattern = QRegExp(r'\s*("[^"]*"|\.\d+)(?:,|$)')
         rules.append((value_pattern, value_format))
 
