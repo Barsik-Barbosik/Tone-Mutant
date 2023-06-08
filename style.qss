@@ -62,3 +62,7 @@ QPushButton {
     background-color: #f0f0f0;
 }
 
+#log-textbox {
+    font-family: Courier New;
+    font-size: 10pt;
+}
