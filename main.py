@@ -6,6 +6,7 @@ from PySide2.QtWidgets import QApplication, QMainWindow, QTextBrowser, \
     QStatusBar, QFileDialog, QSplitter
 
 from core import Core
+from external.sysex_highlighter import SysexHighlighter
 from widgets.central_widget import CentralWidget
 from widgets.gui_helper import GuiHelper
 from widgets.midi_settings_window import MidiSettingsWindow
@@ -33,6 +34,10 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.TopDockWidgetArea, self.top_dock)
 
         self.help_texbox = QTextBrowser()
+        self.log_texbox = QTextBrowser()
+        self.log_texbox.setObjectName("log-textbox")
+        SysexHighlighter(self.log_texbox.document())
+
         self.right_dock = GuiHelper.init_right_dock(self)
         # self.addDockWidget(Qt.RightDockWidgetArea, self.right_dock)
 
