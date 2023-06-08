@@ -80,15 +80,21 @@ class GuiHelper:
         right_dock.setTitleBarWidget(QWidget())
         right_dock.setFloating(False)
 
-        inner_widget = QWidget(main_window)
-        inner_layout = QHBoxLayout(main_window)
-        inner_layout.addWidget(main_window.help_texbox)
-        inner_widget.setLayout(inner_layout)
+        help_tab = QWidget(main_window)
+        help_tab_layout = QHBoxLayout(main_window)
+        help_tab_layout.addWidget(main_window.help_texbox)
+        help_tab.setLayout(help_tab_layout)
+
+        log_tab = QWidget(main_window)
+        log_tab_layout = QHBoxLayout(main_window)
+        log_tab_layout.addWidget(main_window.log_texbox)
+        log_tab.setLayout(log_tab_layout)
 
         tab_widget = QTabWidget(main_window)
         tab_widget.setMinimumHeight(500)
         tab_widget.setMinimumWidth(300)
-        tab_widget.addTab(inner_widget, "Info / Help")
+        tab_widget.addTab(help_tab, "Info / Help")
+        tab_widget.addTab(log_tab, "Log")
 
         outer_widget = QWidget(main_window)
         outer_layout = QHBoxLayout(main_window)
