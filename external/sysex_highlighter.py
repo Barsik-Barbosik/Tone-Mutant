@@ -8,11 +8,15 @@ class SysexHighlighter(QSyntaxHighlighter):
         2: {'foreground': Qt.darkGreen, 'background': Qt.white},
         3: {'foreground': Qt.darkGreen, 'background': Qt.white},
         4: {'foreground': Qt.darkGreen, 'background': Qt.white},
-        5: {'foreground': Qt.darkGreen, 'background': Qt.white},
+        5: {'foreground': Qt.magenta, 'background': Qt.white},
         6: {'foreground': Qt.darkGreen, 'background': Qt.white},
         7: {'foreground': Qt.darkGreen, 'background': Qt.white},
-        16: {'foreground': Qt.black, 'background': Qt.yellow},
-        18: {'foreground': Qt.black, 'background': Qt.yellow},
+        16: {'foreground': Qt.magenta, 'background': Qt.white},
+        17: {'foreground': Qt.magenta, 'background': Qt.white},
+        18: {'foreground': Qt.blue, 'background': Qt.white},
+        19: {'foreground': Qt.blue, 'background': Qt.white},
+        22: {'foreground': Qt.magenta, 'background': Qt.white},
+        23: {'foreground': Qt.magenta, 'background': Qt.white},
     }
 
     def __init__(self, parent=None):
@@ -31,7 +35,7 @@ class SysexHighlighter(QSyntaxHighlighter):
 
     def highlightBlock(self, text):
         self.highlight_word_styles(text)
-        self.highlight_keywords(text, r'MIDI OUT:|MIDI IN:', Qt.darkMagenta)
+        self.highlight_keywords(text, r'^([^:]+:)', Qt.darkMagenta)  # part of string before ":"
         self.highlight_keywords(text, r'F0|F7', Qt.red)
 
     def highlight_word_styles(self, text):
