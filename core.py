@@ -265,6 +265,5 @@ class Core(QObject):
         self.midi_service.close_midi_ports()
 
     def load_tone_from_json(self, json_tone: dict):
-        print("JSON:")
         self.tone.name = json_tone["name"]
         self.main_window.top_widget.tone_name_label.setText(self.tone.name)

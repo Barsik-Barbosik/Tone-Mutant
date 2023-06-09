@@ -94,7 +94,7 @@ class GuiHelper:
         tab_widget.setMinimumHeight(500)
         tab_widget.setMinimumWidth(300)
         tab_widget.addTab(help_tab, "Info / Help")
-        tab_widget.addTab(log_tab, "Log")
+        tab_widget.addTab(log_tab, "MIDI Log")
 
         outer_widget = QWidget(main_window)
         outer_layout = QHBoxLayout(main_window)

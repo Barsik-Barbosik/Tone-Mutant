@@ -83,7 +83,7 @@ class MidiService:
 
     def send_sysex(self, sysex_hex_str: str):
         self.verify_midi_ports()
-        self.core.main_window.log_texbox.log("Outgoing SysEx:\n" + format_as_nice_hex(sysex_hex_str) + "\n")
+        self.core.main_window.log_texbox.log("Outgoing SysEx:\n" + format_as_nice_hex(sysex_hex_str))
         self.lock.lockForWrite()
         self.active_sync_job_count = self.active_sync_job_count + 1
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
@@ -167,7 +167,7 @@ class MidiService:
             self.log("Incoming msg: ", message)
 
     def log(self, title, message):
-        self.core.main_window.log_texbox.log(title + format_as_nice_hex(list_to_hex_str(message)) + "\n")
+        self.core.main_window.log_texbox.log(title + format_as_nice_hex(list_to_hex_str(message)))
 
     def get_last_bank_select_message(self):
         last_message = None
