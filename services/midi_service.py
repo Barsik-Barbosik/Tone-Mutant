@@ -59,9 +59,6 @@ class MidiService:
             self.midi_out = rtmidi.MidiOut()
             self.open_midi_ports()
 
-    # def start_midi_worker(self, incoming_message, _):
-    #     self.threadpool.start(Worker(self.process_message, incoming_message))
-
     def open_midi_ports(self):
         for i in range(self.midi_out.get_port_count()):
             if self.output_name == self.midi_out.get_port_name(i):
@@ -86,7 +83,7 @@ class MidiService:
 
     def send_sysex(self, sysex_hex_str: str):
         self.verify_midi_ports()
-        print("Outgoing SysEx:\t\t" + format_as_nice_hex(sysex_hex_str))
+        self.core.main_window.log_texbox.log("Outgoing SysEx:\n" + format_as_nice_hex(sysex_hex_str) + "\n")
         self.lock.lockForWrite()
         self.active_sync_job_count = self.active_sync_job_count + 1
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
@@ -121,7 +118,6 @@ class MidiService:
 
     def process_message(self, message, _):
         message, deltatime = message
-        print("Incoming MIDI msg:\t" + format_as_nice_hex(list_to_hex_str(message)))
 
         self.lock.lockForWrite()
         self.active_sync_job_count = max(0, self.active_sync_job_count - 1)  # count-- until 0
@@ -130,41 +126,48 @@ class MidiService:
         if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO:
             sysex_type = message[SYSEX_TYPE_INDEX]
             if sysex_type == SysexType.TONE_NAME.value:
+                self.log("Incoming SysEx (Tone Name):\n", message)
                 response = message[-1 - Size.TONE_NAME:-1]
-                print("\tTone name response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_tone_name_response(response)
             elif sysex_type in MAIN_PARAMETER_NUMBERS:
+                self.log("Incoming SysEx (Parameter):\n", message)
                 block_id = message[BLOCK_INDEX]
                 response = message[-1 - Size.MAIN_PARAMETER:-1]
-                print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_main_parameter_response(sysex_type, block_id, response)  # 2 bytes
             elif sysex_type in MAIN_SHORT_PARAMETER_NUMBERS:
+                self.log("Incoming SysEx (Parameter):\n", message)
                 block_id = message[BLOCK_INDEX]
                 response = message[-1 - Size.MAIN_PARAMETER_SHORT:-1]
-                print("\tMain parameter response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_main_parameter_response(sysex_type, block_id, response[:1])  # 1 byte
             elif sysex_type == SysexType.DSP_MODULE.value:
+                self.log("Incoming SysEx (DSP module):\n", message)
                 block_id = message[BLOCK_INDEX]
                 response = message[-1 - Size.DSP_MODULE:-1]
-                print("\tDSP module response (first byte as hex): " + decimal_to_hex(response[0]))
                 self.core.process_dsp_module_response(block_id, response[0])
             elif sysex_type == SysexType.DSP_PARAMS.value:
+                self.log("Incoming SysEx (DSP params):\n", message)
                 block_id = message[BLOCK_INDEX]
                 response = message[-1 - Size.DSP_PARAMS:-1]
-                print("\tDSP params response: " + format_as_nice_hex(list_to_hex_str(response)))
                 self.core.process_dsp_module_parameters_response(block_id, response)
+            else:
+                self.log("Incoming SysEx:\n", message)
         elif message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.REAL_TIME:
-            print("\tThis is a Real Time System Exclusive Message!")
+            self.log("Incoming Real Time SysEx:\n", message)
         elif message[0] == BANK_SELECT_PART1_FIRST_BYTE and message != BANK_SELECT_PART2:
+            self.log("Incoming msg (bank change):\n", message)
             self.bank_select_msg_queue.append(message)
             time.sleep(0.01)
         elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE:
+            self.log("Incoming msg (program change):\n", message)
             bank_select_msg = self.get_last_bank_select_message()
             if bank_select_msg is not None:
-                print("\tBank select msg: " + format_as_nice_hex(list_to_hex_str(bank_select_msg)))
-                print("\tInstrument select msg: " + format_as_nice_hex(list_to_hex_str(message)))
                 self.core.process_instrument_select_response(bank_select_msg[2], message[1])
                 self.threadpool.start(Worker(self.core.countdown_and_autosynchronize, 2))
+        else:
+            self.log("Incoming msg: ", message)
+
+    def log(self, title, message):
+        self.core.main_window.log_texbox.log(title + format_as_nice_hex(list_to_hex_str(message)) + "\n")
 
     def get_last_bank_select_message(self):
         last_message = None
