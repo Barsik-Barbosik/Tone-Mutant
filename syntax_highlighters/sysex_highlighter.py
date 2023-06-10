@@ -35,7 +35,16 @@ class SysexHighlighter(QSyntaxHighlighter):
 
     def highlightBlock(self, text):
         self.highlight_word_styles(text)
-        self.highlight_keywords(text, r'^([^:]+:)', Qt.darkMagenta)  # part of string before ":"
+
+        # self.highlight_keywords(text, r'^([^:]+:)', Qt.darkMagenta)  # part of string before ":"
+        if ":" in text:
+            try:
+                colon_position = text.index(":")
+                self.setFormat(0, colon_position + 1, Qt.darkMagenta)
+                self.setFormat(colon_position + 1, len(text) - colon_position - 1, Qt.blue)
+            except:
+                pass
+
         self.highlight_keywords(text, r'F0|F7', Qt.red)
 
     def highlight_word_styles(self, text):
