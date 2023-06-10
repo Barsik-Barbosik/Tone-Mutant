@@ -1,5 +1,6 @@
 from typing import Callable
 
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QDial, \
     QHBoxLayout, QSpinBox, QComboBox, QWidget, QSizePolicy, QGridLayout, QMenuBar, QMenu, QAction, QMainWindow, \
     QDockWidget, QFrame, QTabWidget
@@ -19,22 +20,22 @@ class GuiHelper:
         file_menu = QMenu("&File", main_window)
         menu_bar.addMenu(file_menu)
 
-        open_action = QAction("&Open Tone (TON)", main_window)
+        open_action = QAction(QIcon('resources/open.png'), "&Open Tone (TON)", main_window)
         open_action.setStatusTip("Open TON-file")
         open_action.setEnabled(False)
-        save_action = QAction("&Save Tone (TON)", main_window)
+        save_action = QAction(QIcon('resources/save.png'), "&Save Tone (TON)", main_window)
         save_action.setStatusTip("Save tone as TON-file")
         save_action.setEnabled(False)
-        open_json_action = QAction("Open Tone (JSON)", main_window)
+        open_json_action = QAction(QIcon('resources/open.png'), "Open Tone (JSON)", main_window)
         open_json_action.setStatusTip("Read tone information from JSON-formatted file")
         open_json_action.triggered.connect(main_window.show_open_json_dialog)
-        save_json_action = QAction("Save Tone (JSON)", main_window)
+        save_json_action = QAction(QIcon('resources/save.png'), "Save Tone (JSON)", main_window)
         save_json_action.setStatusTip("Save tone information as JSON-formatted file")
         save_json_action.triggered.connect(main_window.show_save_json_dialog)
-        midi_settings_action = QAction("&MIDI settings", main_window)
-        midi_settings_action.setStatusTip("Open MIDI settings")
+        midi_settings_action = QAction(QIcon('resources/settings.png'), "&Settings", main_window)
+        midi_settings_action.setStatusTip("Open settings")
         midi_settings_action.triggered.connect(main_window.show_midi_settings)
-        exit_action = QAction("&Exit", main_window)
+        exit_action = QAction(QIcon('resources/exit.png'), "&Exit", main_window)
         exit_action.setStatusTip("Exit application")
         exit_action.triggered.connect(main_window.menu_exit_action)
 
