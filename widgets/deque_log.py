@@ -3,7 +3,7 @@ from collections import deque
 from PySide2.QtCore import QThreadPool, Signal
 from PySide2.QtWidgets import QTextBrowser
 
-from external.sysex_highlighter import SysexHighlighter
+from syntax_highlighters.sysex_highlighter import SysexHighlighter
 
 
 class DequeLog(QTextBrowser):

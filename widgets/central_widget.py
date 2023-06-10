@@ -5,7 +5,7 @@ from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QLi
 
 from constants import constants
 from constants.enums import TabName
-from external.json_highlighter import JsonHighlighter
+from syntax_highlighters.json_highlighter import JsonHighlighter
 from external.object_encoder import ObjectEncoder
 from widgets.dsp_page import DspPage
 from widgets.gui_helper import GuiHelper
