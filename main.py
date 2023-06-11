@@ -75,8 +75,6 @@ class MainWindow(QMainWindow):
         file_dialog = QFileDialog()
         file_dialog.setOptions(options)
         file_dialog.setFileMode(QFileDialog.ExistingFile)
-
-        # Run the dialog and get the selected file name and filter
         file_name, _ = file_dialog.getOpenFileName(self, "Open File", "", "JSON Files (*.json);;All Files (*)",
                                                    options=options)
 
@@ -90,8 +88,6 @@ class MainWindow(QMainWindow):
         file_dialog.setOptions(options)
         file_dialog.setAcceptMode(QFileDialog.AcceptSave)
         file_dialog.setDefaultSuffix("json")
-
-        # Run the dialog and get the selected file name and filter
         file_name, _ = file_dialog.getSaveFileName(self, "Save File", "", "JSON Files (*.json);;All Files (*)",
                                                    options=options)
         if file_name:
