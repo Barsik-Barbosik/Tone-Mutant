@@ -265,5 +265,27 @@ class Core(QObject):
         self.midi_service.close_midi_ports()
 
     def load_tone_from_json(self, json_tone: dict):
-        self.tone.name = json_tone["name"]
-        self.main_window.top_widget.tone_name_label.setText(self.tone.name)
+        # TODO: init Tone or reset params to defaults, delete DSP modules?
+        if "name" in json_tone:
+            self.tone.name = json_tone["name"]
+            self.main_window.top_widget.tone_name_label.setText(self.tone.name)
+        if "parent_tone" in json_tone:
+            if json_tone["parent_tone"] is None:
+                self.tone.parent_tone = None
+            else:
+                pass  # FIXME
+        if "parameters" in json_tone:
+            for main_parameter in json_tone["parameters"]:
+                if "name" in main_parameter and "value" in main_parameter:
+                    print(main_parameter)
+        if "dsp_modules" in json_tone:
+            for dsp_data in json_tone["dsp_modules"].items():
+                if dsp_data[1] is not None:
+                    print(dsp_data[0])  # TODO: get block_id
+                    dsp_module = dsp_data[1]
+                    if "name" in dsp_module:
+                        print(dsp_module["name"])
+                    if "parameters" in dsp_module:
+                        for dsp_parameter in dsp_module["parameters"]:
+                            if "name" in dsp_parameter and "value" in dsp_parameter:
+                                print(dsp_parameter)

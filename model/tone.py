@@ -67,13 +67,13 @@ class Tone:
             "name": self.name,
             "parent_tone": self.parent_tone,
             "parameters": self.main_parameter_list,
-            "dsp_modules": [
-                {"dsp_1": self.dsp_module_1,
-                 "dsp_2": self.dsp_module_2,
-                 "dsp_3": self.dsp_module_3,
-                 "dsp_4": self.dsp_module_4
-                 }
-            ]}
+            "dsp_modules": {
+                "dsp_1": self.dsp_module_1,
+                "dsp_2": self.dsp_module_2,
+                "dsp_3": self.dsp_module_3,
+                "dsp_4": self.dsp_module_4
+            }
+        }
         return obj
 
     @staticmethod
