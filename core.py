@@ -277,7 +277,14 @@ class Core(QObject):
         if "parameters" in json_tone:
             for main_parameter in json_tone["parameters"]:
                 if "name" in main_parameter and "value" in main_parameter:
-                    print(main_parameter)
+                    for tone_main_parameter in self.tone.main_parameter_list:
+                        if tone_main_parameter.name == main_parameter["name"]:
+                            print("Setting: " + main_parameter["name"])
+                            if tone_main_parameter.type == ParameterType.COMBO:
+                                tone_main_parameter.value = main_parameter["value"] - 1
+                            else:
+                                tone_main_parameter.value = main_parameter["value"]
+                            break
         if "dsp_modules" in json_tone:
             for dsp_data in json_tone["dsp_modules"].items():
                 if dsp_data[1] is not None:
