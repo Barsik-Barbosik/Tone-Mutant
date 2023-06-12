@@ -275,15 +275,15 @@ class Core(QObject):
             else:
                 pass  # FIXME
         if "parameters" in json_tone:
-            for main_parameter in json_tone["parameters"]:
-                if "name" in main_parameter and "value" in main_parameter:
+            for json_main_parameter in json_tone["parameters"]:
+                if "name" in json_main_parameter and "value" in json_main_parameter:
                     for tone_main_parameter in self.tone.main_parameter_list:
-                        if tone_main_parameter.name == main_parameter["name"]:
-                            print("Setting: " + main_parameter["name"])
+                        if tone_main_parameter.name == json_main_parameter["name"]:
+                            print("Setting: " + json_main_parameter["name"])
                             if tone_main_parameter.type == ParameterType.COMBO:
-                                tone_main_parameter.value = main_parameter["value"] - 1
+                                tone_main_parameter.value = json_main_parameter["value"] - 1
                             else:
-                                tone_main_parameter.value = main_parameter["value"]
+                                tone_main_parameter.value = json_main_parameter["value"]
                             break
         if "dsp_modules" in json_tone:
             for dsp_data in json_tone["dsp_modules"].items():
@@ -299,21 +299,35 @@ class Core(QObject):
 
                 if block_id is not None and dsp_data[1] is not None:
                     print(dsp_data[0])
-                    dsp_module = dsp_data[1]
-                    if "name" in dsp_module:
-                        print(dsp_module["name"])
+                    json_dsp_module = dsp_data[1]
+                    if "name" in json_dsp_module:
+                        print(json_dsp_module["name"])
 
                         dsp_module_id = None
-                        for module in constants.ALL_DSP_MODULES:
-                            if module.name == dsp_module["name"]:
-                                print("Setting: " + dsp_module["name"])
-                                dsp_module_id = module.id
+                        for dsp_module in constants.ALL_DSP_MODULES:
+                            if dsp_module.name == json_dsp_module["name"]:
+                                print("Setting: " + json_dsp_module["name"])
+                                dsp_module_id = dsp_module.id
                                 break
 
                         if block_id is not None and dsp_module_id is not None:
                             self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
 
-                            if "parameters" in dsp_module:
-                                for dsp_parameter in dsp_module["parameters"]:
-                                    if "name" in dsp_parameter and "value" in dsp_parameter:
-                                        print(dsp_parameter)
+                            dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
+                            dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
+                            dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
+
+                            if "parameters" in json_dsp_module:
+                                for json_dsp_parameter in json_dsp_module["parameters"]:
+                                    if "name" in json_dsp_parameter and "value" in json_dsp_parameter:
+                                        for tone_parameter in dsp_page.dsp_module.dsp_parameter_list:
+                                            if tone_parameter.name == json_dsp_parameter["name"]:
+                                                print("Setting2: " + json_dsp_parameter["name"])
+                                                if tone_parameter.type == ParameterType.COMBO:
+                                                    tone_parameter.value = json_dsp_parameter["value"] - 1
+                                                else:
+                                                    tone_parameter.value = json_dsp_parameter["value"]
+                                                break
+
+                                if self.main_window.central_widget.current_dsp_page:
+                                    self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
