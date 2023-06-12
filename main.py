@@ -2,6 +2,7 @@ import json
 import sys
 
 from PySide2.QtCore import Qt, QCoreApplication, Signal, Slot
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication, QMainWindow, QTextBrowser, \
     QStatusBar, QFileDialog, QSplitter
 
@@ -19,6 +20,7 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("CT-X Tone MUTANT 1.00")
+        self.setWindowIcon(QIcon("resources/note.png"))
 
         self.core: Core = Core(self)
 
