@@ -265,7 +265,6 @@ class Core(QObject):
         self.midi_service.close_midi_ports()
 
     def load_tone_from_json(self, json_tone: dict):
-        # TODO: init Tone or reset params to defaults, delete DSP modules?
         if "name" in json_tone:
             self.tone.name = json_tone["name"]
             self.main_window.top_widget.tone_name_label.setText(self.tone.name)
@@ -284,7 +283,10 @@ class Core(QObject):
                                 tone_main_parameter.value = json_main_parameter["value"] - 1
                             else:
                                 tone_main_parameter.value = json_main_parameter["value"]
+                            self.send_parameter_change_sysex(tone_main_parameter)
                             break
+            self.main_window.central_widget.redraw_main_params_panel_signal.emit()
+
         if "dsp_modules" in json_tone:
             for dsp_data in json_tone["dsp_modules"].items():
                 block_id = None
@@ -328,6 +330,12 @@ class Core(QObject):
                                                 else:
                                                     tone_parameter.value = json_dsp_parameter["value"]
                                                 break
+
+                                try:
+                                    self.midi_service.send_dsp_params_change_sysex(block_id,
+                                                                                   dsp_page.get_dsp_params_as_list())
+                                except Exception as e:
+                                    self.main_window.show_error_msg(str(e))
 
                                 if self.main_window.central_widget.current_dsp_page:
                                     self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
