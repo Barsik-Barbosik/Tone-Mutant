@@ -27,6 +27,9 @@ class MainWindow(QMainWindow):
         self.menu_bar = GuiHelper.init_menu_bar(self)
         self.setMenuBar(self.menu_bar)
 
+        self.help_texbox = QTextBrowser(self)
+        self.log_texbox = DequeLog(self)
+
         self.central_widget = CentralWidget(self)
         # self.setCentralWidget(self.central_widget)
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)  # remove right margin
@@ -34,9 +37,6 @@ class MainWindow(QMainWindow):
         self.top_widget = TopWidget(self)
         self.top_dock = GuiHelper.init_top_dock(self)
         self.addDockWidget(Qt.TopDockWidgetArea, self.top_dock)
-
-        self.help_texbox = QTextBrowser(self)
-        self.log_texbox = DequeLog(self)
 
         self.right_dock = GuiHelper.init_right_dock(self)
         # self.addDockWidget(Qt.RightDockWidgetArea, self.right_dock)

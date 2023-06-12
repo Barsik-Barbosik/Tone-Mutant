@@ -27,6 +27,7 @@ class SysexId(IntEnum):
 class SysexType(Enum):
     TONE_NAME = 0
     DSP_MODULE = 85
+    DSP_BYPASS = 86
     DSP_PARAMS = 87
 
 

@@ -186,6 +186,10 @@ class MidiService:
     def send_dsp_module_change_sysex(self, block_id: int, new_dsp_id: int):
         self.send_parameter_change_sysex(block_id, SysexType.DSP_MODULE.value, new_dsp_id)
 
+    def send_dsp_bypass_sysex(self, block_id: int, bypass: bool):
+        value = 1 if bypass else 0
+        self.send_parameter_change_short_sysex(block_id, SysexType.DSP_BYPASS.value, value)
+
     def send_dsp_params_change_sysex(self, block_id: int, params_list: list):
         # Array size is always 14 bytes: length is "0D"
         msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00"

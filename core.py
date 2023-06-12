@@ -138,15 +138,16 @@ class Core(QObject):
     def update_dsp_module_from_list(self, block_id, dsp_module_id):
         self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
 
-        if dsp_module_id is None:
-            # TODO: turn DSP off
-            self.main_window.show_status_msg("Not implemented!!", 1000)
-        else:
-            try:
+        try:
+            if dsp_module_id is None:
+                print("Disabling DSP...")  # TODO: separate bypass and dsp delete!!
+                self.midi_service.send_dsp_bypass_sysex(block_id, True)
+            else:
+                self.midi_service.send_dsp_bypass_sysex(block_id, False)
                 self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
                 self.request_dsp_module_parameters(block_id, dsp_module_id)
-            except Exception as e:
-                self.main_window.show_error_msg(str(e))
+        except Exception as e:
+            self.main_window.show_error_msg(str(e))
 
     # Update tone dsp module and refresh GUI
     def update_tone_dsp_module_and_refresh_gui(self, block_id, dsp_module_id):
