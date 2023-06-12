@@ -287,12 +287,33 @@ class Core(QObject):
                             break
         if "dsp_modules" in json_tone:
             for dsp_data in json_tone["dsp_modules"].items():
-                if dsp_data[1] is not None:
-                    print(dsp_data[0])  # TODO: get block_id
+                block_id = None
+                if dsp_data[0] == "dsp_1":
+                    block_id = 0
+                elif dsp_data[0] == "dsp_2":
+                    block_id = 1
+                elif dsp_data[0] == "dsp_3":
+                    block_id = 2
+                elif dsp_data[0] == "dsp_4":
+                    block_id = 3
+
+                if block_id is not None and dsp_data[1] is not None:
+                    print(dsp_data[0])
                     dsp_module = dsp_data[1]
                     if "name" in dsp_module:
                         print(dsp_module["name"])
-                    if "parameters" in dsp_module:
-                        for dsp_parameter in dsp_module["parameters"]:
-                            if "name" in dsp_parameter and "value" in dsp_parameter:
-                                print(dsp_parameter)
+
+                        dsp_module_id = None
+                        for module in constants.ALL_DSP_MODULES:
+                            if module.name == dsp_module["name"]:
+                                print("Setting: " + dsp_module["name"])
+                                dsp_module_id = module.id
+                                break
+
+                        if block_id is not None and dsp_module_id is not None:
+                            self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
+
+                            if "parameters" in dsp_module:
+                                for dsp_parameter in dsp_module["parameters"]:
+                                    if "name" in dsp_parameter and "value" in dsp_parameter:
+                                        print(dsp_parameter)
