@@ -3,7 +3,7 @@ from typing import Final
 from constants.enums import ParameterType
 from model.dsp_module import DspModule
 from model.instrument import Instrument
-from model.parameter import DspParameter, Parameter
+from model.parameter import DspParameter
 
 CONFIG_FILENAME: Final[str] = '../config.cfg'
 
@@ -30,10 +30,6 @@ RIGHT_SIDE_MAIN_PARAMS: Final[tuple] = (
 RIGHT_SIDE_DSP_PARAMS: Final[tuple] = (
     "Overdrive Gain", "Overdrive Level", "Dist Gain", "Dist Level", "Delay Level L", "Delay Level R", "Input Level",
     "Wet Level", "Dry Level")
-
-DSP_BYPASS: Final[Parameter] = Parameter(1, "Bypass",
-                                         "DSP Bypass",
-                                         ParameterType.COMBO, ["OFF", "ON"], 0)
 
 ALL_DSP_MODULES: Final[tuple] = (
     DspModule(27, "Mono 1-Band EQ",

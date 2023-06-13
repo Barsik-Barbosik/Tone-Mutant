@@ -1,4 +1,3 @@
-import copy
 import random
 
 from PySide2.QtCore import Qt, Slot, Signal
@@ -43,7 +42,6 @@ class DspPage(QWidget):
         self.list_widget.itemSelectionChanged.connect(self.on_list_widget_changed)
         hbox_layout.addWidget(self.list_widget)  # left side
         hbox_layout.addLayout(self.qgrid_layout)  # right side
-        self.dsp_bypass = copy.deepcopy(constants.DSP_BYPASS)
 
         self.redraw_dsp_params_panel_signal.connect(self.redraw_dsp_params_panel)
 
@@ -60,7 +58,7 @@ class DspPage(QWidget):
             label = QLabel("Bypass:")
             label.setObjectName("label-right-side")
             self.qgrid_layout.addWidget(label, right_side_items_count, 2)
-            self.qgrid_layout.addWidget(GuiHelper.create_combo_input(self.dsp_bypass, self.do_nothing),
+            self.qgrid_layout.addWidget(GuiHelper.create_combo_input(self.dsp_module.bypass, self.send_dsp_bypass),
                                         right_side_items_count, 3)
             right_side_items_count = right_side_items_count + 1
 
@@ -77,8 +75,9 @@ class DspPage(QWidget):
 
         self.qgrid_layout.addWidget(GuiHelper.get_spacer())
 
-    def do_nothing(self, _):
-        pass
+    def send_dsp_bypass(self, bypass_parameter):
+        bypass = True if bypass_parameter.value == 1 else False
+        self.core.send_dsp_bypass(self.block_id, bypass)
 
     def on_list_widget_changed(self):
         if self.list_widget.currentItem() is None:
