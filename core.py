@@ -140,8 +140,9 @@ class Core(QObject):
 
         try:
             if dsp_module_id is None:
-                print("Disabling DSP...")  # TODO: separate bypass and dsp delete!!
                 self.midi_service.send_dsp_bypass_sysex(block_id, True)
+                if self.main_window.central_widget.current_dsp_page:
+                    self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
             else:
                 self.midi_service.send_dsp_bypass_sysex(block_id, False)
                 self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
@@ -155,6 +156,8 @@ class Core(QObject):
         setattr(self.tone, dsp_module_attr, copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id)))
         dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
         dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
+        if dsp_page.dsp_module:
+            dsp_page.dsp_module.bypass.value = 0
 
         dsp_page.list_widget.blockSignals(True)
         dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
@@ -189,6 +192,12 @@ class Core(QObject):
         try:
             dsp_page = self.main_window.central_widget.current_dsp_page
             self.midi_service.send_dsp_params_change_sysex(dsp_page.block_id, dsp_page.get_dsp_params_as_list())
+        except Exception as e:
+            self.main_window.show_error_msg(str(e))
+
+    def send_dsp_bypass(self, block_id, bypass):
+        try:
+            self.midi_service.send_dsp_bypass_sysex(block_id, bypass)
         except Exception as e:
             self.main_window.show_error_msg(str(e))
 
