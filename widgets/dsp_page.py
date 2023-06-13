@@ -1,7 +1,8 @@
+import copy
 import random
 
 from PySide2.QtCore import Qt, Slot, Signal
-from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QListWidgetItem, QPushButton
+from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QListWidgetItem, QPushButton, QLabel
 
 from constants import constants
 from constants.enums import ParameterType
@@ -42,6 +43,7 @@ class DspPage(QWidget):
         self.list_widget.itemSelectionChanged.connect(self.on_list_widget_changed)
         hbox_layout.addWidget(self.list_widget)  # left side
         hbox_layout.addLayout(self.qgrid_layout)  # right side
+        self.dsp_bypass = copy.deepcopy(constants.DSP_BYPASS)
 
         self.redraw_dsp_params_panel_signal.connect(self.redraw_dsp_params_panel)
 
@@ -55,15 +57,28 @@ class DspPage(QWidget):
                                                                       constants.RIGHT_SIDE_DSP_PARAMS,
                                                                       self.core.set_synth_dsp_params)
 
+            label = QLabel("Bypass:")
+            label.setObjectName("label-right-side")
+            self.qgrid_layout.addWidget(label, right_side_items_count, 2)
+            self.qgrid_layout.addWidget(GuiHelper.create_combo_input(self.dsp_bypass, self.do_nothing),
+                                        right_side_items_count, 3)
+            right_side_items_count = right_side_items_count + 1
+
+            largest_items_count = max(right_side_items_count,
+                                      len(self.dsp_module.dsp_parameter_list) - right_side_items_count)
+
             random_button = QPushButton("Randomize DSP values", self)
             random_button.setObjectName("random-button")
             random_button.clicked.connect(self.on_random_button_pressed)
-            button_row = len(self.dsp_module.dsp_parameter_list) - right_side_items_count + 1
+            button_row = largest_items_count + 1
             self.qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
         else:
             self.qgrid_layout.addWidget(GuiHelper.get_spacer(), 0, 0, 1, 4)
 
         self.qgrid_layout.addWidget(GuiHelper.get_spacer())
+
+    def do_nothing(self, _):
+        pass
 
     def on_list_widget_changed(self):
         if self.list_widget.currentItem() is None:
