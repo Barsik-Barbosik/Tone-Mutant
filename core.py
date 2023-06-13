@@ -324,10 +324,23 @@ class Core(QObject):
 
                         if block_id is not None and dsp_module_id is not None:
                             self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
+                            try:
+                                if dsp_module_id is None:
+                                    self.midi_service.send_dsp_bypass_sysex(block_id, True)
+                                    if self.main_window.central_widget.current_dsp_page:
+                                        self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
+                                else:
+                                    self.midi_service.send_dsp_bypass_sysex(block_id, False)
+                                    self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
+                            except Exception as e:
+                                self.main_window.show_error_msg(str(e))
 
                             dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
                             dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
                             dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
+
+                            if dsp_page.dsp_module and "bypass" in json_dsp_module:
+                                dsp_page.dsp_module.bypass.value = json_dsp_module["bypass"]
 
                             if "parameters" in json_dsp_module:
                                 for json_dsp_parameter in json_dsp_module["parameters"]:
