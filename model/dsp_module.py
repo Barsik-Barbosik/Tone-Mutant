@@ -10,7 +10,7 @@ class DspModule:
         self.name = name
         self.description = description
         self.dsp_parameter_list = dsp_parameter_list
-        self.bypass = Parameter(1, "Bypass", "DSP Bypass", ParameterType.COMBO, ["OFF", "ON"], 0)
+        self.bypass = Parameter(1, "Bypass", "DSP Bypass", ParameterType.COMBO, ["OFF", "ON"])
 
     def to_json(self):
         bypass = True if self.bypass.value == 1 else False

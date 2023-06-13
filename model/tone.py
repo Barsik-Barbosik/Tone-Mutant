@@ -1,3 +1,5 @@
+from typing import List
+
 from constants import constants
 from constants.enums import ParameterType
 from model.dsp_module import DspModule
@@ -10,49 +12,49 @@ class Tone:
         self.name: str = None
         self.parent_tone: Instrument = None
 
-        self.main_parameter_list: list[MainParameter] = [
+        self.main_parameter_list: List[MainParameter] = [
             MainParameter(1, 20, 1, "Attack Time",
                           "Adjusts the time after a key is pressed from when the note starts to sound until it reaches maximum volume. A larger value specifies a slower attack.",
-                          ParameterType.SPECIAL_ATK_REL_KNOB, [0, 127], 0),
+                          ParameterType.SPECIAL_ATK_REL_KNOB, [0, 127]),
             MainParameter(2, 20, 5, "Release Time",
                           "Adjusts how long notes linger after keyboard keys are released. A larger values specifies a longer release.",
-                          ParameterType.SPECIAL_ATK_REL_KNOB, [0, 127], 0),
+                          ParameterType.SPECIAL_ATK_REL_KNOB, [0, 127]),
             MainParameter(3, 14, 0, "Cutoff Frequency",
                           "Adjusts timbre by attenuating the components of a note’s frequency characteristics that are higher than a certain frequency (cutoff frequency). A larger value specifies a brighter, harder sound, while a lower value specifies a mellower, softer sound.",
-                          ParameterType.KNOB_X2, [0, 127], 0),
+                          ParameterType.KNOB_X2, [0, 127]),
             MainParameter(4, 15, 0, "Resonance",
                           "Adjusts the gain of harmonic tones in the vicinity of the cutoff frequency specified above. A larger value creates a more unusual sound.",
-                          ParameterType.KNOB_X2, [0, 127], 0),
+                          ParameterType.KNOB_X2, [0, 127]),
             MainParameter(5, 59, 0, "Vibrato Type",
                           "Selects the vibrato waveform.",
-                          ParameterType.COMBO, ["Sine", "Triangle", "Sawtooth", "Square"], 0),
+                          ParameterType.COMBO, ["Sine", "Triangle", "Sawtooth", "Square"]),
             MainParameter(6, 63, 0, "Vibrato Depth",
                           "VSpecifies the depth of vibrato.",
-                          ParameterType.KNOB, [0, 127], 0),
+                          ParameterType.KNOB, [0, 127]),
             MainParameter(7, 60, 0, "Vibrato Rate",
                           "Adjusts the speed of vibrato.",
-                          ParameterType.KNOB, [0, 127], 0),
+                          ParameterType.KNOB, [0, 127]),
             MainParameter(8, 61, 0, "Vibrato Delay",
                           "Adjusts the time until vibrato starts after a note is sounded.",
-                          ParameterType.KNOB, [0, 127], 0),
+                          ParameterType.KNOB, [0, 127]),
             MainParameter(9, 43, 0, "Octave Shift",
                           "Shifts the pitch upwards or downwards in octave steps.",
-                          ParameterType.KNOB, [-3, 3], 0),
+                          ParameterType.KNOB, [-3, 3]),
             MainParameter(10, 45, 0, "Volume",
                           "Specifies the volume level of a tone. A larger value sets a higher volume level.",
-                          ParameterType.KNOB, [0, 127], 0),
+                          ParameterType.KNOB, [0, 127]),
             MainParameter(11, 5, 0, "Velocity Sense",
                           "VSpecifies how much the tone and/or volume should be affected by keyboard touch (pressure). A larger positive value specifies more brightness and greater volume as keyboard touch becomes stronger. A larger negative value specifies more softness and less volume as keyboard touch becomes stronger. A value of 0 specifies no change in accordance with keyboard touch.",
-                          ParameterType.KNOB, [-64, 63], 0),
+                          ParameterType.KNOB, [-64, 63]),
             MainParameter(12, 57, 0, "Reverb Send",
                           "Specifies how much reverb is applied to a tone.",
-                          ParameterType.KNOB, [0, 127], 0),
+                          ParameterType.KNOB, [0, 127]),
             MainParameter(13, 56, 0, "Chorus Send",
                           "Specifies how much chorus is applied to a tone.",
-                          ParameterType.KNOB, [0, 127], 0),
+                          ParameterType.KNOB, [0, 127]),
             MainParameter(14, 58, 0, "Delay Send",
                           "Specifies how much delay is applied to a tone.",
-                          ParameterType.KNOB, [0, 127], 0)]
+                          ParameterType.KNOB, [0, 127])]
 
         # Advanced parameters:
         # reverb params, chorus params, delay params, pitch bend wheel, modulation wheel, sustain pedal
