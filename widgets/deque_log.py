@@ -1,7 +1,7 @@
 from collections import deque
 
-from PySide2.QtCore import QThreadPool, Signal
-from PySide2.QtWidgets import QTextBrowser
+from PySide2.QtCore import QThreadPool, Signal, Qt
+from PySide2.QtWidgets import QTextBrowser, QAction, QMenu
 
 from syntax_highlighters.sysex_highlighter import SysexHighlighter
 
@@ -17,6 +17,15 @@ class DequeLog(QTextBrowser):
 
         self.setObjectName("log-textbox")
         SysexHighlighter(self.document())
+
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self._show_context_menu)
+
+        self.clear_action = QAction("Clear", self)
+        self.clear_action.triggered.connect(self._clear_content)
+
+        self.context_menu = QMenu(self)
+        self.context_menu.addAction(self.clear_action)
 
         self.update_log_signal.connect(self._update_log)
 
@@ -37,3 +46,19 @@ class DequeLog(QTextBrowser):
             return self.log_queue.popleft()
         except IndexError:
             return None
+
+    def _show_context_menu(self, pos):
+        self.context_menu.clear()
+
+        default_menu = self.createStandardContextMenu()
+        actions = default_menu.actions()
+        for action in actions:
+            self.context_menu.addAction(action)
+
+        self.context_menu.addSeparator()
+        self.context_menu.addAction(self.clear_action)
+
+        self.context_menu.exec_(self.mapToGlobal(pos))
+
+    def _clear_content(self):
+        self.clear()
