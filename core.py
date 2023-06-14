@@ -11,6 +11,7 @@ from model.tone import Tone
 from services.midi_service import MidiService
 from utils import utils
 from utils.utils import decode_param_value, decimal_to_hex, hex_hex_to_decimal
+from widgets.change_instrument_window import ChangeInstrumentWindow
 
 
 # Class for managing tone state and handling all communication between GUI and Midi Service
@@ -213,27 +214,29 @@ class Core(QObject):
             self.main_window.show_error_msg(str(e))
 
     # Intercept instrument change messages from synth
-    def process_instrument_select_response(self, bank, program_change):
+    def process_instrument_select_response(self, bank, program):
         self.lock.lockForWrite()
         self.main_window.central_widget.instrument_list.blockSignals(True)
-        print("\tInstrument: " + str(bank) + ", " + str(program_change))
+        print("\tInstrument: " + str(bank) + ", " + str(program))
+        self.find_instrument_and_update_tone(bank, program)
+
+        self.main_window.top_widget.tone_name_label.setText(self.tone.name)
+        self.main_window.central_widget.instrument_list.blockSignals(False)
+        self.lock.unlock()
+
+    def find_instrument_and_update_tone(self, bank, program):
         is_found = False
         for instrument in constants.ALL_INSTRUMENTS_3000_5000:
-            if instrument.bank == bank and instrument.program_change == program_change:
+            if instrument.bank == bank and instrument.program == program:
                 is_found = True
                 self.tone.name = "{:03}".format(instrument.id) + " " + instrument.name
                 self.tone.parent_tone = instrument
                 self.main_window.central_widget.instrument_list.setCurrentRow(self.tone.parent_tone.id - 1)
                 break
-
         if not is_found:
             self.tone.name = "Unknown Tone"
             self.tone.parent_tone = None
             self.main_window.central_widget.instrument_list.clearSelection()
-
-        self.main_window.top_widget.tone_name_label.setText(self.tone.name)
-        self.main_window.central_widget.instrument_list.blockSignals(False)
-        self.lock.unlock()
 
     def countdown_and_autosynchronize(self, timeout):
         self.lock.lockForWrite()
@@ -278,11 +281,21 @@ class Core(QObject):
         if "name" in json_tone:
             self.tone.name = json_tone["name"]
             self.main_window.top_widget.tone_name_label.setText(self.tone.name)
+
+        self.tone.parent_tone = None
         if "parent_tone" in json_tone:
-            if json_tone["parent_tone"] is None:
-                self.tone.parent_tone = None
-            else:
-                pass  # FIXME
+            if json_tone["parent_tone"] is not None:
+                json_parent_tone = json_tone["parent_tone"]
+                if "bank" in json_parent_tone and "program" in json_parent_tone:
+                    self.find_instrument_and_update_tone(json_parent_tone["bank"], json_parent_tone["program"])
+                    if self.tone.parent_tone is not None:
+                        self.main_window.show_status_msg(
+                            "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
+                            0)
+                        modal_window = ChangeInstrumentWindow()
+                        modal_window.exec_()
+                        self.main_window.show_status_msg("", 0)
+
         if "parameters" in json_tone:
             for json_main_parameter in json_tone["parameters"]:
                 if "name" in json_main_parameter and "value" in json_main_parameter:

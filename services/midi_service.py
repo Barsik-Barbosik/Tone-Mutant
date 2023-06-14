@@ -215,7 +215,7 @@ class MidiService:
         time.sleep(0.01)
         self.midi_out.send_message([0xB0, 0x20, 0x00])
         time.sleep(0.01)
-        self.midi_out.send_message([0xC0, instrument.program_change])
+        self.midi_out.send_message([0xC0, instrument.program])
 
         # self.midi_out.send_message(bytearray(bytes.fromhex("B0 00 04")))
         # time.sleep(0.01)
