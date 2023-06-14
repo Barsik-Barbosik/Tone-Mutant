@@ -279,7 +279,7 @@ class Core(QObject):
 
     # Load Tone from JSON
     def load_tone_from_json(self, json_tone: dict):
-        def get_block_id(dsp_id):
+        def _get_block_id(dsp_id):
             block_id_mapping = {
                 "dsp_1": 0,
                 "dsp_2": 1,
@@ -335,7 +335,7 @@ class Core(QObject):
         # DSP
         if "dsp_modules" in json_tone:
             for json_dsp_id, json_dsp_module in json_tone["dsp_modules"].items():
-                block_id = get_block_id(json_dsp_id)
+                block_id = _get_block_id(json_dsp_id)
                 if block_id is not None and json_dsp_module is not None and "name" in json_dsp_module:
                     self._load_dsp_from_json(block_id, json_dsp_module)
 
