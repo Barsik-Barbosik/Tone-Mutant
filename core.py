@@ -292,9 +292,19 @@ class Core(QObject):
                         self.main_window.show_status_msg(
                             "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
                             0)
-                        modal_window = ChangeInstrumentWindow()
+                        modal_window = ChangeInstrumentWindow(
+                            "Please, use your CT-X3000/5000 synthesizer controls to manually select the parent tone:<h2>001 GrandPno</h2>Then press \"Continue\" button to apply parameter changes from JSON.")
                         modal_window.exec_()
                         self.main_window.show_status_msg("", 0)
+
+        if self.tone.parent_tone is None:
+            self.main_window.show_status_msg(
+                "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
+                0)
+            modal_window = ChangeInstrumentWindow(
+                "The parent tone is not found:<h2>GrandPno</h2><h5>Tone nuber (ct-x3000/5000): 100, bank: 100, program: 100</h5>You can choose any other source-tone using your CT-X3000/5000 synthesizer controls.<br>Then press \"Continue\" button to apply parameter changes from JSON.")
+            modal_window.exec_()
+            self.main_window.show_status_msg("", 0)
 
         if "parameters" in json_tone:
             for json_main_parameter in json_tone["parameters"]:

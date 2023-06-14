@@ -3,14 +3,14 @@ from PySide2.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton
 
 
 class ChangeInstrumentWindow(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, text, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Pause: parent tone selection")
 
         layout = QVBoxLayout()
-        label = QLabel(
-            "Please, use your CT-X3000/5000 synthesizer controls to manually select the parent tone:\n\n001 GrandPno\n\nThen press \"Continue\" button to apply parameter changes!")
+        label = QLabel(text)
         label.setAlignment(QtCore.Qt.AlignCenter)
+        label.setTextFormat(QtCore.Qt.RichText)
         layout.addWidget(label)
 
         ok_button = QPushButton("Continue")
