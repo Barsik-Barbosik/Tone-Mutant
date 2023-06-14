@@ -288,17 +288,6 @@ class Core(QObject):
             }
             return block_id_mapping.get(dsp_id)
 
-        def set_main_parameter_value(tone_parameter, json_parameter):
-            value = json_parameter["value"] - 1 if tone_parameter.type == ParameterType.COMBO else \
-                json_parameter["value"]
-            tone_parameter.value = value
-            self.send_parameter_change_sysex(tone_parameter)
-
-        def set_dsp_parameter_value(tone_parameter, json_parameter):
-            value = json_parameter["value"] - 1 if tone_parameter.type == ParameterType.COMBO else \
-                json_parameter["value"]
-            tone_parameter.value = value
-
         # Name
         if "name" in json_tone:
             self.tone.name = json_tone["name"]
@@ -338,53 +327,58 @@ class Core(QObject):
                         (param for param in self.tone.main_parameter_list if param.name == json_main_parameter["name"]),
                         None)
                     if tone_main_parameter:
-                        set_main_parameter_value(tone_main_parameter, json_main_parameter)
+                        tone_main_parameter.value = json_main_parameter["value"] - 1 if \
+                            tone_main_parameter.type == ParameterType.COMBO else json_main_parameter["value"]
+                        self.send_parameter_change_sysex(tone_main_parameter)
             self.main_window.central_widget.redraw_main_params_panel_signal.emit()
 
         # DSP
         if "dsp_modules" in json_tone:
             for json_dsp_id, json_dsp_module in json_tone["dsp_modules"].items():
                 block_id = get_block_id(json_dsp_id)
-                if block_id is not None and json_dsp_module is not None:
-                    if "name" in json_dsp_module:
-                        dsp_module = next(
-                            (dsp_module for dsp_module in constants.ALL_DSP_MODULES if
-                             dsp_module.name == json_dsp_module["name"]), None)
-                        if dsp_module:
-                            dsp_module_id = dsp_module.id
-                            self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
-                            try:
-                                if dsp_module_id is None:
-                                    self.midi_service.send_dsp_bypass_sysex(block_id, True)
-                                    if self.main_window.central_widget.current_dsp_page:
-                                        self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
-                                else:
-                                    self.midi_service.send_dsp_bypass_sysex(block_id, False)
-                                    self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
-                            except Exception as e:
-                                self.main_window.show_error_msg(str(e))
+                if block_id is not None and json_dsp_module is not None and "name" in json_dsp_module:
+                    self._load_dsp_from_json(block_id, json_dsp_module)
 
-                            dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
-                            dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
-                            dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
+    def _load_dsp_from_json(self, block_id, json_dsp_module):
+        dsp_module = next(
+            (dsp_module for dsp_module in constants.ALL_DSP_MODULES if
+             dsp_module.name == json_dsp_module["name"]), None)
+        if dsp_module:
+            dsp_module_id = dsp_module.id
+            self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
+            try:
+                if dsp_module_id is None:
+                    self.midi_service.send_dsp_bypass_sysex(block_id, True)
+                    if self.main_window.central_widget.current_dsp_page:
+                        self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
+                else:
+                    self.midi_service.send_dsp_bypass_sysex(block_id, False)
+                    self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
+            except Exception as e:
+                self.main_window.show_error_msg(str(e))
 
-                            if dsp_page.dsp_module and "bypass" in json_dsp_module:
-                                dsp_page.dsp_module.bypass.value = json_dsp_module["bypass"]
+            dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
+            dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
+            dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
 
-                            if "parameters" in json_dsp_module:
-                                for json_dsp_parameter in json_dsp_module["parameters"]:
-                                    if "name" in json_dsp_parameter and "value" in json_dsp_parameter:
-                                        tone_dsp_parameter = next(
-                                            (param for param in dsp_page.dsp_module.dsp_parameter_list if
-                                             param.name == json_dsp_parameter["name"]), None)
-                                        if tone_dsp_parameter:
-                                            set_dsp_parameter_value(tone_dsp_parameter, json_dsp_parameter)
+            if dsp_page.dsp_module and "bypass" in json_dsp_module:
+                dsp_page.dsp_module.bypass.value = json_dsp_module["bypass"]
 
-                                try:
-                                    self.midi_service.send_dsp_params_change_sysex(block_id,
-                                                                                   dsp_page.get_dsp_params_as_list())
-                                except Exception as e:
-                                    self.main_window.show_error_msg(str(e))
+            if "parameters" in json_dsp_module:
+                for json_dsp_parameter in json_dsp_module["parameters"]:
+                    if "name" in json_dsp_parameter and "value" in json_dsp_parameter:
+                        tone_dsp_parameter = next(
+                            (param for param in dsp_page.dsp_module.dsp_parameter_list if
+                             param.name == json_dsp_parameter["name"]), None)
+                        if tone_dsp_parameter:
+                            tone_dsp_parameter.value = json_dsp_parameter["value"] - 1 if \
+                                tone_dsp_parameter.type == ParameterType.COMBO else json_dsp_parameter["value"]
 
-                                if self.main_window.central_widget.current_dsp_page:
-                                    self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
+                try:
+                    self.midi_service.send_dsp_params_change_sysex(block_id,
+                                                                   dsp_page.get_dsp_params_as_list())
+                except Exception as e:
+                    self.main_window.show_error_msg(str(e))
+
+                if self.main_window.central_widget.current_dsp_page:
+                    self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
