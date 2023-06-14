@@ -277,25 +277,49 @@ class Core(QObject):
     def close_midi_ports(self):
         self.midi_service.close_midi_ports()
 
+    # Load Tone from JSON
     def load_tone_from_json(self, json_tone: dict):
+        def get_block_id(dsp_id):
+            block_id_mapping = {
+                "dsp_1": 0,
+                "dsp_2": 1,
+                "dsp_3": 2,
+                "dsp_4": 3
+            }
+            return block_id_mapping.get(dsp_id)
+
+        def set_main_parameter_value(tone_parameter, json_parameter):
+            value = json_parameter["value"] - 1 if tone_parameter.type == ParameterType.COMBO else \
+                json_parameter["value"]
+            tone_parameter.value = value
+            self.send_parameter_change_sysex(tone_parameter)
+
+        def set_dsp_parameter_value(tone_parameter, json_parameter):
+            value = json_parameter["value"] - 1 if tone_parameter.type == ParameterType.COMBO else \
+                json_parameter["value"]
+            tone_parameter.value = value
+
+        # Name
         if "name" in json_tone:
             self.tone.name = json_tone["name"]
             self.main_window.top_widget.tone_name_label.setText(self.tone.name)
 
+        # Parent tone
         self.tone.parent_tone = None
-        if "parent_tone" in json_tone:
-            if json_tone["parent_tone"] is not None:
-                json_parent_tone = json_tone["parent_tone"]
-                if "bank" in json_parent_tone and "program" in json_parent_tone:
-                    self.find_instrument_and_update_tone(json_parent_tone["bank"], json_parent_tone["program"])
-                    if self.tone.parent_tone is not None:
-                        self.main_window.show_status_msg(
-                            "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
-                            0)
-                        modal_window = ChangeInstrumentWindow(
-                            "Please, use your CT-X3000/5000 synthesizer controls to manually select the parent tone:<h2>001 GrandPno</h2>Then press \"Continue\" button to apply parameter changes from JSON.")
-                        modal_window.exec_()
-                        self.main_window.show_status_msg("", 0)
+        json_parent_tone = json_tone.get("parent_tone")
+        if json_parent_tone:
+            json_bank = json_parent_tone.get("bank")
+            json_program = json_parent_tone.get("program")
+            if json_bank is not None and json_program is not None:
+                self.find_instrument_and_update_tone(json_bank, json_program)
+                if self.tone.parent_tone is not None:
+                    self.main_window.show_status_msg(
+                        "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
+                        0)
+                    modal_window = ChangeInstrumentWindow(
+                        "Please, use your CT-X3000/5000 synthesizer controls to manually select the parent tone:<h2>001 GrandPno</h2>Then press \"Continue\" button to apply parameter changes from JSON.")
+                    modal_window.exec_()
+                    self.main_window.show_status_msg("", 0)
 
         if self.tone.parent_tone is None:
             self.main_window.show_status_msg(
@@ -306,46 +330,28 @@ class Core(QObject):
             modal_window.exec_()
             self.main_window.show_status_msg("", 0)
 
+        # Main parameters
         if "parameters" in json_tone:
             for json_main_parameter in json_tone["parameters"]:
                 if "name" in json_main_parameter and "value" in json_main_parameter:
-                    for tone_main_parameter in self.tone.main_parameter_list:
-                        if tone_main_parameter.name == json_main_parameter["name"]:
-                            print("Setting: " + json_main_parameter["name"])
-                            if tone_main_parameter.type == ParameterType.COMBO:
-                                tone_main_parameter.value = json_main_parameter["value"] - 1
-                            else:
-                                tone_main_parameter.value = json_main_parameter["value"]
-                            self.send_parameter_change_sysex(tone_main_parameter)
-                            break
+                    tone_main_parameter = next(
+                        (param for param in self.tone.main_parameter_list if param.name == json_main_parameter["name"]),
+                        None)
+                    if tone_main_parameter:
+                        set_main_parameter_value(tone_main_parameter, json_main_parameter)
             self.main_window.central_widget.redraw_main_params_panel_signal.emit()
 
+        # DSP
         if "dsp_modules" in json_tone:
-            for dsp_data in json_tone["dsp_modules"].items():
-                block_id = None
-                if dsp_data[0] == "dsp_1":
-                    block_id = 0
-                elif dsp_data[0] == "dsp_2":
-                    block_id = 1
-                elif dsp_data[0] == "dsp_3":
-                    block_id = 2
-                elif dsp_data[0] == "dsp_4":
-                    block_id = 3
-
-                if block_id is not None and dsp_data[1] is not None:
-                    print(dsp_data[0])
-                    json_dsp_module = dsp_data[1]
+            for json_dsp_id, json_dsp_module in json_tone["dsp_modules"].items():
+                block_id = get_block_id(json_dsp_id)
+                if block_id is not None and json_dsp_module is not None:
                     if "name" in json_dsp_module:
-                        print(json_dsp_module["name"])
-
-                        dsp_module_id = None
-                        for dsp_module in constants.ALL_DSP_MODULES:
-                            if dsp_module.name == json_dsp_module["name"]:
-                                print("Setting: " + json_dsp_module["name"])
-                                dsp_module_id = dsp_module.id
-                                break
-
-                        if block_id is not None and dsp_module_id is not None:
+                        dsp_module = next(
+                            (dsp_module for dsp_module in constants.ALL_DSP_MODULES if
+                             dsp_module.name == json_dsp_module["name"]), None)
+                        if dsp_module:
+                            dsp_module_id = dsp_module.id
                             self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
                             try:
                                 if dsp_module_id is None:
@@ -368,14 +374,11 @@ class Core(QObject):
                             if "parameters" in json_dsp_module:
                                 for json_dsp_parameter in json_dsp_module["parameters"]:
                                     if "name" in json_dsp_parameter and "value" in json_dsp_parameter:
-                                        for tone_parameter in dsp_page.dsp_module.dsp_parameter_list:
-                                            if tone_parameter.name == json_dsp_parameter["name"]:
-                                                print("Setting2: " + json_dsp_parameter["name"])
-                                                if tone_parameter.type == ParameterType.COMBO:
-                                                    tone_parameter.value = json_dsp_parameter["value"] - 1
-                                                else:
-                                                    tone_parameter.value = json_dsp_parameter["value"]
-                                                break
+                                        tone_dsp_parameter = next(
+                                            (param for param in dsp_page.dsp_module.dsp_parameter_list if
+                                             param.name == json_dsp_parameter["name"]), None)
+                                        if tone_dsp_parameter:
+                                            set_dsp_parameter_value(tone_dsp_parameter, json_dsp_parameter)
 
                                 try:
                                     self.midi_service.send_dsp_params_change_sysex(block_id,
