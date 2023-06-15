@@ -34,7 +34,7 @@ class GuiHelper:
         save_json_action.triggered.connect(main_window.show_save_json_dialog)
         midi_settings_action = QAction(QIcon('resources/settings.png'), "&Settings", main_window)
         midi_settings_action.setStatusTip("Open settings")
-        midi_settings_action.triggered.connect(main_window.show_midi_settings)
+        midi_settings_action.triggered.connect(main_window.show_settings)
         exit_action = QAction(QIcon('resources/exit.png'), "&Exit", main_window)
         exit_action.setStatusTip("Exit application")
         exit_action.triggered.connect(main_window.menu_exit_action)

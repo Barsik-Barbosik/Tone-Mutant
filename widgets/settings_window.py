@@ -6,16 +6,18 @@ from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QGridLayout, QHBoxLayo
 from constants import constants
 
 
-class MidiSettingsWindow(QWidget):
+class SettingsWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("MIDI Settings")
+        self.setWindowTitle("Settings")
 
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
+        self.synth_model = cfg.get('Synthesizer', 'Model', fallback="")
         self.input_name = cfg.get('Midi', 'InPort', fallback="")
         self.output_name = cfg.get('Midi', 'OutPort', fallback="")
 
+        synth_models = ["CT-X 3000/5000", "CT-X 8000IN/9000IN", "CT-X 700/800"]
         input_ports = rtmidi.MidiIn().get_ports()
         output_ports = rtmidi.MidiOut().get_ports()
 
@@ -23,8 +25,9 @@ class MidiSettingsWindow(QWidget):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.layout = QGridLayout(self)
-        self.input_port_combo = self.create_combo_box("Input port:", input_ports, self.input_name)
-        self.output_port_combo = self.create_combo_box("Output port:", output_ports, self.output_name)
+        self.synth_model_combo = self.create_combo_box("Synthesizer model:", synth_models, self.synth_model)
+        self.input_port_combo = self.create_combo_box("MIDI Input port:", input_ports, self.input_name)
+        self.output_port_combo = self.create_combo_box("MIDI Output port:", output_ports, self.output_name)
         self.layout.addWidget(spacer, 4, 0, 1, 2)
         self.layout.setRowMinimumHeight(4, 20)
         self.layout.setRowStretch(4, 20)
@@ -58,6 +61,12 @@ class MidiSettingsWindow(QWidget):
     def ok_button_action(self):
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
+
+        if self.synth_model_combo.currentIndex() != -1:
+            self.output_name = self.synth_model_combo.currentText()
+            if not cfg.has_section("Synthesizer"):
+                cfg.add_section("Synthesizer")
+            cfg.set('Synthesizer', 'Model', self.output_name)
 
         if self.input_port_combo.currentIndex() != -1:
             self.input_name = self.input_port_combo.currentText()

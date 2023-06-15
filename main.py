@@ -10,7 +10,7 @@ from core import Core
 from widgets.central_widget import CentralWidget
 from widgets.deque_log import DequeLog
 from widgets.gui_helper import GuiHelper
-from widgets.midi_settings_window import MidiSettingsWindow
+from widgets.settings_window import SettingsWindow
 from widgets.top_widget import TopWidget
 
 
@@ -51,7 +51,7 @@ class MainWindow(QMainWindow):
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
 
-        self.midi_settings_window = None
+        self.settings_window = None
 
         self.status_msg_signal.connect(self.show_status_msg)
 
@@ -69,8 +69,8 @@ class MainWindow(QMainWindow):
         self.status_bar.setStyleSheet("background-color: white; color: red")
         self.status_bar.showMessage(text, 5000)
 
-    def show_midi_settings(self):
-        self.midi_settings_window = MidiSettingsWindow()
+    def show_settings(self):
+        self.settings_window = SettingsWindow()
 
     def show_open_json_dialog(self):
         options = QFileDialog.Options()
