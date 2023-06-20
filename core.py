@@ -320,10 +320,15 @@ class Core(QObject):
                                            + ")</h5>Then press \"Continue\" button to apply parameter changes from JSON."
 
         if self.tone.parent_tone is None:
-            modal_window_message = "The parent tone (from " + str(json_synthesizer_model) + ") is not found:<h2>" \
-                                   + str(json_id) + " " + str(self.tone.name) \
-                                   + "</h2><h5>(bank: " + str(json_bank) \
-                                   + ", program: " + str(json_program) \
+            json_synthesizer_model_str = "unknown synthesizer model" if json_synthesizer_model is None else str(
+                json_synthesizer_model)
+            id_str = "" if json_id is None else str(json_id) + " "
+            tone_name_str = "?????" if self.tone.name is None else self.tone.name
+            json_bank_str = "unknown" if json_bank is None else str(json_bank)
+            json_program_str = "unknown" if json_program is None else str(json_program)
+            modal_window_message = "The parent tone (from " + json_synthesizer_model_str + ") is not found:<h2>" \
+                                   + id_str + tone_name_str \
+                                   + "</h2><h5>(bank: " + json_bank_str + ", program: " + json_program_str \
                                    + ")</h5>You can choose any other source-tone using your " + self.synth_model \
                                    + " synthesizer controls.<br>Then press \"Continue\" button to apply parameter changes from JSON."
 
