@@ -300,6 +300,11 @@ class Core(QObject):
 
         # Parent tone
         self.tone.parent_tone = None
+        json_id = json_tone["id"] if "id" in json_tone else None
+        json_synthesizer_model = json_tone["synthesizer_model"] if "synthesizer_model" in json_tone else None
+        json_bank = None
+        json_program = None
+        modal_window_message = ""
         json_parent_tone = json_tone.get("parent_tone")
         if json_parent_tone:
             json_bank = json_parent_tone.get("bank")
@@ -307,27 +312,27 @@ class Core(QObject):
             if json_bank is not None and json_program is not None:
                 self.find_instrument_and_update_tone(json_bank, json_program)
                 if self.tone.parent_tone is not None:
-                    self.main_window.show_status_msg(
-                        "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
-                        0)
-                    modal_window = ChangeInstrumentWindow(
-                        "Please, use your " + self.synth_model + " synthesizer controls to manually select the parent tone:<h2>"
-                        + str(self.tone.parent_tone.id) + " " + self.tone.parent_tone.name
-                        + "</h2><h5>(bank: " + str(self.tone.parent_tone.bank)
-                        + ", program: " + str(self.tone.parent_tone.program)
-                        + ")</h5>Then press \"Continue\" button to apply parameter changes from JSON.")
-                    modal_window.exec_()
-                    self.main_window.show_status_msg("", 0)
+                    modal_window_message = "Please, use your " + self.synth_model \
+                                           + " synthesizer controls to manually select the parent tone:<h2>" \
+                                           + str(self.tone.parent_tone.id) + " " + str(self.tone.parent_tone.name) \
+                                           + "</h2><h5>(bank: " + str(self.tone.parent_tone.bank) \
+                                           + ", program: " + str(self.tone.parent_tone.program) \
+                                           + ")</h5>Then press \"Continue\" button to apply parameter changes from JSON."
 
         if self.tone.parent_tone is None:
-            self.main_window.show_status_msg(
-                "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
-                0)
-            modal_window = ChangeInstrumentWindow(
-                "The parent tone (from CT-X3000/5000) is not found:<h2>001 GrandPno</h2><h5>(bank: 100, program: 100)</h5>You can choose any other source-tone using your "
-                + self.synth_model + " synthesizer controls.<br>Then press \"Continue\" button to apply parameter changes from JSON.")
-            modal_window.exec_()
-            self.main_window.show_status_msg("", 0)
+            modal_window_message = "The parent tone (from " + str(json_synthesizer_model) + ") is not found:<h2>" \
+                                   + str(json_id) + " " + str(self.tone.name) \
+                                   + "</h2><h5>(bank: " + str(json_bank) \
+                                   + ", program: " + str(json_program) \
+                                   + ")</h5>You can choose any other source-tone using your " + self.synth_model \
+                                   + " synthesizer controls.<br>Then press \"Continue\" button to apply parameter changes from JSON."
+
+        self.main_window.show_status_msg(
+            "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
+            0)
+        modal_window = ChangeInstrumentWindow(modal_window_message)
+        modal_window.exec_()
+        self.main_window.show_status_msg("", 0)
 
         # Main parameters
         if "parameters" in json_tone:
