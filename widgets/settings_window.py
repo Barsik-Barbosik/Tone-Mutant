@@ -17,7 +17,7 @@ class SettingsWindow(QWidget):
         self.input_name = cfg.get('Midi', 'InPort', fallback="")
         self.output_name = cfg.get('Midi', 'OutPort', fallback="")
 
-        synth_models = ["CT-X 3000/5000", "CT-X 8000IN/9000IN", "CT-X 700/800"]
+        synth_models = ["CT-X3000/5000", "CT-X8000IN/9000IN", "CT-X700/800"]
         input_ports = rtmidi.MidiIn().get_ports()
         output_ports = rtmidi.MidiOut().get_ports()
 
@@ -63,10 +63,10 @@ class SettingsWindow(QWidget):
         cfg.read(constants.CONFIG_FILENAME)
 
         if self.synth_model_combo.currentIndex() != -1:
-            self.output_name = self.synth_model_combo.currentText()
+            self.synth_model = self.synth_model_combo.currentText()
             if not cfg.has_section("Synthesizer"):
                 cfg.add_section("Synthesizer")
-            cfg.set('Synthesizer', 'Model', self.output_name)
+            cfg.set('Synthesizer', 'Model', self.synth_model)
 
         if self.input_port_combo.currentIndex() != -1:
             self.input_name = self.input_port_combo.currentText()

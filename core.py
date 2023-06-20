@@ -1,3 +1,4 @@
+import configparser
 import copy
 import time
 
@@ -28,6 +29,10 @@ class Core(QObject):
         self.lock = QReadWriteLock()
         self.timeout = 0
         self.synchronize_tone_signal.connect(self.synchronize_tone_with_synth)
+
+        cfg = configparser.ConfigParser()
+        cfg.read(constants.CONFIG_FILENAME)
+        self.synth_model = cfg.get("Synthesizer", "Model", fallback="CT-X3000/5000")
 
     # Synchronize all Tone data: name, main params, DSP modules and their params
     @Slot()
@@ -306,7 +311,11 @@ class Core(QObject):
                         "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
                         0)
                     modal_window = ChangeInstrumentWindow(
-                        "Please, use your CT-X3000/5000 synthesizer controls to manually select the parent tone:<h2>001 GrandPno</h2>Then press \"Continue\" button to apply parameter changes from JSON.")
+                        "Please, use your " + self.synth_model + " synthesizer controls to manually select the parent tone:<h2>"
+                        + str(self.tone.parent_tone.id) + " " + self.tone.parent_tone.name
+                        + "</h2><h5>(bank: " + str(self.tone.parent_tone.bank)
+                        + ", program: " + str(self.tone.parent_tone.program)
+                        + ")</h5>Then press \"Continue\" button to apply parameter changes from JSON.")
                     modal_window.exec_()
                     self.main_window.show_status_msg("", 0)
 
@@ -315,7 +324,8 @@ class Core(QObject):
                 "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
                 0)
             modal_window = ChangeInstrumentWindow(
-                "The parent tone is not found:<h2>GrandPno</h2><h5>Tone nuber (ct-x3000/5000): 100, bank: 100, program: 100</h5>You can choose any other source-tone using your CT-X3000/5000 synthesizer controls.<br>Then press \"Continue\" button to apply parameter changes from JSON.")
+                "The parent tone (from CT-X3000/5000) is not found:<h2>001 GrandPno</h2><h5>(bank: 100, program: 100)</h5>You can choose any other source-tone using your "
+                + self.synth_model + " synthesizer controls.<br>Then press \"Continue\" button to apply parameter changes from JSON.")
             modal_window.exec_()
             self.main_window.show_status_msg("", 0)
 

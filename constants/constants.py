@@ -1066,7 +1066,7 @@ ATTACK_AND_RELEASE_TIME: Final[tuple] = (
     (127, "50 00", 80)
 )
 
-# CT-X 3000/5000
+# CT-X3000/5000
 ALL_INSTRUMENTS_3000_5000: Final[tuple] = (
     Instrument(1, "StagePno", 1, 0),
     Instrument(2, "GrandPno", 3, 0),
@@ -1970,7 +1970,7 @@ ALL_INSTRUMENTS_3000_5000: Final[tuple] = (
     Instrument(900, "User 099", 65, 99)
 )
 
-# CT-X 700/800
+# CT-X700/800
 ALL_INSTRUMENTS_700_800: Final[tuple] = (
     Instrument(1, "StagePno", 1, 0),
     Instrument(2, "GrandPno", 3, 0),
