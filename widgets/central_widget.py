@@ -1,12 +1,13 @@
 import json
+import random
 
 from PySide2.QtCore import Qt, Slot, Signal
-from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QListWidgetItem, QTextBrowser
+from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QListWidgetItem, QTextBrowser, QPushButton
 
 from constants import constants
-from constants.enums import TabName
-from syntax_highlighters.json_highlighter import JsonHighlighter
+from constants.enums import TabName, ParameterType
 from external.object_encoder import ObjectEncoder
+from syntax_highlighters.json_highlighter import JsonHighlighter
 from widgets.dsp_page import DspPage
 from widgets.gui_helper import GuiHelper
 from widgets.inactive_list_widget import InactiveListWidget
@@ -83,11 +84,32 @@ class CentralWidget(QWidget):
     @Slot()
     def redraw_main_params_panel(self):
         GuiHelper.clear_layout(self.qgrid_layout)
-        GuiHelper.fill_qgrid_with_params(self.qgrid_layout,
-                                         self.core.tone.main_parameter_list,
-                                         constants.RIGHT_SIDE_MAIN_PARAMS,
-                                         self.set_synth_parameter)
-        print("redraw_main_params_panel: done")
+        right_side_items_count = GuiHelper.fill_qgrid_with_params(self.qgrid_layout,
+                                                                  self.core.tone.main_parameter_list,
+                                                                  constants.RIGHT_SIDE_MAIN_PARAMS,
+                                                                  self.set_synth_parameter)
+
+        largest_items_count = max(right_side_items_count,
+                                  len(self.core.tone.main_parameter_list) - right_side_items_count)
+
+        random_button = QPushButton("Randomize parameters", self)
+        random_button.setObjectName("random-button")
+        random_button.clicked.connect(self.on_random_button_pressed)
+        button_row = largest_items_count + 1
+        self.qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
+
+    def on_random_button_pressed(self):
+        for main_param in self.core.tone.main_parameter_list:
+            if main_param.name != "Volume":
+                if main_param.type == ParameterType.COMBO:
+                    main_param.value = random.randint(0, len(main_param.choices) - 1)
+                if main_param.type in [ParameterType.KNOB, ParameterType.KNOB_X2, ParameterType.SPECIAL_ATK_REL_KNOB]:
+                    main_param.value = random.randint(main_param.choices[0], main_param.choices[1])
+                self.core.send_parameter_change_sysex(main_param)
+        self.redraw_main_params_panel()
+        self.main_window.show_status_msg(
+            "It may be necessary to correct volume level and octave shift after setting random values.",
+            3000)
 
     def get_current_tab_name(self):
         return TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
