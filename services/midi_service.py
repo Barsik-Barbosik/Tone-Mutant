@@ -101,20 +101,18 @@ class MidiService:
         time.sleep(0.1)
 
     def request_dsp_module(self, block_id: int):
-        if self.is_block_id_valid(block_id):
-            # Array size is always 14 bytes: length is "0D"
-            msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
-            msg_block_id = decimal_to_hex(block_id)
-            msg_end = "00 55 00 00 00 00 00 F7"
-            self.send_sysex(msg_start + msg_block_id + msg_end)
+        # Array size is always 14 bytes: length is "0D"
+        msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
+        msg_block_id = decimal_to_hex(block_id)
+        msg_end = "00 55 00 00 00 00 00 F7"
+        self.send_sysex(msg_start + msg_block_id + msg_end)
 
     def request_dsp_params(self, block_id: int):
-        if self.is_block_id_valid(block_id):
-            # Array size is always 14 bytes: length is "0D"
-            msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
-            msg_block_id = decimal_to_hex(block_id)
-            msg_end = "00 57 00 00 00 0D 00 F7"
-            self.send_sysex(msg_start + msg_block_id + msg_end)
+        # Array size is always 14 bytes: length is "0D"
+        msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
+        msg_block_id = decimal_to_hex(block_id)
+        msg_end = "00 57 00 00 00 0D 00 F7"
+        self.send_sysex(msg_start + msg_block_id + msg_end)
 
     def process_message(self, message, _):
         message, deltatime = message
@@ -222,11 +220,6 @@ class MidiService:
         # self.midi_out.send_message(bytearray(bytes.fromhex("B0 20 00")))
         # time.sleep(0.01)
         # self.midi_out.send_message(bytearray(bytes.fromhex("C0 04")))
-
-    # TODO: more validations
-    @staticmethod
-    def is_block_id_valid(block_id: int):
-        return isinstance(int(block_id), int) and 0 <= int(block_id) <= 3
 
     @staticmethod
     def make_sysex(block_id: int, parameter: int, value: int) -> str:
