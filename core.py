@@ -186,9 +186,10 @@ class Core(QObject):
         dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_module is not None:
             for idx, dsp_param in enumerate(dsp_module.dsp_parameter_list):
-                print("\tParam before: " + str(synth_dsp_params[idx]) +
-                      ", after: " + str(decode_param_value(synth_dsp_params[idx], dsp_param)))
-                dsp_param.value = decode_param_value(synth_dsp_params[idx], dsp_param)
+                if dsp_param.type == ParameterType.SPECIAL_DELAY_KNOB:
+                    dsp_param.value = int(str(synth_dsp_params[12]) + str(synth_dsp_params[13]))
+                else:
+                    dsp_param.value = decode_param_value(synth_dsp_params[idx], dsp_param)
 
         if self.main_window.central_widget.current_dsp_page:
             self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
@@ -210,7 +211,7 @@ class Core(QObject):
     # Send program change message
     def change_instrument_by_id_from_list(self, instrument_id):
         instrument = Tone.get_instrument_by_id(instrument_id)
-        self.tone.name = instrument.name  # TODO: read from synth
+        self.tone.name = instrument.name
         self.tone.parent_tone = instrument
         print("\tInstrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
         try:
