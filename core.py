@@ -76,14 +76,13 @@ class Core(QObject):
         self.lock.lockForWrite()
         tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
         print("\tSynth tone name: " + tone_name)
-        if self.tone.parent_tone and tone_name:
-            self.tone.name = f"{self.tone.parent_tone.id} {tone_name}"
-        elif self.tone.parent_tone is None and tone_name:
+        if tone_name:
             self.tone.name = tone_name
         elif self.tone.name is None:
             self.tone.name = constants.DEFAULT_TONE_NAME
 
-        self.main_window.top_widget.tone_name_label.setText(self.tone.name)
+        tone_id_and_name = self.get_tone_id_and_name()
+        self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
         self.lock.unlock()
 
     # Request main parameter value from synth
@@ -226,16 +225,24 @@ class Core(QObject):
         print("\tInstrument: " + str(bank) + ", " + str(program))
         self.find_instrument_and_update_tone(bank, program)
 
-        self.main_window.top_widget.tone_name_label.setText(self.tone.name)
+        tone_id_and_name = self.get_tone_id_and_name()
+        self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
         self.main_window.central_widget.instrument_list.blockSignals(False)
         self.lock.unlock()
+
+    def get_tone_id_and_name(self):
+        if self.tone.parent_tone:
+            tone_id_and_name = "{:03}".format(self.tone.parent_tone.id) + " " + self.tone.name
+        else:
+            tone_id_and_name = self.tone.name
+        return tone_id_and_name
 
     def find_instrument_and_update_tone(self, bank, program):
         is_found = False
         for instrument in constants.ALL_INSTRUMENTS_3000_5000:
             if instrument.bank == bank and instrument.program == program:
                 is_found = True
-                self.tone.name = "{:03}".format(instrument.id) + " " + instrument.name
+                self.tone.name = instrument.name
                 self.tone.parent_tone = instrument
                 self.main_window.central_widget.instrument_list.setCurrentRow(self.tone.parent_tone.id - 1)
                 break
