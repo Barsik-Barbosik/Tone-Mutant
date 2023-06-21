@@ -32,6 +32,10 @@ def list_to_hex_str(int_list: list) -> str:
     return hex_str
 
 
+def size_to_lsb_msb(size):
+    return decimal_to_hex_hex(size - 1)
+
+
 def format_as_nice_hex(input_str: str) -> str:
     string_without_spaces = input_str.replace(" ", "")
     return " ".join(string_without_spaces[i:i + 2] for i in range(0, len(string_without_spaces), 2))

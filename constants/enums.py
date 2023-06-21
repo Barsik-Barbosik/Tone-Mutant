@@ -33,8 +33,8 @@ class SysexType(Enum):
 
 # Data size (byte count)
 class Size(IntEnum):
-    TONE_NAME = 16  # TODO: replace 0F in sysex
+    TONE_NAME = 16
     MAIN_PARAMETER = 2
     MAIN_PARAMETER_SHORT = 1
     DSP_MODULE = 2
-    DSP_PARAMS = 14  # TODO: replace 0D in sysex
+    DSP_PARAMS = 14

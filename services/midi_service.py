@@ -10,7 +10,8 @@ from constants import constants
 from constants.enums import SysexType, SysexId, Size
 from external.worker import Worker
 from model.instrument import Instrument
-from utils.utils import decimal_to_hex, decimal_to_hex_hex, format_as_nice_hex, list_to_hex_str, decimal_to_hex_hex_8bit
+from utils.utils import decimal_to_hex, decimal_to_hex_hex, format_as_nice_hex, list_to_hex_str, \
+    decimal_to_hex_hex_8bit, size_to_lsb_msb
 
 # TODO: group all params into enums
 SYSEX_FIRST_BYTE = 0xF0
@@ -91,7 +92,8 @@ class MidiService:
         time.sleep(0.01)
 
     def request_tone_name(self):
-        msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0F 00 F7"
+        size = size_to_lsb_msb(Size.TONE_NAME)
+        msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00" + size + "F7"
         self.send_sysex(msg)
 
     def request_parameter_value(self, block_id: int, parameter: int):
@@ -101,17 +103,16 @@ class MidiService:
         time.sleep(0.1)
 
     def request_dsp_module(self, block_id: int):
-        # Array size is always 14 bytes: length is "0D"
         msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
         msg_block_id = decimal_to_hex(block_id)
         msg_end = "00 55 00 00 00 00 00 F7"
         self.send_sysex(msg_start + msg_block_id + msg_end)
 
     def request_dsp_params(self, block_id: int):
-        # Array size is always 14 bytes: length is "0D"
+        size = size_to_lsb_msb(Size.DSP_PARAMS)
         msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
         msg_block_id = decimal_to_hex(block_id)
-        msg_end = "00 57 00 00 00 0D 00 F7"
+        msg_end = "00 57 00 00 00" + size + "F7"
         self.send_sysex(msg_start + msg_block_id + msg_end)
 
     def process_message(self, message, _):
