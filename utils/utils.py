@@ -8,17 +8,21 @@ def decimal_to_hex(decimal_num: int) -> str:
 
 
 # 7-bit (default)
-def decimal_to_hex_hex(decimal_num: int) -> str:
+def int_to_lsb_msb(decimal_num: int) -> str:
     if decimal_num > 32267:
         raise ValueError("Number is too big: {}".format(decimal_num))
     return "{:02X}".format(decimal_num % 128) + " {:02X}".format(decimal_num // 128)
 
 
 # 8-bit (for attack/release time)
-def decimal_to_hex_hex_8bit(decimal_num: int) -> str:
+def int_to_lsb_msb_8bit(decimal_num: int) -> str:
     if decimal_num > 32267:
         raise ValueError("Number is too big: {}".format(decimal_num))
     return "{:02X}".format(decimal_num % 256) + " {:02X}".format(decimal_num // 256)
+
+
+def size_to_lsb_msb(size):
+    return int_to_lsb_msb(size - 1)
 
 
 def hex_hex_to_decimal(a: int, b: int):
@@ -30,10 +34,6 @@ def list_to_hex_str(int_list: list) -> str:
     for int_value in int_list:
         hex_str = hex_str + " " + decimal_to_hex(int_value)
     return hex_str
-
-
-def size_to_lsb_msb(size):
-    return decimal_to_hex_hex(size - 1)
 
 
 def format_as_nice_hex(input_str: str) -> str:

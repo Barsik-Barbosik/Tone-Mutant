@@ -10,8 +10,8 @@ from constants import constants
 from constants.enums import SysexType, SysexId, Size
 from external.worker import Worker
 from model.instrument import Instrument
-from utils.utils import decimal_to_hex, decimal_to_hex_hex, format_as_nice_hex, list_to_hex_str, \
-    decimal_to_hex_hex_8bit, size_to_lsb_msb
+from utils.utils import decimal_to_hex, int_to_lsb_msb, format_as_nice_hex, list_to_hex_str, \
+    int_to_lsb_msb_8bit, size_to_lsb_msb
 
 # TODO: group all params into enums
 SYSEX_FIRST_BYTE = 0xF0
@@ -98,20 +98,20 @@ class MidiService:
 
     def request_parameter_value(self, block_id: int, parameter: int):
         msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00" \
-              + decimal_to_hex_hex(block_id) + decimal_to_hex_hex(parameter) + "00 00 00 00 F7"
+              + int_to_lsb_msb(block_id) + int_to_lsb_msb(parameter) + "00 00 00 00 F7"
         self.send_sysex(msg)
         time.sleep(0.1)
 
     def request_dsp_module(self, block_id: int):
         msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
-        msg_block_id = decimal_to_hex_hex(block_id)
+        msg_block_id = int_to_lsb_msb(block_id)
         msg_end = "55 00 00 00 00 00 F7"
         self.send_sysex(msg_start + msg_block_id + msg_end)
 
     def request_dsp_params(self, block_id: int):
         size = size_to_lsb_msb(Size.DSP_PARAMS)
         msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
-        msg_block_id = decimal_to_hex_hex(block_id)
+        msg_block_id = int_to_lsb_msb(block_id)
         msg_end = "57 00 00 00" + size + "F7"
         self.send_sysex(msg_start + msg_block_id + msg_end)
 
@@ -192,7 +192,7 @@ class MidiService:
     def send_dsp_params_change_sysex(self, block_id: int, params_list: list):
         # Array size is always 14 bytes: length is "0D" TODO: use size
         msg_start = "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00"
-        msg_block_param_and_size = decimal_to_hex_hex(block_id) + "57 00 00 00 0D 00"
+        msg_block_param_and_size = int_to_lsb_msb(block_id) + "57 00 00 00 0D 00"
         msg_params = list_to_hex_str(params_list)
         msg_end = "F7"
         self.send_sysex(msg_start + msg_block_param_and_size + msg_params + msg_end)
@@ -225,18 +225,18 @@ class MidiService:
     @staticmethod
     def make_sysex(block_id: int, parameter: int, value: int) -> str:
         return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
-            + decimal_to_hex_hex(block_id) \
-            + decimal_to_hex_hex(parameter) \
+            + int_to_lsb_msb(block_id) \
+            + int_to_lsb_msb(parameter) \
             + "00 00 00 00" \
-            + decimal_to_hex_hex(value) \
+            + int_to_lsb_msb(value) \
             + "F7"
 
     # Special case for "SHORT_PARAMS" list parameters
     @staticmethod
     def make_sysex_short_value(block_id: int, parameter: int, value: int) -> str:
         return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
-            + decimal_to_hex_hex(block_id) \
-            + decimal_to_hex_hex(parameter) \
+            + int_to_lsb_msb(block_id) \
+            + int_to_lsb_msb(parameter) \
             + "00 00 00 00" \
             + decimal_to_hex(value) \
             + "F7"
@@ -245,8 +245,8 @@ class MidiService:
     @staticmethod
     def make_sysex_8bit_value(block_id: int, parameter: int, value: int) -> str:
         return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
-            + decimal_to_hex_hex(block_id) \
-            + decimal_to_hex_hex(parameter) \
+            + int_to_lsb_msb(block_id) \
+            + int_to_lsb_msb(parameter) \
             + "00 00 00 00" \
-            + decimal_to_hex_hex_8bit(value) \
+            + int_to_lsb_msb_8bit(value) \
             + "F7"
