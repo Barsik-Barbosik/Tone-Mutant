@@ -11,7 +11,7 @@ from model.parameter import MainParameter
 from model.tone import Tone
 from services.midi_service import MidiService
 from utils import utils
-from utils.utils import decode_param_value, decimal_to_hex, hex_hex_to_decimal
+from utils.utils import decode_param_value, int_to_hex, lsb_msb_to_int
 from widgets.change_instrument_window import ChangeInstrumentWindow
 
 
@@ -101,11 +101,11 @@ class Core(QObject):
                 print("\tProcessing parameter: " + parameter.name + ", " + str(param_number) + ", "
                       + str(block_id) + ", " + str(response))
                 if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
-                    value = int(decimal_to_hex(response[1]) + decimal_to_hex(response[0]), 16)
+                    value = int(int_to_hex(response[1]) + int_to_hex(response[0]), 16)
                 elif len(response) == 1:
                     value = response[0]
                 else:
-                    value = hex_hex_to_decimal(response[0], response[1])
+                    value = lsb_msb_to_int(response[0], response[1])
                 parameter.value = decode_param_value(value, parameter)
                 break
 

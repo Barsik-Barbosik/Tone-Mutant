@@ -10,7 +10,7 @@ from constants import constants
 from constants.enums import SysexType, SysexId, Size
 from external.worker import Worker
 from model.instrument import Instrument
-from utils.utils import decimal_to_hex, int_to_lsb_msb, format_as_nice_hex, list_to_hex_str, \
+from utils.utils import int_to_hex, int_to_lsb_msb, format_as_nice_hex, list_to_hex_str, \
     int_to_lsb_msb_8bit, size_to_lsb_msb
 
 # TODO: group all params into enums
@@ -238,7 +238,7 @@ class MidiService:
             + int_to_lsb_msb(block_id) \
             + int_to_lsb_msb(parameter) \
             + "00 00 00 00" \
-            + decimal_to_hex(value) \
+            + int_to_hex(value) \
             + "F7"
 
     # Special case for "Attack time" and "Release time" parameters

@@ -3,44 +3,55 @@ from constants.enums import ParameterType
 from model.parameter import Parameter
 
 
-def decimal_to_hex(decimal_num: int) -> str:
-    return "{:02X}".format(decimal_num)
+# Converts int to 1-byte hex string
+# Example: 111 -> "6F"
+def int_to_hex(number: int) -> str:
+    if number > 255:
+        raise ValueError("Number is too big: {}".format(number))
+    return "{:02X}".format(number)
 
 
-# 7-bit (default)
-def int_to_lsb_msb(decimal_num: int) -> str:
-    if decimal_num > 32267:
-        raise ValueError("Number is too big: {}".format(decimal_num))
-    return "{:02X}".format(decimal_num % 128) + " {:02X}".format(decimal_num // 128)
+# Converts int to 2-byte hex string (7-bit LSB + 7-bit MSB): default for all parameters
+# Example: 222 -> "5E 01"
+def int_to_lsb_msb(number: int) -> str:
+    if number > 32267:
+        raise ValueError("Number is too big: {}".format(number))
+    return "{:02X}".format(number % 128) + " {:02X}".format(number // 128)
 
 
-# 8-bit (for attack/release time)
-def int_to_lsb_msb_8bit(decimal_num: int) -> str:
-    if decimal_num > 32267:
-        raise ValueError("Number is too big: {}".format(decimal_num))
-    return "{:02X}".format(decimal_num % 256) + " {:02X}".format(decimal_num // 256)
+# Converts int to 2-byte hex string (8-bit LSB + 8-bit MSB): for attack/release time
+# Example: 222 -> "DE 00"
+def int_to_lsb_msb_8bit(number: int) -> str:
+    if number > 32267:
+        raise ValueError("Number is too big: {}".format(number))
+    return "{:02X}".format(number % 256) + " {:02X}".format(number // 256)
 
 
 def size_to_lsb_msb(size):
     return int_to_lsb_msb(size - 1)
 
 
-def hex_hex_to_decimal(a: int, b: int):
-    return b * 128 + a
+# Converts 2-byte hex string (7-bit LSB + 7-bit MSB) to int
+# Example: "5E 01" -> 222
+def lsb_msb_to_int(lsb: int, msb: int):
+    return msb * 128 + lsb
 
 
+# Converts each int in the list into a 1-byte hex string and returns the concatenated string
 def list_to_hex_str(int_list: list) -> str:
     hex_str = ""
     for int_value in int_list:
-        hex_str = hex_str + " " + decimal_to_hex(int_value)
+        hex_str = hex_str + " " + int_to_hex(int_value)
     return hex_str
 
 
+# Example: "1122AABB" -> "11 22 AA BB"
 def format_as_nice_hex(input_str: str) -> str:
     string_without_spaces = input_str.replace(" ", "")
     return " ".join(string_without_spaces[i:i + 2] for i in range(0, len(string_without_spaces), 2))
 
 
+# UI value -> synth value
 def encode_value_by_type(parameter):
     if parameter.type == ParameterType.SPECIAL_DELAY_KNOB:
         raise ValueError("Wrong parameter type! Process SPECIAL_DELAY_KNOB separately!")
@@ -63,6 +74,7 @@ def encode_value_by_type(parameter):
         return parameter.value
 
 
+# Synth value -> UI value
 def decode_param_value(value: int, parameter: Parameter):
     # DO NOT USE parameter.value here! And ParameterType.SPECIAL_DELAY_KNOB should be processed separately.
     if parameter.type == ParameterType.KNOB:
