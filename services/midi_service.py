@@ -13,10 +13,11 @@ from model.instrument import Instrument
 from utils.utils import int_to_hex, int_to_lsb_msb, format_as_nice_hex, list_to_hex_str, \
     int_to_lsb_msb_8bit, size_to_lsb_msb
 
-# TODO: group all params into enums
+# TODO: group all params into enums; use for different log highlighting colors
 SYSEX_FIRST_BYTE = 0xF0
-BANK_SELECT_PART1_FIRST_BYTE = 0xB0
-BANK_SELECT_PART2 = [0xB0, 0x20, 0x00]
+CC_FIRST_BYTE = 0xB0  # for channel 0
+CC_BANK_SELECT_MSB = 0x00
+CC_BANK_SELECT_LSB = 0x20  # transmit: 0x00, receive: ignored
 INSTRUMENT_SELECT_FIRST_BYTE = 0xC0
 
 BLOCK_INDEX = 16
@@ -152,12 +153,16 @@ class MidiService:
                 self.log("Incoming SysEx:\n", message)
         elif message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.REAL_TIME:
             self.log("Incoming Real Time SysEx:\n", message)
-        elif message[0] == BANK_SELECT_PART1_FIRST_BYTE and message != BANK_SELECT_PART2:
-            self.log("Incoming msg (bank change):\n", message)
+        elif message[0] == CC_FIRST_BYTE and message[1] == CC_BANK_SELECT_MSB:
+            self.log("Incoming msg (bank change MSB): ", message)
             self.bank_select_msg_queue.append(message)
             time.sleep(0.01)
+        elif message[0] == CC_FIRST_BYTE and message[1] == CC_BANK_SELECT_LSB:
+            self.log("Incoming msg (bank change LSB): ", message)
+        # elif message[0] == CC_FIRST_BYTE:
+        #     self.log("Incoming CC: ", message)
         elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE:
-            self.log("Incoming msg (program change):\n", message)
+            self.log("Incoming msg (program change): ", message)
             bank_select_msg = self.get_last_bank_select_message()
             if bank_select_msg is not None:
                 self.core.process_instrument_select_response(bank_select_msg[2], message[1])
