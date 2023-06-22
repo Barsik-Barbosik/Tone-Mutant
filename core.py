@@ -32,7 +32,8 @@ class Core(QObject):
 
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
-        self.synth_model = cfg.get("Synthesizer", "Model", fallback="CT-X3000/5000")
+        self.tone.synthesizer_model = cfg.get("Synthesizer", "Model", fallback="CT-X3000/5000")
+        self.tone.synthesizer_model = cfg.get("Synthesizer", "Model", fallback="CT-X3000/5000")
 
     # Synchronize all Tone data: name, main params, DSP modules and their params
     @Slot()
@@ -320,7 +321,7 @@ class Core(QObject):
             if json_bank is not None and json_program is not None:
                 self.find_instrument_and_update_tone(json_bank, json_program)
                 if self.tone.parent_tone is not None:
-                    modal_window_message = "Please, use your " + self.synth_model \
+                    modal_window_message = "Please, use your " + self.tone.synthesizer_model \
                                            + " synthesizer controls to manually select the parent tone:<h2>" \
                                            + str(self.tone.parent_tone.id) + " " + str(self.tone.parent_tone.name) \
                                            + "</h2><h5>(bank: " + str(self.tone.parent_tone.bank) \
@@ -337,7 +338,7 @@ class Core(QObject):
             modal_window_message = "The parent tone (from " + json_synthesizer_model_str + ") is not found:<h2>" \
                                    + id_str + tone_name_str \
                                    + "</h2><h5>(bank: " + json_bank_str + ", program: " + json_program_str \
-                                   + ")</h5>You can choose any other source-tone using your " + self.synth_model \
+                                   + ")</h5>You can choose any other source-tone using your " + self.tone.synthesizer_model \
                                    + " synthesizer controls.<br>Then press \"Continue\" button to apply parameter changes from JSON."
 
         self.main_window.show_status_msg(

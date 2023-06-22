@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
         self.status_bar.showMessage(text, 5000)
 
     def show_settings(self):
-        self.settings_window = SettingsWindow()
+        self.settings_window = SettingsWindow(self)
 
     def show_open_json_dialog(self):
         options = QFileDialog.Options()

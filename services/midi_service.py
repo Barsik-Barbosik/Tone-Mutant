@@ -45,23 +45,28 @@ class MidiService:
         else:
             MidiService.__instance = self
             self.core = None
-
-            cfg = configparser.ConfigParser()
-            cfg.read(constants.CONFIG_FILENAME)
-            self.input_name = cfg.get("Midi", "InPort", fallback="")
-            self.output_name = cfg.get("Midi", "OutPort", fallback="")
-            self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
-
-            self.lock = QReadWriteLock()
-            self.active_sync_job_count = 0
-            self.bank_select_msg_queue = deque()
-
             self.threadpool = QThreadPool()
-            self.midi_in = rtmidi.MidiIn()
-            self.midi_out = rtmidi.MidiOut()
+            self.lock = QReadWriteLock()
+            self.bank_select_msg_queue = deque()
+            self.active_sync_job_count = 0
+
+            self.midi_in = None
+            self.midi_out = None
+            self.input_name = None
+            self.output_name = None
+            self.channel = None
             self.open_midi_ports()
 
     def open_midi_ports(self):
+        self.midi_in = rtmidi.MidiIn()
+        self.midi_out = rtmidi.MidiOut()
+
+        cfg = configparser.ConfigParser()
+        cfg.read(constants.CONFIG_FILENAME)
+        self.input_name = cfg.get("Midi", "InPort", fallback="")
+        self.output_name = cfg.get("Midi", "OutPort", fallback="")
+        self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
+
         for i in range(self.midi_out.get_port_count()):
             if self.output_name == self.midi_out.get_port_name(i):
                 self.midi_out.open_port(port=i)

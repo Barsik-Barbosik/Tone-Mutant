@@ -7,13 +7,15 @@ from constants import constants
 
 
 class SettingsWindow(QWidget):
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
         self.setWindowTitle("Settings")
 
+        self.core = parent.core
+
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
-        self.synth_model = cfg.get('Synthesizer', 'Model', fallback="")
+        self.synthesizer_model = cfg.get('Synthesizer', 'Model', fallback="CT-X3000/5000")
         self.input_name = cfg.get('Midi', 'InPort', fallback="")
         self.output_name = cfg.get('Midi', 'OutPort', fallback="")
 
@@ -25,7 +27,7 @@ class SettingsWindow(QWidget):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.layout = QGridLayout(self)
-        self.synth_model_combo = self.create_combo_box("Synthesizer model:", synth_models, self.synth_model)
+        self.synthesizer_model_combo = self.create_combo_box("Synthesizer model:", synth_models, self.synthesizer_model)
         self.input_port_combo = self.create_combo_box("MIDI Input port:", input_ports, self.input_name)
         self.output_port_combo = self.create_combo_box("MIDI Output port:", output_ports, self.output_name)
         self.layout.addWidget(spacer, 4, 0, 1, 2)
@@ -62,11 +64,11 @@ class SettingsWindow(QWidget):
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
 
-        if self.synth_model_combo.currentIndex() != -1:
-            self.synth_model = self.synth_model_combo.currentText()
+        if self.synthesizer_model_combo.currentIndex() != -1:
+            self.synthesizer_model = self.synthesizer_model_combo.currentText()
             if not cfg.has_section("Synthesizer"):
                 cfg.add_section("Synthesizer")
-            cfg.set('Synthesizer', 'Model', self.synth_model)
+            cfg.set('Synthesizer', 'Model', self.synthesizer_model)
 
         if self.input_port_combo.currentIndex() != -1:
             self.input_name = self.input_port_combo.currentText()
@@ -82,6 +84,10 @@ class SettingsWindow(QWidget):
 
         with open(constants.CONFIG_FILENAME, 'w') as cfg_file:
             cfg.write(cfg_file)
+
+        self.core.tone.synthesizer_model = self.synthesizer_model
+        self.core.close_midi_ports()
+        self.core.midi_service.open_midi_ports()
 
         self.close()
 
