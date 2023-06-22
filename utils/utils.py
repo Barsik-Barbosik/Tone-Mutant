@@ -76,8 +76,10 @@ def encode_value_by_type(parameter):
 
 # Synth value -> UI value
 def decode_param_value(value: int, parameter: Parameter):
-    # DO NOT USE parameter.value here! And ParameterType.SPECIAL_DELAY_KNOB should be processed separately.
-    if parameter.type == ParameterType.KNOB:
+    # DO NOT USE parameter.value here!
+    if parameter.type == ParameterType.SPECIAL_DELAY_KNOB:
+        raise ValueError("Wrong parameter type! Process SPECIAL_DELAY_KNOB separately!")
+    elif parameter.type == ParameterType.KNOB:
         if parameter.choices[1] == 127:  # 0...127
             return value
         elif parameter.choices[1] == 3:  # -3...3
