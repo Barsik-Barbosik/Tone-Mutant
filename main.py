@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 
 from PySide2.QtCore import Qt, QCoreApplication, Signal, Slot
@@ -93,9 +94,10 @@ class MainWindow(QMainWindow):
         file_name, _ = file_dialog.getSaveFileName(self, "Save File", "", "JSON Files (*.json);;All Files (*)",
                                                    options=options)
         if file_name:
-            print("Saving file:", file_name)
             with open(file_name, 'w') as file:
+                self.core.tone.name = os.path.splitext(os.path.basename(file_name))[0]
                 file.write(self.central_widget.get_json())
+                self.top_widget.tone_name_label.setText(self.core.tone.name)
 
     @staticmethod
     def menu_exit_action():
