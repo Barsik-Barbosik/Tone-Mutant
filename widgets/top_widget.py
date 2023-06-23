@@ -1,8 +1,7 @@
+from PySide2.QtCore import Slot, Signal
 from PySide2.QtWidgets import QWidget, QLabel, QHBoxLayout, QPushButton
 
 from constants import constants
-from constants.enums import ParameterType
-from model.parameter import AdvancedParameter
 from widgets.gui_helper import GuiHelper
 
 ALL_CHANNELS = ["Upper keyboard", "MIDI Channel 1"]
@@ -10,6 +9,8 @@ CHANNEL_ENABLE_DISABLE_ITEMS = ["ENABLED", "DISABLED"]
 
 
 class TopWidget(QWidget):
+    redraw_upper_volume_knob_signal = Signal()
+
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.core = parent.core
@@ -20,19 +21,19 @@ class TopWidget(QWidget):
 
         label = QLabel("UPPER 1 Volume:")
         self.layout.addWidget(label)
+        self.outer_upper_volume_knob_layout = QHBoxLayout()
+        self.inner_upper_volume_knob_layout = GuiHelper.create_knob_input(self.core.tone.upper_volume,
+                                                                          self.on_volume_change)
+        self.outer_upper_volume_knob_layout.addLayout(self.inner_upper_volume_knob_layout)
+        self.layout.addLayout(self.outer_upper_volume_knob_layout)
 
-        volume_parameter = AdvancedParameter(200, 200, 0, "UPPER 1 Volume",
-                                             "Volume of the note. Only notes played on the keyboard are affected by this (not MIDI IN or rhythms).",
-                                             ParameterType.KNOB, [0, 127])
-        self.layout.addLayout(GuiHelper.create_knob_input(volume_parameter, self.on_volume_change))
-
-        self.layout.addWidget(GuiHelper.get_spacer())
+        self.layout.addWidget(GuiHelper.get_spacer())  # --------------------------
 
         self.tone_name_label = QLabel(constants.DEFAULT_TONE_NAME)
         self.tone_name_label.setObjectName("tone-name-label")
         self.layout.addWidget(self.tone_name_label)
 
-        self.layout.addWidget(GuiHelper.get_spacer())
+        self.layout.addWidget(GuiHelper.get_spacer())  # --------------------------
 
         synchronize_tone_button = QPushButton("Synchronize tone", self)
         synchronize_tone_button.setObjectName("top-widget-button")
@@ -43,5 +44,14 @@ class TopWidget(QWidget):
         randomize_tone_button.setObjectName("top-widget-button")
         self.layout.addWidget(randomize_tone_button)
 
+        self.redraw_upper_volume_knob_signal.connect(self.redraw_upper_volume_knob)
+
     def on_volume_change(self, parameter):
         self.core.send_parameter_change_sysex(parameter)
+
+    @Slot()
+    def redraw_upper_volume_knob(self):
+        GuiHelper.clear_layout(self.inner_upper_volume_knob_layout)
+        self.inner_upper_volume_knob_layout = GuiHelper.create_knob_input(self.core.tone.upper_volume,
+                                                                          self.on_volume_change)
+        self.outer_upper_volume_knob_layout.addLayout(self.inner_upper_volume_knob_layout)

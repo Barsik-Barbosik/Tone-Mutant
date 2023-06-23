@@ -11,7 +11,7 @@ from constants.enums import SysexType, SysexId, Size
 from external.worker import Worker
 from model.instrument import Instrument
 from utils.utils import int_to_hex, int_to_lsb_msb, format_as_nice_hex, list_to_hex_str, \
-    int_to_lsb_msb_8bit, size_to_lsb_msb
+    int_to_lsb_msb_8bit, size_to_lsb_msb, lsb_msb_to_int
 
 # TODO: group all params into enums; use for different log highlighting colors
 SYSEX_FIRST_BYTE = 0xF0
@@ -24,7 +24,7 @@ BLOCK_INDEX = 16
 SYSEX_TYPE_INDEX = 18
 
 MAIN_PARAMETER_NUMBERS = [20, 14, 15]  # TODO: get numbers automatically from main list
-MAIN_SHORT_PARAMETER_NUMBERS = [59, 63, 60, 61, 43, 45, 5, 57, 56, 58]
+MAIN_SHORT_PARAMETER_NUMBERS = [59, 63, 60, 61, 43, 45, 5, 57, 56, 58, 200]
 
 
 class MidiService:
@@ -129,29 +129,26 @@ class MidiService:
         self.lock.unlock()
 
         if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO:
-            sysex_type = message[SYSEX_TYPE_INDEX]
+            block_id = lsb_msb_to_int(message[BLOCK_INDEX], message[BLOCK_INDEX + 1])
+            sysex_type = lsb_msb_to_int(message[SYSEX_TYPE_INDEX], message[SYSEX_TYPE_INDEX + 1])
             if sysex_type == SysexType.TONE_NAME.value:
                 self.log("Incoming SysEx (Tone Name):\n", message)
                 response = message[-1 - Size.TONE_NAME:-1]
                 self.core.process_tone_name_response(response)
             elif sysex_type in MAIN_PARAMETER_NUMBERS:
                 self.log("Incoming SysEx (Parameter):\n", message)
-                block_id = message[BLOCK_INDEX]
                 response = message[-1 - Size.MAIN_PARAMETER:-1]
                 self.core.process_main_parameter_response(sysex_type, block_id, response)  # 2 bytes
             elif sysex_type in MAIN_SHORT_PARAMETER_NUMBERS:
                 self.log("Incoming SysEx (Parameter):\n", message)
-                block_id = message[BLOCK_INDEX]
                 response = message[-1 - Size.MAIN_PARAMETER_SHORT:-1]
                 self.core.process_main_parameter_response(sysex_type, block_id, response[:1])  # 1 byte
             elif sysex_type == SysexType.DSP_MODULE.value:
                 self.log("Incoming SysEx (DSP module):\n", message)
-                block_id = message[BLOCK_INDEX]
                 response = message[-1 - Size.DSP_MODULE:-1]
                 self.core.process_dsp_module_response(block_id, response[0])
             elif sysex_type == SysexType.DSP_PARAMS.value:
                 self.log("Incoming SysEx (DSP params):\n", message)
-                block_id = message[BLOCK_INDEX]
                 response = message[-1 - Size.DSP_PARAMS:-1]
                 self.core.process_dsp_module_parameters_response(block_id, response)
             else:
@@ -220,17 +217,11 @@ class MidiService:
         self.send_sysex(sysex)
 
     def send_change_tone_msg(self, instrument: Instrument):
-        self.midi_out.send_message([0xB0, 0x00, instrument.bank])
+        self.midi_out.send_message([CC_FIRST_BYTE, CC_BANK_SELECT_MSB, instrument.bank])
         time.sleep(0.01)
-        self.midi_out.send_message([0xB0, 0x20, 0x00])
+        self.midi_out.send_message([CC_FIRST_BYTE, CC_BANK_SELECT_LSB, 0x00])
         time.sleep(0.01)
-        self.midi_out.send_message([0xC0, instrument.program])
-
-        # self.midi_out.send_message(bytearray(bytes.fromhex("B0 00 04")))
-        # time.sleep(0.01)
-        # self.midi_out.send_message(bytearray(bytes.fromhex("B0 20 00")))
-        # time.sleep(0.01)
-        # self.midi_out.send_message(bytearray(bytes.fromhex("C0 04")))
+        self.midi_out.send_message([INSTRUMENT_SELECT_FIRST_BYTE, instrument.program])
 
     @staticmethod
     def make_sysex(block_id: int, parameter: int, value: int) -> str:

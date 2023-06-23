@@ -4,7 +4,7 @@ from constants import constants
 from constants.enums import ParameterType
 from model.dsp_module import DspModule
 from model.instrument import Instrument
-from model.parameter import MainParameter
+from model.parameter import MainParameter, AdvancedParameter
 
 
 class Tone:
@@ -13,6 +13,7 @@ class Tone:
         self.synthesizer_model: str = None
         self.parent_tone: Instrument = None
 
+        # Main parameters: parameters, that can be edited using synthesizer "tone edit" menu
         self.main_parameter_list: List[MainParameter] = [
             MainParameter(1, 20, 1, "Attack Time",
                           "Adjusts the time after a key is pressed from when the note starts to sound until it reaches maximum volume. A larger value specifies a slower attack.",
@@ -57,8 +58,10 @@ class Tone:
                           "Specifies how much delay is applied to a tone.",
                           ParameterType.KNOB, [0, 127])]
 
-        # Advanced parameters:
-        # reverb params, chorus params, delay params, pitch bend wheel, modulation wheel, sustain pedal
+        # Advanced parameters: parameters, that cannot be edited using synthesizer "tone edit" menu
+        self.upper_volume = AdvancedParameter(200, 200, 0, "UPPER 1 Volume",
+                                              "Volume of the note. Only notes played on the keyboard are affected by this (not MIDI IN or rhythms).",
+                                              ParameterType.KNOB, [0, 127])
 
         self.dsp_module_1: DspModule = None
         self.dsp_module_2: DspModule = None
