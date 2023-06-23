@@ -1,3 +1,5 @@
+import random
+
 from PySide2.QtCore import Slot, Signal
 from PySide2.QtWidgets import QWidget, QLabel, QHBoxLayout, QPushButton
 
@@ -42,7 +44,7 @@ class TopWidget(QWidget):
 
         randomize_tone_button = QPushButton("Randomize tone", self)
         randomize_tone_button.setObjectName("top-widget-button")
-        randomize_tone_button.clicked.connect(self.on_random_button_pressed)
+        randomize_tone_button.clicked.connect(self.on_randomize_tone_button_pressed)
         self.layout.addWidget(randomize_tone_button)
 
         self.redraw_upper_volume_knob_signal.connect(self.redraw_upper_volume_knob)
@@ -50,10 +52,20 @@ class TopWidget(QWidget):
     def on_volume_change(self, parameter):
         self.core.send_parameter_change_sysex(parameter)
 
-    def on_random_button_pressed(self):
-        self.main_window.show_status_msg(
-            "Random main params and 2 DSP!",
-            3000)
+    def on_randomize_tone_button_pressed(self):
+        self.core.main_window.central_widget.on_random_button_pressed()
+
+        random_dsp_1 = random.randint(0, self.core.main_window.central_widget.dsp_page_1.list_widget.count() - 1)
+        self.core.main_window.central_widget.dsp_page_1.list_widget.setCurrentRow(random_dsp_1)
+        if random_dsp_1 > 0:
+            self.core.main_window.central_widget.dsp_page_1.on_random_button_pressed()
+
+        random_dsp_2 = random.randint(0, self.core.main_window.central_widget.dsp_page_2.list_widget.count() - 1)
+        self.core.main_window.central_widget.dsp_page_2.list_widget.setCurrentRow(random_dsp_2)
+        if random_dsp_2 > 0:
+            self.core.main_window.central_widget.dsp_page_2.on_random_button_pressed()
+
+        self.main_window.show_status_msg("Setting random main parameters and 2 random DSP modules...", 3000)
 
     @Slot()
     def redraw_upper_volume_knob(self):
