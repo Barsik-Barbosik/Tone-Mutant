@@ -30,6 +30,14 @@ class MainParameter(Parameter):
         self.block_id: int = block_id
 
 
+class AdvancedParameter(Parameter):
+    def __init__(self, id: int, action_number: int, block_id: int, name: str, description: str, type: ParameterType,
+                 choices: List):
+        super().__init__(id, name, description, type, choices)
+        self.action_number: int = action_number  # TODO: rename to param_number
+        self.block_id: int = block_id
+
+
 class DspParameter(Parameter):
     def __init__(self, id: int, name: str, description: str, type: ParameterType, choices: List):
         super().__init__(id, name, description, type, choices)
