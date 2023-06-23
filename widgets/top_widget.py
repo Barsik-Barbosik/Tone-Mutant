@@ -42,12 +42,18 @@ class TopWidget(QWidget):
 
         randomize_tone_button = QPushButton("Randomize tone", self)
         randomize_tone_button.setObjectName("top-widget-button")
+        randomize_tone_button.clicked.connect(self.on_random_button_pressed)
         self.layout.addWidget(randomize_tone_button)
 
         self.redraw_upper_volume_knob_signal.connect(self.redraw_upper_volume_knob)
 
     def on_volume_change(self, parameter):
         self.core.send_parameter_change_sysex(parameter)
+
+    def on_random_button_pressed(self):
+        self.main_window.show_status_msg(
+            "Random main params and 2 DSP!",
+            3000)
 
     @Slot()
     def redraw_upper_volume_knob(self):
