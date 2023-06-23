@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QHBoxLayout, QPushButton, QListWidget
+from PySide2.QtWidgets import QWidget, QLabel, QHBoxLayout, QPushButton, QDial, QSpinBox
 
 from constants import constants
 from widgets.gui_helper import GuiHelper
@@ -16,21 +16,22 @@ class TopWidget(QWidget):
         self.channel = 0
         self.layout = QHBoxLayout(self)
 
-        selection = ALL_CHANNELS[1] if self.channel == 32 else ALL_CHANNELS[0]
-        self.layout.addWidget(QLabel("Channel:"))
+        label = QLabel("UPPER 1 Volume:")
+        self.layout.addWidget(label)
 
-        self.channel_combo = QComboBox(self)
-        self.channel_combo.addItems(ALL_CHANNELS)
-        self.channel_combo.setCurrentText(selection)
-        self.channel_combo.currentIndexChanged.connect(self.on_channel_change)
-        self.layout.addWidget(self.channel_combo)
+        knob_spinbox = QSpinBox()
+        knob_spinbox.setMinimum(0)
+        knob_spinbox.setMaximum(127)
+        knob_spinbox.setValue(100)
+        self.layout.addWidget(knob_spinbox)
 
-        mute_combo = QComboBox(self)
-        mute_combo.addItems(CHANNEL_ENABLE_DISABLE_ITEMS)
-        mute_combo.setCurrentIndex(0)
-        self.layout.addWidget(mute_combo)
-
-        # TODO: Volume knob (200, 0)
+        knob = QDial()
+        knob.setMinimum(0)
+        knob.setMaximum(127)
+        knob.setValue(100)
+        knob.setFixedSize(constants.KNOB_SIZE, constants.KNOB_SIZE)
+        knob.valueChanged.connect(self.on_volume_change)
+        self.layout.addWidget(knob)
 
         self.layout.addWidget(GuiHelper.get_spacer())
 
@@ -49,14 +50,11 @@ class TopWidget(QWidget):
         randomize_tone_button.setObjectName("top-widget-button")
         self.layout.addWidget(randomize_tone_button)
 
-    def on_channel_change(self):
-        if self.channel_combo.currentIndex() != -1:
-            self.channel = 32 if self.channel_combo.currentIndex() == 1 else 0
-            print("Channel: " + str(self.channel))
-
-            # instrument_list: QListWidget = self.main_window.central_widget.instrument_list
-            # if self.channel == 32:
-            #     instrument_list.setEnabled(True)
-            # else:
-            #     instrument_list.setEnabled(False)
-            #     instrument_list.clearSelection()
+    def on_volume_change(self):
+        # self.core.midi_service.send_sysex("F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 48 01 00 00 00 00 00 F7")  # TODO: remove!~
+        # self.core.midi_service.send_sysex("B0 01 7F")  # TODO: remove!~
+        # self.core.midi_service.send_sysex("B4 01 7F")  # TODO: remove!~
+        # self.core.midi_service.send_sysex("B1 01 7F")  # TODO: remove!~
+        # self.core.midi_service.send_sysex("B2 01 7F")  # TODO: remove!~
+        # self.core.midi_service.send_sysex("B3 01 7F")  # TODO: remove!~
+        pass
