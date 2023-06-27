@@ -106,7 +106,7 @@ class MidiService:
         msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00" \
               + int_to_lsb_msb(block_id) + int_to_lsb_msb(parameter) + "00 00 00 00 F7"
         self.send_sysex(msg)
-        time.sleep(0.1)
+        # time.sleep(0.1)
 
     def request_dsp_module(self, block_id: int):
         msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
