@@ -37,7 +37,7 @@ class CentralWidget(QWidget):
         self.instrument_list = InactiveListWidget(self)
         self.instrument_list.setObjectName("inactive-list")
 
-        self.qgrid_layout = QGridLayout(self)
+        self.qgrid_layout = QGridLayout()
         self.tab_widget = QTabWidget(self)
         self.tab_widget.setMinimumHeight(500)
         self.tab_widget.addTab(self.create_main_params_page(), TabName.MAIN_PARAMETERS.value)
@@ -59,7 +59,7 @@ class CentralWidget(QWidget):
         self.qgrid_layout.setColumnStretch(2, 1)
         self.qgrid_layout.setColumnStretch(3, 2)
         main_params_page = QWidget(self)
-        hbox_layout = QHBoxLayout(self)
+        hbox_layout = QHBoxLayout()
         main_params_page.setLayout(hbox_layout)
 
         self.instrument_list.setFixedWidth(180)
@@ -146,7 +146,7 @@ class CentralWidget(QWidget):
 
     def create_json_view_page(self) -> QWidget:
         json_view_page = QWidget(self)
-        hbox_layout = QHBoxLayout(self)
+        hbox_layout = QHBoxLayout()
         hbox_layout.addWidget(self.json_view_tab_textbox)
         json_view_page.setLayout(hbox_layout)
         return json_view_page

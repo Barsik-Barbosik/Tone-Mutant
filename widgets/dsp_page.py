@@ -24,7 +24,7 @@ class DspPage(QWidget):
         hbox_layout = QHBoxLayout(self)
         self.setLayout(hbox_layout)
 
-        self.qgrid_layout = QGridLayout(self)
+        self.qgrid_layout = QGridLayout()
         self.qgrid_layout.setColumnStretch(0, 1)
         self.qgrid_layout.setColumnStretch(1, 2)
         self.qgrid_layout.setColumnStretch(2, 1)

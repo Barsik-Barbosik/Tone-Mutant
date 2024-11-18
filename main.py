@@ -15,12 +15,26 @@ from widgets.settings_window import SettingsWindow
 from widgets.top_widget import TopWidget
 
 
+# Nuitka compiler options:
+# nuitka-project: --output-filename=ToneMutant
+# nuitka-project: --product-name=ToneMutant
+# nuitka-project: --product-version=1.0.0
+# nuitka-project: --file-version=1.0.0
+# nuitka-project: --file-description="Tone editor for Casio keyboards"
+# nuitka-project: --standalone
+# nuitka-project: --onefile
+# nuitka-project: --enable-plugin=pyside2
+# nuitka-project: --include-data-dir="C:\Workspace\ToneMutant\resources=resources"
+# nuitka-project: --windows-icon-from-ico=resources/note.ico
+# nuitka-project: --disable-console
+# nuitka-project: --remove-output
+
 class MainWindow(QMainWindow):
     status_msg_signal = Signal(str, int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("CT-X Tone MUTANT 1.00")
+        self.setWindowTitle("ToneMutant 1.0.0")
         self.setWindowIcon(QIcon("resources/note.png"))
 
         self.core: Core = Core(self)
@@ -111,7 +125,7 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    with open("style.qss", "r") as style_file:
+    with open("resources/style.qss", "r") as style_file:
         style = style_file.read()
         app.setStyleSheet(style)
 

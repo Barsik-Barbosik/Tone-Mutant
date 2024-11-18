@@ -2,9 +2,10 @@ import configparser
 import copy
 import time
 
-from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject, QThreadPool
+from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
 
 from constants import constants
+from constants.constants import DEFAULT_TONE_NAME
 from constants.enums import ParameterType
 from external.worker import Worker
 from model.parameter import MainParameter
@@ -54,7 +55,9 @@ class Core(QObject):
         self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
         self.lock.unlock()
 
-        QThreadPool().start(Worker(self.update_main_params_page))
+        worker = Worker(self.update_main_params_page)
+        worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+        worker.start()
 
     def update_main_params_page(self):
         for i in range(0, 10):
@@ -263,7 +266,7 @@ class Core(QObject):
                 self.main_window.central_widget.instrument_list.setCurrentRow(self.tone.parent_tone.id - 1)
                 break
         if not is_found:
-            self.tone.name = "Unknown Tone"
+            self.tone.name = DEFAULT_TONE_NAME
             self.tone.parent_tone = None
             self.main_window.central_widget.instrument_list.clearSelection()
 

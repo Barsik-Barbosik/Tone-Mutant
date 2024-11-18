@@ -60,13 +60,13 @@ class GuiHelper:
         qframe = QFrame(main_window)
         qframe.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
         qframe.setObjectName("top-widget")
-        inner_layout = QHBoxLayout(main_window)
+        inner_layout = QHBoxLayout()
         inner_layout.setContentsMargins(0, 0, 0, 0)
         inner_layout.addWidget(main_window.top_widget)
         qframe.setLayout(inner_layout)
 
         outer_widget = QWidget(main_window)
-        outer_layout = QHBoxLayout(main_window)
+        outer_layout = QHBoxLayout()
         outer_layout.setContentsMargins(10, 10, 10, 0)  # remove bottom margin
         outer_layout.addWidget(qframe)
         outer_widget.setLayout(outer_layout)
@@ -82,12 +82,12 @@ class GuiHelper:
         right_dock.setFloating(False)
 
         help_tab = QWidget(main_window)
-        help_tab_layout = QHBoxLayout(main_window)
+        help_tab_layout = QHBoxLayout()
         help_tab_layout.addWidget(main_window.help_texbox)
         help_tab.setLayout(help_tab_layout)
 
         log_tab = QWidget(main_window)
-        log_tab_layout = QHBoxLayout(main_window)
+        log_tab_layout = QHBoxLayout()
         log_tab_layout.addWidget(main_window.log_texbox)
         log_tab.setLayout(log_tab_layout)
 
@@ -98,7 +98,7 @@ class GuiHelper:
         tab_widget.addTab(log_tab, "MIDI Log")
 
         outer_widget = QWidget(main_window)
-        outer_layout = QHBoxLayout(main_window)
+        outer_layout = QHBoxLayout()
         outer_layout.setContentsMargins(0, 10, 10, 10)  # remove left margin
         outer_layout.addWidget(tab_widget)
         outer_widget.setLayout(outer_layout)
@@ -142,7 +142,7 @@ class GuiHelper:
         combo_box.addItems(parameter.choices)
         combo_box.setCurrentIndex(parameter.value)
         combo_box.currentIndexChanged.connect(
-            lambda: GuiHelper.on_combo_changed(combo_box, parameter, function_to_run))
+            lambda new_value: GuiHelper.on_combo_changed(combo_box, parameter, function_to_run))
         return combo_box
 
     @staticmethod
@@ -157,9 +157,10 @@ class GuiHelper:
         knob.setMaximum(knob_spinbox.maximum())
         knob.setValue(parameter.value)
         knob.setFixedSize(constants.KNOB_SIZE, constants.KNOB_SIZE)
-        knob.valueChanged.connect(lambda: GuiHelper.on_knob_changed(knob, knob_spinbox, parameter, function_to_run))
+        knob.valueChanged.connect(
+            lambda new_value: GuiHelper.on_knob_changed(knob, knob_spinbox, parameter, function_to_run))
         knob_spinbox.valueChanged.connect(
-            lambda: GuiHelper.on_knob_spinbox_changed(knob_spinbox, knob, parameter, function_to_run))
+            lambda new_value: GuiHelper.on_knob_spinbox_changed(knob_spinbox, knob, parameter, function_to_run))
 
         if isinstance(parameter, MainParameter):
             if parameter.action_number is None:

@@ -4,7 +4,7 @@ import time
 from collections import deque
 
 import rtmidi
-from PySide2.QtCore import QThreadPool, QReadWriteLock
+from PySide2.QtCore import QReadWriteLock
 
 from constants import constants
 from constants.enums import SysexType, SysexId, Size
@@ -45,7 +45,7 @@ class MidiService:
         else:
             MidiService.__instance = self
             self.core = None
-            self.threadpool = QThreadPool()
+            # self.threadpool = QThreadPool()
             self.lock = QReadWriteLock()
             self.bank_select_msg_queue = deque()
             self.active_sync_job_count = 0
@@ -168,7 +168,11 @@ class MidiService:
             bank_select_msg = self.get_last_bank_select_message()
             if bank_select_msg is not None:
                 self.core.process_instrument_select_response(bank_select_msg[2], message[1])
-                self.threadpool.start(Worker(self.core.countdown_and_autosynchronize, 2))
+
+                worker = Worker(self.core.countdown_and_autosynchronize, 2)
+                worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+                worker.start()
+
         else:
             self.log("Incoming msg: ", message)
 

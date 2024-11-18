@@ -5,11 +5,11 @@ from model.dsp_module import DspModule
 from model.instrument import Instrument
 from model.parameter import DspParameter
 
-CONFIG_FILENAME: Final[str] = '../config.cfg'
+CONFIG_FILENAME: Final[str] = 'config.cfg'
 
 KNOB_SIZE: Final[int] = 40
 
-DEFAULT_TONE_NAME = "Unknown Tone"
+DEFAULT_TONE_NAME = " "
 
 EMPTY_DSP_NAME: Final[str] = "OFF"
 
