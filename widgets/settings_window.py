@@ -4,6 +4,7 @@ import rtmidi
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QGridLayout, QHBoxLayout, QPushButton, QSizePolicy
 
 from constants import constants
+from constants.constants import DEFAULT_MIDI_IN_PORT, DEFAULT_MIDI_OUT_PORT, DEFAULT_SYNTH_MODEL
 
 
 class SettingsWindow(QWidget):
@@ -15,9 +16,9 @@ class SettingsWindow(QWidget):
 
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
-        self.synthesizer_model = cfg.get('Synthesizer', 'Model', fallback="CT-X3000/5000")
-        self.input_name = cfg.get('Midi', 'InPort', fallback="")
-        self.output_name = cfg.get('Midi', 'OutPort', fallback="")
+        self.synthesizer_model = cfg.get('Synthesizer', 'Model', fallback=DEFAULT_SYNTH_MODEL)
+        self.input_name = cfg.get('Midi', 'InPort', fallback=DEFAULT_MIDI_IN_PORT)
+        self.output_name = cfg.get('Midi', 'OutPort', fallback=DEFAULT_MIDI_OUT_PORT)
 
         synth_models = ["CT-X3000/5000", "CT-X8000IN/9000IN", "CT-X700/800"]
         input_ports = rtmidi.MidiIn().get_ports()

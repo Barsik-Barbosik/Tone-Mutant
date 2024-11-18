@@ -5,7 +5,7 @@ import time
 from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
 
 from constants import constants
-from constants.constants import DEFAULT_TONE_NAME
+from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL
 from constants.enums import ParameterType
 from external.worker import Worker
 from model.parameter import MainParameter
@@ -33,8 +33,7 @@ class Core(QObject):
 
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
-        self.tone.synthesizer_model = cfg.get("Synthesizer", "Model", fallback="CT-X3000/5000")
-        self.tone.synthesizer_model = cfg.get("Synthesizer", "Model", fallback="CT-X3000/5000")
+        self.tone.synthesizer_model = cfg.get("Synthesizer", "Model", fallback=DEFAULT_SYNTH_MODEL)
 
     # Synchronize all Tone data: name, main params, DSP modules and their params
     @Slot()

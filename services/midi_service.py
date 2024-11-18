@@ -7,6 +7,7 @@ import rtmidi
 from PySide2.QtCore import QReadWriteLock
 
 from constants import constants
+from constants.constants import DEFAULT_MIDI_IN_PORT, DEFAULT_MIDI_OUT_PORT, DEFAULT_MIDI_CHANNEL
 from constants.enums import SysexType, SysexId, Size
 from external.worker import Worker
 from model.instrument import Instrument
@@ -63,9 +64,9 @@ class MidiService:
 
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
-        self.input_name = cfg.get("Midi", "InPort", fallback="")
-        self.output_name = cfg.get("Midi", "OutPort", fallback="")
-        self.channel = int(cfg.get("Midi Real-Time", "Channel", fallback="0"))
+        self.input_name = cfg.get("Midi", "InPort", fallback=DEFAULT_MIDI_IN_PORT)
+        self.output_name = cfg.get("Midi", "OutPort", fallback=DEFAULT_MIDI_OUT_PORT)
+        self.channel = DEFAULT_MIDI_CHANNEL
 
         for i in range(self.midi_out.get_port_count()):
             if self.output_name == self.midi_out.get_port_name(i):

@@ -5,7 +5,11 @@ from model.dsp_module import DspModule
 from model.instrument import Instrument
 from model.parameter import DspParameter
 
-CONFIG_FILENAME: Final[str] = 'config.cfg'
+CONFIG_FILENAME: Final[str] = "config.cfg"
+DEFAULT_SYNTH_MODEL: Final[str] = "CT-X3000/5000"
+DEFAULT_MIDI_IN_PORT: Final[str] = "CASIO USB-MIDI 0"
+DEFAULT_MIDI_OUT_PORT: Final[str] = "CASIO USB-MIDI 1"
+DEFAULT_MIDI_CHANNEL: Final[int] = 0
 
 KNOB_SIZE: Final[int] = 40
 
