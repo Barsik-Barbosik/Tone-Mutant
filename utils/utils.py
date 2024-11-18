@@ -1,3 +1,6 @@
+import os
+import sys
+
 from constants import constants
 from constants.enums import ParameterType
 from model.parameter import Parameter
@@ -99,3 +102,14 @@ def decode_param_value(value: int, parameter: Parameter):
     elif parameter.name == "Vibrato Type" and value == 0x0F:
         return 0  # Why synth returns "0F" instead of "00"?
     return value
+
+
+# Get the absolute path to a resource
+def resource_path(relative_path):
+    if hasattr(sys.modules[__name__], '__compiled__'):
+        # Nuitka exe: temp dir
+        base_path = os.path.dirname(os.path.abspath(sys.executable))
+    else:
+        # development: current dir
+        base_path = os.getcwd()
+    return os.path.join(base_path, relative_path)

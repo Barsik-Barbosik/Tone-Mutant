@@ -9,6 +9,7 @@ from PySide2.QtWidgets import QLabel
 from constants import constants
 from constants.enums import ParameterType
 from model.parameter import Parameter, MainParameter
+from utils.utils import resource_path
 
 
 class GuiHelper:
@@ -20,22 +21,22 @@ class GuiHelper:
         file_menu = QMenu("&File", main_window)
         menu_bar.addMenu(file_menu)
 
-        open_action = QAction(QIcon('resources/open.png'), "&Open Tone (TON)", main_window)
+        open_action = QAction(QIcon(resource_path('resources/open.png')), "&Open Tone (TON)", main_window)
         open_action.setStatusTip("Open TON-file")
         open_action.setEnabled(False)
-        save_action = QAction(QIcon('resources/save.png'), "&Save Tone (TON)", main_window)
+        save_action = QAction(QIcon(resource_path('resources/save.png')), "&Save Tone (TON)", main_window)
         save_action.setStatusTip("Save tone as TON-file")
         save_action.setEnabled(False)
-        open_json_action = QAction(QIcon('resources/open.png'), "Open Tone (JSON)", main_window)
+        open_json_action = QAction(QIcon(resource_path('resources/open.png')), "Open Tone (JSON)", main_window)
         open_json_action.setStatusTip("Read tone information from JSON-formatted file")
         open_json_action.triggered.connect(main_window.show_open_json_dialog)
-        save_json_action = QAction(QIcon('resources/save.png'), "Save Tone (JSON)", main_window)
+        save_json_action = QAction(QIcon(resource_path('resources/save.png')), "Save Tone (JSON)", main_window)
         save_json_action.setStatusTip("Save tone information as JSON-formatted file")
         save_json_action.triggered.connect(main_window.show_save_json_dialog)
-        midi_settings_action = QAction(QIcon('resources/settings.png'), "&Settings", main_window)
+        midi_settings_action = QAction(QIcon(resource_path('resources/settings.png')), "&Settings", main_window)
         midi_settings_action.setStatusTip("Open settings")
         midi_settings_action.triggered.connect(main_window.show_settings)
-        exit_action = QAction(QIcon('resources/exit.png'), "&Exit", main_window)
+        exit_action = QAction(QIcon(resource_path('resources/exit.png')), "&Exit", main_window)
         exit_action.setStatusTip("Exit application")
         exit_action.triggered.connect(main_window.menu_exit_action)
 

@@ -8,6 +8,7 @@ from PySide2.QtWidgets import QApplication, QMainWindow, QTextBrowser, \
     QStatusBar, QFileDialog, QSplitter
 
 from core import Core
+from utils.utils import resource_path
 from widgets.central_widget import CentralWidget
 from widgets.deque_log import DequeLog
 from widgets.gui_helper import GuiHelper
@@ -21,6 +22,7 @@ from widgets.top_widget import TopWidget
 # nuitka-project: --product-version=1.0.0
 # nuitka-project: --file-version=1.0.0
 # nuitka-project: --file-description="Tone editor for Casio keyboards"
+# nuitka-project: --company-name="Barsik-Barbosik"
 # nuitka-project: --standalone
 # nuitka-project: --onefile
 # nuitka-project: --enable-plugin=pyside2
@@ -35,7 +37,7 @@ class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("ToneMutant 1.0.0")
-        self.setWindowIcon(QIcon("resources/note.png"))
+        self.setWindowIcon(QIcon(resource_path("resources/note.png")))
 
         self.core: Core = Core(self)
 
@@ -125,7 +127,7 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    with open("resources/style.qss", "r") as style_file:
+    with open(resource_path("resources/style.qss"), "r") as style_file:
         style = style_file.read()
         app.setStyleSheet(style)
 
