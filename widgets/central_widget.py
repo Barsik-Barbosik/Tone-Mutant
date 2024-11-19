@@ -158,14 +158,14 @@ class CentralWidget(QWidget):
     def update_help_text_panel(self):
         text = ""
         if self.get_current_tab_name() == TabName.MAIN_PARAMETERS:
-            text = "<h2>Main Parameters</h2>List of parameters for editing tone.<br/>"
+            text = "<h2>Main Parameters</h2>List of main tone parameters for editing.<br/>"
             for param in self.core.tone.main_parameter_list:
                 text = text + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
         elif self.get_current_tab_name() == TabName.JSON:
-            text = "<h2>JSON</h2>Main tone data in JSON format. Many parameter values can be seen here. Currently, this view is read-only. Perhaps in the future, it will become editable."
+            text = "<h2>Tone in JSON format</h2>Parameter values are displayed here.<br/><br/>Currently, this view is read-only, but it may become editable in the future."
         elif self.current_dsp_page is not None and self.current_dsp_page.block_id is not None:
             if self.current_dsp_page.dsp_module is None:
-                text = "DSP module is not selected."
+                text = "The DSP module is not selected."
             else:
                 text = "<h2>" + self.current_dsp_page.get_module_name() + "</h2>" \
                        + self.current_dsp_page.dsp_module.description + "<br/>"
