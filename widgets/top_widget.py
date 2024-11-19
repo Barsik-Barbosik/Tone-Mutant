@@ -1,9 +1,11 @@
 import random
 
 from PySide2.QtCore import Slot, Signal
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QLabel, QHBoxLayout, QPushButton
 
 from constants import constants
+from utils.utils import resource_path
 from widgets.gui_helper import GuiHelper
 
 ALL_CHANNELS = ["Upper keyboard", "MIDI Channel 1"]
@@ -37,12 +39,14 @@ class TopWidget(QWidget):
 
         self.layout.addWidget(GuiHelper.get_spacer())  # --------------------------
 
-        synchronize_tone_button = QPushButton("Synchronize tone", self)
+        synchronize_tone_button = QPushButton(" Synchronize Tone", self)
+        synchronize_tone_button.setIcon(QIcon(resource_path("resources/sync.png")))
         synchronize_tone_button.setObjectName("top-widget-button")
         synchronize_tone_button.clicked.connect(self.core.synchronize_tone_with_synth)
         self.layout.addWidget(synchronize_tone_button)
 
-        randomize_tone_button = QPushButton("Randomize tone", self)
+        randomize_tone_button = QPushButton(" Randomize Tone", self)
+        randomize_tone_button.setIcon(QIcon(resource_path("resources/note2.png")))
         randomize_tone_button.setObjectName("top-widget-button")
         randomize_tone_button.clicked.connect(self.on_randomize_tone_button_pressed)
         self.layout.addWidget(randomize_tone_button)

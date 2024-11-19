@@ -1,10 +1,12 @@
 import configparser
 
 import rtmidi
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QGridLayout, QHBoxLayout, QPushButton, QSizePolicy
 
 from constants import constants
 from constants.constants import DEFAULT_MIDI_IN_PORT, DEFAULT_MIDI_OUT_PORT, DEFAULT_SYNTH_MODEL
+from utils.utils import resource_path
 
 
 class SettingsWindow(QWidget):
@@ -37,9 +39,11 @@ class SettingsWindow(QWidget):
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(spacer)
-        ok_button = QPushButton("OK", self)
+        ok_button = QPushButton(" OK", self)
+        ok_button.setIcon(QIcon(resource_path("resources/apply.png")))
         ok_button.clicked.connect(self.ok_button_action)
-        cancel_button = QPushButton("CANCEL", self)
+        cancel_button = QPushButton(" CANCEL", self)
+        cancel_button.setIcon(QIcon(resource_path("resources/cancel.png")))
         cancel_button.clicked.connect(self.cancel_button_action)
         button_layout.addWidget(ok_button)
         button_layout.addWidget(cancel_button)

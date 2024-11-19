@@ -1,12 +1,14 @@
 import random
 
 from PySide2.QtCore import Qt, Slot, Signal
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QListWidgetItem, QPushButton, QLabel
 
 from constants import constants
 from constants.enums import ParameterType
 from model.dsp_module import DspModule
 from utils import utils
+from utils.utils import resource_path
 from widgets.gui_helper import GuiHelper
 
 
@@ -65,7 +67,8 @@ class DspPage(QWidget):
             largest_items_count = max(right_side_items_count,
                                       len(self.dsp_module.dsp_parameter_list) - right_side_items_count)
 
-            random_button = QPushButton("Randomize DSP values", self)
+            random_button = QPushButton(" Randomize DSP Values", self)
+            random_button.setIcon(QIcon(resource_path("resources/random.png")))
             random_button.setObjectName("random-button")
             random_button.clicked.connect(self.on_random_button_pressed)
             button_row = largest_items_count + 1

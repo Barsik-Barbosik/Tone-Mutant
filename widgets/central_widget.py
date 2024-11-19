@@ -2,12 +2,14 @@ import json
 import random
 
 from PySide2.QtCore import Qt, Slot, Signal
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QListWidgetItem, QTextBrowser, QPushButton
 
 from constants import constants
 from constants.enums import TabName, ParameterType
 from external.object_encoder import ObjectEncoder
 from syntax_highlighters.json_highlighter import JsonHighlighter
+from utils.utils import resource_path
 from widgets.dsp_page import DspPage
 from widgets.gui_helper import GuiHelper
 from widgets.inactive_list_widget import InactiveListWidget
@@ -92,7 +94,8 @@ class CentralWidget(QWidget):
         largest_items_count = max(right_side_items_count,
                                   len(self.core.tone.main_parameter_list) - right_side_items_count)
 
-        random_button = QPushButton("Randomize parameters", self)
+        random_button = QPushButton(" Randomize Parameters", self)
+        random_button.setIcon(QIcon(resource_path("resources/random.png")))
         random_button.setObjectName("random-button")
         random_button.clicked.connect(self.on_random_button_pressed)
         button_row = largest_items_count + 1
