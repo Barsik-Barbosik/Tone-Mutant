@@ -2577,3 +2577,38 @@ ALL_INSTRUMENTS_700_800: Final[tuple] = (
     Instrument(599, "CymbalSt", 120, 67),
     Instrument(600, "Tom Set", 120, 68)
 )
+
+HOW_TO_SAVE_TONE: Final[str] = '''
+    <h2>Saving a Tone</h2>
+    1. Long-press <b>"FUNCTION"</b> key until the <i>"[EDIT]"</i> indicator appears.<br/><br/>
+    2. To save the edited tone, press the <b>"[7]&nbsp;WRITE"</b> number key.<br/><br/>
+    3. If the tone you are editing is a user tone, the message <i>"Replace?"</i> will appear here.<br/><br/>
+    Press <b>"[+]&nbsp;YES"</b> key to replace the original tone data with the new data, or <b>"[-]&nbsp;NO"</b> key to save the new data without replacing the original data.<br/><br/>
+    The message <i>"Wait..."</i> remains on the display while the tone save operation is being performed.<br/><br/>
+    <i>"Complete"</i> appears on the display after the operation is complete.<br/><br/>
+    If you are saving the data as a new user tone, the save destination tone number will be the lowest one in memory that currently does not have any data stored.<br/><br/>
+    The newly saved user tone will be selected after this operation is complete.<br/><br/>
+    4. To exit the Tone Editing Mode, long-press the <b>"[4]&nbsp;EXIT"</b> number key.<br/>
+
+    <h2>Renaming a Tone</h2>
+    1. Hold down <b>"[RECORD/STOP]"</b> key until <i>"ToneName"</i> appears.<br/><br/>
+    2. Press the <b>"[6]&nbsp;ENTER"</b> number key. This displays the renaming screen.<br/><br/>
+    3. Input the new name (using the <b>dial wheel</b>, <b>"[1]&nbsp;LEFT"</b> and <b>"[3]&nbsp;RIGHT"</b> number keys)<br/><br/>
+    4. Press the <b>"[6]&nbsp;ENTER"</b> number key. This displays <i>"Sure?"</i>.<br/><br/>
+    5. Press <b>"[+]&nbsp;YES"</b> to execute the rename or <b>"[-]&nbsp;NO"</b> to cancel.<br/><br/>
+    6. To exit, press the <b>"[4]&nbsp;EXIT"</b> number key.<br/>
+
+    <h2>Saving a Tone to a Computer</h2>
+    Use official "DataManager for CT-X" from CASIO.<br/>
+
+    <h2>Saving a Tone to a USB Flash Drive</h2>
+    1. Press <b>"FUNCTION"</b> key.<br/><br/>
+    2. Use the <b>"[1]&nbsp;LEFT"</b> and <b>"[3]&nbsp;RIGHT"</b> number keys to display <i>"Media"</i> and then press <b>"[6]&nbsp;ENTER"</b> key.<br/><br/>
+    3. Use the <b>"[1]&nbsp;LEFT"</b> and <b>"[3]&nbsp;RIGHT"</b> number keys to display <i>"Save"</i> and then press <b>"[6]&nbsp;ENTER"</b> key.<br/><br/>
+    4. Use the <b>"[1]&nbsp;LEFT"</b> and <b>"[3]&nbsp;RIGHT"</b> number keys to display <i>"Tone"</i> and then press <b>"[6]&nbsp;ENTER"</b> key.<br/><br/>
+    5. Use the <b>"[1]&nbsp;LEFT"</b> and <b>"[3]&nbsp;RIGHT"</b> number keys to select the tone to be saved, and then press <b>"[6]&nbsp;ENTER"</b> key.<br/><br/>
+    6. Input the file name (using the <b>dial wheel</b>, <b>"[1]&nbsp;LEFT"</b> and <b>"[3]&nbsp;RIGHT"</b> number keys).<br/><br/>
+    7. Press the <b>"[6]&nbsp;ENTER"</b> number key. This displays <i>"Sure?"</i>.<br/><br/>
+    8. Press <b>"[+]&nbsp;YES"</b> to execute the save or <b>"[-]&nbsp;NO"</b> to cancel.<br/><br/>
+    9. To exit, long-press the <b>"[4]&nbsp;EXIT"</b> key.<br/><br/>
+'''

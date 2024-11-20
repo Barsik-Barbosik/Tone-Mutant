@@ -356,7 +356,7 @@ class Core(QObject):
                                    + id_str + tone_name_str \
                                    + "</h2><h5>(bank: " + json_bank_str + ", program: " + json_program_str \
                                    + ")</h5>You can choose any other source-tone using your " + self.tone.synthesizer_model \
-                                   + " synthesizer controls.<br>Then press \"Continue\" button to apply parameter changes from JSON."
+                                   + " synthesizer controls.<br/>Then press \"Continue\" button to apply parameter changes from JSON."
 
         self.main_window.show_status_msg(
             "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",

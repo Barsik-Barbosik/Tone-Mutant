@@ -7,6 +7,7 @@ from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication, QMainWindow, QTextBrowser, \
     QStatusBar, QFileDialog, QSplitter
 
+from constants.constants import HOW_TO_SAVE_TONE
 from core import Core
 from utils.utils import resource_path
 from widgets.central_widget import CentralWidget
@@ -88,6 +89,9 @@ class MainWindow(QMainWindow):
 
     def show_settings(self):
         self.settings_window = SettingsWindow(self)
+
+    def show_how_to_save_tone(self):
+        self.show_help_text(HOW_TO_SAVE_TONE)
 
     def show_open_json_dialog(self):
         options = QFileDialog.Options()
