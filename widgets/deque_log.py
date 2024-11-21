@@ -3,6 +3,7 @@ from collections import deque
 from PySide2.QtCore import QThreadPool, Signal, Qt
 from PySide2.QtWidgets import QTextBrowser, QAction, QMenu
 
+from constants.constants import LOG_MAX_LEN
 from syntax_highlighters.sysex_highlighter import SysexHighlighter
 
 
@@ -12,7 +13,7 @@ class DequeLog(QTextBrowser):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-        self.log_queue = deque()
+        self.log_queue = deque(maxlen=LOG_MAX_LEN)
         self.threadpool = QThreadPool()
 
         self.setObjectName("log-textbox")
@@ -38,14 +39,24 @@ class DequeLog(QTextBrowser):
             message = self._get_message()
             if message is not None:
                 self.append(message)
+                self._apply_log_limit()
             else:
                 break
+        # self.moveCursor(self.textCursor().End)
 
     def _get_message(self):
         try:
             return self.log_queue.popleft()
         except IndexError:
             return None
+
+    def _apply_log_limit(self):
+        while self.document().blockCount() > LOG_MAX_LEN:
+            cursor = self.textCursor()
+            cursor.movePosition(cursor.Start)
+            cursor.select(cursor.BlockUnderCursor)
+            cursor.removeSelectedText()
+            cursor.deleteChar()
 
     def _show_context_menu(self, pos):
         self.context_menu.clear()
