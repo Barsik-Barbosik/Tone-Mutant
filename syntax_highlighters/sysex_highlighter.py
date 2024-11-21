@@ -47,6 +47,10 @@ class SysexHighlighter(QSyntaxHighlighter):
 
         self.highlight_keywords(text, r'F0|F7', Qt.red)
 
+        self.highlight_info_line(text)
+
+        self.highlight_error_line(text)
+
     def highlight_word_styles(self, text):
         space_positions = self.find_space_positions(text)
         for word_index, word_format in self.word_formats:
@@ -66,6 +70,18 @@ class SysexHighlighter(QSyntaxHighlighter):
             length = expression.matchedLength()
             self.setFormat(index, length, keyword_format)
             index = expression.indexIn(text, index + length)
+
+    def highlight_info_line(self, text):
+        if text and text.startswith("[INFO]"):
+            info_line_format = QTextCharFormat()
+            info_line_format.setForeground(Qt.black)
+            self.setFormat(0, len(text), info_line_format)
+
+    def highlight_error_line(self, text):
+        if text and text.startswith("[ERROR]"):
+            error_line_format = QTextCharFormat()
+            error_line_format.setForeground(Qt.red)
+            self.setFormat(0, len(text), error_line_format)
 
     @staticmethod
     def find_space_positions(string):

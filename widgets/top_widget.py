@@ -57,6 +57,9 @@ class TopWidget(QWidget):
         self.core.send_parameter_change_sysex(parameter)
 
     def on_randomize_tone_button_pressed(self):
+        msg = "Setting random main parameters and 2 random DSP modules..."
+        self.main_window.log_texbox.log("[INFO] " + msg)
+
         self.core.main_window.central_widget.on_random_button_pressed()
 
         random_dsp_1 = random.randint(0, self.core.main_window.central_widget.dsp_page_1.list_widget.count() - 1)
@@ -69,7 +72,7 @@ class TopWidget(QWidget):
         if random_dsp_2 > 0:
             self.core.main_window.central_widget.dsp_page_2.on_random_button_pressed()
 
-        self.main_window.show_status_msg("Setting random main parameters and 2 random DSP modules...", 3000)
+        self.main_window.show_status_msg(msg, 3000)
 
     @Slot()
     def redraw_upper_volume_knob(self):

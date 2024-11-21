@@ -70,9 +70,9 @@ And thanks to the users of the www.casiomusicforums.com community. Some useful i
 ## License
 This project is licensed under the LGPLv3 License - see the [LICENSE.md](LICENSE.md) file for details.
 
-This software uses PySide2, which is licensed under the LGPLv3 and GPLv2 licenses. For details, see [PySide2 Licensing](https://wiki.qt.io/Qt_for_Python_Licensing). 
+This software uses PySide2, which is licensed under the LGPLv3 and GPLv2 licenses. For details, see [PySide2 Licensing](https://wiki.qt.io/Qt_for_Python_Licensing). The underlying Qt framework, utilized via PySide2, is licensed under the LGPLv3, GPLv3, and commercial licenses. For more information, visit the [Qt Licensing page](https://www.qt.io/licensing/).
 
-The underlying Qt framework, utilized via PySide2, is licensed under the LGPLv3, GPLv3, and commercial licenses. For more information, visit the [Qt Licensing page](https://www.qt.io/licensing/).
+This software uses Python-RtMidi, which is distributed under the [MIT License](https://github.com/SpotlightKid/python-rtmidi/blob/master/LICENSE.md). RtMidi is distributed under a [modified MIT License](https://github.com/SpotlightKid/python-rtmidi/blob/master/LICENSE.md).
 
 This software may be compiled using [Nuitka](https://nuitka.net/), an optimizing Python compiler. Nuitka is distributed under the Apache License 2.0. For details, see the [Nuitka License page](https://nuitka.net/pages/license.html).
 

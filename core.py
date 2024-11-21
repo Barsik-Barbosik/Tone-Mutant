@@ -39,7 +39,7 @@ class Core(QObject):
     @Slot()
     def synchronize_tone_with_synth(self):
         self.lock.lockForWrite()
-        print("\tSynchronizing tone!")
+        self.main_window.log_texbox.log("[INFO] Synchronizing tone...")
         self.midi_service.active_sync_job_count = 0
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
@@ -79,7 +79,7 @@ class Core(QObject):
     def process_tone_name_response(self, response):
         self.lock.lockForWrite()
         tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
-        print("\tSynth tone name: " + tone_name)
+        self.main_window.log_texbox.log("[INFO] Synth tone name: " + tone_name)
         if tone_name:
             self.tone.name = tone_name
         elif self.tone.name is None:
@@ -92,7 +92,7 @@ class Core(QObject):
     # Request main parameter value from synth
     def request_main_parameters(self):
         for parameter in self.tone.main_parameter_list:
-            print("\tRequesting parameter: " + parameter.name)
+            self.main_window.log_texbox.log("[INFO] Requesting parameter: " + parameter.name)
             try:
                 self.midi_service.request_parameter_value(parameter.block_id, parameter.action_number)
             except Exception as e:
@@ -102,7 +102,7 @@ class Core(QObject):
     def process_main_parameter_response(self, param_number, block_id, response):
         for parameter in self.tone.main_parameter_list:
             if parameter.action_number == param_number and parameter.block_id == block_id:
-                print("\tProcessing parameter: " + parameter.name + ", " + str(param_number) + ", "
+                self.main_window.log_texbox.log("[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
                       + str(block_id) + ", " + str(response))
                 if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
                     value = int(int_to_hex(response[1]) + int_to_hex(response[0]), 16)
@@ -118,7 +118,7 @@ class Core(QObject):
 
     # Send message to update synth's main parameter
     def send_parameter_change_sysex(self, parameter: MainParameter):
-        print("\tParam " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
+        self.main_window.log_texbox.log("[INFO] Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
         value = utils.encode_value_by_type(parameter)
         try:
             if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
@@ -215,7 +215,8 @@ class Core(QObject):
     def set_synth_dsp_params(self, _):
         try:
             dsp_page = self.main_window.central_widget.current_dsp_page
-            self.midi_service.send_dsp_params_change_sysex(dsp_page.block_id, dsp_page.get_dsp_params_as_list())
+            if dsp_page:
+                self.midi_service.send_dsp_params_change_sysex(dsp_page.block_id, dsp_page.get_dsp_params_as_list())
         except Exception as e:
             self.main_window.show_error_msg(str(e))
 
@@ -230,7 +231,7 @@ class Core(QObject):
         instrument = Tone.get_instrument_by_id(instrument_id)
         self.tone.name = instrument.name
         self.tone.parent_tone = instrument
-        print("\tInstrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
+        self.main_window.log_texbox.log("[INFO] Instrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
         try:
             self.midi_service.send_change_tone_msg(self.tone.parent_tone)
         except Exception as e:
@@ -240,7 +241,7 @@ class Core(QObject):
     def process_instrument_select_response(self, bank, program):
         self.lock.lockForWrite()
         self.main_window.central_widget.instrument_list.blockSignals(True)
-        print("\tInstrument: " + str(bank) + ", " + str(program))
+        self.main_window.log_texbox.log("[INFO] Instrument: " + str(bank) + ", " + str(program))
         self.find_instrument_and_update_tone(bank, program)
 
         tone_id_and_name = self.get_tone_id_and_name()
@@ -359,7 +360,7 @@ class Core(QObject):
                                    + " synthesizer controls.<br/>Then press \"Continue\" button to apply parameter changes from JSON."
 
         self.main_window.show_status_msg(
-            "This manual tone selection is necessary because choosing the UPPER Tone is unavailable via SysEx messages.",
+            "Manual tone selection is necessary because selecting the UPPER Tone is not possible via SysEx messages.",
             0)
         modal_window = ChangeInstrumentWindow(modal_window_message)
         modal_window.exec_()

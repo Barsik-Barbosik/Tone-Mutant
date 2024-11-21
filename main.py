@@ -84,6 +84,7 @@ class MainWindow(QMainWindow):
         self.status_bar.showMessage(text, msecs)
 
     def show_error_msg(self, text: str):
+        self.log_texbox.log("[ERROR] " + text)
         self.status_bar.setStyleSheet("background-color: white; color: red")
         self.status_bar.showMessage(text, 5000)
 

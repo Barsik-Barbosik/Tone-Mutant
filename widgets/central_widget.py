@@ -110,9 +110,9 @@ class CentralWidget(QWidget):
                     main_param.value = random.randint(main_param.choices[0], main_param.choices[1])
                 self.core.send_parameter_change_sysex(main_param)
         self.redraw_main_params_panel()
-        self.main_window.show_status_msg(
-            "It may be necessary to correct volume level and octave shift after setting random values.",
-            3000)
+        msg = "It may be necessary to adjust the volume level and octave shift after setting random values."
+        self.main_window.show_status_msg(msg, 3000)
+        self.main_window.log_texbox.log("[INFO] " + msg)
 
     def get_current_tab_name(self):
         return TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))

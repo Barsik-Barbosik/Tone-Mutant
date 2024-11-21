@@ -100,8 +100,9 @@ class DspPage(QWidget):
                 dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
         self.core.set_synth_dsp_params(None)
         self.redraw_dsp_params_panel()
-        self.main_window.show_status_msg("It may be necessary to correct volume levels after setting random values.",
-                                         3000)
+        msg = "It might be necessary to adjust the volume levels after setting random values."
+        self.main_window.show_status_msg(msg, 3000)
+        self.main_window.log_texbox.log("[INFO] " + msg)
 
     def get_module_name(self):
         return self.dsp_module.name if self.dsp_module is not None else constants.EMPTY_DSP_NAME
