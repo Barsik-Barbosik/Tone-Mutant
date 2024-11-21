@@ -44,7 +44,7 @@ class SysexHighlighter(QSyntaxHighlighter):
         self._highlight_word_styles(text)
         self._highlight_bracketed_text(text)
         self._highlight_keywords(text, r'F0|F7', Qt.red)
-        self._highlight_prefixed_line(text, "[INFO]", Qt.black)
+        self._highlight_prefixed_line(text, "[INFO]", Qt.darkGray)
         self._highlight_prefixed_line(text, "[ERROR]", Qt.red)
 
     def _highlight_word_styles(self, text):

@@ -46,7 +46,6 @@ class MidiService:
         else:
             MidiService.__instance = self
             self.core = None
-            # self.threadpool = QThreadPool()
             self.lock = QReadWriteLock()
             self.bank_select_msg_queue = deque()
             self.active_sync_job_count = 0
@@ -56,6 +55,7 @@ class MidiService:
             self.input_name = None
             self.output_name = None
             self.channel = None
+
             self.open_midi_ports()
 
     def open_midi_ports(self):
@@ -83,14 +83,14 @@ class MidiService:
         self.midi_in.delete()
         self.midi_out.delete()
 
-    def verify_midi_ports(self):
+    def check_and_reopen_midi_ports(self):
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
             self.open_midi_ports()
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
-            raise Exception("Unable to open MIDI port. Please verify MIDI settings.")
+            raise Exception("Unable to open MIDI port. Please check the MIDI settings.")
 
     def send_sysex(self, sysex_hex_str: str):
-        self.verify_midi_ports()
+        self.check_and_reopen_midi_ports()
         self.core.main_window.log_texbox.log("[MIDI OUT]\n" + format_as_nice_hex(sysex_hex_str))
         self.lock.lockForWrite()
         self.active_sync_job_count = self.active_sync_job_count + 1

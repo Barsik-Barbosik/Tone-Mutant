@@ -43,15 +43,22 @@ class Core(QObject):
         self.midi_service.active_sync_job_count = 0
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
-        self.request_tone_name()
-        self.request_main_parameters()
-        self.request_dsp_module(0)
-        self.request_dsp_module(1)
-        self.request_dsp_module(2)
-        self.request_dsp_module(3)
-        self.request_upper_volume()
+        try:
+            self.midi_service.check_and_reopen_midi_ports()
+        except Exception as e:
+            self.main_window.show_error_msg(str(e))
 
-        self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
+        if self.midi_service.midi_out.is_port_open() and self.midi_service.midi_in.is_port_open():
+            self.request_tone_name()
+            self.request_main_parameters()
+            self.request_dsp_module(0)
+            self.request_dsp_module(1)
+            self.request_dsp_module(2)
+            self.request_dsp_module(3)
+            self.request_upper_volume()
+
+            self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
+
         self.lock.unlock()
 
         worker = Worker(self.update_main_params_page)
@@ -102,8 +109,9 @@ class Core(QObject):
     def process_main_parameter_response(self, param_number, block_id, response):
         for parameter in self.tone.main_parameter_list:
             if parameter.action_number == param_number and parameter.block_id == block_id:
-                self.main_window.log_texbox.log("[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
-                      + str(block_id) + ", " + str(response))
+                self.main_window.log_texbox.log(
+                    "[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
+                    + str(block_id) + ", " + str(response))
                 if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
                     value = int(int_to_hex(response[1]) + int_to_hex(response[0]), 16)
                 elif len(response) == 1:
@@ -118,7 +126,8 @@ class Core(QObject):
 
     # Send message to update synth's main parameter
     def send_parameter_change_sysex(self, parameter: MainParameter):
-        self.main_window.log_texbox.log("[INFO] Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
+        self.main_window.log_texbox.log(
+            "[INFO] Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
         value = utils.encode_value_by_type(parameter)
         try:
             if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
@@ -231,7 +240,8 @@ class Core(QObject):
         instrument = Tone.get_instrument_by_id(instrument_id)
         self.tone.name = instrument.name
         self.tone.parent_tone = instrument
-        self.main_window.log_texbox.log("[INFO] Instrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
+        self.main_window.log_texbox.log(
+            "[INFO] Instrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
         try:
             self.midi_service.send_change_tone_msg(self.tone.parent_tone)
         except Exception as e:
