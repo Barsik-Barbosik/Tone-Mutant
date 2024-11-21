@@ -155,6 +155,7 @@ class GuiHelper:
     @staticmethod
     def create_knob_input(parameter: Parameter, function_to_run: Callable) -> QHBoxLayout:
         knob_spinbox = QSpinBox()
+        knob_spinbox.setMaximumWidth(60)
         knob_spinbox.setMinimum(parameter.choices[0])
         knob_spinbox.setMaximum(parameter.choices[1])
         knob_spinbox.setValue(parameter.value)

@@ -63,7 +63,7 @@ class MainWindow(QMainWindow):
         splitter.addWidget(self.central_widget)
         splitter.addWidget(self.right_dock)
         splitter.setStretchFactor(0, 1)  # central_widget
-        splitter.setStretchFactor(1, 2)  # right_dock
+        splitter.setStretchFactor(1, 3)  # right_dock
         self.setCentralWidget(splitter)
 
         self.status_bar = QStatusBar(self)
