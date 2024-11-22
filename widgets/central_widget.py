@@ -3,13 +3,13 @@ import random
 
 from PySide2.QtCore import Qt, Slot, Signal
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QListWidgetItem, QTextBrowser, QPushButton
+from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QTextBrowser, QPushButton, QListWidgetItem
 
 from constants import constants
 from constants.enums import TabName, ParameterType
 from external.object_encoder import ObjectEncoder
 from syntax_highlighters.json_highlighter import JsonHighlighter
-from utils.utils import resource_path
+from utils.utils import resource_path, get_all_instruments
 from widgets.dsp_page import DspPage
 from widgets.gui_helper import GuiHelper
 from widgets.inactive_list_widget import InactiveListWidget
@@ -65,13 +65,7 @@ class CentralWidget(QWidget):
         main_params_page.setLayout(hbox_layout)
 
         self.instrument_list.setFixedWidth(180)
-        # self.instrument_list.setEnabled(False)
-        for idx, instrument in enumerate(constants.ALL_INSTRUMENTS_3000_5000):
-            item = QListWidgetItem()
-            item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
-            item.setData(Qt.UserRole, instrument.id)
-            self.instrument_list.insertItem(idx, item)
-        # self.instrument_list.setCurrentRow(0)
+        self.populate_instrument_list()
         self.instrument_list.itemSelectionChanged.connect(self.on_instrument_list_changed)
         hbox_layout.addWidget(self.instrument_list)  # left side
 
@@ -82,6 +76,15 @@ class CentralWidget(QWidget):
 
         hbox_layout.addLayout(self.qgrid_layout)  # right side
         return main_params_page
+
+    def populate_instrument_list(self):
+        self.instrument_list.clear()
+
+        for idx, instrument in enumerate(get_all_instruments()):
+            item = QListWidgetItem()
+            item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
+            item.setData(Qt.UserRole, instrument.id)
+            self.instrument_list.insertItem(idx, item)
 
     @Slot()
     def redraw_main_params_panel(self):

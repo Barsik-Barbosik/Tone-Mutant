@@ -12,7 +12,7 @@ from model.parameter import MainParameter
 from model.tone import Tone
 from services.midi_service import MidiService
 from utils import utils
-from utils.utils import decode_param_value, int_to_hex, lsb_msb_to_int
+from utils.utils import decode_param_value, int_to_hex, lsb_msb_to_int, get_all_instruments
 from widgets.change_instrument_window import ChangeInstrumentWindow
 
 
@@ -269,7 +269,7 @@ class Core(QObject):
 
     def find_instrument_and_update_tone(self, bank, program):
         is_found = False
-        for instrument in constants.ALL_INSTRUMENTS_3000_5000:
+        for instrument in get_all_instruments():
             if instrument.bank == bank and instrument.program == program:
                 is_found = True
                 self.tone.name = instrument.name

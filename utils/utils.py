@@ -1,7 +1,9 @@
+import configparser
 import os
 import sys
 
 from constants import constants
+from constants.constants import DEFAULT_SYNTH_MODEL, CTX_700_800, CTX_8000IN_9000IN
 from constants.enums import ParameterType
 from model.parameter import Parameter
 
@@ -113,3 +115,18 @@ def resource_path(relative_path):
         # development: current dir
         base_path = os.getcwd()
     return os.path.join(base_path, relative_path)
+
+
+def get_all_instruments():
+    cfg = configparser.ConfigParser()
+    cfg.read(constants.CONFIG_FILENAME)
+    synth_model = cfg.get("Synthesizer", "Model", fallback=DEFAULT_SYNTH_MODEL)
+
+    if synth_model == CTX_700_800:
+        all_instruments = constants.ALL_INSTRUMENTS_700_800
+    elif synth_model == CTX_8000IN_9000IN:
+        all_instruments = constants.ALL_INSTRUMENTS_8000IN_9000IN
+    else:
+        all_instruments = constants.ALL_INSTRUMENTS_3000_5000
+
+    return all_instruments

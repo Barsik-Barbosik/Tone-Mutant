@@ -5,7 +5,8 @@ from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QGridLayout, QHBoxLayout, QPushButton, QSizePolicy
 
 from constants import constants
-from constants.constants import DEFAULT_MIDI_IN_PORT, DEFAULT_MIDI_OUT_PORT, DEFAULT_SYNTH_MODEL
+from constants.constants import DEFAULT_MIDI_IN_PORT, DEFAULT_MIDI_OUT_PORT, DEFAULT_SYNTH_MODEL, CTX_3000_5000, \
+    CTX_700_800, CTX_8000IN_9000IN
 from utils.utils import resource_path
 
 
@@ -22,7 +23,7 @@ class SettingsWindow(QWidget):
         self.input_name = cfg.get('Midi', 'InPort', fallback=DEFAULT_MIDI_IN_PORT)
         self.output_name = cfg.get('Midi', 'OutPort', fallback=DEFAULT_MIDI_OUT_PORT)
 
-        synth_models = ["CT-X3000/5000", "CT-X8000IN/9000IN", "CT-X700/800"]
+        synth_models = [CTX_3000_5000, CTX_8000IN_9000IN, CTX_700_800]
         input_ports = rtmidi.MidiIn().get_ports()
         output_ports = rtmidi.MidiOut().get_ports()
 
@@ -93,6 +94,7 @@ class SettingsWindow(QWidget):
         self.core.tone.synthesizer_model = self.synthesizer_model
         self.core.close_midi_ports()
         self.core.midi_service.open_midi_ports()
+        self.core.main_window.central_widget.populate_instrument_list()
 
         self.close()
 
