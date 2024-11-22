@@ -182,6 +182,7 @@ class Core(QObject):
         dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
         dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_page.dsp_module:
+            self.main_window.log_texbox.log("[INFO] Selected DSP module: " + dsp_page.dsp_module.name)
             dsp_page.dsp_module.bypass.value = 0
 
         dsp_page.list_widget.blockSignals(True)

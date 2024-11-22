@@ -133,39 +133,39 @@ class MidiService:
             block_id = lsb_msb_to_int(message[BLOCK_INDEX], message[BLOCK_INDEX + 1])
             sysex_type = lsb_msb_to_int(message[SYSEX_TYPE_INDEX], message[SYSEX_TYPE_INDEX + 1])
             if sysex_type == SysexType.TONE_NAME.value:
-                self.log("[MIDI IN] Tone Name:\n", message)
+                self.log("[MIDI IN] Tone Name\n", message)
                 response = message[-1 - Size.TONE_NAME:-1]
                 self.core.process_tone_name_response(response)
             elif sysex_type in MAIN_PARAMETER_NUMBERS:
-                self.log("[MIDI IN] Parameter:\n", message)
+                self.log("[MIDI IN] Parameter\n", message)
                 response = message[-1 - Size.MAIN_PARAMETER:-1]
                 self.core.process_main_parameter_response(sysex_type, block_id, response)  # 2 bytes
             elif sysex_type in MAIN_SHORT_PARAMETER_NUMBERS:
-                self.log("[MIDI IN] Parameter:\n", message)
+                self.log("[MIDI IN] Parameter\n", message)
                 response = message[-1 - Size.MAIN_PARAMETER_SHORT:-1]
                 self.core.process_main_parameter_response(sysex_type, block_id, response[:1])  # 1 byte
             elif sysex_type == SysexType.DSP_MODULE.value:
-                self.log("[MIDI IN] DSP module:\n", message)
+                self.log("[MIDI IN] DSP module\n", message)
                 response = message[-1 - Size.DSP_MODULE:-1]
                 self.core.process_dsp_module_response(block_id, response[0])
             elif sysex_type == SysexType.DSP_PARAMS.value:
-                self.log("[MIDI IN] DSP params:\n", message)
+                self.log("[MIDI IN] DSP parameters\n", message)
                 response = message[-1 - Size.DSP_PARAMS:-1]
                 self.core.process_dsp_module_parameters_response(block_id, response)
             else:
                 self.log("[MIDI IN]\n", message)
         elif message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.REAL_TIME:
-            self.log("[MIDI IN] Real Time SysEx:\n", message)
+            self.log("[MIDI IN] Real Time SysEx\n", message)
         elif message[0] == CC_FIRST_BYTE and message[1] == CC_BANK_SELECT_MSB:
-            self.log("[MIDI IN] Bank change MSB: ", message)
+            self.log("[MIDI IN] Bank change MSB\n", message)
             self.bank_select_msg_queue.append(message)
             time.sleep(0.01)
         elif message[0] == CC_FIRST_BYTE and message[1] == CC_BANK_SELECT_LSB:
-            self.log("[MIDI IN] Bank change LSB: ", message)
+            self.log("[MIDI IN] Bank change LSB\n", message)
         # elif message[0] == CC_FIRST_BYTE:
         #     self.log("[MIDI IN] CC: ", message)
         elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE:
-            self.log("[MIDI IN] Program change: ", message)
+            self.log("[MIDI IN] Program change\n", message)
             bank_select_msg = self.get_last_bank_select_message()
             if bank_select_msg is not None:
                 self.core.process_instrument_select_response(bank_select_msg[2], message[1])
