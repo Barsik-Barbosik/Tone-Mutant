@@ -1,0 +1,3 @@
+PySide2==5.15.2.1
+python-rtmidi==1.4.9
+Nuitka==2.5

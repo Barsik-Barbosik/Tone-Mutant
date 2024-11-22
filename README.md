@@ -47,7 +47,9 @@ Make sure you have the following dependencies installed:
 - **PySide2 5.15** (Qt for Python)
 - **Python-rtmidi 1.4.9** (a Python binding for the RtMidi C++ library)
 - **Nuitka 2.5** (for compiling)
-
+```bash
+pip install -r requirements.txt
+```
 I have not tested with other versions.
 
 ### Running the Application

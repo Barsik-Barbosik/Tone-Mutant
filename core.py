@@ -354,7 +354,7 @@ class Core(QObject):
                                            + str(self.tone.parent_tone.id) + " " + str(self.tone.parent_tone.name) \
                                            + "</h2><h5>(bank: " + str(self.tone.parent_tone.bank) \
                                            + ", program: " + str(self.tone.parent_tone.program) \
-                                           + ")</h5>Then press \"Continue\" button to apply parameter changes from JSON."
+                                           + ")</h5>Then, press the \"Continue\" button to apply the parameter changes from the JSON file."
 
         if self.tone.parent_tone is None:
             json_synthesizer_model_str = "unknown synthesizer model" if json_synthesizer_model is None else str(
@@ -363,11 +363,11 @@ class Core(QObject):
             tone_name_str = "?????" if self.tone.name is None else self.tone.name
             json_bank_str = "unknown" if json_bank is None else str(json_bank)
             json_program_str = "unknown" if json_program is None else str(json_program)
-            modal_window_message = "The parent tone (from " + json_synthesizer_model_str + ") is not found:<h2>" \
+            modal_window_message = "The parent tone (from " + json_synthesizer_model_str + " model) is unknown:<h2>" \
                                    + id_str + tone_name_str \
                                    + "</h2><h5>(bank: " + json_bank_str + ", program: " + json_program_str \
-                                   + ")</h5>You can choose any other source-tone using your " + self.tone.synthesizer_model \
-                                   + " synthesizer controls.<br/>Then press \"Continue\" button to apply parameter changes from JSON."
+                                   + ")</h5>You can select any other source tone using your synthesizer controls.<br/>" \
+                                   + "Then, press the \"Continue\" button to apply the parameter changes from the JSON file."
 
         self.main_window.show_status_msg(
             "Manual tone selection is necessary because selecting the UPPER Tone is not possible via SysEx messages.",
