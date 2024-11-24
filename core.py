@@ -58,7 +58,7 @@ class Core(QObject):
             self.request_dsp_module(3)
             self.request_upper_volume()
 
-            self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
+        self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
 
         self.lock.unlock()
 
