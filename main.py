@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import tempfile
 
 from PySide2.QtCore import Qt, QCoreApplication, Signal, Slot
 from PySide2.QtGui import QIcon
@@ -26,6 +27,7 @@ from widgets.top_widget import TopWidget
 # nuitka-project: --company-name="Barsik-Barbosik"
 # nuitka-project: --standalone
 # nuitka-project: --onefile
+# nuitka-project: --onefile-windows-splash-screen-image={MAIN_DIRECTORY}/resources/splash.png
 # nuitka-project: --enable-plugin=pyside2
 # nuitka-project: --include-data-dir="C:\Workspace\ToneMutant\resources=resources"
 # nuitka-project: --windows-icon-from-ico=resources/note.ico
@@ -36,6 +38,16 @@ class MainWindow(QMainWindow):
     status_msg_signal = Signal(str, int)
 
     def __init__(self, parent=None):
+        # Splash screen (Nuitka)
+        if "NUITKA_ONEFILE_PARENT" in os.environ:
+            splash_filename = os.path.join(
+                tempfile.gettempdir(),
+                "onefile_%d_splash_feedback.tmp" % int(os.environ["NUITKA_ONEFILE_PARENT"]),
+            )
+
+            if os.path.exists(splash_filename):
+                os.unlink(splash_filename)
+
         super().__init__(parent)
         self.setWindowTitle("ToneMutant 1.0.0")
         self.setWindowIcon(QIcon(resource_path("resources/note.png")))
