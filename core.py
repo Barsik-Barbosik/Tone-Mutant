@@ -44,6 +44,7 @@ class Core(QObject):
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
         try:
+            self.midi_service.close_midi_ports()
             self.midi_service.check_and_reopen_midi_ports()
         except Exception as e:
             self.main_window.show_error_msg(str(e))
