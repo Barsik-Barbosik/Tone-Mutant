@@ -92,11 +92,18 @@ class SettingsWindow(QWidget):
             cfg.write(cfg_file)
 
         self.core.tone.synthesizer_model = self.synthesizer_model
-        self.core.close_midi_ports()
-        self.core.midi_service.open_midi_ports()
+
+        try:
+            self.core.close_midi_ports()
+            self.core.midi_service.open_midi_ports()
+        except Exception as e:
+            self.core.main_window.log_texbox.log("[ERROR] Unable to open MIDI port.")
+
         self.core.main_window.central_widget.populate_instrument_list()
 
         self.close()
+        self.deleteLater()
 
     def cancel_button_action(self):
         self.close()
+        self.deleteLater()
