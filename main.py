@@ -29,7 +29,7 @@ from widgets.top_widget import TopWidget
 # nuitka-project: --onefile
 # nuitka-project: --onefile-windows-splash-screen-image={MAIN_DIRECTORY}/resources/splash.png
 # nuitka-project: --enable-plugin=pyside2
-# nuitka-project: --include-data-dir="C:\Workspace\ToneMutant\resources=resources"
+# nuitka-project: --include-data-dir={MAIN_DIRECTORY}/resources=resources
 # nuitka-project: --windows-icon-from-ico=resources/note.ico
 # nuitka-project: --disable-console
 # nuitka-project: --remove-output
