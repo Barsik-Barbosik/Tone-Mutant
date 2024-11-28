@@ -110,7 +110,7 @@ class GuiHelper:
 
             submit_button = QPushButton(" Send MIDI Message")
             submit_button.setIcon(QIcon(resource_path("resources/apply.png")))
-            submit_button.clicked.connect(lambda: main_window.send_midi_msg(midi_msg_input.toPlainText()))
+            submit_button.clicked.connect(lambda: main_window.core.send_midi_msg(midi_msg_input.toPlainText()))
             log_tab_layout.addWidget(submit_button)
 
         log_tab.setLayout(log_tab_layout)

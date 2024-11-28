@@ -441,3 +441,6 @@ class Core(QObject):
 
                 if self.main_window.central_widget.current_dsp_page:
                     self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
+
+    def send_midi_msg(self, midi_msg: str):
+        self.midi_service.send_midi_msg(midi_msg)

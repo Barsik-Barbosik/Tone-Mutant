@@ -31,7 +31,7 @@ from widgets.top_widget import TopWidget
 # nuitka-project: --enable-plugin=pyside2
 # nuitka-project: --include-data-dir={MAIN_DIRECTORY}/resources=resources
 # nuitka-project: --windows-icon-from-ico=resources/note.ico
-# nuitka-project: --disable-console
+# nuitka-project: --windows-console-mode=disable
 # nuitka-project: --remove-output
 
 class MainWindow(QMainWindow):
@@ -61,7 +61,6 @@ class MainWindow(QMainWindow):
         self.log_texbox = DequeLog(self)
 
         self.central_widget = CentralWidget(self)
-        # self.setCentralWidget(self.central_widget)
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)  # remove right margin
 
         self.top_widget = TopWidget(self)
@@ -69,7 +68,6 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.TopDockWidgetArea, self.top_dock)
 
         self.right_dock = GuiHelper.init_right_dock(self)
-        # self.addDockWidget(Qt.RightDockWidgetArea, self.right_dock)
 
         splitter = QSplitter(self)
         splitter.addWidget(self.central_widget)
@@ -131,9 +129,6 @@ class MainWindow(QMainWindow):
                 self.core.tone.name = os.path.splitext(os.path.basename(file_name))[0]
                 file.write(self.central_widget.get_json())
                 self.top_widget.tone_name_label.setText(self.core.tone.name)
-
-    def send_midi_msg(self, midi_msg: str):
-        self.core.midi_service.send_midi_msg(midi_msg)
 
     @staticmethod
     def menu_exit_action():
