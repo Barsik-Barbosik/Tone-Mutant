@@ -1,4 +1,4 @@
-from PySide2.QtCore import Qt, Signal, QCoreApplication
+from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser
 
@@ -15,8 +15,6 @@ from utils.utils import resource_path
 
 
 class MainWindow(QMainWindow):
-    status_msg_signal = Signal(str, int)
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("ToneMutant 1.0.0")
@@ -48,9 +46,6 @@ class MainWindow(QMainWindow):
         self._setup_layout()
 
         self.settings_window = None
-
-        # Signal connections
-        self.status_msg_signal.connect(self.core.show_status_msg)
 
         # Initialize tone synchronization
         self.core.synchronize_tone_with_synth()

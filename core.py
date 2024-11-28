@@ -20,6 +20,7 @@ from utils.worker import Worker
 # NB! Use int values as its method parameters, all required byte/hex conversions make in the Midi Service!
 class Core(QObject):
     synchronize_tone_signal = Signal()
+    status_msg_signal = Signal(str, int)
 
     def __init__(self, main_window, status_bar):
         super().__init__()
@@ -31,6 +32,7 @@ class Core(QObject):
         self.lock = QReadWriteLock()
         self.timeout = 0
         self.synchronize_tone_signal.connect(self.synchronize_tone_with_synth)
+        self.status_msg_signal.connect(self.show_status_msg)
 
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
@@ -305,7 +307,7 @@ class Core(QObject):
                     self.lock.lockForWrite()
                     text = "Autosynchronize countdown: " + str(self.timeout)
                     print(text)
-                    self.main_window.status_msg_signal.emit(text, 1000)
+                    self.status_msg_signal.emit(text, 1000)
                     self.timeout = self.timeout - 1
                     self.lock.unlock()
                     time.sleep(1)
@@ -448,6 +450,7 @@ class Core(QObject):
     def send_custom_midi_msg(self, midi_msg: str):
         self.midi_service.send_custom_midi_msg(midi_msg)
 
+    @Slot()
     def show_status_msg(self, text: str, msecs: int):
         self.status_bar.setStyleSheet("background-color: white; color: black")
         self.status_bar.showMessage(text, msecs)
