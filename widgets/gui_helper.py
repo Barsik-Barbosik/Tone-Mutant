@@ -1,9 +1,10 @@
+import configparser
 from typing import Callable
 
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QDial, \
     QHBoxLayout, QSpinBox, QComboBox, QWidget, QSizePolicy, QGridLayout, QMenuBar, QMenu, QAction, QMainWindow, \
-    QDockWidget, QFrame, QTabWidget
+    QDockWidget, QFrame, QTabWidget, QVBoxLayout, QTextEdit, QPushButton
 from PySide2.QtWidgets import QLabel
 
 from constants import constants
@@ -29,10 +30,12 @@ class GuiHelper:
         save_json_action.triggered.connect(main_window.show_save_json_dialog)
 
         open_action = QAction(QIcon(resource_path('resources/open.png')), "&Open Tone (TON)", main_window)
-        open_action.setStatusTip("Open TON file (Not implemented. Please use the \"Synchronize Tone\" button to load the required tone from the synthesizer.)")
+        open_action.setStatusTip(
+            "Open TON file (Not implemented. Please use the \"Synchronize Tone\" button to load the required tone from the synthesizer.)")
         open_action.setEnabled(False)
         save_action = QAction(QIcon(resource_path('resources/save.png')), "&Save Tone (TON)", main_window)
-        save_action.setStatusTip("Save tone as a TON file (Not implemented. Please use the synthesizer to save and export the tone. See \"How to Save a TON File\" for instructions.)")
+        save_action.setStatusTip(
+            "Save tone as a TON file (Not implemented. Please use the synthesizer to save and export the tone. See \"How to Save a TON File\" for instructions.)")
         save_action.setEnabled(False)
         how_to_save_action = QAction(QIcon(resource_path('resources/help.png')), "&How to Save a TON File", main_window)
         how_to_save_action.setStatusTip("Instructions on how to use the synthesizer to save and export the tone")
@@ -94,8 +97,22 @@ class GuiHelper:
         help_tab.setLayout(help_tab_layout)
 
         log_tab = QWidget(main_window)
-        log_tab_layout = QHBoxLayout()
+        log_tab_layout = QVBoxLayout()
         log_tab_layout.addWidget(main_window.log_texbox)
+
+        cfg = configparser.ConfigParser()
+        cfg.read(constants.CONFIG_FILENAME)
+        if "true" == cfg.get("Expert", "is_custom_midi_msg_sending_enabled", fallback="false"):
+            midi_msg_input = QTextEdit(main_window)
+            midi_msg_input.setPlaceholderText("MIDI message...")
+            midi_msg_input.setMaximumHeight(80)
+            log_tab_layout.addWidget(midi_msg_input)
+
+            submit_button = QPushButton(" Send MIDI Message")
+            submit_button.setIcon(QIcon(resource_path("resources/apply.png")))
+            submit_button.clicked.connect(lambda: main_window.send_midi_msg(midi_msg_input.toPlainText()))
+            log_tab_layout.addWidget(submit_button)
+
         log_tab.setLayout(log_tab_layout)
 
         tab_widget = QTabWidget(main_window)

@@ -98,6 +98,20 @@ class MidiService:
         self.lock.unlock()
         time.sleep(0.01)
 
+    def send_midi_msg(self, msg_str: str):
+        self.check_and_reopen_midi_ports()
+        self.core.main_window.log_texbox.log("[MIDI OUT] " + format_as_nice_hex(msg_str))
+        self.lock.lockForWrite()
+
+        try:
+            self.active_sync_job_count = self.active_sync_job_count + 1
+            self.midi_out.send_message(bytearray(bytes.fromhex(msg_str)))
+        except Exception as e:
+            self.core.main_window.show_error_msg(str(e))
+
+        self.lock.unlock()
+        time.sleep(0.01)
+
     def request_tone_name(self):
         size = size_to_lsb_msb(Size.TONE_NAME)
         msg = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00" + size + "F7"

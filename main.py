@@ -132,6 +132,9 @@ class MainWindow(QMainWindow):
                 file.write(self.central_widget.get_json())
                 self.top_widget.tone_name_label.setText(self.core.tone.name)
 
+    def send_midi_msg(self, midi_msg: str):
+        self.core.midi_service.send_midi_msg(midi_msg)
+
     @staticmethod
     def menu_exit_action():
         QCoreApplication.instance().quit()

@@ -88,6 +88,10 @@ class SettingsWindow(QWidget):
                 cfg.add_section("Midi")
             cfg.set('Midi', 'OutPort', self.output_name)
 
+        if not cfg.has_section("Expert"):
+            cfg.add_section("Expert")
+        cfg.set('Expert', 'is_custom_midi_msg_sending_enabled', "false")
+
         with open(constants.CONFIG_FILENAME, 'w') as cfg_file:
             cfg.write(cfg_file)
 
