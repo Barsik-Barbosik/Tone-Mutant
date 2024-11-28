@@ -1,9 +1,9 @@
 from typing import Final
 
 from constants.enums import ParameterType
-from model.dsp_module import DspModule
-from model.instrument import Instrument
-from model.parameter import DspParameter
+from models.dsp_module import DspModule
+from models.instrument import Instrument
+from models.parameter import DspParameter
 
 CTX_3000_5000: Final[str] = "CT-X3000/5000"
 CTX_8000IN_9000IN: Final[str] = "CT-X8000IN/9000IN"

@@ -2,9 +2,9 @@ from typing import List
 
 from constants import constants
 from constants.enums import ParameterType
-from model.dsp_module import DspModule
-from model.instrument import Instrument
-from model.parameter import MainParameter, AdvancedParameter
+from models.dsp_module import DspModule
+from models.instrument import Instrument
+from models.parameter import MainParameter, AdvancedParameter
 from utils.utils import get_all_instruments
 
 

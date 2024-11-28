@@ -9,10 +9,10 @@ from PySide2.QtCore import QReadWriteLock
 from constants import constants
 from constants.constants import DEFAULT_MIDI_IN_PORT, DEFAULT_MIDI_OUT_PORT, DEFAULT_MIDI_CHANNEL
 from constants.enums import SysexType, SysexId, Size
-from external.worker import Worker
-from model.instrument import Instrument
+from models.instrument import Instrument
 from utils.utils import int_to_hex, int_to_lsb_msb, format_as_nice_hex, list_to_hex_str, \
     int_to_lsb_msb_8bit, size_to_lsb_msb, lsb_msb_to_int
+from utils.worker import Worker
 
 # TODO: group all params into enums; use for different log highlighting colors
 SYSEX_FIRST_BYTE = 0xF0
@@ -91,23 +91,23 @@ class MidiService:
 
     def send_sysex(self, sysex_hex_str: str):
         self.check_and_reopen_midi_ports()
-        self.core.main_window.log_texbox.log("[MIDI OUT]\n" + format_as_nice_hex(sysex_hex_str))
+        self.core.log("[MIDI OUT]\n" + format_as_nice_hex(sysex_hex_str))
         self.lock.lockForWrite()
         self.active_sync_job_count = self.active_sync_job_count + 1
         self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
         self.lock.unlock()
         time.sleep(0.01)
 
-    def send_midi_msg(self, msg_str: str):
-        self.check_and_reopen_midi_ports()
-        self.core.main_window.log_texbox.log("[MIDI OUT] " + format_as_nice_hex(msg_str))
+    def send_custom_midi_msg(self, msg_str: str):
         self.lock.lockForWrite()
 
         try:
+            self.check_and_reopen_midi_ports()
+            self.core.log("[MIDI OUT] " + format_as_nice_hex(msg_str))
             self.active_sync_job_count = self.active_sync_job_count + 1
             self.midi_out.send_message(bytearray(bytes.fromhex(msg_str)))
         except Exception as e:
-            self.core.main_window.show_error_msg(str(e))
+            self.core.show_error_msg(str(e))
 
         self.lock.unlock()
         time.sleep(0.01)
@@ -192,7 +192,7 @@ class MidiService:
             self.log("[MIDI IN] ", message)
 
     def log(self, title, message):
-        self.core.main_window.log_texbox.log(title + format_as_nice_hex(list_to_hex_str(message)))
+        self.core.log(title + format_as_nice_hex(list_to_hex_str(message)))
 
     def get_last_bank_select_message(self):
         last_message = None

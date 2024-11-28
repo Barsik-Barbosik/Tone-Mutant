@@ -5,7 +5,7 @@ import sys
 from constants import constants
 from constants.constants import DEFAULT_SYNTH_MODEL, CTX_700_800, CTX_8000IN_9000IN
 from constants.enums import ParameterType
-from model.parameter import Parameter
+from models.parameter import Parameter
 
 
 # Converts int to 1-byte hex string

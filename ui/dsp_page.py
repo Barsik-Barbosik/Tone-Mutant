@@ -6,10 +6,10 @@ from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QL
 
 from constants import constants
 from constants.enums import ParameterType
-from model.dsp_module import DspModule
+from models.dsp_module import DspModule
+from ui.gui_helper import GuiHelper
 from utils import utils
 from utils.utils import resource_path
-from widgets.gui_helper import GuiHelper
 
 
 class DspPage(QWidget):
@@ -18,8 +18,6 @@ class DspPage(QWidget):
     def __init__(self, parent, block_id: int):
         super().__init__(parent)
         self.core = parent.core
-        self.main_window = self.core.main_window
-
         self.block_id: int = block_id
         self.dsp_module: DspModule = None
 
@@ -101,8 +99,8 @@ class DspPage(QWidget):
         self.core.set_synth_dsp_params(None)
         self.redraw_dsp_params_panel()
         msg = "It might be necessary to adjust the volume levels after setting random values."
-        self.main_window.show_status_msg(msg, 3000)
-        self.main_window.log_texbox.log("[INFO] " + msg)
+        self.core.show_status_msg(msg, 3000)
+        self.core.log("[INFO] " + msg)
 
     def get_module_name(self):
         return self.dsp_module.name if self.dsp_module is not None else constants.EMPTY_DSP_NAME

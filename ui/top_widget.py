@@ -5,8 +5,8 @@ from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QLabel, QHBoxLayout, QPushButton
 
 from constants import constants
+from ui.gui_helper import GuiHelper
 from utils.utils import resource_path
-from widgets.gui_helper import GuiHelper
 
 ALL_CHANNELS = ["Upper keyboard", "MIDI Channel 1"]
 CHANNEL_ENABLE_DISABLE_ITEMS = ["ENABLED", "DISABLED"]
@@ -18,7 +18,6 @@ class TopWidget(QWidget):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.core = parent.core
-        self.main_window = self.core.main_window
 
         self.channel = 0
         self.layout = QHBoxLayout(self)
@@ -58,7 +57,7 @@ class TopWidget(QWidget):
 
     def on_randomize_tone_button_pressed(self):
         msg = "Setting random main parameters and 2 random DSP modules..."
-        self.main_window.log_texbox.log("[INFO] " + msg)
+        self.core.log("[INFO] " + msg)
 
         self.core.main_window.central_widget.on_random_button_pressed()
 
@@ -72,7 +71,7 @@ class TopWidget(QWidget):
         if random_dsp_2 > 0:
             self.core.main_window.central_widget.dsp_page_2.on_random_button_pressed()
 
-        self.main_window.show_status_msg(msg, 3000)
+        self.core.show_status_msg(msg, 3000)
 
     @Slot()
     def redraw_upper_volume_knob(self):

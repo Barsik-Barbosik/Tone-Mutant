@@ -99,9 +99,9 @@ class SettingsWindow(QWidget):
 
         try:
             self.core.close_midi_ports()
-            self.core.midi_service.open_midi_ports()
+            self.core.open_midi_ports()
         except Exception as e:
-            self.core.main_window.log_texbox.log("[ERROR] Unable to open MIDI port.")
+            self.core.log("[ERROR] Unable to open MIDI port.")
 
         self.core.main_window.central_widget.populate_instrument_list()
 

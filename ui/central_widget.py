@@ -7,12 +7,12 @@ from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QTe
 
 from constants import constants
 from constants.enums import TabName, ParameterType
-from external.object_encoder import ObjectEncoder
 from syntax_highlighters.json_highlighter import JsonHighlighter
+from ui.dsp_page import DspPage
+from ui.gui_helper import GuiHelper
+from ui.inactive_list_widget import InactiveListWidget
+from utils.object_encoder import ObjectEncoder
 from utils.utils import resource_path, get_all_instruments
-from widgets.dsp_page import DspPage
-from widgets.gui_helper import GuiHelper
-from widgets.inactive_list_widget import InactiveListWidget
 
 
 class CentralWidget(QWidget):
@@ -22,7 +22,6 @@ class CentralWidget(QWidget):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.core = parent.core
-        self.main_window = self.core.main_window
 
         self.json_view_tab_textbox = QTextBrowser()
         JsonHighlighter(self.json_view_tab_textbox.document())
@@ -114,8 +113,8 @@ class CentralWidget(QWidget):
                 self.core.send_parameter_change_sysex(main_param)
         self.redraw_main_params_panel()
         msg = "It may be necessary to adjust the volume level and octave shift after setting random values."
-        self.main_window.show_status_msg(msg, 3000)
-        self.main_window.log_texbox.log("[INFO] " + msg)
+        self.core.show_status_msg(msg, 3000)
+        self.core.log("[INFO] " + msg)
 
     def get_current_tab_name(self):
         return TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
@@ -125,9 +124,9 @@ class CentralWidget(QWidget):
         current_tab_name = self.get_current_tab_name()
 
         if current_tab_name == TabName.MAIN_PARAMETERS:
-            self.main_window.show_status_msg("Main parameters for editing tone", 3000)
+            self.core.show_status_msg("Main parameters for editing tone", 3000)
         elif current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
-            self.main_window.show_status_msg("Parameters for " + current_tab_name.value + " module", 3000)
+            self.core.show_status_msg("Parameters for " + current_tab_name.value + " module", 3000)
             if current_tab_name == TabName.DSP_1:
                 self.current_dsp_page = self.dsp_page_1
             elif current_tab_name == TabName.DSP_2:
@@ -138,7 +137,7 @@ class CentralWidget(QWidget):
                 self.current_dsp_page = self.dsp_page_4
             self.current_dsp_page.redraw_dsp_params_panel()
         elif current_tab_name == TabName.JSON:
-            self.main_window.show_status_msg("Tone information in JSON-format", 3000)
+            self.core.show_status_msg("Tone information in JSON-format", 3000)
             self.json_view_tab_textbox.setPlainText(self.get_json())
 
         self.update_help_text_panel()
@@ -175,7 +174,7 @@ class CentralWidget(QWidget):
                 for param in self.current_dsp_page.dsp_module.dsp_parameter_list:
                     text = text + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
 
-        self.main_window.show_help_text(text)
+        self.core.main_window.show_help_text(text)
 
     # Send message to update synth's main parameter
     def set_synth_parameter(self, parameter):

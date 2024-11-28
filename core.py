@@ -7,13 +7,13 @@ from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
 from constants import constants
 from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL
 from constants.enums import ParameterType
-from external.worker import Worker
-from model.parameter import MainParameter
-from model.tone import Tone
+from models.parameter import MainParameter
+from models.tone import Tone
 from services.midi_service import MidiService
+from ui.change_instrument_window import ChangeInstrumentWindow
 from utils import utils
 from utils.utils import decode_param_value, int_to_hex, lsb_msb_to_int, get_all_instruments
-from widgets.change_instrument_window import ChangeInstrumentWindow
+from utils.worker import Worker
 
 
 # Class for managing tone state and handling all communication between GUI and Midi Service
@@ -21,9 +21,10 @@ from widgets.change_instrument_window import ChangeInstrumentWindow
 class Core(QObject):
     synchronize_tone_signal = Signal()
 
-    def __init__(self, main_window):
+    def __init__(self, main_window, status_bar):
         super().__init__()
         self.main_window = main_window
+        self.status_bar = status_bar
         self.tone: Tone = Tone()
         self.midi_service = MidiService.get_instance()
         self.midi_service.core = self
@@ -39,7 +40,7 @@ class Core(QObject):
     @Slot()
     def synchronize_tone_with_synth(self):
         self.lock.lockForWrite()
-        self.main_window.log_texbox.log("[INFO] Synchronizing tone...")
+        self.log("[INFO] Synchronizing tone...")
         self.midi_service.active_sync_job_count = 0
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
@@ -47,7 +48,7 @@ class Core(QObject):
             self.midi_service.close_midi_ports()
             self.midi_service.check_and_reopen_midi_ports()
         except Exception as e:
-            self.main_window.show_error_msg(str(e))
+            self.show_error_msg(str(e))
 
         if self.midi_service.midi_out.is_port_open() and self.midi_service.midi_in.is_port_open():
             self.request_tone_name()
@@ -81,13 +82,13 @@ class Core(QObject):
         try:
             self.midi_service.request_tone_name()
         except Exception as e:
-            self.main_window.show_error_msg(str(e))
+            self.show_error_msg(str(e))
 
     # Process tone name from synth response
     def process_tone_name_response(self, response):
         self.lock.lockForWrite()
         tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
-        self.main_window.log_texbox.log("[INFO] Synth tone name: " + tone_name)
+        self.log("[INFO] Synth tone name: " + tone_name)
         if tone_name:
             self.tone.name = tone_name
         elif self.tone.name is None:
@@ -100,19 +101,18 @@ class Core(QObject):
     # Request main parameter value from synth
     def request_main_parameters(self):
         for parameter in self.tone.main_parameter_list:
-            self.main_window.log_texbox.log("[INFO] Requesting parameter: " + parameter.name)
+            self.log("[INFO] Requesting parameter: " + parameter.name)
             try:
                 self.midi_service.request_parameter_value(parameter.block_id, parameter.action_number)
             except Exception as e:
-                self.main_window.show_error_msg(str(e))
+                self.show_error_msg(str(e))
 
     # Process main parameter value response
     def process_main_parameter_response(self, param_number, block_id, response):
         for parameter in self.tone.main_parameter_list:
             if parameter.action_number == param_number and parameter.block_id == block_id:
-                self.main_window.log_texbox.log(
-                    "[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
-                    + str(block_id) + ", " + str(response))
+                self.log("[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
+                         + str(block_id) + ", " + str(response))
                 if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
                     value = int(int_to_hex(response[1]) + int_to_hex(response[0]), 16)
                 elif len(response) == 1:
@@ -127,7 +127,7 @@ class Core(QObject):
 
     # Send message to update synth's main parameter
     def send_parameter_change_sysex(self, parameter: MainParameter):
-        self.main_window.log_texbox.log(
+        self.log(
             "[INFO] Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
         value = utils.encode_value_by_type(parameter)
         try:
@@ -140,14 +140,14 @@ class Core(QObject):
             else:
                 self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.action_number, value)
         except Exception as e:
-            self.main_window.show_error_msg(str(e))
+            self.show_error_msg(str(e))
 
     # Request DSP module from synth
     def request_dsp_module(self, block_id):
         try:
             self.midi_service.request_dsp_module(block_id)
         except Exception as e:
-            self.main_window.show_error_msg(str(e))
+            self.show_error_msg(str(e))
 
     # Process DSP module from synth response
     def process_dsp_module_response(self, block_id: int, dsp_module_id: int):
@@ -174,7 +174,7 @@ class Core(QObject):
                 self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
                 self.request_dsp_module_parameters(block_id, dsp_module_id)
         except Exception as e:
-            self.main_window.show_error_msg(str(e))
+            self.show_error_msg(str(e))
 
     # Update tone dsp module and refresh GUI
     def update_tone_dsp_module_and_refresh_gui(self, block_id, dsp_module_id):
@@ -183,7 +183,7 @@ class Core(QObject):
         dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
         dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_page.dsp_module:
-            self.main_window.log_texbox.log("[INFO] Selected DSP module: " + dsp_page.dsp_module.name)
+            self.log("[INFO] Selected DSP module: " + dsp_page.dsp_module.name)
             dsp_page.dsp_module.bypass.value = 0
 
         dsp_page.list_widget.blockSignals(True)
@@ -199,7 +199,7 @@ class Core(QObject):
             try:
                 self.midi_service.request_dsp_params(block_id)
             except Exception as e:
-                self.main_window.show_error_msg(str(e))
+                self.show_error_msg(str(e))
 
     # Process DSP module parameters from synth response
     def process_dsp_module_parameters_response(self, block_id, synth_dsp_params):
@@ -220,7 +220,7 @@ class Core(QObject):
             self.midi_service.request_parameter_value(self.tone.upper_volume.block_id,
                                                       self.tone.upper_volume.action_number)
         except Exception as e:
-            self.main_window.show_error_msg(str(e))
+            self.show_error_msg(str(e))
 
     # Send message to update synth's DSP parameters
     def set_synth_dsp_params(self, _):
@@ -229,31 +229,30 @@ class Core(QObject):
             if dsp_page:
                 self.midi_service.send_dsp_params_change_sysex(dsp_page.block_id, dsp_page.get_dsp_params_as_list())
         except Exception as e:
-            self.main_window.show_error_msg(str(e))
+            self.show_error_msg(str(e))
 
     def send_dsp_bypass(self, block_id, bypass):
         try:
             self.midi_service.send_dsp_bypass_sysex(block_id, bypass)
         except Exception as e:
-            self.main_window.show_error_msg(str(e))
+            self.show_error_msg(str(e))
 
     # Send program change message
     def change_instrument_by_id_from_list(self, instrument_id):
         instrument = Tone.get_instrument_by_id(instrument_id)
         self.tone.name = instrument.name
         self.tone.parent_tone = instrument
-        self.main_window.log_texbox.log(
-            "[INFO] Instrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
+        self.log("[INFO] Instrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
         try:
             self.midi_service.send_change_tone_msg(self.tone.parent_tone)
         except Exception as e:
-            self.main_window.show_error_msg(str(e))
+            self.show_error_msg(str(e))
 
     # Intercept instrument change messages from synth
     def process_instrument_select_response(self, bank, program):
         self.lock.lockForWrite()
         self.main_window.central_widget.instrument_list.blockSignals(True)
-        self.main_window.log_texbox.log("[INFO] Instrument: " + str(bank) + ", " + str(program))
+        self.log("[INFO] Instrument: " + str(bank) + ", " + str(program))
         self.find_instrument_and_update_tone(bank, program)
 
         tone_id_and_name = self.get_tone_id_and_name()
@@ -317,6 +316,10 @@ class Core(QObject):
             self.synchronize_tone_signal.emit()
             self.lock.unlock()
 
+    # Open midi ports
+    def open_midi_ports(self):
+        self.midi_service.open_midi_ports()
+
     # Close midi ports
     def close_midi_ports(self):
         self.midi_service.close_midi_ports()
@@ -371,12 +374,12 @@ class Core(QObject):
                                    + ")</h5>You can select any other source tone using your synthesizer controls.<br/>" \
                                    + "Then, press the \"Continue\" button to apply the parameter changes from the JSON file."
 
-        self.main_window.show_status_msg(
+        self.show_status_msg(
             "Manual tone selection is necessary because selecting the UPPER Tone is not possible via SysEx messages.",
             0)
         modal_window = ChangeInstrumentWindow(modal_window_message)
         modal_window.exec_()
-        self.main_window.show_status_msg("", 0)
+        self.show_status_msg("", 0)
 
         # Main parameters
         if "parameters" in json_tone:
@@ -414,7 +417,7 @@ class Core(QObject):
                     self.midi_service.send_dsp_bypass_sysex(block_id, False)
                     self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
             except Exception as e:
-                self.main_window.show_error_msg(str(e))
+                self.show_error_msg(str(e))
 
             dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
             dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
@@ -437,10 +440,22 @@ class Core(QObject):
                     self.midi_service.send_dsp_params_change_sysex(block_id,
                                                                    dsp_page.get_dsp_params_as_list())
                 except Exception as e:
-                    self.main_window.show_error_msg(str(e))
+                    self.show_error_msg(str(e))
 
                 if self.main_window.central_widget.current_dsp_page:
                     self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
 
-    def send_midi_msg(self, midi_msg: str):
-        self.midi_service.send_midi_msg(midi_msg)
+    def send_custom_midi_msg(self, midi_msg: str):
+        self.midi_service.send_custom_midi_msg(midi_msg)
+
+    def show_status_msg(self, text: str, msecs: int):
+        self.status_bar.setStyleSheet("background-color: white; color: black")
+        self.status_bar.showMessage(text, msecs)
+
+    def show_error_msg(self, text: str):
+        self.log("[ERROR] " + text)
+        self.status_bar.setStyleSheet("background-color: white; color: red")
+        self.status_bar.showMessage(text, 5000)
+
+    def log(self, msg: str):
+        self.main_window.log_texbox.log(msg)
