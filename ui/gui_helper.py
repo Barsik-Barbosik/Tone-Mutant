@@ -23,20 +23,20 @@ class GuiHelper:
         file_menu = QMenu("&File", main_window)
         menu_bar.addMenu(file_menu)
 
-        open_json_action = QAction(QIcon(resource_path('resources/open.png')), "Open Tone (JSON)", main_window)
+        open_json_action = QAction(QIcon(resource_path('resources/open.png')), "&Open Tone (JSON)", main_window)
         open_json_action.setStatusTip("Read tone information from a JSON-formatted file")
         open_json_action.triggered.connect(open_json_callback)
 
-        save_json_action = QAction(QIcon(resource_path('resources/save.png')), "Save Tone (JSON)", main_window)
+        save_json_action = QAction(QIcon(resource_path('resources/save.png')), "&Save Tone (JSON)", main_window)
         save_json_action.setStatusTip("Save tone information as a JSON-formatted file")
         save_json_action.triggered.connect(save_json_callback)
 
-        open_action = QAction(QIcon(resource_path('resources/open.png')), "&Open Tone (TON)", main_window)
+        open_action = QAction(QIcon(resource_path('resources/open.png')), "Open Tone (TON)", main_window)
         open_action.setStatusTip(
             "Open TON file (Not implemented. Please use the \"Synchronize Tone\" button to load the required tone from the synthesizer.)")
         open_action.setEnabled(False)
 
-        save_action = QAction(QIcon(resource_path('resources/save.png')), "&Save Tone (TON)", main_window)
+        save_action = QAction(QIcon(resource_path('resources/save.png')), "Save Tone (TON)", main_window)
         save_action.setStatusTip(
             "Save tone as a TON file (Not implemented. Please use the synthesizer to save and export the tone. See \"How to Save a TON File\" for instructions.)")
         save_action.setEnabled(False)
@@ -92,40 +92,23 @@ class GuiHelper:
 
     @staticmethod
     def init_right_dock(main_window: QMainWindow):
+        # Create the dock widget
         right_dock = QDockWidget("Right Dock", main_window)
         right_dock.setTitleBarWidget(QWidget())
         right_dock.setFloating(False)
 
-        help_tab = QWidget(main_window)
-        help_tab_layout = QHBoxLayout()
-        help_tab_layout.addWidget(main_window.help_texbox)
-        help_tab.setLayout(help_tab_layout)
+        # Create tabs (Help and Log)
+        help_tab = GuiHelper.create_help_tab(main_window)
+        log_tab = GuiHelper.create_log_tab(main_window)
 
-        log_tab = QWidget(main_window)
-        log_tab_layout = QVBoxLayout()
-        log_tab_layout.addWidget(main_window.log_texbox)
-
-        cfg = configparser.ConfigParser()
-        cfg.read(constants.CONFIG_FILENAME)
-        if "true" == cfg.get("Expert", "is_custom_midi_msg_sending_enabled", fallback="false"):
-            midi_msg_input = QTextEdit(main_window)
-            midi_msg_input.setPlaceholderText("MIDI message...")
-            midi_msg_input.setMaximumHeight(80)
-            log_tab_layout.addWidget(midi_msg_input)
-
-            submit_button = QPushButton(" Send MIDI Message")
-            submit_button.setIcon(QIcon(resource_path("resources/apply.png")))
-            submit_button.clicked.connect(lambda: main_window.core.send_custom_midi_msg(midi_msg_input.toPlainText()))
-            log_tab_layout.addWidget(submit_button)
-
-        log_tab.setLayout(log_tab_layout)
-
+        # Set up the tab widget
         tab_widget = QTabWidget(main_window)
         tab_widget.setMinimumHeight(500)
         tab_widget.setMinimumWidth(300)
         tab_widget.addTab(help_tab, "Info / Help")
         tab_widget.addTab(log_tab, "Log")
 
+        # Wrap tab widget in a container and set it as the dock widget's content
         outer_widget = QWidget(main_window)
         outer_layout = QHBoxLayout()
         outer_layout.setContentsMargins(0, 10, 10, 10)  # remove left margin
@@ -133,8 +116,49 @@ class GuiHelper:
         outer_widget.setLayout(outer_layout)
 
         right_dock.setWidget(outer_widget)
-
         return right_dock
+
+    @staticmethod
+    def create_help_tab(main_window: QMainWindow) -> QWidget:
+        """Creates the Help/Info tab."""
+        help_tab = QWidget(main_window)
+        help_tab_layout = QHBoxLayout()
+        help_tab_layout.addWidget(main_window.help_texbox)
+        help_tab.setLayout(help_tab_layout)
+        return help_tab
+
+    @staticmethod
+    def create_log_tab(main_window: QMainWindow) -> QWidget:
+        """Creates the Log tab."""
+        log_tab = QWidget(main_window)
+        log_tab_layout = QVBoxLayout()
+        log_tab_layout.addWidget(main_window.log_texbox)
+
+        if GuiHelper.is_custom_midi_msg_enabled():
+            GuiHelper.add_midi_msg_input(log_tab_layout, main_window)
+
+        log_tab.setLayout(log_tab_layout)
+        return log_tab
+
+    @staticmethod
+    def is_custom_midi_msg_enabled() -> bool:
+        """Checks if custom MIDI message sending is enabled."""
+        cfg = configparser.ConfigParser()
+        cfg.read(constants.CONFIG_FILENAME)
+        return cfg.get("Expert", "is_custom_midi_msg_sending_enabled", fallback="false").lower() == "true"
+
+    @staticmethod
+    def add_midi_msg_input(log_tab_layout: QVBoxLayout, main_window: QMainWindow):
+        """Adds the MIDI message input section to the log tab."""
+        midi_msg_input = QTextEdit(main_window)
+        midi_msg_input.setPlaceholderText("MIDI message...")
+        midi_msg_input.setMaximumHeight(80)
+        log_tab_layout.addWidget(midi_msg_input)
+
+        submit_button = QPushButton(" Send MIDI Message")
+        submit_button.setIcon(QIcon(resource_path("resources/apply.png")))
+        submit_button.clicked.connect(lambda: main_window.core.send_custom_midi_msg(midi_msg_input.toPlainText()))
+        log_tab_layout.addWidget(submit_button)
 
     @staticmethod
     def fill_qgrid_with_params(qgrid_layout: QGridLayout, param_list: list, right_side_items: tuple,
@@ -205,14 +229,14 @@ class GuiHelper:
     @staticmethod
     def on_combo_changed(combo: QComboBox, parameter: Parameter, function_to_run: Callable):
         parameter.value = parameter.choices.index(combo.currentText())
-        function_to_run(parameter)  # send dsp params change sysex
+        function_to_run(parameter)
 
     @staticmethod
     def on_knob_changed(knob: QDial, linked_knob_spinbox: QSpinBox, parameter: Parameter, function_to_run: Callable):
         if knob.value() != linked_knob_spinbox.value():
             linked_knob_spinbox.setValue(knob.value())
             parameter.value = knob.value()
-            function_to_run(parameter)  # send dsp params change sysex
+            function_to_run(parameter)
 
     @staticmethod
     def on_knob_spinbox_changed(knob_spinbox: QSpinBox, linked_knob: QDial, parameter: Parameter,
@@ -220,7 +244,7 @@ class GuiHelper:
         if knob_spinbox.value() != linked_knob.value():
             linked_knob.setValue(knob_spinbox.value())
             parameter.value = knob_spinbox.value()
-            function_to_run(parameter)  # send dsp params change sysex
+            function_to_run(parameter)
 
     @staticmethod
     def clear_layout(layout):
