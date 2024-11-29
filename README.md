@@ -69,7 +69,7 @@ python -m nuitka main.py
 
 ## Acknowledgments
 I would like to thank GitHub user **michgz** for his project ["Tone Tyrant for Casio"](https://github.com/michgz/tonetyrant).
-Initially, I only aimed to make the interface of his program a bit more user-friendly, but it eventually grew into a separate project. Additionally, a lot of information about various MIDI parameters in Casio synthesizers was obtained from the projects in his repository.
+Initially, I only aimed to make the interface of his program a bit more user-friendly, but it eventually grew into a separate project. Additionally, a lot of information about various [MIDI parameters](https://github.com/michgz/ac7maker/tree/master/Documentation%20of%20Casio%20formats) in Casio synthesizers was obtained from the projects in his repository.
 
 And thanks to the users of the www.casiomusicforums.com community. Some useful information was found there, such as the names of amplifiers and pedals used in the DSP effects.
 
