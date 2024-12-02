@@ -3,7 +3,7 @@ from PySide2.QtGui import QTextCharFormat, QSyntaxHighlighter
 
 
 class SysexHighlighter(QSyntaxHighlighter):
-    WORD_STYLES = {
+    HEX_COLORS = {
         1: {'foreground': Qt.darkGreen, 'background': Qt.white},
         2: {'foreground': Qt.darkGreen, 'background': Qt.white},
         3: {'foreground': Qt.darkGreen, 'background': Qt.white},
@@ -17,6 +17,22 @@ class SysexHighlighter(QSyntaxHighlighter):
         19: {'foreground': Qt.blue, 'background': Qt.white},
         22: {'foreground': Qt.magenta, 'background': Qt.white},
         23: {'foreground': Qt.magenta, 'background': Qt.white},
+        24: {'foreground': Qt.blue, 'background': Qt.white},
+        25: {'foreground': Qt.blue, 'background': Qt.white},
+        26: {'foreground': Qt.blue, 'background': Qt.white},
+        27: {'foreground': Qt.blue, 'background': Qt.white},
+        28: {'foreground': Qt.blue, 'background': Qt.white},
+        29: {'foreground': Qt.blue, 'background': Qt.white},
+        30: {'foreground': Qt.blue, 'background': Qt.white},
+        31: {'foreground': Qt.blue, 'background': Qt.white},
+        32: {'foreground': Qt.blue, 'background': Qt.white},
+        33: {'foreground': Qt.blue, 'background': Qt.white},
+        34: {'foreground': Qt.blue, 'background': Qt.white},
+        35: {'foreground': Qt.blue, 'background': Qt.white},
+        36: {'foreground': Qt.blue, 'background': Qt.white},
+        37: {'foreground': Qt.blue, 'background': Qt.white},
+        38: {'foreground': Qt.blue, 'background': Qt.white},
+        39: {'foreground': Qt.blue, 'background': Qt.white},
     }
 
     def __init__(self, parent=None):
@@ -28,7 +44,7 @@ class SysexHighlighter(QSyntaxHighlighter):
         """Create and return a list of word index and QTextCharFormat pairs."""
         return [
             (word_index, self._create_text_format(styles))
-            for word_index, styles in self.WORD_STYLES.items()
+            for word_index, styles in self.HEX_COLORS.items()
         ]
 
     @staticmethod

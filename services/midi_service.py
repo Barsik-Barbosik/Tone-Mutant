@@ -103,7 +103,9 @@ class MidiService:
 
         try:
             self.check_and_reopen_midi_ports()
-            self.core.log("[MIDI OUT] " + format_as_nice_hex(msg_str))
+            msg_hex: str = format_as_nice_hex(msg_str)
+            line_break = "\n" if msg_hex is not None and msg_hex.startswith("F0") else ""
+            self.core.log("[MIDI OUT]" + line_break + msg_hex)
             self.active_sync_job_count = self.active_sync_job_count + 1
             self.midi_out.send_message(bytearray(bytes.fromhex(msg_str)))
         except Exception as e:
