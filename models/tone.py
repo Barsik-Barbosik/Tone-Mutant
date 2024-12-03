@@ -65,9 +65,21 @@ class Tone:
                                               ParameterType.KNOB, [0, 127])
 
         self.advanced_parameter_list: List[AdvancedParameter] = [
-            AdvancedParameter(1, 114, 0, "Monophonic",
-                              "Monophonic...",
-                              ParameterType.COMBO, ["Disabled", "Enabled"])]
+            AdvancedParameter(1, 41, 0, "Sound B for Note-off",
+                              "Sound B is triggered when a key is released, producing a sound specifically for the note-off action. This adds detail or effects to the end of a note, such as a fade, click, or other textures.",
+                              ParameterType.COMBO, ["Disabled", "Enabled"]),
+            AdvancedParameter(2, 115, 0, "Sound B for Double-stop",
+                              "Sound B is triggered when two notes are played together, simulating the effect of a double-stop, as used in string instruments.",
+                              ParameterType.COMBO, ["Disabled", "Enabled"]),
+            AdvancedParameter(3, 114, 0, "Monophonic Mode",
+                              "In monophonic mode, the synthesizer produces only one note at a time, regardless of how many keys are pressed. If multiple keys are pressed simultaneously or in succession, the most recent key pressed takes priority and becomes the only note that sounds.",
+                              ParameterType.COMBO, ["Disabled", "Enabled"]),
+            AdvancedParameter(4, 116, 0, "Portamento",
+                              "Portamento lets the sound slide smoothly from one note to the next instead of jumping.",
+                              ParameterType.COMBO, ["Disabled", "Mode 1", "Mode 2"]),
+            AdvancedParameter(5, 107, 0, "Portamento Time",
+                              "Portamento time controls how long it takes to slide from one note to another. A shorter time makes the slide quick, while a longer time creates a slow, smooth glide.",
+                              ParameterType.KNOB, [0, 127]), ]
 
         self.dsp_module_1: DspModule = None
         self.dsp_module_2: DspModule = None
