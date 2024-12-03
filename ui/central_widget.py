@@ -39,6 +39,7 @@ class CentralWidget(QWidget):
         self.instrument_list.setObjectName("inactive-list")
 
         self.qgrid_layout = QGridLayout()
+        self.advanced_qgrid_layout = QGridLayout()
         self.tab_widget = QTabWidget(self)
         self.tab_widget.setMinimumHeight(500)
         self.tab_widget.addTab(self.create_main_params_page(), TabName.MAIN_PARAMETERS.value)
@@ -46,6 +47,7 @@ class CentralWidget(QWidget):
         self.tab_widget.addTab(self.dsp_page_2, TabName.DSP_2.value)
         self.tab_widget.addTab(self.dsp_page_3, TabName.DSP_3.value)
         self.tab_widget.addTab(self.dsp_page_4, TabName.DSP_4.value)
+        self.tab_widget.addTab(self.create_advanced_params_page(), TabName.ADVANCED_PARAMETERS.value)
         self.tab_widget.addTab(self.create_json_view_page(), TabName.JSON.value)
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
@@ -84,6 +86,24 @@ class CentralWidget(QWidget):
             item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
             item.setData(Qt.UserRole, instrument.id)
             self.instrument_list.insertItem(idx, item)
+
+    def create_advanced_params_page(self) -> QWidget:
+        self.advanced_qgrid_layout.setColumnStretch(0, 4)
+        self.advanced_qgrid_layout.setColumnStretch(1, 1)
+        self.advanced_qgrid_layout.setColumnStretch(2, 2)
+        self.advanced_qgrid_layout.setColumnStretch(3, 1)
+        self.advanced_qgrid_layout.setColumnStretch(4, 2)
+        advanced_params_page = QWidget(self)
+        hbox_layout = QHBoxLayout()
+        advanced_params_page.setLayout(hbox_layout)
+
+        GuiHelper.fill_qgrid_with_params(self.advanced_qgrid_layout,
+                                         self.core.tone.advanced_parameter_list,
+                                         constants.RIGHT_SIDE_ADVANCED_PARAMS,
+                                         self.set_synth_parameter)
+
+        hbox_layout.addLayout(self.advanced_qgrid_layout)  # right side
+        return advanced_params_page
 
     @Slot()
     def redraw_main_params_panel(self):

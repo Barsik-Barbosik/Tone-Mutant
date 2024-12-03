@@ -64,6 +64,11 @@ class Tone:
                                               "Volume of the note. Only notes played on the keyboard are affected by this (not MIDI IN or rhythms).",
                                               ParameterType.KNOB, [0, 127])
 
+        self.advanced_parameter_list: List[AdvancedParameter] = [
+            AdvancedParameter(1, 114, 0, "Monophonic",
+                              "Monophonic...",
+                              ParameterType.COMBO, ["Disabled", "Enabled"])]
+
         self.dsp_module_1: DspModule = None
         self.dsp_module_2: DspModule = None
         self.dsp_module_3: DspModule = None

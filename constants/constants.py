@@ -32,7 +32,7 @@ BLOCK_MAPPING = {
 
 SHORT_PARAMS: Final[tuple] = (
     "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume", "Velocity Sense",
-    "Reverb Send", "Chorus Send", "Delay Send", "UPPER 1 Volume")
+    "Reverb Send", "Chorus Send", "Delay Send", "UPPER 1 Volume", "Monophonic")
 
 RIGHT_SIDE_MAIN_PARAMS: Final[tuple] = (
     "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Reverb Send", "Chorus Send", "Delay Send")
@@ -40,6 +40,8 @@ RIGHT_SIDE_MAIN_PARAMS: Final[tuple] = (
 RIGHT_SIDE_DSP_PARAMS: Final[tuple] = (
     "Overdrive Gain", "Overdrive Level", "Dist Gain", "Dist Level", "Delay Level L", "Delay Level R", "Input Level",
     "Wet Level", "Dry Level")
+
+RIGHT_SIDE_ADVANCED_PARAMS: Final[tuple] = ()
 
 ALL_DSP_MODULES: Final[tuple] = (
     DspModule(27, "Mono 1-Band EQ",
