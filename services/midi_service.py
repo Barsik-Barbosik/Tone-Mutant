@@ -25,7 +25,7 @@ BLOCK_INDEX = 16
 SYSEX_TYPE_INDEX = 18
 
 MAIN_PARAMETER_NUMBERS = [20, 14, 15]  # TODO: get numbers automatically from main list
-MAIN_SHORT_PARAMETER_NUMBERS = [59, 63, 60, 61, 43, 45, 5, 57, 56, 58, 200]
+SHORT_PARAMETER_NUMBERS = [59, 63, 60, 61, 43, 45, 5, 57, 56, 58, 200, 41, 107, 114, 115, 116]
 
 
 class MidiService:
@@ -155,11 +155,11 @@ class MidiService:
             elif sysex_type in MAIN_PARAMETER_NUMBERS:
                 self.log("[MIDI IN] Parameter\n", message)
                 response = message[-1 - Size.MAIN_PARAMETER:-1]
-                self.core.process_main_parameter_response(sysex_type, block_id, response)  # 2 bytes
-            elif sysex_type in MAIN_SHORT_PARAMETER_NUMBERS:
+                self.core.process_parameter_response(sysex_type, block_id, response)  # 2 bytes
+            elif sysex_type in SHORT_PARAMETER_NUMBERS:
                 self.log("[MIDI IN] Parameter\n", message)
                 response = message[-1 - Size.MAIN_PARAMETER_SHORT:-1]
-                self.core.process_main_parameter_response(sysex_type, block_id, response[:1])  # 1 byte
+                self.core.process_parameter_response(sysex_type, block_id, response[:1])  # 1 byte
             elif sysex_type == SysexType.DSP_MODULE.value:
                 self.log("[MIDI IN] DSP module\n", message)
                 response = message[-1 - Size.DSP_MODULE:-1]

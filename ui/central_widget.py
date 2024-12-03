@@ -18,6 +18,7 @@ from utils.utils import resource_path, get_all_instruments
 class CentralWidget(QWidget):
     update_help_text_panel_signal = Signal()
     redraw_main_params_panel_signal = Signal()
+    redraw_advanced_params_panel_signal = Signal()
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -55,6 +56,7 @@ class CentralWidget(QWidget):
 
         self.update_help_text_panel_signal.connect(self.update_help_text_panel)
         self.redraw_main_params_panel_signal.connect(self.redraw_main_params_panel)
+        self.redraw_advanced_params_panel_signal.connect(self.redraw_advanced_params_panel)
 
     def create_main_params_page(self) -> QWidget:
         self.qgrid_layout.setColumnStretch(0, 1)
@@ -122,6 +124,14 @@ class CentralWidget(QWidget):
         random_button.clicked.connect(self.on_random_button_pressed)
         button_row = largest_items_count + 1
         self.qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
+
+    @Slot()
+    def redraw_advanced_params_panel(self):
+        GuiHelper.clear_layout(self.advanced_qgrid_layout)
+        GuiHelper.fill_qgrid_with_params(self.advanced_qgrid_layout,
+                                         self.core.tone.advanced_parameter_list,
+                                         constants.RIGHT_SIDE_ADVANCED_PARAMS,
+                                         self.set_synth_parameter)
 
     def on_random_button_pressed(self):
         for main_param in self.core.tone.main_parameter_list:

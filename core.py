@@ -59,22 +59,24 @@ class Core(QObject):
             self.request_dsp_module(1)
             self.request_dsp_module(2)
             self.request_dsp_module(3)
+            self.request_advanced_parameters()
             self.request_upper_volume()
 
         self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
 
         self.lock.unlock()
 
-        worker = Worker(self.update_main_params_page)
+        worker = Worker(self.redraw_both_params_pages)
         worker.signals.error.connect(lambda error: print(f"Error: {error}"))
         worker.start()
 
-    def update_main_params_page(self):
+    def redraw_both_params_pages(self):
         for i in range(0, 10):
             self.lock.lockForWrite()
             if self.midi_service.active_sync_job_count == 0:
                 self.lock.unlock()
                 self.main_window.central_widget.redraw_main_params_panel_signal.emit()
+                self.main_window.central_widget.redraw_advanced_params_panel_signal.emit()
                 break
             self.lock.unlock()
             time.sleep(0.5)
@@ -109,8 +111,17 @@ class Core(QObject):
             except Exception as e:
                 self.show_error_msg(str(e))
 
-    # Process main parameter value response
-    def process_main_parameter_response(self, param_number, block_id, response):
+    # Request advanced parameter value from synth
+    def request_advanced_parameters(self):
+        for parameter in self.tone.advanced_parameter_list:
+            self.log("[INFO] Requesting parameter: " + parameter.name)
+            try:
+                self.midi_service.request_parameter_value(parameter.block_id, parameter.action_number)
+            except Exception as e:
+                self.show_error_msg(str(e))
+
+    # Process main/advanced parameter value response
+    def process_parameter_response(self, param_number, block_id, response):
         for parameter in self.tone.main_parameter_list:
             if parameter.action_number == param_number and parameter.block_id == block_id:
                 self.log("[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
@@ -118,6 +129,16 @@ class Core(QObject):
                 if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
                     value = int(int_to_hex(response[1]) + int_to_hex(response[0]), 16)
                 elif len(response) == 1:
+                    value = response[0]
+                else:
+                    value = lsb_msb_to_int(response[0], response[1])
+                parameter.value = decode_param_value(value, parameter)
+                break
+        for parameter in self.tone.advanced_parameter_list:
+            if parameter.action_number == param_number and parameter.block_id == block_id:
+                self.log("[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
+                         + str(block_id) + ", " + str(response))
+                if len(response) == 1:
                     value = response[0]
                 else:
                     value = lsb_msb_to_int(response[0], response[1])
@@ -306,7 +327,7 @@ class Core(QObject):
                 if is_active:
                     self.lock.lockForWrite()
                     text = "Autosynchronize countdown: " + str(self.timeout)
-                    print(text)
+                    # print(text)
                     self.status_msg_signal.emit(text, 1000)
                     self.timeout = self.timeout - 1
                     self.lock.unlock()
@@ -395,6 +416,7 @@ class Core(QObject):
                             tone_main_parameter.type == ParameterType.COMBO else json_main_parameter["value"]
                         self.send_parameter_change_sysex(tone_main_parameter)
             self.main_window.central_widget.redraw_main_params_panel_signal.emit()
+            self.main_window.central_widget.redraw_advanced_params_panel_signal.emit()
 
         # DSP
         if "dsp_modules" in json_tone:
