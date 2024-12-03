@@ -14,6 +14,7 @@ class SettingsWindow(QWidget):
     def __init__(self, parent):
         super().__init__()
         self.setWindowTitle("Settings")
+        self.setWindowIcon(QIcon(resource_path("resources/settings.png")))
 
         self.core = parent.core
 

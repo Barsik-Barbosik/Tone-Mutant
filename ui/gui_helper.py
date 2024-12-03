@@ -17,7 +17,7 @@ class GuiHelper:
 
     @staticmethod
     def init_menu_bar(main_window: QMainWindow, exit_callback, open_json_callback, save_json_callback,
-                      settings_callback, how_to_save_callback):
+                      settings_callback, how_to_save_callback, request_parameter_callback):
         menu_bar = QMenuBar(main_window)
 
         file_menu = QMenu("&File", main_window)
@@ -63,6 +63,16 @@ class GuiHelper:
         file_menu.addAction(midi_settings_action)
         file_menu.addSeparator()
         file_menu.addAction(exit_action)
+
+        if GuiHelper.is_custom_midi_msg_enabled():
+            requests_menu = QMenu("&Requests", main_window)
+            menu_bar.addMenu(requests_menu)
+
+            request_parameter_action = QAction(QIcon(resource_path('resources/get.png')), "&Request Parameter", main_window)
+            request_parameter_action.setStatusTip("Request a parameter from synthesizer")
+            request_parameter_action.triggered.connect(request_parameter_callback)
+
+            requests_menu.addAction(request_parameter_action)
 
         return menu_bar
 

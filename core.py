@@ -472,6 +472,9 @@ class Core(QObject):
     def send_custom_midi_msg(self, midi_msg: str):
         self.midi_service.send_custom_midi_msg(midi_msg)
 
+    def request_custom_parameter(self, number: int, block_id: int):
+        self.midi_service.request_parameter_value(block_id, number)
+
     @Slot()
     def show_status_msg(self, text: str, msecs: int):
         self.status_bar.setStyleSheet("background-color: white; color: black")

@@ -9,6 +9,7 @@ class ChangeInstrumentWindow(QDialog):
     def __init__(self, text, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Pause: parent tone selection")
+        self.setWindowIcon(QIcon(resource_path("resources/note.png")))
 
         layout = QVBoxLayout()
         label = QLabel(text)

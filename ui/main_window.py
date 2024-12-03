@@ -8,6 +8,7 @@ from ui.central_widget import CentralWidget
 from ui.deque_log import DequeLog
 from ui.file_dialogs import FileDialogHelper
 from ui.gui_helper import GuiHelper
+from ui.request_parameter_window import RequestParameterWindow
 from ui.settings_window import SettingsWindow
 from ui.top_widget import TopWidget
 from utils.file_operations import FileOperations
@@ -17,7 +18,7 @@ from utils.utils import resource_path
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("ToneMutant 1.0.0")
+        self.setWindowTitle("ToneMutant 1.0.1")
         self.setWindowIcon(QIcon(resource_path("resources/note.png")))
 
         self.status_bar = QStatusBar(self)
@@ -33,7 +34,8 @@ class MainWindow(QMainWindow):
             open_json_callback=self.show_open_json_dialog,
             save_json_callback=self.show_save_json_dialog,
             settings_callback=self.show_settings,
-            how_to_save_callback=self.show_how_to_save_tone
+            how_to_save_callback=self.show_how_to_save_tone,
+            request_parameter_callback=self.show_request_parameter_dialog
         )
         self.setMenuBar(self.menu_bar)
 
@@ -46,6 +48,7 @@ class MainWindow(QMainWindow):
         self._setup_layout()
 
         self.settings_window = None
+        self.request_parameter_window = None
 
         # Initialize tone synchronization
         self.core.synchronize_tone_with_synth()
@@ -84,6 +87,9 @@ class MainWindow(QMainWindow):
         if file_name:
             FileOperations.save_json(file_name, self.central_widget.get_json())
             self.top_widget.tone_name_label.setText(self.core.tone.name)
+
+    def show_request_parameter_dialog(self):
+        self.request_parameter_window = RequestParameterWindow(self)
 
     @staticmethod
     def menu_exit_action():
