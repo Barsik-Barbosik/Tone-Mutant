@@ -118,6 +118,9 @@ class GuiHelper:
         tab_widget.addTab(help_tab, "Info / Help")
         tab_widget.addTab(log_tab, "Log")
 
+        # Save a reference to the tab widget in the main window
+        main_window.right_tab_widget = tab_widget
+
         # Wrap tab widget in a container and set it as the dock widget's content
         outer_widget = QWidget(main_window)
         outer_layout = QHBoxLayout()

@@ -43,6 +43,7 @@ class RequestParameterWindow(QWidget):
 
     def on_submit(self):
         try:
+            self.core.main_window.right_tab_widget.setCurrentIndex(1)  # open Log tab
             number = int(self.number_input.text())
             block = int(self.block_input.text())
             self.core.request_custom_parameter(number, block)
