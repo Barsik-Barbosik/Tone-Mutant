@@ -8,9 +8,6 @@ from constants import constants
 from ui.gui_helper import GuiHelper
 from utils.utils import resource_path
 
-ALL_CHANNELS = ["Upper keyboard", "MIDI Channel 1"]
-CHANNEL_ENABLE_DISABLE_ITEMS = ["ENABLED", "DISABLED"]
-
 
 class TopWidget(QWidget):
     redraw_upper_volume_knob_signal = Signal()
