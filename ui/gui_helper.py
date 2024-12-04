@@ -65,7 +65,7 @@ class GuiHelper:
         file_menu.addAction(exit_action)
 
         if GuiHelper.is_custom_midi_msg_enabled():
-            requests_menu = QMenu("&Requests", main_window)
+            requests_menu = QMenu("&Request", main_window)
             menu_bar.addMenu(requests_menu)
 
             request_parameter_action = QAction(QIcon(resource_path('resources/get.png')), "&Request Parameter", main_window)

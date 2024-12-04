@@ -25,7 +25,7 @@ BLOCK_INDEX = 16
 SYSEX_TYPE_INDEX = 18
 
 MAIN_PARAMETER_NUMBERS = [20, 14, 15]  # TODO: get numbers automatically from main list
-SHORT_PARAMETER_NUMBERS = [59, 63, 60, 61, 43, 45, 5, 57, 56, 58, 200, 41, 107, 114, 115, 116]
+SHORT_PARAMETER_NUMBERS = [59, 63, 60, 61, 43, 45, 5, 57, 56, 58, 200, 41, 42, 107, 114, 115, 116]
 
 
 class MidiService:
