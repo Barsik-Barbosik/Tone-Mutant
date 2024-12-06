@@ -17,7 +17,7 @@ class GuiHelper:
 
     @staticmethod
     def init_menu_bar(main_window: QMainWindow, exit_callback, open_json_callback, save_json_callback,
-                      settings_callback, how_to_save_callback, request_parameter_callback):
+                      settings_callback, how_to_save_callback, request_parameter_callback, download_tone_callback):
         menu_bar = QMenuBar(main_window)
 
         file_menu = QMenu("&File", main_window)
@@ -68,11 +68,19 @@ class GuiHelper:
             requests_menu = QMenu("&Request", main_window)
             menu_bar.addMenu(requests_menu)
 
-            request_parameter_action = QAction(QIcon(resource_path('resources/get.png')), "&Request Parameter", main_window)
+            request_parameter_action = QAction(QIcon(resource_path('resources/get.png')), "&Request Parameter",
+                                               main_window)
             request_parameter_action.setStatusTip("Request a parameter from synthesizer")
             request_parameter_action.triggered.connect(request_parameter_callback)
 
+            download_tone_action = QAction(QIcon(resource_path('resources/get.png')), "&Download Tone",
+                                           main_window)
+            download_tone_action.setStatusTip("Download a user tone (801...900) from synthesizer")
+            download_tone_action.triggered.connect(download_tone_callback)
+
             requests_menu.addAction(request_parameter_action)
+            requests_menu.addSeparator()
+            requests_menu.addAction(download_tone_action)
 
         return menu_bar
 

@@ -9,6 +9,7 @@ from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL
 from constants.enums import ParameterType
 from models.parameter import MainParameter
 from models.tone import Tone
+from services.tyrant_midi_service import TyrantMidiService
 from services.midi_service import MidiService
 from ui.change_instrument_window import ChangeInstrumentWindow
 from utils import utils
@@ -29,6 +30,7 @@ class Core(QObject):
         self.tone: Tone = Tone()
         self.midi_service = MidiService.get_instance()
         self.midi_service.core = self
+        self.tyrant_midi_service = TyrantMidiService()
         self.lock = QReadWriteLock()
         self.timeout = 0
         self.synchronize_tone_signal.connect(self.synchronize_tone_with_synth)

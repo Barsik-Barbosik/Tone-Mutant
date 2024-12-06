@@ -89,6 +89,10 @@ class MidiService:
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
             raise Exception("Unable to open MIDI port. Please check the MIDI settings.")
 
+    def provide_midi_ports(self):
+        self.check_and_reopen_midi_ports()
+        return self.midi_in, self.midi_out
+
     def send_sysex(self, sysex_hex_str: str):
         self.check_and_reopen_midi_ports()
         self.core.log("[MIDI OUT]\n" + format_as_nice_hex(sysex_hex_str))
@@ -145,7 +149,7 @@ class MidiService:
         self.active_sync_job_count = max(0, self.active_sync_job_count - 1)  # count-- until 0
         self.lock.unlock()
 
-        if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO:
+        if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO and len(message) > (SYSEX_TYPE_INDEX + 1):
             block_id = lsb_msb_to_int(message[BLOCK_INDEX], message[BLOCK_INDEX + 1])
             sysex_type = lsb_msb_to_int(message[SYSEX_TYPE_INDEX], message[SYSEX_TYPE_INDEX + 1])
             if sysex_type == SysexType.TONE_NAME.value:
@@ -169,7 +173,7 @@ class MidiService:
                 response = message[-1 - Size.DSP_PARAMS:-1]
                 self.core.process_dsp_module_parameters_response(block_id, response)
             else:
-                self.log("[MIDI IN]\n", message)
+                self.log("[MIDI IN] SysEx\n", message)
         elif message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.REAL_TIME:
             self.log("[MIDI IN] Real Time SysEx\n", message)
         elif message[0] == CC_FIRST_BYTE and message[1] == CC_BANK_SELECT_MSB:
@@ -194,7 +198,9 @@ class MidiService:
             self.log("[MIDI IN] ", message)
 
     def log(self, title, message):
-        self.core.log(title + format_as_nice_hex(list_to_hex_str(message)))
+        msg_hex: str = format_as_nice_hex(list_to_hex_str(message))
+        line_break = "\n" if msg_hex is not None and msg_hex.startswith("F0") else ""
+        self.core.log(title + line_break + msg_hex)
 
     def get_last_bank_select_message(self):
         last_message = None

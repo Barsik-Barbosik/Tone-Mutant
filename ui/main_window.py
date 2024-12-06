@@ -35,7 +35,8 @@ class MainWindow(QMainWindow):
             save_json_callback=self.show_save_json_dialog,
             settings_callback=self.show_settings,
             how_to_save_callback=self.show_how_to_save_tone,
-            request_parameter_callback=self.show_request_parameter_dialog
+            request_parameter_callback=self.show_request_parameter_dialog,
+            download_tone_callback=self.show_download_tone_dialog
         )
         self.setMenuBar(self.menu_bar)
 
@@ -90,6 +91,27 @@ class MainWindow(QMainWindow):
 
     def show_request_parameter_dialog(self):
         self.request_parameter_window = RequestParameterWindow(self)
+
+    def show_download_tone_dialog(self):
+        # if val_result < 801 or val_result > 900:
+        #     raise Exception("Cannot download from Tone number {0}".format(val_result))
+
+        # TEST: Get a User Tone from slot 900 and save into slot 899
+        download_from = 900
+        upload_to = 899
+
+        try:
+            downloaded_tone = self.core.tyrant_midi_service.download_tone(download_from - 801, memory=1, category=3)
+            # In order to save the downloaded tone as a TON-file, the first 20 bytes and the last 4 bytes need to be added
+            self.core.tyrant_midi_service.upload_tone(upload_to - 801, downloaded_tone, memory=1, category=3)
+
+            # Restore default MIDI-in callback
+            self.core.close_midi_ports()
+            self.core.open_midi_ports()
+
+            print(downloaded_tone)
+        except Exception:
+            pass
 
     @staticmethod
     def menu_exit_action():
