@@ -18,7 +18,7 @@ from utils.utils import resource_path
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("ToneMutant 1.0.1")
+        self.setWindowTitle("ToneMutant 1.0.2")
         self.setWindowIcon(QIcon(resource_path("resources/note.png")))
 
         self.status_bar = QStatusBar(self)
@@ -36,7 +36,7 @@ class MainWindow(QMainWindow):
             settings_callback=self.show_settings,
             how_to_save_callback=self.show_how_to_save_tone,
             request_parameter_callback=self.show_request_parameter_dialog,
-            download_tone_callback=self.show_download_tone_dialog
+            save_ton_callback=self.show_save_ton_dialog
         )
         self.setMenuBar(self.menu_bar)
 
@@ -92,28 +92,37 @@ class MainWindow(QMainWindow):
     def show_request_parameter_dialog(self):
         self.request_parameter_window = RequestParameterWindow(self)
 
-    def show_download_tone_dialog(self):
-        # if val_result < 801 or val_result > 900:
-        #     raise Exception("Cannot download from Tone number {0}".format(val_result))
+    def show_save_ton_dialog(self):
+        file_name = FileDialogHelper.save_ton_dialog(self)
+        if file_name:
+            try:
+                current_tone = self.core.tyrant_midi_service.read_current_tone()
+                ton_data = self.core.tyrant_midi_service.wrap_tone_file(current_tone)
 
-        # TEST: Get a User Tone from slot 900 and save into slot 899
-        download_from = 900
-        upload_to = 899
+                # Restore default MIDI-in callback after using tyrant_midi_service
+                self.core.close_midi_ports()
+                self.core.open_midi_ports()
 
-        try:
-            current_tone = self.core.tyrant_midi_service.tone_read(0, memory=3)
-            print(current_tone)
+                FileOperations.save_binary_file(file_name, ton_data)
+                self.top_widget.tone_name_label.setText(self.core.tone.name)
+            except Exception as e:
+                self.core.show_error_msg(str(e))
 
-            # downloaded_tone = self.core.tyrant_midi_service.bulk_download(download_from - 801, memory=1, category=3)
-            # In order to save the downloaded tone as a TON-file, the first 20 bytes and the last 4 bytes need to be added
-            # self.core.tyrant_midi_service.bulk_upload(upload_to - 801, downloaded_tone, memory=1, category=3)
-            # print(downloaded_tone)
-
-            # Restore default MIDI-in callback
-            self.core.close_midi_ports()
-            self.core.open_midi_ports()
-        except Exception:
-            pass
+    # def test(self):
+    #     # if val_result < 801 or val_result > 900:
+    #     #     raise Exception("Cannot download from Tone number {0}".format(val_result))
+    #
+    #     # TEST: Get a User Tone from slot 900 and save into slot 899
+    #     download_from = 900
+    #     upload_to = 899
+    #
+    #     downloaded_tone = self.core.tyrant_midi_service.bulk_download(download_from - 801, memory=1, category=3)
+    #     self.core.tyrant_midi_service.bulk_upload(upload_to - 801, downloaded_tone, memory=1, category=3)
+    #     print(downloaded_tone)
+    #
+    #     # Restore default MIDI-in callback
+    #     self.core.close_midi_ports()
+    #     self.core.open_midi_ports()
 
     @staticmethod
     def menu_exit_action():

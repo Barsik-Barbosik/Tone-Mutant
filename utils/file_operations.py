@@ -11,3 +11,8 @@ class FileOperations:
     def save_json(file_path, data):
         with open(file_path, 'w') as file:
             file.write(data)
+
+    @staticmethod
+    def save_binary_file(file_path, data):
+        with open(file_path, 'wb') as file:
+            file.write(data)

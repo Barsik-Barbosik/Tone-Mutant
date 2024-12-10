@@ -33,11 +33,23 @@ class TyrantMidiService:
     class SysexTimeoutError(Exception):
         pass
 
-    def tone_read(self, parameter_set, memory=3):
+    def read_current_tone(self):
+        """
+        Original name: tone_read
+
+        Read current tone directly from the keyboard.
+        Bulk uploads & downloads for some reason don't work, so it needs to be done parameter-by-parameter.
+
+        Function reads a tone from the "currently selected" memory segment (memory 3), and returns it HBR form.
+        This particular memory segment doesn't permit true HBR reads, so under the hood this is multiple single parameter reads.
+        """
+        parameter_set = 0
+        memory = 3
+
         if self.IS_DEBUG_MODE:
             t1 = time.time()
 
-        # Get MIDI ports and replace callback
+        # Get MIDI ports and replace callback (callback is used instead of MidiIn.get_message())
         midi_in, midi_out = MidiService.get_instance().provide_midi_ports()
         midi_in.set_callback(self.process_message)
 
@@ -50,9 +62,10 @@ class TyrantMidiService:
                     length = 0
                     if p == 87:
                         length = 15
-                    z.append(self.get_single_parameter(midi_out, p, length=length, memory=memory,
-                                                       category=self.TONE_CATEGORY, parameter_set=parameter_set,
-                                                       block0=b))
+                    single_parameter = self.get_single_parameter(midi_out, p, length=length, memory=memory,
+                                                                 category=self.TONE_CATEGORY,
+                                                                 parameter_set=parameter_set, block0=b)
+                    z.append(single_parameter)
 
             y.append(z)
 
@@ -338,57 +351,23 @@ class TyrantMidiService:
     def get_single_parameter(self, midi_out, parameter, category=3, memory=3, parameter_set=0, block0=0, block1=0,
                              length=0):
         global type_1_rxed
-
-        if self.IS_DEBUG_MODE:
-            t1 = time.time()
-
-        # parse_response(os.read(f, 20))
-        # time.sleep(0.02)
+        type_1_rxed = b''
 
         if length > 0:
             l = length
         else:
             l = 1
 
-        type_1_rxed = b''
-
         # Read the parameter
-        x1 = self.make_packet(parameter_set=parameter_set, category=category, memory=memory, parameter=parameter,
-                              block=[0, 0, block1, block0], length=l)
+        packet = self.make_packet(parameter_set=parameter_set, category=category, memory=memory, parameter=parameter,
+                                  block=[0, 0, block1, block0], length=l)
         if self.IS_DEBUG_MODE:
-            print(f"x1: {x1.hex()}")
-        midi_out.send_message(bytearray(x1))
+            print("Parameter {0} ([{1},{2}])".format(parameter, block1, block0))
+            print(f"packet: {packet.hex()}")
+        midi_out.send_message(bytearray(packet))
         time.sleep(0.01)
 
-        if self.IS_DEBUG_MODE:
-            t2 = time.time()
-
-        # Handle any response
-
-        # The minimum length of a response packet is 26. The value "25" here ensures
-        # that every response is split across 2 packets, which is optimal for speed.
-        # (I think because otherwise the second read ends up waiting for the next b"\xfe"
-        # MIDI clock, which can take many 10s of milliseconds).
-        # x2 = os.read(f, 25)
-        # parse_response(x2)
-        # time.sleep(0.02)
-        # x3 = os.read(f, 20)
-        # parse_response(x3)
-        # time.sleep(0.01)
-
-        if self.IS_DEBUG_MODE:
-            t3 = time.time()
-
-            print("Parameter {0} ([{1},{2}])".format(parameter, block1, block0))
-            print("TX time: {0:.4f}".format(t2 - t1))
-            # print("RX time: {0:.4f} (lengths: {1}, {2})".format(t3 - t2, len(x2), len(x3)))
-
-            print("> " + str(binascii.hexlify(x1)))
-            # print("< " + str(binascii.hexlify(x2)))
-            # print("< " + str(binascii.hexlify(x3)))
-
-        # Now decode the response. Value of "length" determines whether to regard it as
-        # a string or a number
+        # Decode the response. Value of "length" determines whether to regard it as a string or a number.
         if length > 0:
             # Regard the response as a string
             if len(type_1_rxed) > 0:  # should maybe check this is equal to length??
@@ -429,7 +408,7 @@ class TyrantMidiService:
 
     def bulk_download(self, param_set, memory=1, category=30):
         """
-        Old name: download_ac7_internal
+        Original name: download_ac7_internal
         Request and receive a complete parameter set from the keyboard.
         """
         global have_got_ack, have_got_ess, total_rxed
@@ -473,7 +452,7 @@ class TyrantMidiService:
 
     def bulk_upload(self, param_set, data, memory=1, category=30):
         """
-        Old name: upload_ac7_internal
+        Original name: upload_ac7_internal
         Upload a complete parameter set to the keyboard.
         The meaning of the data and required length depend on "memory" and "category".
 
@@ -832,3 +811,13 @@ class TyrantMidiService:
         if p >= 26 and p <= 27:
             return 3
         return 1
+
+    @staticmethod
+    def wrap_tone_file(x):
+        y = b'CT-X3000'
+        y += struct.pack('<2I', 0, 0)
+        y += b'TONH'
+        y += struct.pack('<3I', 0, binascii.crc32(x), len(x))
+        y += x
+        y += b'EODA'
+        return y

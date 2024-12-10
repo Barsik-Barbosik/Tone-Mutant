@@ -17,7 +17,7 @@ class GuiHelper:
 
     @staticmethod
     def init_menu_bar(main_window: QMainWindow, exit_callback, open_json_callback, save_json_callback,
-                      settings_callback, how_to_save_callback, request_parameter_callback, download_tone_callback):
+                      settings_callback, how_to_save_callback, request_parameter_callback, save_ton_callback):
         menu_bar = QMenuBar(main_window)
 
         file_menu = QMenu("&File", main_window)
@@ -37,11 +37,10 @@ class GuiHelper:
         open_action.setEnabled(False)
 
         save_action = QAction(QIcon(resource_path('resources/save.png')), "Save Tone (TON)", main_window)
-        save_action.setStatusTip(
-            "Save tone as a TON file (Not implemented. Please use the synthesizer to save and export the tone. See \"How to Save a TON File\" for instructions.)")
-        save_action.setEnabled(False)
+        save_action.setStatusTip("Save tone as a TON file")
+        save_action.triggered.connect(save_ton_callback)
 
-        how_to_save_action = QAction(QIcon(resource_path('resources/help.png')), "&How to Save a TON File", main_window)
+        how_to_save_action = QAction(QIcon(resource_path('resources/help.png')), "&Saving a TON File Using Synthesizer", main_window)
         how_to_save_action.setStatusTip("Instructions on how to use the synthesizer to save and export the tone")
         how_to_save_action.triggered.connect(how_to_save_callback)
 
@@ -76,7 +75,7 @@ class GuiHelper:
             download_tone_action = QAction(QIcon(resource_path('resources/get.png')), "&Download Tone",
                                            main_window)
             download_tone_action.setStatusTip("Download a user tone (801...900) from synthesizer")
-            download_tone_action.triggered.connect(download_tone_callback)
+            download_tone_action.triggered.connect(save_ton_callback)
 
             requests_menu.addAction(request_parameter_action)
             requests_menu.addSeparator()
