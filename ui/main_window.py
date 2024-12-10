@@ -1,5 +1,3 @@
-import os
-
 from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser
@@ -90,6 +88,7 @@ class MainWindow(QMainWindow):
         if file_name:
             FileOperations.save_json(file_name, self.central_widget.get_json())
             self.top_widget.tone_name_label.setText(self.core.tone.name)
+            self.core.status_msg_signal.emit("File successfully saved!", 3000)
 
     def show_request_parameter_dialog(self):
         self.request_parameter_window = RequestParameterWindow(self)
@@ -98,12 +97,7 @@ class MainWindow(QMainWindow):
         file_name = FileDialogHelper.save_ton_dialog(self)
         if file_name:
             try:
-                if not self.core.tone.name:
-                    file_name_without_extension = os.path.splitext(os.path.basename(file_name))[0]
-                    self.core.tone.name = file_name_without_extension
-
-                ton_file_data = self.core.get_current_tone_as_ton_file(self.core.tone.name)
-                FileOperations.save_binary_file(file_name, ton_file_data)
+                self.core.start_ton_file_saving_worker(file_name)
                 self.top_widget.tone_name_label.setText(self.core.tone.name)
             except Exception as e:
                 self.core.show_error_msg(str(e))

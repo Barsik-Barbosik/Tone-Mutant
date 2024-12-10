@@ -1,5 +1,6 @@
 import configparser
 import copy
+import os
 import time
 
 from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
@@ -13,6 +14,7 @@ from services.midi_service import MidiService
 from services.tyrant_midi_service import TyrantMidiService
 from ui.change_instrument_window import ChangeInstrumentWindow
 from utils import utils
+from utils.file_operations import FileOperations
 from utils.utils import decode_param_value, int_to_hex, lsb_msb_to_int, get_all_instruments
 from utils.worker import Worker
 
@@ -490,8 +492,19 @@ class Core(QObject):
     def log(self, msg: str):
         self.main_window.log_texbox.log(msg)
 
+    def start_ton_file_saving_worker(self, file_name):
+        if not self.tone.name:
+            file_name_without_extension = os.path.splitext(os.path.basename(file_name))[0]
+            self.tone.name = file_name_without_extension
+
+        self.status_msg_signal.emit("Saving... Please wait!", 10000)
+        worker = Worker(self.get_current_tone_as_ton_file, self.tone.name)
+        worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+        worker.signals.result.connect(lambda ton_file_data: self.save_file(file_name, ton_file_data))
+        worker.start()
+
     def get_current_tone_as_ton_file(self, tone_name: str):
-        new_tone_name = tone_name[:8]
+        new_tone_name = tone_name[:8]  # trim to first 8 symbols
         current_tone = self.tyrant_midi_service.read_current_tone(new_tone_name)
         ton_file_data = self.tyrant_midi_service.wrap_tone_file(current_tone)
 
@@ -500,3 +513,7 @@ class Core(QObject):
         self.open_midi_ports()
 
         return ton_file_data
+
+    def save_file(self, file_name, ton_file_data):
+        FileOperations.save_binary_file(file_name, ton_file_data)
+        self.status_msg_signal.emit("File successfully saved!", 3000)
