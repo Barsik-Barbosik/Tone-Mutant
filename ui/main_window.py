@@ -101,15 +101,17 @@ class MainWindow(QMainWindow):
         upload_to = 899
 
         try:
-            downloaded_tone = self.core.tyrant_midi_service.download_tone(download_from - 801, memory=1, category=3)
+            current_tone = self.core.tyrant_midi_service.tone_read(0, memory=3)
+            print(current_tone)
+
+            # downloaded_tone = self.core.tyrant_midi_service.bulk_download(download_from - 801, memory=1, category=3)
             # In order to save the downloaded tone as a TON-file, the first 20 bytes and the last 4 bytes need to be added
-            self.core.tyrant_midi_service.upload_tone(upload_to - 801, downloaded_tone, memory=1, category=3)
+            # self.core.tyrant_midi_service.bulk_upload(upload_to - 801, downloaded_tone, memory=1, category=3)
+            # print(downloaded_tone)
 
             # Restore default MIDI-in callback
             self.core.close_midi_ports()
             self.core.open_midi_ports()
-
-            print(downloaded_tone)
         except Exception:
             pass
 
