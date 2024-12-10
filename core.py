@@ -9,8 +9,8 @@ from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL
 from constants.enums import ParameterType
 from models.parameter import MainParameter
 from models.tone import Tone
-from services.tyrant_midi_service import TyrantMidiService
 from services.midi_service import MidiService
+from services.tyrant_midi_service import TyrantMidiService
 from ui.change_instrument_window import ChangeInstrumentWindow
 from utils import utils
 from utils.utils import decode_param_value, int_to_hex, lsb_msb_to_int, get_all_instruments
@@ -489,3 +489,14 @@ class Core(QObject):
 
     def log(self, msg: str):
         self.main_window.log_texbox.log(msg)
+
+    def get_current_tone_as_ton_file(self, tone_name: str):
+        new_tone_name = tone_name[:8]
+        current_tone = self.tyrant_midi_service.read_current_tone(new_tone_name)
+        ton_file_data = self.tyrant_midi_service.wrap_tone_file(current_tone)
+
+        # Restore default MIDI-in callback after using tyrant_midi_service
+        self.close_midi_ports()
+        self.open_midi_ports()
+
+        return ton_file_data

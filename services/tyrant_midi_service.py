@@ -33,7 +33,7 @@ class TyrantMidiService:
     class SysexTimeoutError(Exception):
         pass
 
-    def read_current_tone(self):
+    def read_current_tone(self, new_tone_name: str):
         """
         Original name: tone_read
 
@@ -79,8 +79,12 @@ class TyrantMidiService:
         x = bytearray(b'\x00' * 0x1C8)
 
         # Name
-        # x[0x1A6:0x1B6] = b'                '
-        x[0x1A6:0x1B6] = b'TheNameOfTheTone'
+        if new_tone_name:
+            new_tone_name_bytes = new_tone_name.encode('utf-8')
+            x[0x1A6:0x1B6] = new_tone_name_bytes.ljust(16, b' ')
+            x[0x1A6 + 8] = 0x00  # Set the 9th byte in the range to \x00
+        else:
+            x[0x1A6:0x1B6] = b'                '
 
         for (a, b) in [(0, 0x00), (20, 0x88)]:
             x[b + 0x00:b + 0x02] = self.to_2b(y[a + 7][0])
@@ -296,7 +300,9 @@ class TyrantMidiService:
             v += 0x01
         if y[82][0]:
             v += 0x02
-        if y[81][0]:
+        if True:  # y[81][0]
+            # Trying to fix the issue where the final v is 139 instead of 143.
+            # This was the reason the tone name was empty in the "CASIO Data Manager for CT-X".
             v += 0x04
         v += 0x08 * (y[80][0] % 16)
         if y[55][0]:

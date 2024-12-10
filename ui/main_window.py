@@ -1,3 +1,5 @@
+import os
+
 from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser
@@ -96,14 +98,12 @@ class MainWindow(QMainWindow):
         file_name = FileDialogHelper.save_ton_dialog(self)
         if file_name:
             try:
-                current_tone = self.core.tyrant_midi_service.read_current_tone()
-                ton_data = self.core.tyrant_midi_service.wrap_tone_file(current_tone)
+                if not self.core.tone.name:
+                    file_name_without_extension = os.path.splitext(os.path.basename(file_name))[0]
+                    self.core.tone.name = file_name_without_extension
 
-                # Restore default MIDI-in callback after using tyrant_midi_service
-                self.core.close_midi_ports()
-                self.core.open_midi_ports()
-
-                FileOperations.save_binary_file(file_name, ton_data)
+                ton_file_data = self.core.get_current_tone_as_ton_file(self.core.tone.name)
+                FileOperations.save_binary_file(file_name, ton_file_data)
                 self.top_widget.tone_name_label.setText(self.core.tone.name)
             except Exception as e:
                 self.core.show_error_msg(str(e))
