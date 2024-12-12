@@ -84,6 +84,6 @@ This software uses Python-RtMidi, which is distributed under the [MIT License](h
 
 This software may be compiled using Nuitka, an optimizing Python compiler. Nuitka is distributed under the Apache License 2.0. For details, see the [Nuitka License page](https://nuitka.net/pages/license.html).
 
-Button icons used in this software are licensed under a Creative Commons Attribution-Share Alike 3.0 License. Ownership and copyright of the icons remains the property of [Aha-Soft](http://www.aha-soft.com/free-icons/).
+Button icons used in this software are licensed under a [Creative Commons Attribution 3.0 License](https://creativecommons.org/licenses/by/3.0/). Fugue Icons and Diagona Icons are property of [Yusuke Kamiyamane](https://p.yusukekamiyamane.com/). Some other icons are the property of [Aha-Soft](http://www.aha-soft.com/free-icons/).
 
 **Company and product names used in this software may be registered trademarks of others.**

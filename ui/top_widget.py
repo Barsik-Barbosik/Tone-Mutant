@@ -36,13 +36,13 @@ class TopWidget(QWidget):
         self.layout.addWidget(GuiHelper.get_spacer())  # --------------------------
 
         synchronize_tone_button = QPushButton(" Synchronize Tone", self)
-        synchronize_tone_button.setIcon(QIcon(resource_path("resources/sync.png")))
+        synchronize_tone_button.setIcon(QIcon(resource_path("resources/piano.png")))
         synchronize_tone_button.setObjectName("top-widget-button")
         synchronize_tone_button.clicked.connect(self.core.synchronize_tone_with_synth)
         self.layout.addWidget(synchronize_tone_button)
 
         randomize_tone_button = QPushButton(" Randomize Tone", self)
-        randomize_tone_button.setIcon(QIcon(resource_path("resources/note2.png")))
+        randomize_tone_button.setIcon(QIcon(resource_path("resources/random_wand.png")))
         randomize_tone_button.setObjectName("top-widget-button")
         randomize_tone_button.clicked.connect(self.on_randomize_tone_button_pressed)
         self.layout.addWidget(randomize_tone_button)

@@ -10,7 +10,7 @@ class RequestParameterWindow(QWidget):
         super().__init__()
 
         self.setWindowTitle("Request Parameter")
-        self.setWindowIcon(QIcon(resource_path("resources/get.png")))
+        self.setWindowIcon(QIcon(resource_path("resources/request.png")))
 
         self.core = parent.core
 

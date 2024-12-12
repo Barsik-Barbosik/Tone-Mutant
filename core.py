@@ -6,7 +6,7 @@ import time
 from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
 
 from constants import constants
-from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL
+from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL, EMPTY_TONE
 from constants.enums import ParameterType
 from models.parameter import MainParameter
 from models.tone import Tone
@@ -517,3 +517,24 @@ class Core(QObject):
     def save_file(self, file_name, ton_file_data):
         FileOperations.save_binary_file(file_name, ton_file_data)
         self.status_msg_signal.emit("File successfully saved!", 3000)
+
+    def upload_tone(self, tone_number):
+        if tone_number < 801 or tone_number > 900:
+            raise Exception("Cannot delete from Tone number {0}".format(tone_number))
+
+        download_from = 899
+        tone_data = self.core.tyrant_midi_service.bulk_download(download_from - 801, memory=1, category=3)
+        self.core.tyrant_midi_service.bulk_upload(tone_number - 801, tone_data, memory=1, category=3)
+        self.core.close_midi_ports()
+        self.core.open_midi_ports()
+
+    def rename_tone(self, new_name):
+        pass
+
+    def delete_tone(self, tone_number):
+        if tone_number < 801 or tone_number > 900:
+            raise Exception("Cannot delete from Tone number {0}".format(tone_number))
+
+        self.core.tyrant_midi_service.bulk_upload(tone_number - 801, EMPTY_TONE, memory=1, category=3)
+        self.core.close_midi_ports()
+        self.core.open_midi_ports()

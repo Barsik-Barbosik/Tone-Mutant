@@ -18,7 +18,7 @@ from utils.utils import resource_path
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("ToneMutant 1.0.2")
+        self.setWindowTitle("ToneMutant 1.1.0")
         self.setWindowIcon(QIcon(resource_path("resources/note.png")))
 
         self.status_bar = QStatusBar(self)
@@ -102,21 +102,14 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 self.core.show_error_msg(str(e))
 
-    # def test(self):
-    #     # if val_result < 801 or val_result > 900:
-    #     #     raise Exception("Cannot download from Tone number {0}".format(val_result))
-    #
-    #     # TEST: Get a User Tone from slot 900 and save into slot 899
-    #     download_from = 900
-    #     upload_to = 899
-    #
-    #     downloaded_tone = self.core.tyrant_midi_service.bulk_download(download_from - 801, memory=1, category=3)
-    #     self.core.tyrant_midi_service.bulk_upload(upload_to - 801, downloaded_tone, memory=1, category=3)
-    #     print(downloaded_tone)
-    #
-    #     # Restore default MIDI-in callback
-    #     self.core.close_midi_ports()
-    #     self.core.open_midi_ports()
+    def upload_tone(self):
+        self.core.upload_tone(900)
+
+    def rename_tone(self):
+        self.core.rename_tone("New Name")
+
+    def delete_tone(self):
+        self.core.delete_tone(900)
 
     @staticmethod
     def menu_exit_action():

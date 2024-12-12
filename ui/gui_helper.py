@@ -20,32 +20,44 @@ class GuiHelper:
                       settings_callback, how_to_save_callback, request_parameter_callback, save_ton_callback):
         menu_bar = QMenuBar(main_window)
 
-        open_json_action = QAction(QIcon(resource_path('resources/open.png')), "&Open Tone (JSON)", main_window)
+        open_json_action = QAction(QIcon(resource_path('resources/open.png')), "Open Tone (JSON)", main_window)
         open_json_action.setStatusTip("Read tone information from a JSON-formatted file")
         open_json_action.triggered.connect(open_json_callback)
 
-        save_json_action = QAction(QIcon(resource_path('resources/save.png')), "&Save Tone (JSON)", main_window)
+        save_json_action = QAction(QIcon(resource_path('resources/save_purple.png')), "Save Tone (JSON)", main_window)
         save_json_action.setStatusTip("Save tone information as a JSON-formatted file")
         save_json_action.triggered.connect(save_json_callback)
-
-        open_action = QAction(QIcon(resource_path('resources/open.png')), "Open Tone (TON)", main_window)
-        open_action.setStatusTip(
-            "Open TON file (Not implemented. Please use the \"Synchronize Tone\" button to load the required tone from the synthesizer.)")
-        open_action.setEnabled(False)
 
         save_action = QAction(QIcon(resource_path('resources/save.png')), "Save Tone (TON)", main_window)
         save_action.setStatusTip("Save tone as a TON file")
         save_action.triggered.connect(save_ton_callback)
 
-        midi_settings_action = QAction(QIcon(resource_path('resources/settings.png')), "&Settings", main_window)
+        midi_settings_action = QAction(QIcon(resource_path('resources/settings.png')), "Settings", main_window)
         midi_settings_action.setStatusTip("Open settings")
         midi_settings_action.triggered.connect(settings_callback)
 
-        exit_action = QAction(QIcon(resource_path('resources/exit.png')), "&Exit", main_window)
+        exit_action = QAction(QIcon(resource_path('resources/exit.png')), "Exit", main_window)
         exit_action.setStatusTip("Exit application")
         exit_action.triggered.connect(exit_callback)
 
-        how_to_save_action = QAction(QIcon(resource_path('resources/help.png')), "&Saving a TON File Using Synthesizer",
+        upload_tone_action = QAction(QIcon(resource_path('resources/piano_plus.png')), "Save Tone to Synthesizer's Memory",
+                                     main_window)
+        upload_tone_action.setStatusTip("Save current tone to the synthesizer's user memory section (801–900)")
+        upload_tone_action.setEnabled(False)
+
+        rename_tone_action = QAction(QIcon(resource_path('resources/piano_pencil.png')), "Rename Tone", main_window)
+        rename_tone_action.setStatusTip("Rename user tone (801–900)")
+        rename_tone_action.setEnabled(False)
+
+        delete_tone_action = QAction(QIcon(resource_path('resources/piano_minus.png')), "Delete Tone", main_window)
+        delete_tone_action.setStatusTip("Delete user tone (801–900)")
+        delete_tone_action.setEnabled(False)
+
+        request_parameter_action = QAction(QIcon(resource_path('resources/request.png')), "Request Parameter", main_window)
+        request_parameter_action.setStatusTip("Request a parameter from synthesizer")
+        request_parameter_action.triggered.connect(request_parameter_callback)
+
+        how_to_save_action = QAction(QIcon(resource_path('resources/help.png')), "Saving a TON File Using Synthesizer",
                                      main_window)
         how_to_save_action.setStatusTip("Instructions on how to use the synthesizer to save and export the tone")
         how_to_save_action.triggered.connect(how_to_save_callback)
@@ -53,8 +65,6 @@ class GuiHelper:
         file_menu = QMenu("&File", main_window)
         file_menu.addAction(open_json_action)
         file_menu.addAction(save_json_action)
-        file_menu.addSeparator()
-        file_menu.addAction(open_action)
         file_menu.addAction(save_action)
         file_menu.addSeparator()
         file_menu.addAction(midi_settings_action)
@@ -62,21 +72,16 @@ class GuiHelper:
         file_menu.addAction(exit_action)
         menu_bar.addMenu(file_menu)
 
+        tools_menu = QMenu("&Synthesizer Tools", main_window)
+        tools_menu.addAction(upload_tone_action)
+        tools_menu.addAction(rename_tone_action)
+        tools_menu.addAction(delete_tone_action)
+
         if GuiHelper.is_custom_midi_msg_enabled():
-            upload_tone_action = QAction(QIcon(resource_path('resources/get.png')), "&Write Tone to Synthesizer Memory",
-                                         main_window)
-            upload_tone_action.setStatusTip("Write a tone to the synthesizer's user memory section (801–900)")
-            upload_tone_action.setEnabled(False)
-
-            request_parameter_action = QAction(QIcon(resource_path('resources/get.png')), "&Request Parameter",
-                                               main_window)
-            request_parameter_action.setStatusTip("Request a parameter from synthesizer")
-            request_parameter_action.triggered.connect(request_parameter_callback)
-
-            tools_menu = QMenu("&Tools", main_window)
-            tools_menu.addAction(upload_tone_action)
+            tools_menu.addSeparator()
             tools_menu.addAction(request_parameter_action)
-            menu_bar.addMenu(tools_menu)
+
+        menu_bar.addMenu(tools_menu)
 
         help_menu = QMenu("&Help", main_window)
         help_menu.addAction(how_to_save_action)
@@ -177,7 +182,7 @@ class GuiHelper:
         log_tab_layout.addWidget(midi_msg_input)
 
         submit_button = QPushButton(" Send MIDI Message")
-        submit_button.setIcon(QIcon(resource_path("resources/apply.png")))
+        submit_button.setIcon(QIcon(resource_path("resources/send.png")))
         submit_button.clicked.connect(lambda: main_window.core.send_custom_midi_msg(midi_msg_input.toPlainText()))
         log_tab_layout.addWidget(submit_button)
 

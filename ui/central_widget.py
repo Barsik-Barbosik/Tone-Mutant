@@ -119,7 +119,7 @@ class CentralWidget(QWidget):
                                   len(self.core.tone.main_parameter_list) - right_side_items_count)
 
         random_button = QPushButton(" Randomize Parameters", self)
-        random_button.setIcon(QIcon(resource_path("resources/random.png")))
+        random_button.setIcon(QIcon(resource_path("resources/random_star.png")))
         random_button.setObjectName("random-button")
         random_button.clicked.connect(self.on_random_button_pressed)
         button_row = largest_items_count + 1

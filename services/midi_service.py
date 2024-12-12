@@ -177,15 +177,15 @@ class MidiService:
         elif message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.REAL_TIME:
             self.log("[MIDI IN] Real Time SysEx", message)
         elif message[0] == CC_FIRST_BYTE and message[1] == CC_BANK_SELECT_MSB:
-            self.log("[MIDI IN] Bank change MSB", message)
+            self.log("[MIDI IN] Bank change MSB ", message)
             self.bank_select_msg_queue.append(message)
             time.sleep(0.01)
         elif message[0] == CC_FIRST_BYTE and message[1] == CC_BANK_SELECT_LSB:
-            self.log("[MIDI IN] Bank change LSB", message)
+            self.log("[MIDI IN] Bank change LSB ", message)
         # elif message[0] == CC_FIRST_BYTE:
         #     self.log("[MIDI IN] CC: ", message)
         elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE:
-            self.log("[MIDI IN] Program change", message)
+            self.log("[MIDI IN] Program change ", message)
             bank_select_msg = self.get_last_bank_select_message()
             if bank_select_msg is not None:
                 self.core.process_instrument_select_response(bank_select_msg[2], message[1])
