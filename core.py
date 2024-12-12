@@ -386,7 +386,7 @@ class Core(QObject):
                                            + str(self.tone.parent_tone.id) + " " + str(self.tone.parent_tone.name) \
                                            + "</h2><h5>(bank: " + str(self.tone.parent_tone.bank) \
                                            + ", program: " + str(self.tone.parent_tone.program) \
-                                           + ")</h5>Then, press the \"Continue\" button to apply the parameter changes from the JSON file."
+                                           + ")</h5>Then, press the 'Continue' button to apply the parameter changes from the JSON file."
 
         if self.tone.parent_tone is None:
             json_synthesizer_model_str = "unknown synthesizer model" if json_synthesizer_model is None else str(
@@ -399,7 +399,7 @@ class Core(QObject):
                                    + id_str + tone_name_str \
                                    + "</h2><h5>(bank: " + json_bank_str + ", program: " + json_program_str \
                                    + ")</h5>You can select any other source tone using your synthesizer controls.<br/>" \
-                                   + "Then, press the \"Continue\" button to apply the parameter changes from the JSON file."
+                                   + "Then, press the 'Continue' button to apply the parameter changes from the JSON file."
 
         self.show_status_msg(
             "Manual tone selection is necessary because selecting the UPPER Tone is not possible via SysEx messages.",
@@ -523,10 +523,10 @@ class Core(QObject):
             raise Exception("Cannot delete from Tone number {0}".format(tone_number))
 
         download_from = 899
-        tone_data = self.core.tyrant_midi_service.bulk_download(download_from - 801, memory=1, category=3)
-        self.core.tyrant_midi_service.bulk_upload(tone_number - 801, tone_data, memory=1, category=3)
-        self.core.close_midi_ports()
-        self.core.open_midi_ports()
+        tone_data = self.tyrant_midi_service.bulk_download(download_from - 801, memory=1, category=3)
+        self.tyrant_midi_service.bulk_upload(tone_number - 801, tone_data, memory=1, category=3)
+        self.close_midi_ports()
+        self.open_midi_ports()
 
     def rename_tone(self, new_name):
         pass
@@ -535,6 +535,6 @@ class Core(QObject):
         if tone_number < 801 or tone_number > 900:
             raise Exception("Cannot delete from Tone number {0}".format(tone_number))
 
-        self.core.tyrant_midi_service.bulk_upload(tone_number - 801, EMPTY_TONE, memory=1, category=3)
-        self.core.close_midi_ports()
-        self.core.open_midi_ports()
+        self.tyrant_midi_service.bulk_upload(tone_number - 801, EMPTY_TONE, memory=1, category=3)
+        self.close_midi_ports()
+        self.open_midi_ports()

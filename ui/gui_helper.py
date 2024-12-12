@@ -17,7 +17,8 @@ class GuiHelper:
 
     @staticmethod
     def init_menu_bar(main_window: QMainWindow, exit_callback, open_json_callback, save_json_callback,
-                      settings_callback, how_to_save_callback, request_parameter_callback, save_ton_callback):
+                      settings_callback, how_to_save_callback, request_parameter_callback, save_ton_callback,
+                      delete_tone_callback):
         menu_bar = QMenuBar(main_window)
 
         open_json_action = QAction(QIcon(resource_path('resources/open.png')), "Open Tone (JSON)", main_window)
@@ -40,7 +41,8 @@ class GuiHelper:
         exit_action.setStatusTip("Exit application")
         exit_action.triggered.connect(exit_callback)
 
-        upload_tone_action = QAction(QIcon(resource_path('resources/piano_plus.png')), "Save Tone to Synthesizer's Memory",
+        upload_tone_action = QAction(QIcon(resource_path('resources/piano_plus.png')),
+                                     "Save Tone to Synthesizer's Memory",
                                      main_window)
         upload_tone_action.setStatusTip("Save current tone to the synthesizer's user memory section (801–900)")
         upload_tone_action.setEnabled(False)
@@ -51,9 +53,10 @@ class GuiHelper:
 
         delete_tone_action = QAction(QIcon(resource_path('resources/piano_minus.png')), "Delete Tone", main_window)
         delete_tone_action.setStatusTip("Delete user tone (801–900)")
-        delete_tone_action.setEnabled(False)
+        delete_tone_action.triggered.connect(delete_tone_callback)
 
-        request_parameter_action = QAction(QIcon(resource_path('resources/request.png')), "Request Parameter", main_window)
+        request_parameter_action = QAction(QIcon(resource_path('resources/request.png')), "Request Parameter",
+                                           main_window)
         request_parameter_action.setStatusTip("Request a parameter from synthesizer")
         request_parameter_action.triggered.connect(request_parameter_callback)
 

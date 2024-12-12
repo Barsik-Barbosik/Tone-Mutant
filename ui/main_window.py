@@ -5,6 +5,7 @@ from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser
 from constants.constants import HOW_TO_SAVE_TONE
 from core import Core
 from ui.central_widget import CentralWidget
+from ui.delete_tone_window import DeleteToneWindow
 from ui.deque_log import DequeLog
 from ui.file_dialogs import FileDialogHelper
 from ui.gui_helper import GuiHelper
@@ -36,7 +37,8 @@ class MainWindow(QMainWindow):
             settings_callback=self.show_settings,
             how_to_save_callback=self.show_how_to_save_tone,
             request_parameter_callback=self.show_request_parameter_dialog,
-            save_ton_callback=self.show_save_ton_dialog
+            save_ton_callback=self.show_save_ton_dialog,
+            delete_tone_callback=self.show_delete_tone_dialog
         )
         self.setMenuBar(self.menu_bar)
 
@@ -50,6 +52,7 @@ class MainWindow(QMainWindow):
 
         self.settings_window = None
         self.request_parameter_window = None
+        self.delete_tone_window = None
 
         # Initialize tone synchronization
         self.core.synchronize_tone_with_synth()
@@ -108,8 +111,8 @@ class MainWindow(QMainWindow):
     def rename_tone(self):
         self.core.rename_tone("New Name")
 
-    def delete_tone(self):
-        self.core.delete_tone(900)
+    def show_delete_tone_dialog(self):
+        self.delete_tone_window = DeleteToneWindow(self)
 
     @staticmethod
     def menu_exit_action():

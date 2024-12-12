@@ -15,7 +15,7 @@ class RequestParameterWindow(QWidget):
         self.core = parent.core
 
         layout = QVBoxLayout()
-        label = QLabel("Request a parameter from the synthesizer.\nThe result will appear in the \"Log\" tab.")
+        label = QLabel("Request a parameter from the synthesizer.\nThe result will appear in the 'Log' tab.")
         label.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(label)
 
@@ -49,5 +49,5 @@ class RequestParameterWindow(QWidget):
             self.core.request_custom_parameter(number, block)
         except ValueError:
             QMessageBox.warning(self, "Input Error",
-                                "The \"Number\" and \"Block\" fields must contain a valid integers.")
+                                "The 'Number' and 'Block' fields must contain a valid integers.")
             return
