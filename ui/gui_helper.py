@@ -80,7 +80,7 @@ class GuiHelper:
         tools_menu.addAction(rename_tone_action)
         tools_menu.addAction(delete_tone_action)
 
-        if GuiHelper.is_custom_midi_msg_enabled():
+        if GuiHelper.is_expert_mode_enabled():
             tools_menu.addSeparator()
             tools_menu.addAction(request_parameter_action)
 
@@ -163,18 +163,18 @@ class GuiHelper:
         log_tab_layout = QVBoxLayout()
         log_tab_layout.addWidget(main_window.log_texbox)
 
-        if GuiHelper.is_custom_midi_msg_enabled():
+        if GuiHelper.is_expert_mode_enabled():
             GuiHelper.add_midi_msg_input(log_tab_layout, main_window)
 
         log_tab.setLayout(log_tab_layout)
         return log_tab
 
     @staticmethod
-    def is_custom_midi_msg_enabled() -> bool:
-        """Checks if custom MIDI message sending is enabled."""
+    def is_expert_mode_enabled() -> bool:
+        """Checks if expert mode is enabled."""
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
-        return cfg.get("Expert", "is_custom_midi_msg_sending_enabled", fallback="false").lower() == "true"
+        return cfg.get("Expert", "is_expert_mode_enabled", fallback="false").lower() == "true"
 
     @staticmethod
     def add_midi_msg_input(log_tab_layout: QVBoxLayout, main_window: QMainWindow):
