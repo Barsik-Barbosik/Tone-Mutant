@@ -497,6 +497,7 @@ class Core(QObject):
             file_name_without_extension = os.path.splitext(os.path.basename(file_name))[0]
             self.tone.name = file_name_without_extension
 
+        self.main_window.loading_animation.start()
         self.status_msg_signal.emit("Saving... Please wait!", 10000)
         worker = Worker(self.get_current_tone_as_ton_file, self.tone.name)
         worker.signals.error.connect(lambda error: print(f"Error: {error}"))
@@ -517,6 +518,7 @@ class Core(QObject):
     def save_file(self, file_name, ton_file_data):
         FileOperations.save_binary_file(file_name, ton_file_data)
         self.status_msg_signal.emit("File successfully saved!", 3000)
+        self.main_window.loading_animation.stop()
 
     def upload_tone(self, tone_number, tone_name):
         if tone_number < 801 or tone_number > 900:

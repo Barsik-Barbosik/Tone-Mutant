@@ -27,6 +27,7 @@ class LoadingAnimation(QWidget):
         """Start the loading animation and make it visible."""
         self.setVisible(True)
         self.movie.start()
+        self.center_loading_animation()
 
     def stop(self):
         """Stop the loading animation and hide it."""
