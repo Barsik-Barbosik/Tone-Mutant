@@ -9,6 +9,7 @@ from ui.delete_tone_window import DeleteToneWindow
 from ui.deque_log import DequeLog
 from ui.file_dialogs import FileDialogHelper
 from ui.gui_helper import GuiHelper
+from ui.loading_animation import LoadingAnimation
 from ui.request_parameter_window import RequestParameterWindow
 from ui.settings_window import SettingsWindow
 from ui.top_widget import TopWidget
@@ -51,6 +52,8 @@ class MainWindow(QMainWindow):
         self.top_widget = TopWidget(self)
 
         self._setup_layout()
+
+        self.loading_animation = LoadingAnimation(self)
 
         self.settings_window = None
         self.upload_tone_window = None
@@ -116,6 +119,10 @@ class MainWindow(QMainWindow):
 
     def show_delete_tone_dialog(self):
         self.delete_tone_window = DeleteToneWindow(self)
+
+    def resizeEvent(self, event):
+        super(MainWindow, self).resizeEvent(event)
+        self.loading_animation.center_loading_animation()
 
     @staticmethod
     def menu_exit_action():
