@@ -165,7 +165,10 @@ class TyrantMidiService:
             x[b + 0x84:b + 0x85] = self.to_1b(y[a + 3][0])
             x[b + 0x85:b + 0x86] = self.to_1b(y[a + 4][0])
             x[b + 0x86:b + 0x87] = self.to_1b(y[a + 5][0])
-            x[b + 0x87] = y[a + 1][0]
+
+            # x[b + 0x87] = y[a + 1][0]
+            # Prevent "ValueError('byte must be in range(0, 256)". Sometimes value was -1.
+            x[b + 0x87] = max(0, min(255, y[a + 1][0]))
 
         x[0x110] = y[56][0]
         x[0x111] = y[57][0]

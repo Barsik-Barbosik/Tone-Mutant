@@ -476,8 +476,8 @@ class Core(QObject):
     def send_custom_midi_msg(self, midi_msg: str):
         self.midi_service.send_custom_midi_msg(midi_msg)
 
-    def request_custom_parameter(self, number: int, block_id: int):
-        self.midi_service.request_parameter_value(block_id, number)
+    def request_custom_parameter(self, number: int, block_id: int, category: int, memory: int, parameter_set: int):
+        self.midi_service.request_parameter_value_with_cat_mem_pset(block_id, number, category, memory, parameter_set)
 
     @Slot()
     def show_status_msg(self, text: str, msecs: int):

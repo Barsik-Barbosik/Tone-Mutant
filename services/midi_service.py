@@ -129,6 +129,13 @@ class MidiService:
         self.send_sysex(msg)
         # time.sleep(0.1)
 
+    def request_parameter_value_with_cat_mem_pset(self, block_id: int, parameter: int, category: int, memory: int,
+                                                  parameter_set: int):
+        msg = "F0 44 19 01 7F 00 " + int_to_hex(category) + int_to_hex(memory) \
+              + int_to_lsb_msb(parameter_set) + "00 00 00 00 00 00" + int_to_lsb_msb(block_id) \
+              + int_to_lsb_msb(parameter) + "00 00 00 00 F7"
+        self.send_sysex(msg)
+
     def request_dsp_module(self, block_id: int):
         msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
         msg_block_id = int_to_lsb_msb(block_id)
