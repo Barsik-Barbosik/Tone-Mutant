@@ -12,6 +12,7 @@ from ui.gui_helper import GuiHelper
 from ui.request_parameter_window import RequestParameterWindow
 from ui.settings_window import SettingsWindow
 from ui.top_widget import TopWidget
+from ui.upload_tone_window import UploadToneWindow
 from utils.file_operations import FileOperations
 from utils.utils import resource_path
 
@@ -38,6 +39,7 @@ class MainWindow(QMainWindow):
             how_to_save_callback=self.show_how_to_save_tone,
             request_parameter_callback=self.show_request_parameter_dialog,
             save_ton_callback=self.show_save_ton_dialog,
+            upload_tone_callback=self.show_upload_tone_dialog,
             delete_tone_callback=self.show_delete_tone_dialog
         )
         self.setMenuBar(self.menu_bar)
@@ -51,8 +53,9 @@ class MainWindow(QMainWindow):
         self._setup_layout()
 
         self.settings_window = None
-        self.request_parameter_window = None
+        self.upload_tone_window = None
         self.delete_tone_window = None
+        self.request_parameter_window = None
 
         # Initialize tone synchronization
         self.core.synchronize_tone_with_synth()
@@ -105,8 +108,8 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 self.core.show_error_msg(str(e))
 
-    def upload_tone(self):
-        self.core.upload_tone(900)
+    def show_upload_tone_dialog(self):
+        self.upload_tone_window = UploadToneWindow(self)
 
     def rename_tone(self):
         self.core.rename_tone("New Name")

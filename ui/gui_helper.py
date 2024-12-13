@@ -18,7 +18,7 @@ class GuiHelper:
     @staticmethod
     def init_menu_bar(main_window: QMainWindow, exit_callback, open_json_callback, save_json_callback,
                       settings_callback, how_to_save_callback, request_parameter_callback, save_ton_callback,
-                      delete_tone_callback):
+                      upload_tone_callback, delete_tone_callback):
         menu_bar = QMenuBar(main_window)
 
         open_json_action = QAction(QIcon(resource_path('resources/open.png')), "Open Tone (JSON)", main_window)
@@ -45,7 +45,7 @@ class GuiHelper:
                                      "Save Tone to Synthesizer's Memory",
                                      main_window)
         upload_tone_action.setStatusTip("Save current tone to the synthesizer's user memory section (801–900)")
-        upload_tone_action.setEnabled(False)
+        upload_tone_action.triggered.connect(upload_tone_callback)
 
         rename_tone_action = QAction(QIcon(resource_path('resources/piano_pencil.png')), "Rename Tone", main_window)
         rename_tone_action.setStatusTip("Rename user tone (801–900)")

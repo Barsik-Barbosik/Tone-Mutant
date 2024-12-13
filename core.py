@@ -518,13 +518,17 @@ class Core(QObject):
         FileOperations.save_binary_file(file_name, ton_file_data)
         self.status_msg_signal.emit("File successfully saved!", 3000)
 
-    def upload_tone(self, tone_number):
+    def upload_tone(self, tone_number, tone_name):
         if tone_number < 801 or tone_number > 900:
-            raise Exception("Cannot delete from Tone number {0}".format(tone_number))
+            raise Exception("The 'Tone Number' must be in the range of 801 to 900.")
 
-        download_from = 899
-        tone_data = self.tyrant_midi_service.bulk_download(download_from - 801, memory=1, category=3)
-        self.tyrant_midi_service.bulk_upload(tone_number - 801, tone_data, memory=1, category=3)
+        if not tone_name:
+            tone_name = DEFAULT_TONE_NAME
+
+        new_tone_name = tone_name[:8]  # trim to first 8 symbols
+        current_tone = self.tyrant_midi_service.read_current_tone(new_tone_name)
+
+        self.tyrant_midi_service.bulk_upload(tone_number - 801, current_tone, memory=1, category=3)
         self.close_midi_ports()
         self.open_midi_ports()
 
