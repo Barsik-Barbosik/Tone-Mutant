@@ -80,10 +80,13 @@ class UploadToneWindow(QWidget):
             self.core.log(f"[INFO] Saving tone number: {tone_number}")
 
             if 800 < tone_number <= 900:
+                # TODO: upload tone in separate thread
+                self.close()
+
                 self.core.upload_tone(tone_number, self.name_input.text())
                 self.core.synchronize_tone_with_synth()
                 self.core.status_msg_signal.emit("Tone successfully saved!", 3000)
-                self.close()
+                # self.close()
                 self.deleteLater()
             else:
                 QMessageBox.warning(self, "Input Error", "The 'Tone Number' must be in the range of 801 to 900.")

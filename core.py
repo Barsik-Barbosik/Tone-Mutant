@@ -522,6 +522,8 @@ class Core(QObject):
         if tone_number < 801 or tone_number > 900:
             raise Exception("The 'Tone Number' must be in the range of 801 to 900.")
 
+        self.status_msg_signal.emit("Saving... Please wait!", 10000)
+
         if not tone_name:
             tone_name = DEFAULT_TONE_NAME
 
