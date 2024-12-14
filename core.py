@@ -3,7 +3,7 @@ import copy
 import os
 import time
 
-from PySide2.QtCore import QReadWriteLock, Signal, Slot, QObject
+from PySide2.QtCore import Signal, Slot, QObject
 
 from constants import constants
 from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL, EMPTY_TONE
@@ -33,7 +33,7 @@ class Core(QObject):
         self.midi_service = MidiService.get_instance()
         self.midi_service.core = self
         self.tyrant_midi_service = TyrantMidiService()
-        self.lock = QReadWriteLock()
+        # self.lock = QReadWriteLock()
         self.timeout = 0
         self.synchronize_tone_signal.connect(self.synchronize_tone_with_synth)
         self.status_msg_signal.connect(self.show_status_msg)
@@ -45,14 +45,14 @@ class Core(QObject):
     # Synchronize all Tone data: name, main params, DSP modules and their params
     @Slot()
     def synchronize_tone_with_synth(self):
-        self.lock.lockForWrite()
+        # self.lock.lockForWrite()
         self.log("[INFO] Synchronizing tone...")
         self.midi_service.active_sync_job_count = 0
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
 
         try:
-            self.midi_service.close_midi_ports()
-            self.midi_service.check_and_reopen_midi_ports()
+            self.close_midi_ports()
+            self.open_midi_ports()
         except Exception as e:
             self.show_error_msg(str(e))
 
@@ -68,21 +68,22 @@ class Core(QObject):
 
         self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
 
-        self.lock.unlock()
+        # self.lock.unlock()
 
-        worker = Worker(self.redraw_both_params_pages)
+        worker = Worker(self.redraw_main_and_advanced_params_pages)
         worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
         worker.start()
+        self.main_window.loading_animation.stop()
 
-    def redraw_both_params_pages(self):
+    def redraw_main_and_advanced_params_pages(self):
         for i in range(0, 10):
-            self.lock.lockForWrite()
+            # self.lock.lockForWrite()
             if self.midi_service.active_sync_job_count == 0:
-                self.lock.unlock()
+                # self.lock.unlock()
                 self.main_window.central_widget.redraw_main_params_panel_signal.emit()
                 self.main_window.central_widget.redraw_advanced_params_panel_signal.emit()
                 break
-            self.lock.unlock()
+            # self.lock.unlock()
             time.sleep(0.5)
 
     # Request tone name from synth
@@ -94,7 +95,7 @@ class Core(QObject):
 
     # Process tone name from synth response
     def process_tone_name_response(self, response):
-        self.lock.lockForWrite()
+        # self.lock.lockForWrite()
         tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
         self.log("[INFO] Synth tone name: " + tone_name)
         if tone_name:
@@ -104,7 +105,7 @@ class Core(QObject):
 
         tone_id_and_name = self.get_tone_id_and_name()
         self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
-        self.lock.unlock()
+        # self.lock.unlock()
 
     # Request main parameter value from synth
     def request_main_parameters(self):
@@ -178,10 +179,10 @@ class Core(QObject):
 
     # Process DSP module from synth response
     def process_dsp_module_response(self, block_id: int, dsp_module_id: int):
-        self.lock.lockForWrite()
+        # self.lock.lockForWrite()
         self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
         self.request_dsp_module_parameters(block_id, dsp_module_id)
-        self.lock.unlock()
+        # self.lock.unlock()
 
     # On list widget changed: update tone dsp and send module change sysex
     def update_dsp_module_from_list(self, block_id, dsp_module_id):
@@ -277,7 +278,7 @@ class Core(QObject):
 
     # Intercept instrument change messages from synth
     def process_instrument_select_response(self, bank, program):
-        self.lock.lockForWrite()
+        # self.lock.lockForWrite()
         self.main_window.central_widget.instrument_list.blockSignals(True)
         self.log("[INFO] Instrument: " + str(bank) + ", " + str(program))
         self.find_instrument_and_update_tone(bank, program)
@@ -285,7 +286,7 @@ class Core(QObject):
         tone_id_and_name = self.get_tone_id_and_name()
         self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
         self.main_window.central_widget.instrument_list.blockSignals(False)
-        self.lock.unlock()
+        # self.lock.unlock()
 
     def get_tone_id_and_name(self):
         if self.tone.parent_tone:
@@ -309,46 +310,51 @@ class Core(QObject):
             self.main_window.central_widget.instrument_list.clearSelection()
 
     def countdown_and_autosynchronize(self, timeout):
-        self.lock.lockForWrite()
+        # self.lock.lockForWrite()
         is_active = self.timeout > 0
-        self.lock.unlock()
+        # self.lock.unlock()
 
         if is_active:
             # worker exists: reset timer and exit
-            self.lock.lockForWrite()
+            # self.lock.lockForWrite()
             self.timeout = timeout
-            self.lock.unlock()
+            # self.lock.unlock()
         else:
             # start countdown
-            self.lock.lockForWrite()
+            # self.lock.lockForWrite()
             self.timeout = timeout
-            self.lock.unlock()
+            # self.lock.unlock()
             while True:
-                self.lock.lockForWrite()
+                # self.lock.lockForWrite()
                 is_active = self.timeout > 0
-                self.lock.unlock()
+                # self.lock.unlock()
 
                 if is_active:
-                    self.lock.lockForWrite()
+                    # self.lock.lockForWrite()
                     text = "Autosynchronize countdown: " + str(self.timeout)
                     self.status_msg_signal.emit(text, 1000)
                     self.timeout = self.timeout - 1
-                    self.lock.unlock()
+                    # self.lock.unlock()
                     time.sleep(1)
                 else:
                     break
 
-            self.lock.lockForWrite()
+            # self.lock.lockForWrite()
+            # self.main_window.loading_animation.start()
             self.synchronize_tone_signal.emit()
-            self.lock.unlock()
+            # self.lock.unlock()
 
     # Open midi ports
     def open_midi_ports(self):
+        # self.lock.lockForWrite()
         self.midi_service.open_midi_ports()
+        # self.lock.unlock()
 
     # Close midi ports
     def close_midi_ports(self):
+        # self.lock.lockForWrite()
         self.midi_service.close_midi_ports()
+        # self.lock.unlock()
 
     # Load Tone from JSON
     def load_tone_from_json(self, json_tone: dict):

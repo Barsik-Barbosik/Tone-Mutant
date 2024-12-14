@@ -94,17 +94,20 @@ class MidiService:
         return self.midi_in, self.midi_out
 
     def send_sysex(self, sysex_hex_str: str):
-        self.check_and_reopen_midi_ports()
-        self.core.log("[MIDI OUT]\n" + format_as_nice_hex(sysex_hex_str))
         self.lock.lockForWrite()
-        self.active_sync_job_count = self.active_sync_job_count + 1
-        self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
-        self.lock.unlock()
+        try:
+            self.check_and_reopen_midi_ports()
+            self.core.log("[MIDI OUT]\n" + format_as_nice_hex(sysex_hex_str))
+            self.active_sync_job_count = self.active_sync_job_count + 1
+            self.midi_out.send_message(bytearray(bytes.fromhex(sysex_hex_str)))
+        except Exception as e:
+            self.core.show_error_msg(str(e))
+        finally:
+            self.lock.unlock()
         time.sleep(0.01)
 
     def send_custom_midi_msg(self, msg_str: str):
         self.lock.lockForWrite()
-
         try:
             self.check_and_reopen_midi_ports()
             msg_hex: str = format_as_nice_hex(msg_str)
@@ -114,8 +117,8 @@ class MidiService:
             self.midi_out.send_message(bytearray(bytes.fromhex(msg_str)))
         except Exception as e:
             self.core.show_error_msg(str(e))
-
-        self.lock.unlock()
+        finally:
+            self.lock.unlock()
         time.sleep(0.01)
 
     def request_tone_name(self):
@@ -153,8 +156,10 @@ class MidiService:
         message, deltatime = message
 
         self.lock.lockForWrite()
-        self.active_sync_job_count = max(0, self.active_sync_job_count - 1)  # count-- until 0
-        self.lock.unlock()
+        try:
+            self.active_sync_job_count = max(0, self.active_sync_job_count - 1)  # count-- until 0
+        finally:
+            self.lock.unlock()
 
         if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO and len(message) > (SYSEX_TYPE_INDEX + 1):
             block_id = lsb_msb_to_int(message[BLOCK_INDEX], message[BLOCK_INDEX + 1])
