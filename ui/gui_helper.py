@@ -8,6 +8,7 @@ from PySide2.QtWidgets import QDial, \
 from PySide2.QtWidgets import QLabel
 
 from constants import constants
+from constants.constants import DEFAULT_SYNTH_MODEL, CTX_700_800
 from constants.enums import ParameterType
 from models.parameter import Parameter, MainParameter
 from utils.utils import resource_path
@@ -83,6 +84,11 @@ class GuiHelper:
         if GuiHelper.is_expert_mode_enabled():
             tools_menu.addSeparator()
             tools_menu.addAction(request_parameter_action)
+
+        if not GuiHelper.has_user_memory():
+            upload_tone_action.setEnabled(False)
+            rename_tone_action.setEnabled(False)
+            delete_tone_action.setEnabled(False)
 
         menu_bar.addMenu(tools_menu)
 
@@ -175,6 +181,13 @@ class GuiHelper:
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
         return cfg.get("Expert", "is_expert_mode_enabled", fallback="false").lower() == "true"
+
+    @staticmethod
+    def has_user_memory() -> bool:
+        """Checks if synthesizer model has user memory."""
+        cfg = configparser.ConfigParser()
+        cfg.read(constants.CONFIG_FILENAME)
+        return not cfg.get("Synthesizer", "model", fallback=DEFAULT_SYNTH_MODEL) == CTX_700_800
 
     @staticmethod
     def add_midi_msg_input(log_tab_layout: QVBoxLayout, main_window: QMainWindow):

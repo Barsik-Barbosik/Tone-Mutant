@@ -36,7 +36,8 @@ class SettingsWindow(QWidget):
         self._initialize_ui()
         self.show()
 
-    def _load_config(self):
+    @staticmethod
+    def _load_config():
         """Load the application configuration."""
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
@@ -92,9 +93,9 @@ class SettingsWindow(QWidget):
 
     def _apply_settings(self):
         """Apply the settings and update the configuration file."""
-        expert_mode_changed = (
-                self.is_expert_mode_enabled != self.expert_mode_mapping[self.expert_mode_combo.currentText()]
-        )
+        is_synth_model_changed = self.synthesizer_model != self.synthesizer_model_combo.currentText()
+        is_expert_mode_changed = (
+                self.is_expert_mode_enabled != self.expert_mode_mapping[self.expert_mode_combo.currentText()])
 
         self._update_config('Synthesizer', 'Model', self.synthesizer_model_combo.currentText())
         self._update_config('Midi', 'InPort', self.midi_input_port_combo.currentText())
@@ -105,22 +106,30 @@ class SettingsWindow(QWidget):
         with open(constants.CONFIG_FILENAME, 'w') as cfg_file:
             self.cfg.write(cfg_file)
 
-        if expert_mode_changed:
-            self._show_restart_required_message()
-
-        self._refresh_core()
-        self._close_window()
-
-    def _refresh_core(self):
-        """Refresh the core settings after applying changes."""
-        self.core.tone.synthesizer_model = self.synthesizer_model_combo.currentText()
-
         try:
             self.core.close_midi_ports()
             self.core.open_midi_ports()
         except Exception as e:
             self.core.log(f"[ERROR] Unable to open MIDI port: {e}")
 
+        if is_synth_model_changed:
+            self.core.main_window.reload_menu_bar()
+            self._refresh_instrument_list()
+
+        if is_expert_mode_changed:
+            self.core.main_window.reload_menu_bar()
+            self._show_restart_required_message()
+
+        self._close_window()
+
+    def _update_config(self, section, option, value):
+        """Update the configuration file."""
+        if not self.cfg.has_section(section):
+            self.cfg.add_section(section)
+        self.cfg.set(section, option, value)
+
+    def _refresh_instrument_list(self):
+        self.core.tone.synthesizer_model = self.synthesizer_model_combo.currentText()
         self.core.main_window.central_widget.populate_instrument_list()
 
     def _show_restart_required_message(self):
@@ -136,12 +145,6 @@ class SettingsWindow(QWidget):
         """Close and clean up the settings window."""
         self.close()
         self.deleteLater()
-
-    def _update_config(self, section, option, value):
-        """Update the configuration file."""
-        if not self.cfg.has_section(section):
-            self.cfg.add_section(section)
-        self.cfg.set(section, option, value)
 
     @staticmethod
     def _format_attribute_name(label_text):

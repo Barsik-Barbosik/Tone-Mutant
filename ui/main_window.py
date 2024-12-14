@@ -28,24 +28,10 @@ class MainWindow(QMainWindow):
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
 
-        # Initialize Core
         self.core = Core(self, self.status_bar)
 
-        # Initialize UI components
-        self.menu_bar = GuiHelper.init_menu_bar(
-            self,
-            exit_callback=self.menu_exit_action,
-            open_json_callback=self.show_open_json_dialog,
-            save_json_callback=self.show_save_json_dialog,
-            settings_callback=self.show_settings,
-            how_to_save_callback=self.show_how_to_save_tone,
-            request_parameter_callback=self.show_request_parameter_dialog,
-            save_ton_callback=self.show_save_ton_dialog,
-            upload_tone_callback=self.show_upload_tone_dialog,
-            rename_tone_callback=self.show_rename_tone_dialog,
-            delete_tone_callback=self.show_delete_tone_dialog
-        )
-        self.setMenuBar(self.menu_bar)
+        self.menu_bar = None
+        self.reload_menu_bar()
 
         self.help_texbox = QTextBrowser(self)
         self.log_texbox = DequeLog(self)
@@ -65,6 +51,22 @@ class MainWindow(QMainWindow):
 
         # Initialize tone synchronization
         self.core.synchronize_tone_with_synth()
+
+    def reload_menu_bar(self):
+        self.menu_bar = GuiHelper.init_menu_bar(
+            self,
+            exit_callback=self.menu_exit_action,
+            open_json_callback=self.show_open_json_dialog,
+            save_json_callback=self.show_save_json_dialog,
+            settings_callback=self.show_settings,
+            how_to_save_callback=self.show_how_to_save_tone,
+            request_parameter_callback=self.show_request_parameter_dialog,
+            save_ton_callback=self.show_save_ton_dialog,
+            upload_tone_callback=self.show_upload_tone_dialog,
+            rename_tone_callback=self.show_rename_tone_dialog,
+            delete_tone_callback=self.show_delete_tone_dialog
+        )
+        self.setMenuBar(self.menu_bar)
 
     def _setup_layout(self):
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)
