@@ -198,7 +198,7 @@ class MidiService:
                 self.core.process_instrument_select_response(bank_select_msg[2], message[1])
 
                 worker = Worker(self.core.countdown_and_autosynchronize, 2)
-                worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+                worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
                 worker.start()
 
         else:

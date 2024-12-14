@@ -71,7 +71,7 @@ class Core(QObject):
         self.lock.unlock()
 
         worker = Worker(self.redraw_both_params_pages)
-        worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+        worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
         worker.start()
 
     def redraw_both_params_pages(self):
@@ -331,7 +331,6 @@ class Core(QObject):
                 if is_active:
                     self.lock.lockForWrite()
                     text = "Autosynchronize countdown: " + str(self.timeout)
-                    # print(text)
                     self.status_msg_signal.emit(text, 1000)
                     self.timeout = self.timeout - 1
                     self.lock.unlock()
@@ -502,7 +501,7 @@ class Core(QObject):
             self.tone.name = file_name_without_extension
 
         worker = Worker(self.get_current_tone_as_ton_file, self.tone.name)
-        worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+        worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
         worker.signals.result.connect(lambda ton_file_data: self.save_file(file_name, ton_file_data))
         worker.start()
 
@@ -531,7 +530,7 @@ class Core(QObject):
         self.log(f"[INFO] Saving tone number: {tone_number}")
 
         worker = Worker(self.upload_tone, tone_number, self.tone.name)
-        worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+        worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
         worker.start()
 
     def upload_tone(self, tone_number, tone_name):
@@ -557,7 +556,7 @@ class Core(QObject):
         self.log(f"[INFO] Renaming tone number: {tone_number}")
 
         worker = Worker(self.rename_tone, tone_number, new_name)
-        worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+        worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
         worker.start()
 
     def rename_tone(self, tone_number, new_name):
@@ -586,7 +585,7 @@ class Core(QObject):
         self.log(f"[INFO] Deleting tone number: {tone_number}")
 
         worker = Worker(self.delete_tone, tone_number)
-        worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+        worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
         worker.start()
 
     def delete_tone(self, tone_number):
