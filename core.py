@@ -544,17 +544,30 @@ class Core(QObject):
         self.close_midi_ports()
         self.open_midi_ports()
 
+        # self.synchronize_tone_signal.emit()
         self.status_msg_signal.emit("Tone successfully saved!", 3000)
         self.main_window.loading_animation.stop()
-        # self.core.synchronize_tone_with_synth()
 
     def rename_tone(self, new_name):
         pass
 
-    def delete_tone(self, tone_number):
+    def start_tone_delete_worker(self, tone_number):
         if tone_number < 801 or tone_number > 900:
-            raise Exception("Cannot delete from Tone number {0}".format(tone_number))
+            raise Exception("The 'Tone Number' must be in the range of 801 to 900.")
 
+        self.main_window.loading_animation.start()
+        self.status_msg_signal.emit("Deleting... Please wait!", 10000)
+        self.log(f"[INFO] Deleting tone number: {tone_number}")
+
+        worker = Worker(self.delete_tone, tone_number)
+        worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+        worker.start()
+
+    def delete_tone(self, tone_number):
         self.tyrant_midi_service.bulk_upload(tone_number - 801, EMPTY_TONE, memory=1, category=3)
         self.close_midi_ports()
         self.open_midi_ports()
+
+        self.synchronize_tone_signal.emit()
+        self.status_msg_signal.emit("Tone successfully deleted!", 3000)
+        self.main_window.loading_animation.stop()

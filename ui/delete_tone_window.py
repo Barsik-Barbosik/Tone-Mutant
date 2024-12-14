@@ -46,13 +46,9 @@ class DeleteToneWindow(QWidget):
 
     def on_submit(self):
         try:
-            self.core.log(f"[INFO] Deleting tone number: {self.number_input.text()}")
-
             if self.number_input.text() and 800 < int(self.number_input.text()) <= 900:
-                self.core.delete_tone(int(self.number_input.text()))
-                self.core.synchronize_tone_with_synth()
-                self.core.status_msg_signal.emit("Tone successfully deleted!", 3000)
                 self.close()
+                self.core.start_tone_delete_worker(int(self.number_input.text()))
                 self.deleteLater()
             else:
                 QMessageBox.warning(self, "Input Error", "The 'Tone Number' must be in the range of 801 to 900.")
