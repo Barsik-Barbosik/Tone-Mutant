@@ -2,6 +2,7 @@ from PySide2 import QtCore
 from PySide2.QtGui import QIcon, QIntValidator
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFormLayout, QMessageBox
 
+from constants.constants import DEFAULT_TONE_NAME
 from utils.utils import resource_path
 
 
@@ -46,6 +47,7 @@ class UploadToneWindow(QWidget):
         # Tone Name input
         tone_name = self.get_tone_name()
         self.name_input = self.create_line_edit("Tone Name...", None, tone_name)
+        self.name_input.setMaxLength(8)
         form_layout.addRow("Tone Name:", self.name_input)
 
         layout.addLayout(form_layout)
@@ -56,7 +58,8 @@ class UploadToneWindow(QWidget):
         self.submit_button.clicked.connect(self.on_submit)
         layout.addWidget(self.submit_button)
 
-    def create_line_edit(self, placeholder, validator, default_value):
+    @staticmethod
+    def create_line_edit(placeholder, validator, default_value):
         line_edit = QLineEdit()
         line_edit.setPlaceholderText(placeholder)
         if validator:
@@ -77,16 +80,16 @@ class UploadToneWindow(QWidget):
         try:
             tone_number = int(self.number_input.text())
 
-            self.core.log(f"[INFO] Saving tone number: {tone_number}")
-
             if 800 < tone_number <= 900:
-                # TODO: upload tone in separate thread
                 self.close()
 
-                self.core.upload_tone(tone_number, self.name_input.text())
-                self.core.synchronize_tone_with_synth()
-                self.core.status_msg_signal.emit("Tone successfully saved!", 3000)
-                # self.close()
+                if self.name_input.text():
+                    self.core.tone.name = self.name_input.text()
+                else:
+                    self.core.tone.name = DEFAULT_TONE_NAME
+
+                self.core.start_tone_upload_worker(tone_number)
+                self.core.main_window.top_widget.tone_name_label.setText(self.core.tone.name)
                 self.deleteLater()
             else:
                 QMessageBox.warning(self, "Input Error", "The 'Tone Number' must be in the range of 801 to 900.")

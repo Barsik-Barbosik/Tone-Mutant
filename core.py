@@ -492,13 +492,15 @@ class Core(QObject):
     def log(self, msg: str):
         self.main_window.log_texbox.log(msg)
 
-    def start_ton_file_saving_worker(self, file_name):
+    def start_ton_file_save_worker(self, file_name):
+        self.main_window.loading_animation.start()
+        self.status_msg_signal.emit("Saving... Please wait!", 10000)
+        self.log(f"[INFO] Saving tone file: {file_name}")
+
         if not self.tone.name:
             file_name_without_extension = os.path.splitext(os.path.basename(file_name))[0]
             self.tone.name = file_name_without_extension
 
-        self.main_window.loading_animation.start()
-        self.status_msg_signal.emit("Saving... Please wait!", 10000)
         worker = Worker(self.get_current_tone_as_ton_file, self.tone.name)
         worker.signals.error.connect(lambda error: print(f"Error: {error}"))
         worker.signals.result.connect(lambda ton_file_data: self.save_file(file_name, ton_file_data))
@@ -520,21 +522,31 @@ class Core(QObject):
         self.status_msg_signal.emit("File successfully saved!", 3000)
         self.main_window.loading_animation.stop()
 
-    def upload_tone(self, tone_number, tone_name):
+    def start_tone_upload_worker(self, tone_number):
         if tone_number < 801 or tone_number > 900:
             raise Exception("The 'Tone Number' must be in the range of 801 to 900.")
 
+        self.main_window.loading_animation.start()
         self.status_msg_signal.emit("Saving... Please wait!", 10000)
+        self.log(f"[INFO] Saving tone number: {tone_number}")
 
+        worker = Worker(self.upload_tone, tone_number, self.tone.name)
+        worker.signals.error.connect(lambda error: print(f"Error: {error}"))
+        worker.start()
+
+    def upload_tone(self, tone_number, tone_name):
         if not tone_name:
             tone_name = DEFAULT_TONE_NAME
 
-        new_tone_name = tone_name[:8]  # trim to first 8 symbols
-        current_tone = self.tyrant_midi_service.read_current_tone(new_tone_name)
+        current_tone = self.tyrant_midi_service.read_current_tone(tone_name[:8])
 
         self.tyrant_midi_service.bulk_upload(tone_number - 801, current_tone, memory=1, category=3)
         self.close_midi_ports()
         self.open_midi_ports()
+
+        self.status_msg_signal.emit("Tone successfully saved!", 3000)
+        self.main_window.loading_animation.stop()
+        # self.core.synchronize_tone_with_synth()
 
     def rename_tone(self, new_name):
         pass

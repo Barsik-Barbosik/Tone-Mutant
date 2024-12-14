@@ -106,7 +106,7 @@ class MainWindow(QMainWindow):
         file_name = FileDialogHelper.save_ton_dialog(self)
         if file_name:
             try:
-                self.core.start_ton_file_saving_worker(file_name)
+                self.core.start_ton_file_save_worker(file_name)
                 self.top_widget.tone_name_label.setText(self.core.tone.name)
             except Exception as e:
                 self.core.show_error_msg(str(e))
