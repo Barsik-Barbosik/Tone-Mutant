@@ -4,7 +4,7 @@ from PySide2.QtCore import QThreadPool, Signal, Qt
 from PySide2.QtWidgets import QTextBrowser, QAction, QMenu
 
 from constants.constants import LOG_MAX_LEN
-from syntax_highlighters.sysex_highlighter import SysexHighlighter
+from utils.syntax_highlighters.sysex_highlighter import SysexHighlighter
 
 
 class DequeLog(QTextBrowser):
