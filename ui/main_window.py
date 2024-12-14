@@ -10,6 +10,7 @@ from ui.deque_log import DequeLog
 from ui.file_dialogs import FileDialogHelper
 from ui.gui_helper import GuiHelper
 from ui.loading_animation import LoadingAnimation
+from ui.rename_tone_window import RenameToneWindow
 from ui.request_parameter_window import RequestParameterWindow
 from ui.settings_window import SettingsWindow
 from ui.top_widget import TopWidget
@@ -41,6 +42,7 @@ class MainWindow(QMainWindow):
             request_parameter_callback=self.show_request_parameter_dialog,
             save_ton_callback=self.show_save_ton_dialog,
             upload_tone_callback=self.show_upload_tone_dialog,
+            rename_tone_callback=self.show_rename_tone_dialog,
             delete_tone_callback=self.show_delete_tone_dialog
         )
         self.setMenuBar(self.menu_bar)
@@ -57,6 +59,7 @@ class MainWindow(QMainWindow):
 
         self.settings_window = None
         self.upload_tone_window = None
+        self.rename_tone_window = None
         self.delete_tone_window = None
         self.request_parameter_window = None
 
@@ -114,8 +117,8 @@ class MainWindow(QMainWindow):
     def show_upload_tone_dialog(self):
         self.upload_tone_window = UploadToneWindow(self)
 
-    def rename_tone(self):
-        self.core.rename_tone("New Name")
+    def show_rename_tone_dialog(self):
+        self.rename_tone_window = RenameToneWindow(self)
 
     def show_delete_tone_dialog(self):
         self.delete_tone_window = DeleteToneWindow(self)
