@@ -95,7 +95,13 @@ class Tone:
                               ParameterType.COMBO, ["OFF", "ON", "Legato"]),
             AdvancedParameter(10, 107, 0, "Portamento Time",
                               "Portamento time controls how long it takes to slide from one note to another. A shorter time makes the slide quick, while a longer time creates a slow, smooth glide.",
-                              ParameterType.KNOB, [0, 127]), ]
+                              ParameterType.KNOB, [0, 127]),
+            AdvancedParameter(11, 4, 0, "Velocity to Cutoff",
+                              "Controls how velocity affects the filter cutoff (certain wavetables only).",
+                              ParameterType.KNOB, [0, 127]),
+            AdvancedParameter(12, 80, 0, "Stretch Tuning",
+                              "Specifies the stretch tuning, also known as the Railsback curve. A value of 0 is recommended for most instruments, while values from 1 to 7 may be suitable for piano or electric piano sounds.",
+                              ParameterType.COMBO, [str(i) for i in range(8)])]
 
         self.dsp_module_1: DspModule = None
         self.dsp_module_2: DspModule = None

@@ -146,7 +146,7 @@ class Core(QObject):
                 if len(response) == 1:
                     value = response[0]
                     if parameter.name == "Sound A Timbre Type" or parameter.name == "Sound B Timbre Type":
-                        value = int (value / 2)
+                        value = int(value / 2)
                 else:
                     value = lsb_msb_to_int(response[0], response[1])
                 parameter.value = decode_param_value(value, parameter)
@@ -436,8 +436,8 @@ class Core(QObject):
             for json_advanced_parameter in json_tone["advanced_parameters"]:
                 if "name" in json_advanced_parameter and "value" in json_advanced_parameter:
                     tone_advanced_parameter = next(
-                        (param for param in self.tone.advanced_parameter_list if param.name == json_advanced_parameter["name"]),
-                        None)
+                        (param for param in self.tone.advanced_parameter_list if
+                         param.name == json_advanced_parameter["name"]), None)
                     if tone_advanced_parameter:
                         tone_advanced_parameter.value = json_advanced_parameter["value"] - 1 if \
                             tone_advanced_parameter.type == ParameterType.COMBO else json_advanced_parameter["value"]
