@@ -2,11 +2,16 @@
 **Tone Mutant** is a tone editing tool designed for Casio CT-X series keyboards.
 
 ## Features
-* Real-time control of synthesis parameters (including DSP effects) for the currently selected keyboard tone, using SysEx commands over MIDI USB to the keyboard.
+* Real-time control of tone parameters: Allows adjustment of parameters, including DSP effects, for the currently selected keyboard tone.
+* Tone randomization: Ability to generate a random tone or randomize specific tone parameters.
+* Save tone parameters as TON files: Compatible with the keyboard.
+* Save and load tone parameters as JSON-formatted files: For CT-X700 and CT-X800 keyboards, which don't have user memory.
+* Save tones directly to the synthesizer's internal memory.
+* Rename tones stored in the synthesizer's memory: For better organization.
+* Delete tones from the synthesizer's memory.
 * Includes descriptions for all used parameters.
-* Ability to generate a random tone or randomize specific tone parameters.
-* Option to view a log of incoming and outgoing MIDI messages.
-* Supports saving and loading tone parameters as JSON-formatted files for easy sharing (saving as a TON file is not yet implemented).
+* Displays a log of incoming and outgoing MIDI messages: For monitoring and debugging.
+* Option to send custom MIDI messages.
 
 ![Application screenshot](screenshot.png)
 
