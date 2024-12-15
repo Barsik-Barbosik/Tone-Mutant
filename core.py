@@ -145,6 +145,8 @@ class Core(QObject):
                          + str(block_id) + ", " + str(response))
                 if len(response) == 1:
                     value = response[0]
+                    if parameter.name == "Sound A Timbre Type" or parameter.name == "Sound B Timbre Type":
+                        value = int (value / 2)
                 else:
                     value = lsb_msb_to_int(response[0], response[1])
                 parameter.value = decode_param_value(value, parameter)
@@ -158,6 +160,9 @@ class Core(QObject):
         self.log(
             "[INFO] Param " + str(parameter.name) + ": " + str(parameter.param_number) + ", " + str(parameter.value))
         value = utils.encode_value_by_type(parameter)
+        if parameter.name == "Sound A Timbre Type" or parameter.name == "Sound B Timbre Type":
+            value = int(value * 2)
+
         try:
             if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
                 self.midi_service.send_atk_rel_parameter_change_sysex(parameter.block_id,
