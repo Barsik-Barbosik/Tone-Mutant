@@ -259,7 +259,7 @@ class GuiHelper:
             lambda new_value: GuiHelper.on_knob_spinbox_changed(knob_spinbox, knob, parameter, function_to_run))
 
         if isinstance(parameter, MainParameter):
-            if parameter.action_number is None:
+            if parameter.param_number is None:
                 knob_spinbox.setEnabled(False)
                 knob.setEnabled(False)
 

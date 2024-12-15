@@ -112,7 +112,7 @@ class Core(QObject):
         for parameter in self.tone.main_parameter_list:
             self.log("[INFO] Requesting parameter: " + parameter.name)
             try:
-                self.midi_service.request_parameter_value(parameter.block_id, parameter.action_number)
+                self.midi_service.request_parameter_value(parameter.block_id, parameter.param_number)
             except Exception as e:
                 self.show_error_msg(str(e))
 
@@ -121,14 +121,14 @@ class Core(QObject):
         for parameter in self.tone.advanced_parameter_list:
             self.log("[INFO] Requesting parameter: " + parameter.name)
             try:
-                self.midi_service.request_parameter_value(parameter.block_id, parameter.action_number)
+                self.midi_service.request_parameter_value(parameter.block_id, parameter.param_number)
             except Exception as e:
                 self.show_error_msg(str(e))
 
     # Process main/advanced parameter value response
     def process_parameter_response(self, param_number, block_id, response):
         for parameter in self.tone.main_parameter_list:
-            if parameter.action_number == param_number and parameter.block_id == block_id:
+            if parameter.param_number == param_number and parameter.block_id == block_id:
                 self.log("[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
                          + str(block_id) + ", " + str(response))
                 if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
@@ -140,7 +140,7 @@ class Core(QObject):
                 parameter.value = decode_param_value(value, parameter)
                 break
         for parameter in self.tone.advanced_parameter_list:
-            if parameter.action_number == param_number and parameter.block_id == block_id:
+            if parameter.param_number == param_number and parameter.block_id == block_id:
                 self.log("[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
                          + str(block_id) + ", " + str(response))
                 if len(response) == 1:
@@ -149,24 +149,24 @@ class Core(QObject):
                     value = lsb_msb_to_int(response[0], response[1])
                 parameter.value = decode_param_value(value, parameter)
                 break
-        if self.tone.upper_volume.action_number == param_number and self.tone.upper_volume.block_id == block_id:
+        if self.tone.upper_volume.param_number == param_number and self.tone.upper_volume.block_id == block_id:
             self.tone.upper_volume.value = response[0]
             self.main_window.top_widget.redraw_upper_volume_knob_signal.emit()
 
     # Send message to update synth's main parameter
     def send_parameter_change_sysex(self, parameter: MainParameter):
         self.log(
-            "[INFO] Param " + str(parameter.name) + ": " + str(parameter.action_number) + ", " + str(parameter.value))
+            "[INFO] Param " + str(parameter.name) + ": " + str(parameter.param_number) + ", " + str(parameter.value))
         value = utils.encode_value_by_type(parameter)
         try:
             if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
                 self.midi_service.send_atk_rel_parameter_change_sysex(parameter.block_id,
-                                                                      parameter.action_number, value)
+                                                                      parameter.param_number, value)
             elif parameter.name in constants.SHORT_PARAMS:
                 self.midi_service.send_parameter_change_short_sysex(parameter.block_id,
-                                                                    parameter.action_number, value)
+                                                                    parameter.param_number, value)
             else:
-                self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.action_number, value)
+                self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.param_number, value)
         except Exception as e:
             self.show_error_msg(str(e))
 
@@ -246,7 +246,7 @@ class Core(QObject):
     def request_upper_volume(self):
         try:
             self.midi_service.request_parameter_value(self.tone.upper_volume.block_id,
-                                                      self.tone.upper_volume.action_number)
+                                                      self.tone.upper_volume.param_number)
         except Exception as e:
             self.show_error_msg(str(e))
 

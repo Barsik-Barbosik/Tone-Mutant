@@ -32,7 +32,7 @@ class RenameToneWindow(QWidget):
 
     @staticmethod
     def add_title(layout):
-        label = QLabel("Rename tone in the synthesizer's memory")
+        label = QLabel("Rename a tone in the synthesizer's memory")
         label.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(label)
 
