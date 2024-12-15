@@ -425,6 +425,18 @@ class Core(QObject):
                             tone_main_parameter.type == ParameterType.COMBO else json_main_parameter["value"]
                         self.send_parameter_change_sysex(tone_main_parameter)
             self.main_window.central_widget.redraw_main_params_panel_signal.emit()
+
+        # Advanced parameters
+        if "advanced_parameters" in json_tone:
+            for json_advanced_parameter in json_tone["advanced_parameters"]:
+                if "name" in json_advanced_parameter and "value" in json_advanced_parameter:
+                    tone_advanced_parameter = next(
+                        (param for param in self.tone.advanced_parameter_list if param.name == json_advanced_parameter["name"]),
+                        None)
+                    if tone_advanced_parameter:
+                        tone_advanced_parameter.value = json_advanced_parameter["value"] - 1 if \
+                            tone_advanced_parameter.type == ParameterType.COMBO else json_advanced_parameter["value"]
+                        self.send_parameter_change_sysex(tone_advanced_parameter)
             self.main_window.central_widget.redraw_advanced_params_panel_signal.emit()
 
         # DSP

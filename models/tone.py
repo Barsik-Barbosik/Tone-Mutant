@@ -100,7 +100,8 @@ class Tone:
                 "dsp_2": self.dsp_module_2,
                 "dsp_3": self.dsp_module_3,
                 "dsp_4": self.dsp_module_4
-            }
+            },
+            "advanced_parameters": self.advanced_parameter_list
         }
         return obj
 
