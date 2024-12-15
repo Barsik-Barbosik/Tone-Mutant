@@ -206,7 +206,10 @@ class CentralWidget(QWidget):
                 for param in self.current_dsp_page.dsp_module.dsp_parameter_list:
                     text = text + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
         elif self.get_current_tab_name() == TabName.ADVANCED_PARAMETERS:
-            text = "<h2>Advanced Parameters</h2>List of advanced tone parameters for editing.<br/>"
+            text = "<h2>Advanced Parameters</h2>List of advanced tone parameters for editing.<br/><br/>" \
+                   "<i>Note: Sound timbre type and wavetable cannot be changed in real time. Save the tone to the synthesizer's memory, " \
+                   "then reload it to hear the difference. " \
+                   "It also appears that they are related: an incorrect combination can result in silence.</i><br/>"
             for param in self.core.tone.advanced_parameter_list:
                 text = text + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
 

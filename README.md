@@ -33,9 +33,9 @@ The **Synchronize Tone** button is used to synchronize data from the synthesizer
 
 The **Randomize Tone** button sets random main tone parameters and selects two random DSP modules with random parameters.
 
-**Notice 1:** The initial sound wave of a tone cannot be changed on the fly. For example, if you select a guitar sound, random parameters will be applied to that guitar sound. To achieve a piano-like sound, select any tone from the piano section first. When you save the modified tone as a JSON file, the name and number of the initial tone are saved as 'parent_tone'.
+**Note 1:** The initial sound wave of a tone cannot be changed on the fly. For example, if you select a guitar sound, random parameters will be applied to that guitar sound. To achieve a piano-like sound, select any tone from the piano section first. When you save the modified tone as a JSON file, the name and number of the initial tone are saved as 'parent_tone'.
 
-**Notice 2:** When the program is first launched, it cannot determine the number or name of the tone currently in use. However, if the application is already running and a new tone is selected on the synthesizer, a MIDI event with the new tone number is captured, allowing the program to identify the tone's name. It's a good idea to rotate the dial wheel forward and backward immediately after starting the application to display the current tone name.
+**Note 2:** When the program is first launched, it cannot determine the number or name of the tone currently in use. However, if the application is already running and a new tone is selected on the synthesizer, a MIDI event with the new tone number is captured, allowing the program to identify the tone's name. It's a good idea to rotate the dial wheel forward and backward immediately after starting the application to display the current tone name.
 
 ## Running the Application with Python
 To run the application directly in Python, follow these steps:
