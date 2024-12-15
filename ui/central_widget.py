@@ -7,11 +7,11 @@ from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QTe
 
 from constants import constants
 from constants.enums import TabName, ParameterType
-from utils.syntax_highlighters.json_highlighter import JsonHighlighter
 from ui.dsp_page import DspPage
 from ui.gui_helper import GuiHelper
 from ui.inactive_list_widget import InactiveListWidget
 from utils.object_encoder import ObjectEncoder
+from utils.syntax_highlighters.json_highlighter import JsonHighlighter
 from utils.utils import resource_path, get_all_instruments
 
 
@@ -166,6 +166,8 @@ class CentralWidget(QWidget):
             elif current_tab_name == TabName.DSP_4:
                 self.current_dsp_page = self.dsp_page_4
             self.current_dsp_page.redraw_dsp_params_panel()
+        elif current_tab_name == TabName.ADVANCED_PARAMETERS:
+            self.core.show_status_msg("Advanced parameters for editing tone", 3000)
         elif current_tab_name == TabName.JSON:
             self.core.show_status_msg("Tone information in JSON-format", 3000)
             self.json_view_tab_textbox.setPlainText(self.get_json())
