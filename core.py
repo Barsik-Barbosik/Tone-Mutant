@@ -511,6 +511,8 @@ class Core(QObject):
         self.status_bar.setStyleSheet("background-color: white; color: red")
         self.status_bar.showMessage(text, 5000)
 
+        self.main_window.loading_animation.stop()
+
     def log(self, msg: str):
         self.main_window.log_texbox.log(msg)
 

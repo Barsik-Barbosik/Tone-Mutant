@@ -110,7 +110,7 @@ class SettingsWindow(QWidget):
             self.core.close_midi_ports()
             self.core.open_midi_ports()
         except Exception as e:
-            self.core.log(f"[ERROR] Unable to open MIDI port: {e}")
+            self.core.show_error_msg(f"Unable to open MIDI port: {e}")
 
         if is_synth_model_changed:
             self.core.main_window.reload_menu_bar()
