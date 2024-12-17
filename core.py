@@ -195,8 +195,10 @@ class Core(QObject):
 
         try:
             if dsp_module_id is None:
-                removed_dsp_module_id = 16383  # "7F 7F"
-                self.midi_service.send_dsp_module_change_sysex(block_id, removed_dsp_module_id)
+                EMPTY_DSP_MODULE_ID = 16383  # "7F 7F"
+                EMPTY_PARAMS_LIST = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                self.midi_service.send_dsp_module_change_sysex(block_id, EMPTY_DSP_MODULE_ID)
+                self.midi_service.send_dsp_params_change_sysex(block_id, EMPTY_PARAMS_LIST)
                 self.midi_service.send_dsp_bypass_sysex(block_id, True)
                 if self.main_window.central_widget.current_dsp_page:
                     self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
