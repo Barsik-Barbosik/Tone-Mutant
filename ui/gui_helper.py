@@ -19,7 +19,8 @@ class GuiHelper:
     @staticmethod
     def init_menu_bar(main_window: QMainWindow, exit_callback, open_json_callback, save_json_callback,
                       settings_callback, how_to_save_callback, request_parameter_callback, save_ton_callback,
-                      upload_tone_callback, rename_tone_callback, delete_tone_callback):
+                      upload_tone_callback, rename_tone_callback, delete_tone_callback,
+                      user_tone_manager_callback):
         menu_bar = QMenuBar(main_window)
 
         open_json_action = QAction(QIcon(resource_path('resources/open.png')), "Open Tone (JSON)", main_window)
@@ -61,6 +62,11 @@ class GuiHelper:
         request_parameter_action.setStatusTip("Request a parameter from synthesizer")
         request_parameter_action.triggered.connect(request_parameter_callback)
 
+        user_tone_manager_action = QAction(QIcon(resource_path('resources/exclamation.png')), "User Tone Manager",
+                                           main_window)
+        user_tone_manager_action.setStatusTip("Under construction...")
+        user_tone_manager_action.triggered.connect(user_tone_manager_callback)
+
         how_to_save_action = QAction(QIcon(resource_path('resources/help.png')), "Saving a TON File Using Synthesizer",
                                      main_window)
         how_to_save_action.setStatusTip("Instructions on how to use the synthesizer to save and export the tone")
@@ -83,12 +89,14 @@ class GuiHelper:
 
         if GuiHelper.is_expert_mode_enabled():
             tools_menu.addSeparator()
+            tools_menu.addAction(user_tone_manager_action)
             tools_menu.addAction(request_parameter_action)
 
         if not GuiHelper.has_user_memory():
             upload_tone_action.setEnabled(False)
             rename_tone_action.setEnabled(False)
             delete_tone_action.setEnabled(False)
+            user_tone_manager_action.setEnabled(False)
 
         menu_bar.addMenu(tools_menu)
 

@@ -9,6 +9,7 @@ from ui.delete_tone_window import DeleteToneWindow
 from ui.deque_log import DequeLog
 from ui.file_dialogs import FileDialogHelper
 from ui.gui_helper import GuiHelper
+from ui.user_tone_manager_window import UserToneManagerWindow
 from ui.loading_animation import LoadingAnimation
 from ui.rename_tone_window import RenameToneWindow
 from ui.request_parameter_window import RequestParameterWindow
@@ -22,7 +23,7 @@ from utils.utils import resource_path
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Tone Mutant 1.1.1")
+        self.setWindowTitle("Tone Mutant 1.1.2")
         self.setWindowIcon(QIcon(resource_path("resources/note.png")))
 
         self.status_bar = QStatusBar(self)
@@ -47,6 +48,7 @@ class MainWindow(QMainWindow):
         self.upload_tone_window = None
         self.rename_tone_window = None
         self.delete_tone_window = None
+        self.user_tone_manager_window = None
         self.request_parameter_window = None
 
         # Initialize tone synchronization
@@ -64,7 +66,8 @@ class MainWindow(QMainWindow):
             save_ton_callback=self.show_save_ton_dialog,
             upload_tone_callback=self.show_upload_tone_dialog,
             rename_tone_callback=self.show_rename_tone_dialog,
-            delete_tone_callback=self.show_delete_tone_dialog
+            delete_tone_callback=self.show_delete_tone_dialog,
+            user_tone_manager_callback=self.show_user_tone_manager_window
         )
         self.setMenuBar(self.menu_bar)
 
@@ -124,6 +127,9 @@ class MainWindow(QMainWindow):
 
     def show_delete_tone_dialog(self):
         self.delete_tone_window = DeleteToneWindow(self)
+
+    def show_user_tone_manager_window(self):
+        self.user_tone_manager_window = UserToneManagerWindow(items=["My Piano", "My Guitar", "My Drum"])
 
     def resizeEvent(self, event):
         super(MainWindow, self).resizeEvent(event)
