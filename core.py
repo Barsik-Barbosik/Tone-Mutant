@@ -195,10 +195,8 @@ class Core(QObject):
 
         try:
             if dsp_module_id is None:
-                # It is not possible to completely remove a once-selected DSP module.
-                # Set DSP module, which requires fewer resources?
-                # removed_dsp_module_id = 27  # Mono 1-Band EQ
-                # self.midi_service.send_dsp_module_change_sysex(block_id, removed_dsp_module_id)
+                removed_dsp_module_id = 16383  # "7F 7F"
+                self.midi_service.send_dsp_module_change_sysex(block_id, removed_dsp_module_id)
                 self.midi_service.send_dsp_bypass_sysex(block_id, True)
                 if self.main_window.central_widget.current_dsp_page:
                     self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()

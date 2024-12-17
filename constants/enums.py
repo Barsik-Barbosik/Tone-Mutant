@@ -8,7 +8,7 @@ class TabName(Enum):
     DSP_3 = "DSP 3"
     DSP_4 = "DSP 4"
     ADVANCED_PARAMETERS = "Advanced parameters"
-    JSON = "View JSON"
+    JSON = "JSON"
 
 
 class ParameterType(Enum):
