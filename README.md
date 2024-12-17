@@ -26,7 +26,7 @@ CT-X800 (not tested yet)
 ```
 
 ## Installation and Usage
-You can download the executable for Windows 7, 10, and 11 from [here](https://github.com/Barsik-Barbosik/Tone-Mutant/releases/download/Version_1.1.1/ToneMutant.exe).
+You can download the executable for Windows 7, 10, and 11 from [here](https://github.com/Barsik-Barbosik/Tone-Mutant/releases).
 
 1. Place the application in a writable directory (a configuration file will be created in the same folder).
 2. Connect the synthesizer to your PC using a USB cable and turn the synthesizer on.
