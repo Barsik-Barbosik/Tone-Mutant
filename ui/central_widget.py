@@ -165,7 +165,7 @@ class CentralWidget(QWidget):
                 self.current_dsp_page = self.dsp_page_3
             elif current_tab_name == TabName.DSP_4:
                 self.current_dsp_page = self.dsp_page_4
-            self.current_dsp_page.redraw_dsp_params_panel()
+            self.current_dsp_page.redraw_dsp_params_panel_signal.emit()
         elif current_tab_name == TabName.ADVANCED_PARAMETERS:
             self.core.show_status_msg("Advanced parameters for editing tone", 3000)
         elif current_tab_name == TabName.JSON:

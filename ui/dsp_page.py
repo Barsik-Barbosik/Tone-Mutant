@@ -39,14 +39,16 @@ class DspPage(QWidget):
             item.setData(Qt.UserRole, dsp_module.id)
             self.list_widget.insertItem(idx + 1, item)
         self.list_widget.setCurrentRow(0)
-        self.list_widget.itemSelectionChanged.connect(self.on_list_widget_changed)
+        self.list_widget.itemSelectionChanged.connect(lambda: self.on_list_widget_changed(block_id))
+
         hbox_layout.addWidget(self.list_widget)  # left side
         hbox_layout.addLayout(self.qgrid_layout)  # right side
 
-        self.redraw_dsp_params_panel_signal.connect(self.redraw_dsp_params_panel)
+        self.redraw_dsp_params_panel_signal.connect(lambda: self.redraw_dsp_params_panel(block_id))
 
     @Slot()
-    def redraw_dsp_params_panel(self):
+    def redraw_dsp_params_panel(self, _):
+        # print(f"redraw_dsp_params_panel, block: {self.block_id}")
         GuiHelper.clear_layout(self.qgrid_layout)
 
         if self.dsp_module is not None:
@@ -80,13 +82,14 @@ class DspPage(QWidget):
         bypass = True if bypass_parameter.value == 1 else False
         self.core.send_dsp_bypass(self.block_id, bypass)
 
-    def on_list_widget_changed(self):
+    def on_list_widget_changed(self, _):
         if self.list_widget.currentItem() is None:
             self.list_widget.blockSignals(True)
             self.list_widget.setCurrentRow(0)
             self.list_widget.blockSignals(False)
         else:
             dsp_module_id: int = self.list_widget.currentItem().data(Qt.UserRole)
+            # print(f"block_id: {self.block_id}, dsp_module_id: {dsp_module_id}")
             if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
                 self.core.update_dsp_module_from_list(self.block_id, dsp_module_id)
 
@@ -97,7 +100,7 @@ class DspPage(QWidget):
             if dsp_param.type in [ParameterType.KNOB, ParameterType.SPECIAL_DELAY_KNOB]:
                 dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
         self.core.set_synth_dsp_params(None)
-        self.redraw_dsp_params_panel()
+        self.redraw_dsp_params_panel(self.block_id)
         msg = "It might be necessary to adjust the volume levels after setting random values."
         self.core.show_status_msg(msg, 3000)
         self.core.log("[INFO] " + msg)
