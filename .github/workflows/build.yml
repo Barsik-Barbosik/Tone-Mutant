@@ -6,7 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest] # windows-latest, ubuntu-latest, macos-latest
+        os: [windows-latest] # windows-latest, ubuntu-latest, macos-latest
         
     runs-on: ${{ matrix.os }}
     
@@ -38,6 +38,6 @@ jobs:
            name: ${{ runner.os }} Build
            path: | # match what's created for the OSes
               build/*.exe
-              build/*.bin
+              # build/*.bin
               # build/*.app/**/*
               
