@@ -27,8 +27,9 @@ jobs:
         - name: Build Executable with Nuitka
           uses: Nuitka/Nuitka-Action@main
           with:
-           nuitka-version: 2.5.4
+           nuitka-version: 2.5
            script-name: main.py
+           mode: onefile # override app!
   
         - name: Upload Artifacts
           uses: actions/upload-artifact@v3
