@@ -1,6 +1,9 @@
 # Example: https://github.com/doctorixx/Nuitka-CI-CD/blob/master/.github/workflows/build.yml
 
-on: push
+on:
+  push:
+    tags:
+      - '*'
 name: Build EXE
 jobs:
   build:
@@ -31,6 +34,7 @@ jobs:
           with:
            nuitka-version: 2.5
            script-name: main.py
+           mode: onefile
   
         - name: Upload Artifacts
           uses: actions/upload-artifact@v4
