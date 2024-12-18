@@ -59,12 +59,16 @@ class TopWidget(QWidget):
         self.core.main_window.central_widget.on_random_button_pressed()
 
         random_dsp_1 = random.randint(0, self.core.main_window.central_widget.dsp_page_1.list_widget.count() - 1)
+        random_dsp_2 = random.randint(0, self.core.main_window.central_widget.dsp_page_2.list_widget.count() - 1)
+
+        if random_dsp_1 == 0 and random_dsp_2 > 0:  # swap
+            random_dsp_1, random_dsp_2 = random_dsp_2, random_dsp_1
+
         self.core.main_window.central_widget.dsp_page_1.list_widget.setCurrentRow(random_dsp_1)
         if random_dsp_1 > 0:
             self.core.main_window.central_widget.dsp_page_1.on_random_button_pressed(
                 self.core.main_window.central_widget.dsp_page_1.block_id)
 
-        random_dsp_2 = random.randint(0, self.core.main_window.central_widget.dsp_page_2.list_widget.count() - 1)
         self.core.main_window.central_widget.dsp_page_2.list_widget.setCurrentRow(random_dsp_2)
         if random_dsp_2 > 0:
             self.core.main_window.central_widget.dsp_page_2.on_random_button_pressed(
