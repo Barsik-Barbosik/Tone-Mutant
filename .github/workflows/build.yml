@@ -25,11 +25,10 @@ jobs:
            pip install -r requirements.txt
   
         - name: Build Executable with Nuitka
-          uses: Nuitka/Nuitka-Action@main
+          uses: renyijiu/Nuitka-Action@main # use a random fork of older Nuitka-action, without default mode-option commit
           with:
            nuitka-version: 2.5
            script-name: main.py
-           mode: onefile # override app!
   
         - name: Upload Artifacts
           uses: actions/upload-artifact@v3
