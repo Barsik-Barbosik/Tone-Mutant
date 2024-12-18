@@ -1,7 +1,7 @@
 # Example: https://github.com/doctorixx/Nuitka-CI-CD/blob/master/.github/workflows/build.yml
 
-on: [workflow_dispatch]
-name: Build executable
+on: push
+name: Build EXE
 jobs:
   build:
     strategy:
