@@ -129,7 +129,7 @@ class MainWindow(QMainWindow):
         self.delete_tone_window = DeleteToneWindow(self)
 
     def show_user_tone_manager_window(self):
-        self.user_tone_manager_window = UserToneManagerWindow(items=["My Piano", "My Guitar", "My Drum"])
+        self.user_tone_manager_window = UserToneManagerWindow(self)
 
     def resizeEvent(self, event):
         super(MainWindow, self).resizeEvent(event)

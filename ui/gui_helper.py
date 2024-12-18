@@ -90,7 +90,7 @@ class GuiHelper:
 
         if GuiHelper.is_expert_mode_enabled():
             tools_menu.addSeparator()
-            # tools_menu.addAction(user_tone_manager_action)
+            tools_menu.addAction(user_tone_manager_action)
             tools_menu.addAction(request_parameter_action)
 
         if not GuiHelper.has_user_memory():

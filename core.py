@@ -626,3 +626,12 @@ class Core(QObject):
         self.synchronize_tone_signal.emit()
         self.status_msg_signal.emit("Tone successfully deleted!", 3000)
         self.main_window.loading_animation.stop()
+
+    def get_user_memory_tones(self):
+        tones = []
+        for i in range(0, 100):
+            tones.append("User Tone " + str(i))
+        tones[0] = "My Piano"
+        tones[1] = "My Guitar"
+        tones[2] = "My Drum"
+        return tones

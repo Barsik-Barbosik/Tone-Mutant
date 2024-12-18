@@ -94,12 +94,16 @@ class DragAndDropTable(QTableWidget):
 
 
 class UserToneManagerWindow(QWidget):
-    def __init__(self, items=None):
+    def __init__(self, parent):
         super().__init__()
+
         self.setWindowTitle("User Tone Manager")
         self.setWindowIcon(QIcon(resource_path("resources/exclamation.png")))
+        self.resize(500, 500)
 
-        self.resize(400, 400)
+        self.core = parent.core
+        items = self.core.get_user_memory_tones()
+
         self._setup_ui(items)
 
     def _setup_ui(self, items):
