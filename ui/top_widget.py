@@ -53,8 +53,8 @@ class TopWidget(QWidget):
         self.core.send_parameter_change_sysex(parameter)
 
     def on_randomize_tone_button_pressed(self):
-        msg = "Setting random main parameters and 2 random DSP modules..."
-        self.core.log("[INFO] " + msg)
+        msg = "Setting random main parameters and selecting 1–2 random DSP modules"
+        self.core.log(f"[INFO] {msg}...")
 
         self.core.main_window.central_widget.on_random_button_pressed()
 
@@ -68,11 +68,13 @@ class TopWidget(QWidget):
         if random_dsp_1 > 0:
             self.core.main_window.central_widget.dsp_page_1.on_random_button_pressed(
                 self.core.main_window.central_widget.dsp_page_1.block_id)
+            msg = msg + ": " + self.core.tone.dsp_module_1.name
 
         self.core.main_window.central_widget.dsp_page_2.list_widget.setCurrentRow(random_dsp_2)
         if random_dsp_2 > 0:
             self.core.main_window.central_widget.dsp_page_2.on_random_button_pressed(
                 self.core.main_window.central_widget.dsp_page_2.block_id)
+            msg = msg + ", " + self.core.tone.dsp_module_2.name
 
         self.core.show_status_msg(msg, 3000)
 
