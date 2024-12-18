@@ -2,12 +2,12 @@ from enum import Enum, IntEnum
 
 
 class TabName(Enum):
-    MAIN_PARAMETERS = "Main parameters"
+    MAIN_PARAMETERS = "Main Params"
     DSP_1 = "DSP 1"
     DSP_2 = "DSP 2"
     DSP_3 = "DSP 3"
     DSP_4 = "DSP 4"
-    ADVANCED_PARAMETERS = "Advanced parameters"
+    ADVANCED_PARAMETERS = "Advanced Params"
     JSON = "JSON"
 
 

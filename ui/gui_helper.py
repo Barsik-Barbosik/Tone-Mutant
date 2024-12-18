@@ -313,3 +313,11 @@ class GuiHelper:
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         return spacer
+
+    @staticmethod
+    def get_green_icon():
+        return QIcon(resource_path("resources/green.png"))
+
+    @staticmethod
+    def get_white_icon():
+        return QIcon(resource_path("resources/white.png"))

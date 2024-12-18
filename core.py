@@ -14,6 +14,7 @@ from models.tone import Tone
 from services.midi_service import MidiService
 from services.tyrant_midi_service import TyrantMidiService
 from ui.change_instrument_window import ChangeInstrumentWindow
+from ui.gui_helper import GuiHelper
 from utils import utils
 from utils.file_operations import FileOperations
 from utils.utils import decode_param_value, int_to_hex, lsb_msb_to_int, get_all_instruments
@@ -217,6 +218,11 @@ class Core(QObject):
         if dsp_page.dsp_module:
             self.log("[INFO] Selected DSP module: " + dsp_page.dsp_module.name)
             dsp_page.dsp_module.bypass.value = 0
+            self.main_window.central_widget.tab_widget.setTabIcon(block_id + 1, GuiHelper.get_green_icon())
+            # self.main_window.central_widget.tab_widget.setTabText(block_id + 1, dsp_page.dsp_module.name)
+        else:
+            self.main_window.central_widget.tab_widget.setTabIcon(block_id + 1, GuiHelper.get_white_icon())
+            # self.main_window.central_widget.tab_widget.setTabText(block_id + 1, "DSP X")
 
         dsp_page.list_widget.blockSignals(True)
         dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
