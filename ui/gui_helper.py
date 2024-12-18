@@ -11,6 +11,7 @@ from constants import constants
 from constants.constants import DEFAULT_SYNTH_MODEL, CTX_700_800
 from constants.enums import ParameterType
 from models.parameter import Parameter, MainParameter
+from utils.syntax_highlighters.sysex_highlighter import SysexHighlighter
 from utils.utils import resource_path
 
 
@@ -203,6 +204,7 @@ class GuiHelper:
         midi_msg_input = QTextEdit(main_window)
         midi_msg_input.setPlaceholderText("MIDI message...")
         midi_msg_input.setMaximumHeight(80)
+        SysexHighlighter(midi_msg_input.document())
         log_tab_layout.addWidget(midi_msg_input)
 
         submit_button = QPushButton(" Send MIDI Message")
