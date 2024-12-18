@@ -27,7 +27,7 @@ jobs:
         - name: Build Executable with Nuitka
           uses: Nuitka/Nuitka-Action@main
           with:
-           nuitka-version: main
+           nuitka-version: 2.5.6
            script-name: main.py
   
         - name: Upload Artifacts
