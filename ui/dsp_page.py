@@ -70,7 +70,7 @@ class DspPage(QWidget):
             random_button = QPushButton(" Randomize DSP Values", self)
             random_button.setIcon(QIcon(resource_path("resources/random_star.png")))
             random_button.setObjectName("random-button")
-            random_button.clicked.connect(self.on_random_button_pressed)
+            random_button.clicked.connect(lambda: self.on_random_button_pressed(self.block_id))
             button_row = largest_items_count + 1
             self.qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
         else:
@@ -93,14 +93,14 @@ class DspPage(QWidget):
             if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
                 self.core.update_dsp_module_from_list(self.block_id, dsp_module_id)
 
-    def on_random_button_pressed(self):
+    def on_random_button_pressed(self, _):
         for dsp_param in self.dsp_module.dsp_parameter_list:
             if dsp_param.type == ParameterType.COMBO:
                 dsp_param.value = random.randint(0, len(dsp_param.choices) - 1)
             if dsp_param.type in [ParameterType.KNOB, ParameterType.SPECIAL_DELAY_KNOB]:
                 dsp_param.value = random.randint(dsp_param.choices[0], dsp_param.choices[1])
         self.core.set_synth_dsp_params(None)
-        self.redraw_dsp_params_panel(self.block_id)
+        self.redraw_dsp_params_panel_signal.emit()
         msg = "It might be necessary to adjust the volume levels after setting random values."
         self.core.show_status_msg(msg, 3000)
         self.core.log("[INFO] " + msg)

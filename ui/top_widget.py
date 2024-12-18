@@ -1,5 +1,4 @@
 import random
-import time
 
 from PySide2.QtCore import Slot, Signal
 from PySide2.QtGui import QIcon
@@ -62,12 +61,14 @@ class TopWidget(QWidget):
         random_dsp_1 = random.randint(0, self.core.main_window.central_widget.dsp_page_1.list_widget.count() - 1)
         self.core.main_window.central_widget.dsp_page_1.list_widget.setCurrentRow(random_dsp_1)
         if random_dsp_1 > 0:
-            self.core.main_window.central_widget.dsp_page_1.on_random_button_pressed()
+            self.core.main_window.central_widget.dsp_page_1.on_random_button_pressed(
+                self.core.main_window.central_widget.dsp_page_1.block_id)
 
         random_dsp_2 = random.randint(0, self.core.main_window.central_widget.dsp_page_2.list_widget.count() - 1)
         self.core.main_window.central_widget.dsp_page_2.list_widget.setCurrentRow(random_dsp_2)
         if random_dsp_2 > 0:
-            self.core.main_window.central_widget.dsp_page_2.on_random_button_pressed()
+            self.core.main_window.central_widget.dsp_page_2.on_random_button_pressed(
+                self.core.main_window.central_widget.dsp_page_2.block_id)
 
         self.core.show_status_msg(msg, 3000)
 

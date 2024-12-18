@@ -6,7 +6,8 @@ import time
 from PySide2.QtCore import Signal, Slot, QObject
 
 from constants import constants
-from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL, EMPTY_TONE
+from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL, EMPTY_TONE, EMPTY_DSP_MODULE_ID, \
+    EMPTY_DSP_PARAMS_LIST
 from constants.enums import ParameterType
 from models.parameter import MainParameter
 from models.tone import Tone
@@ -195,10 +196,8 @@ class Core(QObject):
 
         try:
             if dsp_module_id is None:
-                EMPTY_DSP_MODULE_ID = 16383  # "7F 7F"
-                EMPTY_PARAMS_LIST = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 self.midi_service.send_dsp_module_change_sysex(block_id, EMPTY_DSP_MODULE_ID)
-                self.midi_service.send_dsp_params_change_sysex(block_id, EMPTY_PARAMS_LIST)
+                self.midi_service.send_dsp_params_change_sysex(block_id, EMPTY_DSP_PARAMS_LIST)
                 self.midi_service.send_dsp_bypass_sysex(block_id, True)
                 if self.main_window.central_widget.current_dsp_page:
                     self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
