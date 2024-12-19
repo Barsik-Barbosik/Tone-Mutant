@@ -1,6 +1,8 @@
 from PySide2 import QtCore
+from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon, QIntValidator
-from PySide2.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFormLayout, QMessageBox
+from PySide2.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFormLayout, QMessageBox, \
+    QHBoxLayout
 
 from utils.utils import resource_path
 
@@ -24,31 +26,37 @@ class RequestParameterWindow(QWidget):
         self.number_input = QLineEdit()
         self.number_input.setPlaceholderText("Parameter Number...")
         self.number_input.setValidator(QIntValidator(0, 255, self))
-        form_layout.addRow("Number:", self.number_input)
+        form_layout.addRow(self.create_colored_square_label("#0000FF", "Number:"), self.number_input)
 
         self.block_input = QLineEdit()
         self.block_input.setPlaceholderText("Block...")
         self.block_input.setText("0")
         self.block_input.setValidator(QIntValidator(0, 7, self))
-        form_layout.addRow("Block:", self.block_input)
+        form_layout.addRow(self.create_colored_square_label("#FF00FF", "Block:"), self.block_input)
 
         self.category_input = QLineEdit()
         self.category_input.setPlaceholderText("Category... (0-65)")
         self.category_input.setValidator(QIntValidator(0, 65, self))
         self.category_input.setText("3")
-        form_layout.addRow("Category:", self.category_input)
+        form_layout.addRow(self.create_colored_square_label("#006400", "Category:"), self.category_input)
 
         self.memory_input = QLineEdit()
         self.memory_input.setPlaceholderText("Memory... (0-4)")
         self.memory_input.setValidator(QIntValidator(0, 4, self))
         self.memory_input.setText("3")
-        form_layout.addRow("Memory Area ID:", self.memory_input)
+        form_layout.addRow(self.create_colored_square_label("#006400", "Memory Area ID:"), self.memory_input)
 
         self.parameter_set_input = QLineEdit()
         self.parameter_set_input.setPlaceholderText("Parameter Set...")
         self.parameter_set_input.setValidator(QIntValidator(0, 1499, self))
         self.parameter_set_input.setText("0")
-        form_layout.addRow("Parameter Set:", self.parameter_set_input)
+        form_layout.addRow(self.create_colored_square_label("#FF00FF", "Parameter Set:"), self.parameter_set_input)
+
+        self.size_input = QLineEdit()
+        self.size_input.setPlaceholderText("Size...")
+        self.size_input.setValidator(QIntValidator(0, 65535, self))
+        self.size_input.setText("0")
+        form_layout.addRow(self.create_colored_square_label("#0000FF", "Size:"), self.size_input)
 
         layout.addLayout(form_layout)
 
@@ -68,7 +76,39 @@ class RequestParameterWindow(QWidget):
             category = int(self.category_input.text())
             memory = int(self.memory_input.text())
             parameter_set = int(self.parameter_set_input.text())
-            self.core.request_custom_parameter(number, block, category, memory, parameter_set)
+            size = int(self.size_input.text())
+            self.core.request_custom_parameter(number, block, category, memory, parameter_set, size)
         except ValueError:
             QMessageBox.warning(self, "Input Error", "All fields must contain valid integers.")
             return
+
+    @staticmethod
+    def create_colored_square_label(color: str, text: str) -> QWidget:
+        """
+        Creates a widget containing a colored square and a label.
+
+        Args:
+            color (str): The color of the square (e.g., "red", "#ff0000").
+            text (str): The text for the label.
+
+        Returns:
+            QWidget: A widget containing the colored square and label.
+        """
+        container = QWidget()
+        layout = QHBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(5)  # Space between square and text
+
+        # Create the square label
+        square_label = QLabel("⬛")  # Unicode black square
+        square_label.setStyleSheet(f"color: {color};")  # Apply the color
+
+        # Create the text label
+        text_label = QLabel(text)
+        text_label.setAlignment(Qt.AlignVCenter)  # Align text vertically
+
+        # Add both labels to the layout
+        layout.addWidget(square_label)
+        layout.addWidget(text_label)
+
+        return container

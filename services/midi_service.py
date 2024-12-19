@@ -21,11 +21,10 @@ CC_BANK_SELECT_MSB = 0x00
 CC_BANK_SELECT_LSB = 0x20  # transmit: 0x00, receive: ignored
 INSTRUMENT_SELECT_FIRST_BYTE = 0xC0
 
+MEMORY_3 = 3  # 3 is real-time, current tone
+
 BLOCK_INDEX = 16
 SYSEX_TYPE_INDEX = 18
-
-MAIN_PARAMETER_NUMBERS = [20, 14, 15, 2, 22]  # TODO: get param size automatically from the list!!!
-SHORT_PARAMETER_NUMBERS = [59, 63, 60, 61, 43, 45, 5, 57, 56, 58, 200, 41, 42, 107, 114, 115, 116, 1, 21, 4, 80]
 
 
 class MidiService:
@@ -40,12 +39,12 @@ class MidiService:
                     MidiService()
         return MidiService.__instance
 
-    def __init__(self):
+    def __init__(self, parent):
         if MidiService.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
             MidiService.__instance = self
-            self.core = None
+            self.core = parent
             self.lock = QReadWriteLock()
             self.bank_select_msg_queue = deque()
             self.active_sync_job_count = 0
@@ -55,6 +54,20 @@ class MidiService:
             self.input_name = None
             self.output_name = None
             self.channel = None
+            self.short_params = [200]  # volume
+            self.long_params = []
+
+            for param in self.core.tone.main_parameter_list:
+                if param.name in constants.SHORT_PARAMS:
+                    self.short_params.append(param.param_number)
+                else:
+                    self.long_params.append(param.param_number)
+
+            for param in self.core.tone.advanced_parameter_list:
+                if param.name in constants.SHORT_PARAMS:
+                    self.short_params.append(param.param_number)
+                else:
+                    self.long_params.append(param.param_number)
 
             self.open_midi_ports()
 
@@ -132,11 +145,16 @@ class MidiService:
         self.send_sysex(msg)
         # time.sleep(0.1)
 
-    def request_parameter_value_with_cat_mem_pset(self, block_id: int, parameter: int, category: int, memory: int,
-                                                  parameter_set: int):
-        msg = "F0 44 19 01 7F 00 " + int_to_hex(category) + int_to_hex(memory) \
+    def request_parameter_value_full(self,
+                                     block_id: int,
+                                     parameter: int,
+                                     category: int,
+                                     memory: int,
+                                     parameter_set: int,
+                                     size: int):
+        msg = "F0 44 19 01 7F 00" + int_to_hex(category) + int_to_hex(memory) \
               + int_to_lsb_msb(parameter_set) + "00 00 00 00 00 00" + int_to_lsb_msb(block_id) \
-              + int_to_lsb_msb(parameter) + "00 00 00 00 F7"
+              + int_to_lsb_msb(parameter) + "00 00" + int_to_lsb_msb(size) + "F7"
         self.send_sysex(msg)
 
     def request_dsp_module(self, block_id: int):
@@ -161,18 +179,19 @@ class MidiService:
         finally:
             self.lock.unlock()
 
-        if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO and len(message) > (SYSEX_TYPE_INDEX + 1):
+        if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO and len(message) > (SYSEX_TYPE_INDEX + 1) and \
+                message[7] == MEMORY_3:
             block_id = lsb_msb_to_int(message[BLOCK_INDEX], message[BLOCK_INDEX + 1])
             sysex_type = lsb_msb_to_int(message[SYSEX_TYPE_INDEX], message[SYSEX_TYPE_INDEX + 1])
             if sysex_type == SysexType.TONE_NAME.value:
                 self.log("[MIDI IN] Tone Name", message)
                 response = message[-1 - Size.TONE_NAME:-1]
                 self.core.process_tone_name_response(response)
-            elif sysex_type in MAIN_PARAMETER_NUMBERS:
+            elif sysex_type in self.long_params:
                 self.log("[MIDI IN] Parameter", message)
                 response = message[-1 - Size.MAIN_PARAMETER:-1]
                 self.core.process_parameter_response(sysex_type, block_id, response)  # 2 bytes
-            elif sysex_type in SHORT_PARAMETER_NUMBERS:
+            elif sysex_type in self.short_params:
                 self.log("[MIDI IN] Parameter", message)
                 response = message[-1 - Size.MAIN_PARAMETER_SHORT:-1]
                 self.core.process_parameter_response(sysex_type, block_id, response[:1])  # 1 byte

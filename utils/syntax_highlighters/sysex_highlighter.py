@@ -4,35 +4,32 @@ from PySide2.QtGui import QTextCharFormat, QSyntaxHighlighter
 
 class SysexHighlighter(QSyntaxHighlighter):
     HEX_COLORS = {
-        1: {'foreground': Qt.darkGreen, 'background': Qt.white},
-        2: {'foreground': Qt.darkGreen, 'background': Qt.white},
-        3: {'foreground': Qt.darkGreen, 'background': Qt.white},
-        4: {'foreground': Qt.darkGreen, 'background': Qt.white},
-        5: {'foreground': Qt.magenta, 'background': Qt.white},
-        6: {'foreground': Qt.darkGreen, 'background': Qt.white},
-        7: {'foreground': Qt.darkGreen, 'background': Qt.white},
-        16: {'foreground': Qt.magenta, 'background': Qt.white},
-        17: {'foreground': Qt.magenta, 'background': Qt.white},
-        18: {'foreground': Qt.blue, 'background': Qt.white},
-        19: {'foreground': Qt.blue, 'background': Qt.white},
-        22: {'foreground': Qt.magenta, 'background': Qt.white},
-        23: {'foreground': Qt.magenta, 'background': Qt.white},
-        24: {'foreground': Qt.blue, 'background': Qt.white},
-        25: {'foreground': Qt.blue, 'background': Qt.white},
-        26: {'foreground': Qt.blue, 'background': Qt.white},
-        27: {'foreground': Qt.blue, 'background': Qt.white},
-        28: {'foreground': Qt.blue, 'background': Qt.white},
-        29: {'foreground': Qt.blue, 'background': Qt.white},
-        30: {'foreground': Qt.blue, 'background': Qt.white},
-        31: {'foreground': Qt.blue, 'background': Qt.white},
-        32: {'foreground': Qt.blue, 'background': Qt.white},
-        33: {'foreground': Qt.blue, 'background': Qt.white},
-        34: {'foreground': Qt.blue, 'background': Qt.white},
-        35: {'foreground': Qt.blue, 'background': Qt.white},
-        36: {'foreground': Qt.blue, 'background': Qt.white},
-        37: {'foreground': Qt.blue, 'background': Qt.white},
-        38: {'foreground': Qt.blue, 'background': Qt.white},
-        39: {'foreground': Qt.blue, 'background': Qt.white},
+        # sysex first byte F0 is red
+        1: {'foreground': Qt.gray, 'background': Qt.white},  # casio & model
+        2: {'foreground': Qt.gray, 'background': Qt.white},  # casio & model
+        3: {'foreground': Qt.gray, 'background': Qt.white},  # casio & model
+        4: {'foreground': Qt.gray, 'background': Qt.white},  # casio & model
+        5: {'foreground': Qt.red, 'background': Qt.white},  # action
+        6: {'foreground': Qt.darkGreen, 'background': Qt.white},  # category
+        7: {'foreground': Qt.darkGreen, 'background': Qt.white},  # memory area id
+        8: {'foreground': Qt.magenta, 'background': Qt.white},  # parameter set
+        9: {'foreground': Qt.magenta, 'background': Qt.white},  # parameter set
+        10: {'foreground': Qt.gray, 'background': Qt.white},  # block 3
+        11: {'foreground': Qt.gray, 'background': Qt.white},  # block 3
+        12: {'foreground': Qt.gray, 'background': Qt.white},  # block 2
+        13: {'foreground': Qt.gray, 'background': Qt.white},  # block 2
+        14: {'foreground': Qt.gray, 'background': Qt.white},  # block 1
+        15: {'foreground': Qt.gray, 'background': Qt.white},  # block 1
+        16: {'foreground': Qt.magenta, 'background': Qt.white},  # block 0
+        17: {'foreground': Qt.magenta, 'background': Qt.white},  # block 0
+        18: {'foreground': Qt.blue, 'background': Qt.white},  # param number
+        19: {'foreground': Qt.blue, 'background': Qt.white},  # param number
+        20: {'foreground': Qt.gray, 'background': Qt.white},  # data index number
+        21: {'foreground': Qt.gray, 'background': Qt.white},  # data index number
+        22: {'foreground': Qt.blue, 'background': Qt.white},  # size
+        23: {'foreground': Qt.blue, 'background': Qt.white}  # size
+        # request/response data symbols are black
+        # sysex last byte F7 is red
     }
 
     def __init__(self, parent=None):

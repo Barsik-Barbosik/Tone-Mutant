@@ -32,8 +32,7 @@ class Core(QObject):
         self.main_window = main_window
         self.status_bar = status_bar
         self.tone: Tone = Tone()
-        self.midi_service = MidiService.get_instance()
-        self.midi_service.core = self
+        self.midi_service = MidiService(self)
         self.tyrant_midi_service = TyrantMidiService()
         # self.lock = QReadWriteLock()
         self.timeout = 0
@@ -503,8 +502,9 @@ class Core(QObject):
     def send_custom_midi_msg(self, midi_msg: str):
         self.midi_service.send_custom_midi_msg(midi_msg)
 
-    def request_custom_parameter(self, number: int, block_id: int, category: int, memory: int, parameter_set: int):
-        self.midi_service.request_parameter_value_with_cat_mem_pset(block_id, number, category, memory, parameter_set)
+    def request_custom_parameter(self, number: int, block_id: int, category: int, memory: int, parameter_set: int,
+                                 size: int):
+        self.midi_service.request_parameter_value_full(block_id, number, category, memory, parameter_set, size)
 
     @Slot()
     def show_status_msg(self, text: str, msecs: int):
