@@ -42,6 +42,8 @@ class Core(QObject):
         cfg.read(constants.CONFIG_FILENAME)
         self.tone.synthesizer_model = cfg.get("Synthesizer", "Model", fallback=DEFAULT_SYNTH_MODEL)
 
+        self.is_status_bar_update_on_pause = False
+
     # Synchronize all Tone data: name, main params, DSP modules and their params
     @Slot()
     def synchronize_tone_with_synth(self):
@@ -477,8 +479,9 @@ class Core(QObject):
 
     @Slot()
     def show_status_msg(self, text: str, msecs: int):
-        self.status_bar.setStyleSheet("background-color: white; color: black")
-        self.status_bar.showMessage(text, msecs)
+        if not self.is_status_bar_update_on_pause:
+            self.status_bar.setStyleSheet("background-color: white; color: black")
+            self.status_bar.showMessage(text, msecs)
 
     def show_error_msg(self, text: str):
         self.log("[ERROR] " + text)
@@ -486,6 +489,9 @@ class Core(QObject):
         self.status_bar.showMessage(text, 5000)
 
         self.main_window.loading_animation.stop()
+
+    def pause_status_bar_updates(self, is_status_bar_update_on_pause: bool):
+        self.is_status_bar_update_on_pause = is_status_bar_update_on_pause
 
     def log(self, msg: str):
         self.main_window.log_texbox.log(msg)
