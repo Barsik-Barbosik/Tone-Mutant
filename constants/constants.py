@@ -732,7 +732,7 @@ ALL_DSP_MODULES: Final[tuple] = (
                DspParameter(8, "Routing",
                             "Specifies the distortion and wah connection.",
                             ParameterType.COMBO,
-                            ["Dist", "Wah", "Wah-Dist", "Dist-Wah"]),
+                            ["Distortion", "Wah", "Wah-Distortion", "Distortion-Wah"]),
                DspParameter(9, "Amp",
                             "Specifies the amp type.",
                             ParameterType.COMBO, [

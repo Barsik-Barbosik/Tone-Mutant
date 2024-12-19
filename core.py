@@ -490,6 +490,7 @@ class Core(QObject):
                             tone_dsp_parameter.value = json_dsp_parameter["value"] - 1 if \
                                 tone_dsp_parameter.type == ParameterType.COMBO else json_dsp_parameter["value"]
 
+                time.sleep(0.5)
                 try:
                     self.midi_service.send_dsp_params_change_sysex(block_id,
                                                                    dsp_page.get_dsp_params_as_list())
