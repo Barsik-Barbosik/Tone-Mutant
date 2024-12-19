@@ -102,9 +102,10 @@ class UserToneManagerWindow(QWidget):
         self.resize(500, 500)
 
         self.core = parent.core
-        items = self.core.get_user_memory_tones()
+        self.items = []
+        self.core.request_user_memory_tone_names()
 
-        self._setup_ui(items)
+        self._setup_ui(self.items)
 
     def _setup_ui(self, items):
         """Sets up the UI elements of the window."""

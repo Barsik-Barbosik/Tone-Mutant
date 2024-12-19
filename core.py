@@ -130,8 +130,7 @@ class Core(QObject):
     def process_parameter_response(self, param_number, block_id, response):
         for parameter in self.tone.main_parameter_list:
             if parameter.param_number == param_number and parameter.block_id == block_id:
-                self.log("[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
-                         + str(block_id) + ", " + str(response))
+                self.log(f"[INFO] {parameter.name}: {str(response)}")
                 if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
                     value = int(int_to_hex(response[1]) + int_to_hex(response[0]), 16)
                 elif len(response) == 1:
@@ -142,8 +141,7 @@ class Core(QObject):
                 break
         for parameter in self.tone.advanced_parameter_list:
             if parameter.param_number == param_number and parameter.block_id == block_id:
-                self.log("[INFO] Processing parameter: " + parameter.name + ", " + str(param_number) + ", "
-                         + str(block_id) + ", " + str(response))
+                self.log(f"[INFO] {parameter.name}: {str(response)}")
                 if len(response) == 1:
                     value = response[0]
                     if parameter.name == "Sound A Timbre Type" or parameter.name == "Sound B Timbre Type":
@@ -215,7 +213,7 @@ class Core(QObject):
         dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
         dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_page.dsp_module:
-            self.log("[INFO] Selected DSP module: " + dsp_page.dsp_module.name)
+            self.log(f"[INFO] DSP module: {dsp_page.dsp_module.name}")
             dsp_page.dsp_module.bypass.value = 0
             self.main_window.central_widget.tab_widget.setTabIcon(block_id + 1, GuiHelper.get_green_icon())
             # self.main_window.central_widget.tab_widget.setTabText(block_id + 1, dsp_page.dsp_module.name)
@@ -628,11 +626,13 @@ class Core(QObject):
         self.status_msg_signal.emit("Tone successfully deleted!", 3000)
         self.main_window.loading_animation.stop()
 
-    def get_user_memory_tones(self):
-        tones = []
+    def request_user_memory_tone_names(self):
         for i in range(0, 100):
-            tones.append("User Tone " + str(i))
-        tones[0] = "My Piano"
-        tones[1] = "My Guitar"
-        tones[2] = "My Drum"
-        return tones
+            self.request_user_memory_tone_name(i)
+
+    def request_user_memory_tone_name(self, tone_number):
+        self.midi_service.request_parameter_value_full(0, 0, 3, 1, tone_number, 12)
+
+    def process_user_memory_tone_name_response(self, response):
+        tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
+        # print(f"Tone name: {tone_name}")
