@@ -11,9 +11,9 @@ class SysexHighlighter(QSyntaxHighlighter):
         4: {'foreground': Qt.gray, 'background': Qt.white},  # casio & model
         5: {'foreground': Qt.red, 'background': Qt.white},  # action
         6: {'foreground': Qt.darkGreen, 'background': Qt.white},  # category
-        7: {'foreground': Qt.darkGreen, 'background': Qt.white},  # memory area id
-        8: {'foreground': Qt.magenta, 'background': Qt.white},  # parameter set
-        9: {'foreground': Qt.magenta, 'background': Qt.white},  # parameter set
+        7: {'foreground': Qt.magenta, 'background': Qt.white},  # memory area id
+        8: {'foreground': Qt.darkGreen, 'background': Qt.white},  # parameter set
+        9: {'foreground': Qt.darkGreen, 'background': Qt.white},  # parameter set
         10: {'foreground': Qt.gray, 'background': Qt.white},  # block 3
         11: {'foreground': Qt.gray, 'background': Qt.white},  # block 3
         12: {'foreground': Qt.gray, 'background': Qt.white},  # block 2

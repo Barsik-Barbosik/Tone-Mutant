@@ -44,13 +44,13 @@ class RequestParameterWindow(QWidget):
         self.memory_input.setPlaceholderText("Memory... (0-4)")
         self.memory_input.setValidator(QIntValidator(0, 4, self))
         self.memory_input.setText("3")
-        form_layout.addRow(self.create_colored_square_label("#006400", "Memory Area ID:"), self.memory_input)
+        form_layout.addRow(self.create_colored_square_label("#FF00FF", "Memory Area ID:"), self.memory_input)
 
         self.parameter_set_input = QLineEdit()
         self.parameter_set_input.setPlaceholderText("Parameter Set...")
         self.parameter_set_input.setValidator(QIntValidator(0, 1499, self))
         self.parameter_set_input.setText("0")
-        form_layout.addRow(self.create_colored_square_label("#FF00FF", "Parameter Set:"), self.parameter_set_input)
+        form_layout.addRow(self.create_colored_square_label("#006400", "Parameter Set:"), self.parameter_set_input)
 
         self.size_input = QLineEdit()
         self.size_input.setPlaceholderText("Size...")
