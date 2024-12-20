@@ -30,6 +30,7 @@ class SysexType(Enum):
     DSP_MODULE = 85
     DSP_BYPASS = 86
     DSP_PARAMS = 87
+    TONE_NUMBER = 228  # when category=2
 
 
 # Data size (byte count)

@@ -178,8 +178,9 @@ class CentralWidget(QWidget):
         return json.dumps(self.core.tone, cls=ObjectEncoder, indent=4)
 
     def on_instrument_list_changed(self):
-        instrument_id: int = self.instrument_list.currentItem().data(Qt.UserRole)
-        self.core.change_instrument_by_id_from_list(instrument_id)
+        # instrument_id: int = self.instrument_list.currentItem().data(Qt.UserRole)
+        # self.core.change_instrument_by_id_from_list(instrument_id)
+        pass
 
     def create_json_view_page(self) -> QWidget:
         json_view_page = QWidget(self)

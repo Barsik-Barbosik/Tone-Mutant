@@ -1,3 +1,5 @@
+import os
+
 from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser
@@ -103,6 +105,10 @@ class MainWindow(QMainWindow):
     def show_save_json_dialog(self):
         file_name = FileDialogHelper.save_json_dialog(self)
         if file_name:
+            # if not self.core.tone.name:
+            file_name_without_extension = os.path.splitext(os.path.basename(file_name))[0]
+            self.core.tone.name = file_name_without_extension[:8]  # trim to first 8 symbols
+
             FileOperations.save_json(file_name, self.central_widget.get_json())
             self.top_widget.tone_name_label.setText(self.core.tone.name)
             self.core.status_msg_signal.emit("File successfully saved!", 3000)

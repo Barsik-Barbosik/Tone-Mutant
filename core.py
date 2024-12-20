@@ -8,7 +8,7 @@ from PySide2.QtCore import Signal, Slot, QObject
 from constants import constants
 from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL, EMPTY_TONE, EMPTY_DSP_MODULE_ID, \
     EMPTY_DSP_PARAMS_LIST, INTERNAL_MEMORY_USER_TONE_COUNT
-from constants.enums import ParameterType
+from constants.enums import ParameterType, SysexType
 from models.parameter import MainParameter
 from models.tone import Tone
 from services.midi_service import MidiService
@@ -92,14 +92,40 @@ class Core(QObject):
     # Process tone name from synth response
     def process_tone_name_response(self, response):
         tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
-        self.log("[INFO] Synth tone name: " + tone_name)
+        self.log(f"[INFO] Synth tone name: {tone_name}")
         if tone_name:
             self.tone.name = tone_name
         elif self.tone.name is None:
             self.tone.name = constants.DEFAULT_TONE_NAME
+            self.request_tone_number_from_performance_params()
 
         tone_id_and_name = self.get_tone_id_and_name()
         self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
+
+    # A new method for retrieving tone number and name
+    def request_tone_number_from_performance_params(self):
+        try:
+            self.midi_service.request_parameter_value_full(0, SysexType.TONE_NUMBER.value, 2, 3, 0, 0)
+        except Exception as e:
+            self.show_error_msg(str(e))
+
+    def process_tone_number_from_performance_params_response(self, tone_number):
+        # self.main_window.central_widget.instrument_list.disconnect(True)
+        # self.main_window.central_widget.instrument_list.itemSelectionChanged.disconnect(self.main_window.central_widget.on_instrument_list_changed)
+        for instrument in get_all_instruments():
+            if instrument.id == tone_number:
+                self.log(f"[INFO] Synth tone name (by number from performance params): {instrument.name}")
+                self.tone.name = instrument.name
+                self.tone.parent_tone = instrument
+
+                self.main_window.central_widget.instrument_list.setCurrentRow(self.tone.parent_tone.id - 1)
+
+                tone_id_and_name = self.get_tone_id_and_name()
+                self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
+
+                break
+        # self.main_window.central_widget.instrument_list.disconnect(False)
+        # self.main_window.central_widget.instrument_list.itemSelectionChanged.connect(self.main_window.central_widget.on_instrument_list_changed)
 
     # Request main parameter value from synth
     def request_main_parameters(self):

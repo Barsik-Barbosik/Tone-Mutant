@@ -243,6 +243,18 @@ class MidiService:
             self.log("[MIDI IN] DSP parameters", message)
             response = message[-1 - Size.DSP_PARAMS:-1]
             self.core.process_dsp_module_parameters_response(block_id, response)
+        elif sysex_type == SysexType.TONE_NUMBER.value:
+            self.log(f"[MIDI IN] Parameter {sysex_type}", message)
+            tone_number = 0
+            response = message[-1 - Size.MAIN_PARAMETER:-1]
+            tone_tumber_response = lsb_msb_to_int(response[0], response[1])
+
+            if tone_tumber_response in range(0, 800):
+                tone_number = tone_tumber_response + 1
+            elif tone_tumber_response in range(820, 920):
+                tone_number = tone_tumber_response - 19
+
+            self.core.process_tone_number_from_performance_params_response(tone_number)
         else:
             self.log("[MIDI IN] SysEx", message)
 
