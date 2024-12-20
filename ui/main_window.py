@@ -23,7 +23,7 @@ from utils.utils import resource_path
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Tone Mutant 1.1.5")
+        self.setWindowTitle("Tone Mutant 1.1.6")
         self.setWindowIcon(QIcon(resource_path("resources/note.png")))
 
         self.status_bar = QStatusBar(self)
