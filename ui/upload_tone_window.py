@@ -1,6 +1,7 @@
 from PySide2 import QtCore
 from PySide2.QtGui import QIcon, QIntValidator
-from PySide2.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFormLayout, QMessageBox
+from PySide2.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFormLayout, QMessageBox, \
+    QHBoxLayout
 
 from constants.constants import DEFAULT_TONE_NAME
 from utils.utils import resource_path
@@ -56,7 +57,15 @@ class UploadToneWindow(QWidget):
         self.submit_button = QPushButton("SAVE")
         self.submit_button.setIcon(QIcon(resource_path("resources/apply.png")))
         self.submit_button.clicked.connect(self.on_submit)
-        layout.addWidget(self.submit_button)
+        self.submit_button.setFixedWidth(150)
+
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        button_layout.addWidget(self.submit_button)
+        button_layout.addStretch()
+        button_layout.setContentsMargins(10, 10, 10, 5)  # (left, top, right, bottom) margins
+
+        layout.addLayout(button_layout)
 
     @staticmethod
     def create_line_edit(placeholder, validator, default_value):

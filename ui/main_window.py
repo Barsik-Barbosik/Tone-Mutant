@@ -9,13 +9,13 @@ from ui.delete_tone_window import DeleteToneWindow
 from ui.deque_log import DequeLog
 from ui.file_dialogs import FileDialogHelper
 from ui.gui_helper import GuiHelper
-from ui.user_tone_manager_window import UserToneManagerWindow
 from ui.loading_animation import LoadingAnimation
 from ui.rename_tone_window import RenameToneWindow
 from ui.request_parameter_window import RequestParameterWindow
 from ui.settings_window import SettingsWindow
 from ui.top_widget import TopWidget
 from ui.upload_tone_window import UploadToneWindow
+from ui.user_tone_manager_window import UserToneManagerWindow
 from utils.file_operations import FileOperations
 from utils.utils import resource_path
 
@@ -130,6 +130,7 @@ class MainWindow(QMainWindow):
 
     def show_user_tone_manager_window(self):
         self.user_tone_manager_window = UserToneManagerWindow(self)
+        self.user_tone_manager_window.load_memory_tone_names()
 
     def resizeEvent(self, event):
         super(MainWindow, self).resizeEvent(event)

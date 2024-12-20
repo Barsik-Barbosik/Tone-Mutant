@@ -7,7 +7,7 @@ from PySide2.QtCore import Signal, Slot, QObject
 
 from constants import constants
 from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL, EMPTY_TONE, EMPTY_DSP_MODULE_ID, \
-    EMPTY_DSP_PARAMS_LIST
+    EMPTY_DSP_PARAMS_LIST, INTERNAL_MEMORY_USER_TONE_COUNT
 from constants.enums import ParameterType
 from models.parameter import MainParameter
 from models.tone import Tone
@@ -603,12 +603,13 @@ class Core(QObject):
         self.main_window.loading_animation.stop()
 
     def request_user_memory_tone_names(self):
-        for i in range(0, 100):
+        for i in range(0, INTERNAL_MEMORY_USER_TONE_COUNT):
             self.request_user_memory_tone_name(i)
 
     def request_user_memory_tone_name(self, tone_number):
         self.midi_service.request_parameter_value_full(0, 0, 3, 1, tone_number, 12)
 
-    def process_user_memory_tone_name_response(self, response):
-        tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
-        # print(f"Tone name: {tone_name}")
+    def process_user_memory_tone_name_response(self, tone_number_response, tone_name_response):
+        tone_number = lsb_msb_to_int(tone_number_response[0], tone_number_response[1])
+        tone_name = ''.join(chr(i) for i in tone_name_response if chr(i).isprintable()).strip()
+        self.main_window.user_tone_manager_window.add_item(tone_number, tone_name)

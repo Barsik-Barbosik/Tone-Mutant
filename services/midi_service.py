@@ -216,8 +216,9 @@ class MidiService:
     def _process_memory_1_message(self, sysex_type, message):
         if sysex_type == SysexType.TONE_NAME.value:
             self.log("[MIDI IN] Tone Name (Memory 1)", message)
-            response = message[-1 - Size.TONE_NAME:-1]
-            self.core.process_user_memory_tone_name_response(response)
+            tone_number_response = message[8:10]  # "parameter set" value
+            tone_name_response = message[-1 - Size.TONE_NAME:-1]
+            self.core.process_user_memory_tone_name_response(tone_number_response, tone_name_response)
         else:
             self.log("[MIDI IN] SysEx (Memory 1)", message)
 

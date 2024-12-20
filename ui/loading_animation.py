@@ -28,6 +28,7 @@ class LoadingAnimation(QWidget):
         self.center_loading_animation()
         self.setVisible(True)
         self.movie.start()
+        self.raise_()
 
     def stop(self):
         """Stop the loading animation and hide it."""
