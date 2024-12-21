@@ -27,7 +27,8 @@ class UserToneManagerWindow(QWidget):
         """Sets up the UI elements of the window."""
         main_layout = QVBoxLayout(self)
 
-        label = QLabel("Drag-and-Drop User Tone List. Buttons are not working.")
+        label = QLabel()
+        label.setText("<h2>User Tone Manager</h2>")
         label.setAlignment(QtCore.Qt.AlignCenter)
         main_layout.addWidget(label)
 
@@ -36,6 +37,10 @@ class UserToneManagerWindow(QWidget):
 
         self.table_widget = DragAndDropTable(self)
         content_layout.addWidget(self.table_widget)
+
+        # self.table_widget.connect(self.table_widget, QtCore.SIGNAL("itemDropped"), self.core.on_item_dropped)
+        self.table_widget.itemSelectionChanged.connect(self.on_item_selection_changed)
+        # self.table_widget.itemClicked.connect(self.on_item_selected)
 
         self.refresh_button = QPushButton(" Refresh")
         self.refresh_button.setIcon(QIcon(resource_path("resources/refresh.png")))
@@ -79,6 +84,10 @@ class UserToneManagerWindow(QWidget):
 
     def load_memory_tone_names(self):
         self.refresh_button.setEnabled(False)
+        self.upload_button.setEnabled(False)
+        self.rename_button.setEnabled(False)
+        self.delete_button.setEnabled(False)
+
         self.loading_animation.start()
         self.items = [None] * INTERNAL_MEMORY_USER_TONE_COUNT
         worker = Worker(self.core.request_user_memory_tone_names)
@@ -107,3 +116,13 @@ class UserToneManagerWindow(QWidget):
     def resizeEvent(self, event):
         super(UserToneManagerWindow, self).resizeEvent(event)
         self.loading_animation.center_loading_animation()
+
+    def on_item_selection_changed(self):
+        if self.table_widget.selectedItems():
+            self.upload_button.setEnabled(True)
+            self.rename_button.setEnabled(True)
+            self.delete_button.setEnabled(True)
+        else:
+            self.upload_button.setEnabled(False)
+            self.rename_button.setEnabled(False)
+            self.delete_button.setEnabled(False)
