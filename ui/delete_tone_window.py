@@ -10,13 +10,14 @@ class DeleteToneWindow(QWidget):
     def __init__(self, parent):
         super().__init__()
 
-        self.setWindowTitle("Delete Tone")
+        self.setWindowTitle("Delete a tone in memory")
         self.setWindowIcon(QIcon(resource_path("resources/piano_minus.png")))
 
         self.core = parent.core
 
         layout = QVBoxLayout()
-        label = QLabel("Delete a tone from the synthesizer's memory")
+        label = QLabel()
+        label.setText("<h2>Delete a Tone</h2>")
         label.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(label)
 
@@ -27,7 +28,7 @@ class DeleteToneWindow(QWidget):
             tone_number = self.core.tone.parent_tone.id
 
         self.number_input = QLineEdit()
-        self.number_input.setPlaceholderText("Tone Number... (801-900)")
+        self.number_input.setPlaceholderText("User Memory... (801-900)")
         self.number_input.setValidator(QIntValidator(801, 900, self))
 
         if tone_number:
@@ -50,6 +51,7 @@ class DeleteToneWindow(QWidget):
 
         layout.addLayout(button_layout)
 
+        self.resize(330, 160)
         self.setLayout(layout)
         self.show()
 

@@ -22,6 +22,7 @@ class UserToneManagerWindow(QWidget):
 
         self.resize(600, 500)
         self._setup_ui()
+        self.show()
 
     def _setup_ui(self):
         """Sets up the UI elements of the window."""
@@ -37,10 +38,6 @@ class UserToneManagerWindow(QWidget):
 
         self.table_widget = DragAndDropTable(self)
         content_layout.addWidget(self.table_widget)
-
-        # self.table_widget.connect(self.table_widget, QtCore.SIGNAL("itemDropped"), self.core.on_item_dropped)
-        self.table_widget.itemSelectionChanged.connect(self.on_item_selection_changed)
-        # self.table_widget.itemClicked.connect(self.on_item_selected)
 
         self.refresh_button = QPushButton(" Refresh")
         self.refresh_button.setIcon(QIcon(resource_path("resources/refresh.png")))
@@ -60,27 +57,23 @@ class UserToneManagerWindow(QWidget):
         self.delete_button = QPushButton(" Delete")
         self.delete_button.setIcon(QIcon(resource_path("resources/piano_minus.png")))
         self.delete_button.setObjectName("manager-button")
+        self.delete_button.clicked.connect(self.delete_tone)
         self.delete_button.setEnabled(False)
-
-        self.apply_button = QPushButton(" Apply")
-        self.apply_button.setIcon(QIcon(resource_path("resources/apply.png")))
-        self.apply_button.setObjectName("manager-button")
-        self.apply_button.setEnabled(False)
 
         button_layout = QVBoxLayout()
         button_layout.addWidget(self.refresh_button)
         button_layout.addWidget(self.upload_button)
         button_layout.addWidget(self.rename_button)
         button_layout.addWidget(self.delete_button)
-        button_layout.addWidget(self.apply_button)
         button_layout.addStretch()
 
         content_layout.addLayout(button_layout)
 
         main_layout.addLayout(content_layout)
 
+        self.table_widget.itemSelectionChanged.connect(self.on_item_selection_changed)
+
         self.setLayout(main_layout)
-        self.show()
 
     def load_memory_tone_names(self):
         self.refresh_button.setEnabled(False)
@@ -119,10 +112,30 @@ class UserToneManagerWindow(QWidget):
 
     def on_item_selection_changed(self):
         if self.table_widget.selectedItems():
-            self.upload_button.setEnabled(True)
-            self.rename_button.setEnabled(True)
+            if len(self.table_widget.selectedItems()) == 1:
+                self.upload_button.setEnabled(True)
+                self.rename_button.setEnabled(True)
+            else:
+                self.upload_button.setEnabled(False)
+                self.rename_button.setEnabled(False)
             self.delete_button.setEnabled(True)
         else:
             self.upload_button.setEnabled(False)
             self.rename_button.setEnabled(False)
             self.delete_button.setEnabled(False)
+
+    def delete_tone(self):
+        selected_items = self.table_widget.selectedItems()
+        if selected_items:
+            for selected_item in selected_items:
+                tone_number = self.table_widget.row(selected_item)
+                tone_name = selected_item.text()
+                print(f"Deleting tone: {tone_number} - {tone_name}")
+                # worker = Worker(self.core.delete_user_memory_tone, tone_number, tone_name)
+                # worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
+                # worker.signals.result.connect(self.load_memory_tone_names)
+                # worker.start()
+
+                # self.core.start_tone_delete_worker(tone_number + 801)
+        else:
+            self.core.show_error_msg("No tone selected")

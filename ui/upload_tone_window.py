@@ -16,7 +16,7 @@ class UploadToneWindow(QWidget):
         self.number_input = None
         self.name_input = None
         self.submit_button = None
-        self.setWindowTitle("Save Tone")
+        self.setWindowTitle("Save a tone to the synth's memory")
         self.setWindowIcon(QIcon(resource_path("resources/piano_plus.png")))
 
         self.init_ui()
@@ -28,12 +28,14 @@ class UploadToneWindow(QWidget):
         self.add_form(layout)
         self.add_submit_button(layout)
 
+        self.resize(330, 160)
         self.setLayout(layout)
         self.show()
 
     @staticmethod
     def add_title(layout):
-        label = QLabel("Save current tone to the synthesizer's memory")
+        label = QLabel()
+        label.setText("<h2>Save Current Tone</h2>")
         label.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(label)
 
@@ -42,12 +44,12 @@ class UploadToneWindow(QWidget):
 
         # Tone Number input
         tone_number = self.get_tone_number()
-        self.number_input = self.create_line_edit("Tone Number... (801-900)", QIntValidator(801, 900), tone_number)
+        self.number_input = self.create_line_edit("User Memory... (801-900)", QIntValidator(801, 900), tone_number)
         form_layout.addRow("Tone Number:", self.number_input)
 
         # Tone Name input
         tone_name = self.get_tone_name()
-        self.name_input = self.create_line_edit("Tone Name...", None, tone_name)
+        self.name_input = self.create_line_edit("Tone Name... (8 symbols)", None, tone_name)
         self.name_input.setMaxLength(8)
         form_layout.addRow("Tone Name:", self.name_input)
 

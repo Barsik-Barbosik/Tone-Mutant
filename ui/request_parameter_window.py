@@ -17,9 +17,11 @@ class RequestParameterWindow(QWidget):
         self.core = parent.core
 
         layout = QVBoxLayout()
-        label = QLabel("Request a parameter from the synthesizer.\nThe result will appear in the 'Log' tab.")
-        label.setAlignment(QtCore.Qt.AlignCenter)
-        layout.addWidget(label)
+
+        title = QLabel()
+        title.setText("<h2>Request a Parameter</h2>")
+        title.setAlignment(QtCore.Qt.AlignCenter)
+        layout.addWidget(title)
 
         form_layout = QFormLayout()
 
@@ -60,6 +62,11 @@ class RequestParameterWindow(QWidget):
 
         layout.addLayout(form_layout)
 
+        label = QLabel("The result will appear in the 'Log' tab.")
+        label.setAlignment(QtCore.Qt.AlignCenter)
+
+        layout.addWidget(label)
+
         self.submit_button = QPushButton(" Get Parameter!")
         self.submit_button.setIcon(QIcon(resource_path("resources/apply.png")))
         self.submit_button.clicked.connect(self.on_submit)
@@ -69,10 +76,11 @@ class RequestParameterWindow(QWidget):
         button_layout.addStretch()
         button_layout.addWidget(self.submit_button)
         button_layout.addStretch()
-        button_layout.setContentsMargins(10, 10, 10, 5)  # (left, top, right, bottom) margins
+        button_layout.setContentsMargins(10, 5, 10, 5)  # (left, top, right, bottom) margins
 
         layout.addLayout(button_layout)
 
+        self.resize(330, 300)
         self.setLayout(layout)
         self.show()
 

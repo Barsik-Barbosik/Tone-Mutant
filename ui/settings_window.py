@@ -1,6 +1,7 @@
 import configparser
 
 import rtmidi
+from PySide2 import QtCore
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QGridLayout, QHBoxLayout, QPushButton, QSizePolicy, \
     QSpacerItem, QMessageBox
@@ -45,15 +46,23 @@ class SettingsWindow(QWidget):
 
     def _initialize_ui(self):
         """Set up the user interface."""
-        self._add_combo_box("Synthesizer Model:", self.synth_models, self.synthesizer_model, 0)
-        self._add_spacer(1)
-        self._add_combo_box("MIDI Input Port:", self.input_ports, self.input_name, 2)
-        self._add_combo_box("MIDI Output Port:", self.output_ports, self.output_name, 3)
-        self._add_spacer(4)
+
+        # Add title label
+        title_label = QLabel()
+        title_label.setText("<h2>Settings</h2>")
+        title_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.layout.addWidget(title_label, 0, 0, 1, 2)
+
+        # Add the combo boxes and buttons
+        self._add_combo_box("Synthesizer Model:", self.synth_models, self.synthesizer_model, 1)
+        self._add_spacer(2)
+        self._add_combo_box("MIDI Input Port:", self.input_ports, self.input_name, 3)
+        self._add_combo_box("MIDI Output Port:", self.output_ports, self.output_name, 4)
+        self._add_spacer(5)
         self._add_combo_box("Expert Mode:", self.expert_mode_values,
-                            self.inverse_expert_mode_mapping.get(self.is_expert_mode_enabled, "OFF"), 5)
-        self._add_spacer(6)
-        self._add_action_buttons(7)
+                            self.inverse_expert_mode_mapping.get(self.is_expert_mode_enabled, "OFF"), 6)
+        self._add_spacer(7)
+        self._add_action_buttons(8)
 
     def _add_combo_box(self, label_text, items, selection, row):
         """Helper method to add a labeled combo box."""
