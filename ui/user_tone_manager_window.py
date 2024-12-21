@@ -102,7 +102,7 @@ class UserToneManagerWindow(QWidget):
         super().__init__()
 
         self.setWindowTitle("User Tone Manager")
-        self.setWindowIcon(QIcon(resource_path("resources/exclamation.png")))
+        self.setWindowIcon(QIcon(resource_path("resources/memory_manager.png")))
 
         self.core = parent.core
         self.items = []
@@ -120,35 +120,33 @@ class UserToneManagerWindow(QWidget):
         main_layout.addWidget(label)
 
         content_layout = QHBoxLayout()
-        content_layout.setContentsMargins(10, 5, 10, 5)
+        content_layout.setContentsMargins(5, 5, 5, 5)
 
         self.table_widget = DragAndDropTable(self)
         content_layout.addWidget(self.table_widget)
 
-        button_layout = QVBoxLayout()
-        button_layout.setContentsMargins(15, 0, 0, 0)
-
-        self.refresh_button = QPushButton("Refresh")
-        self.refresh_button.setIcon(QIcon(resource_path("resources/apply.png")))
+        self.refresh_button = QPushButton(" Refresh")
+        self.refresh_button.setIcon(QIcon(resource_path("resources/refresh.png")))
+        self.refresh_button.setObjectName("manager-button")
         self.refresh_button.clicked.connect(self.load_memory_tone_names)
-        self.refresh_button.setFixedWidth(130)
 
-        self.upload_button = QPushButton("Save")
-        self.upload_button.setIcon(QIcon(resource_path("resources/apply.png")))
-        self.upload_button.setFixedWidth(130)
+        self.upload_button = QPushButton(" Save Tone")
+        self.upload_button.setIcon(QIcon(resource_path("resources/piano_plus.png")))
+        self.upload_button.setObjectName("manager-button")
 
-        self.rename_button = QPushButton("Rename")
-        self.rename_button.setIcon(QIcon(resource_path("resources/apply.png")))
-        self.rename_button.setFixedWidth(130)
+        self.rename_button = QPushButton(" Rename")
+        self.rename_button.setIcon(QIcon(resource_path("resources/piano_pencil.png")))
+        self.rename_button.setObjectName("manager-button")
 
-        self.delete_button = QPushButton("Delete")
-        self.delete_button.setIcon(QIcon(resource_path("resources/apply.png")))
-        self.delete_button.setFixedWidth(130)
+        self.delete_button = QPushButton(" Delete")
+        self.delete_button.setIcon(QIcon(resource_path("resources/piano_minus.png")))
+        self.delete_button.setObjectName("manager-button")
 
-        self.apply_button = QPushButton("Apply")
+        self.apply_button = QPushButton(" Apply")
         self.apply_button.setIcon(QIcon(resource_path("resources/apply.png")))
-        self.apply_button.setFixedWidth(130)
+        self.apply_button.setObjectName("manager-button")
 
+        button_layout = QVBoxLayout()
         button_layout.addWidget(self.refresh_button)
         button_layout.addWidget(self.upload_button)
         button_layout.addWidget(self.rename_button)

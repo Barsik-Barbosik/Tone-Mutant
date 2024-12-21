@@ -54,7 +54,7 @@ class RenameToneWindow(QWidget):
         layout.addLayout(form_layout)
 
     def add_submit_button(self, layout):
-        self.submit_button = QPushButton("RENAME")
+        self.submit_button = QPushButton(" RENAME")
         self.submit_button.setIcon(QIcon(resource_path("resources/apply.png")))
         self.submit_button.clicked.connect(self.on_submit)
         self.submit_button.setFixedWidth(150)

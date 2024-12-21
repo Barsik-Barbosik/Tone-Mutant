@@ -60,7 +60,7 @@ class RequestParameterWindow(QWidget):
 
         layout.addLayout(form_layout)
 
-        self.submit_button = QPushButton("Get Parameter!")
+        self.submit_button = QPushButton(" Get Parameter!")
         self.submit_button.setIcon(QIcon(resource_path("resources/apply.png")))
         self.submit_button.clicked.connect(self.on_submit)
         self.submit_button.setFixedWidth(150)

@@ -63,7 +63,7 @@ class GuiHelper:
         request_parameter_action.setStatusTip("Request a parameter from synthesizer")
         request_parameter_action.triggered.connect(request_parameter_callback)
 
-        user_tone_manager_action = QAction(QIcon(resource_path('resources/exclamation.png')), "User Tone Manager",
+        user_tone_manager_action = QAction(QIcon(resource_path('resources/memory_manager.png')), "User Tone Manager",
                                            main_window)
         user_tone_manager_action.setStatusTip("Under construction...")
         user_tone_manager_action.triggered.connect(user_tone_manager_callback)

@@ -35,6 +35,13 @@ QPushButton {
     padding: 8px 20px 8px 20px;
 }
 
+#manager-button {
+    width: 95px;
+    text-align: left;
+    padding: 5px 15px 5px 15px;
+    margin-left: 10px;
+}
+
 #label-left-side {
     qproperty-alignment: 'AlignVCenter | AlignRight';
     padding-left: 10px;

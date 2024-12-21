@@ -37,7 +37,7 @@ class DeleteToneWindow(QWidget):
 
         layout.addLayout(form_layout)
 
-        self.submit_button = QPushButton("DELETE")
+        self.submit_button = QPushButton(" DELETE")
         self.submit_button.setIcon(QIcon(resource_path("resources/exclamation.png")))
         self.submit_button.clicked.connect(self.on_submit)
         self.submit_button.setFixedWidth(150)
