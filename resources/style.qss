@@ -42,6 +42,11 @@ QPushButton {
     margin-left: 10px;
 }
 
+#manager-button:disabled {
+    background-color: #BBBBBB;
+    color: #FFFFFF;
+}
+
 #label-left-side {
     qproperty-alignment: 'AlignVCenter | AlignRight';
     padding-left: 10px;
