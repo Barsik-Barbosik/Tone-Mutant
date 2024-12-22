@@ -12,17 +12,21 @@ class LimitedLengthEditor(QLineEdit):
 class LimitedLengthDelegate(QItemDelegate):
     def __init__(self, parent=None, callback=None):
         super().__init__(parent)
-        self.callback = callback  # Store the callback function passed as a parameter
+        self.callback = callback
+        self.value_before_edit = None
 
     def createEditor(self, parent, option, index):
-        # Create a custom QLineEdit editor with a max length of 8
         editor = LimitedLengthEditor(parent, max_length=8)
-
-        # If a callback is provided, connect the `editingFinished` signal to it
-        if self.callback:
-            editor.editingFinished.connect(self.callback)
-
+        self.value_before_edit = index.data(Qt.EditRole)
         return editor
+
+    def setModelData(self, editor, model, index):
+        new_value = editor.text()
+        model.setData(index, new_value, Qt.EditRole)  # Update the model
+
+        # Trigger the callback only if the value has changed
+        if self.callback and self.value_before_edit != new_value:
+            self.callback()
 
 
 class DragAndDropTable(QTableWidget):
@@ -44,8 +48,7 @@ class DragAndDropTable(QTableWidget):
         self.setDropIndicatorShown(True)
         # self.setDragDropMode(QTableWidget.InternalMove)
         # self.setAlternatingRowColors(True)
-        # self.setEditTriggers(QAbstractItemView.DoubleClicked)  # Allow editing on double click
-        # self.setItemDelegateForColumn(0, LimitedLengthDelegate(self))
+        self.setEditTriggers(QAbstractItemView.DoubleClicked)  # Allow editing on double click
         self.setItemDelegateForColumn(0, LimitedLengthDelegate(self, callback=self.editing_finished_callback))
 
         self.verticalHeader().setMinimumWidth(50)

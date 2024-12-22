@@ -142,11 +142,14 @@ class UserToneManagerWindow(QDialog):
 
     def on_editing_finished(self):
         """Callback method to handle the end of editing."""
-        current_item = self.table_widget.currentItem()  # Get the currently edited item
+        current_item = self.table_widget.currentItem()
         if current_item:
-            new_value = current_item.text()  # Get the updated text value
-            selected_row = self.table_widget.row(current_item)  # Get the row index of the current item
-            print(f"After edit: {new_value}, row: {selected_row} ({selected_row + USER_TONE_TABLE_ROW_OFFSET})")
+            self.loading_animation.start()
+            tone_number = self.table_widget.row(current_item) + USER_TONE_TABLE_ROW_OFFSET
+            new_tone_name = current_item.text()
+            worker = Worker(self.core.rename_tone, tone_number, new_tone_name)
+            worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
+            worker.start()
 
     def delete_tone(self):
         if self.table_widget.selectedItems():
