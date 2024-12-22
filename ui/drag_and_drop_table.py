@@ -30,11 +30,16 @@ class LimitedLengthDelegate(QItemDelegate):
 
 
 class DragAndDropTable(QTableWidget):
-    def __init__(self, parent=None, table_row_offset=0, editing_finished_callback=None):
+    def __init__(self,
+                 parent=None,
+                 table_row_offset=0,
+                 editing_finished_callback=None,
+                 drag_drop_finished_callback=None):
         super().__init__(parent)
         self._dragged_item_row = None  # Store the row index of the dragged item
         self._row_offset = table_row_offset  # Start row numbering from offset (801 for user tones)
         self.editing_finished_callback = editing_finished_callback  # Store the callback
+        self.drag_drop_finished_callback = drag_drop_finished_callback  # Store the callback
         self._setup_table()
 
     def _setup_table(self):
@@ -89,6 +94,7 @@ class DragAndDropTable(QTableWidget):
         if drop_row < 0 or drop_row >= self.rowCount():
             return
 
+        original_row = self._dragged_item_row  # Store the original row
         item = self.takeItem(self._dragged_item_row, 0)  # Remove the item from its original position
         self.removeRow(self._dragged_item_row)  # Remove the row itself
         self.insertRow(drop_row)  # Insert the item at the new position
@@ -96,6 +102,10 @@ class DragAndDropTable(QTableWidget):
 
         # After the drop, update the row numbers starting from table_row_offset
         self._update_row_numbers()
+
+        # Call the callback if provided, passing the original and new rows
+        if self.drag_drop_finished_callback:
+            self.drag_drop_finished_callback(original_row, drop_row)
 
         event.acceptProposedAction()
 

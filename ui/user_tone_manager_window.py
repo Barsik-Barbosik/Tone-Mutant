@@ -16,6 +16,7 @@ class UserToneManagerWindow(QDialog):
 
         self.setWindowTitle("User Tone Manager")
         self.setWindowIcon(QIcon(resource_path("resources/memory_manager.png")))
+        self.setWindowFlags(QtCore.Qt.Window)
 
         self.core = parent.core
         self.items = []
@@ -40,7 +41,8 @@ class UserToneManagerWindow(QDialog):
 
         self.table_widget = DragAndDropTable(self,
                                              table_row_offset=USER_TONE_TABLE_ROW_OFFSET,
-                                             editing_finished_callback=self.on_editing_finished)
+                                             editing_finished_callback=self.on_editing_finished,
+                                             drag_drop_finished_callback=self.on_drag_drop_finished)
         content_layout.addWidget(self.table_widget)
 
         self.refresh_button = QPushButton(" Refresh")
@@ -131,6 +133,23 @@ class UserToneManagerWindow(QDialog):
             self.upload_button.setEnabled(False)
             self.rename_button.setEnabled(False)
             self.delete_button.setEnabled(False)
+
+    def on_drag_drop_finished(self, original_row, new_row):
+        if original_row > new_row:
+            # Moving up
+            print(f"Save row {original_row} to temp")
+            for i in range(original_row - 1, new_row - 1, -1):
+                print(f"Move row {i} to {i + 1}")
+            print(f"Paste temp to row {new_row}")
+        elif original_row < new_row:
+            # Moving down
+            print(f"Save row {original_row} to temp")
+            for i in range(original_row + 1, new_row + 1):
+                print(f"Move row {i} to {i - 1}")
+            print(f"Paste temp to row {new_row}")
+        else:
+            # No movement
+            print("No movement")
 
     def enable_text_editing(self):
         selected_row = self.table_widget.currentRow()
