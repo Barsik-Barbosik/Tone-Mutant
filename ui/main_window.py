@@ -137,6 +137,9 @@ class MainWindow(QMainWindow):
     def show_user_tone_manager_window(self):
         self.user_tone_manager_window = UserToneManagerWindow(self)
         self.user_tone_manager_window.load_memory_tone_names()
+        self.user_tone_manager_window.exec_()
+
+        self.core.synchronize_tone_signal.emit()  # when user tone manager is closed, synchronize tone with synth
 
     def resizeEvent(self, event):
         super(MainWindow, self).resizeEvent(event)

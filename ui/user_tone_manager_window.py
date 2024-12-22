@@ -1,6 +1,6 @@
 from PySide2 import QtCore
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QVBoxLayout, QWidget, QLabel, QPushButton, QHBoxLayout
+from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog
 
 from constants.constants import INTERNAL_MEMORY_USER_TONE_COUNT
 from ui.drag_and_drop_table import DragAndDropTable
@@ -9,7 +9,7 @@ from utils.utils import resource_path
 from utils.worker import Worker
 
 
-class UserToneManagerWindow(QWidget):
+class UserToneManagerWindow(QDialog):
     def __init__(self, parent):
         super().__init__()
 
@@ -18,11 +18,12 @@ class UserToneManagerWindow(QWidget):
 
         self.core = parent.core
         self.items = []
+        self.selectedItems = []
         self.loading_animation = LoadingAnimation(self)
 
         self.resize(600, 500)
         self._setup_ui()
-        self.show()
+        # self.show()
 
     def _setup_ui(self):
         """Sets up the UI elements of the window."""
@@ -59,6 +60,9 @@ class UserToneManagerWindow(QWidget):
         self.delete_button.setObjectName("manager-button")
         self.delete_button.clicked.connect(self.delete_tone)
         self.delete_button.setEnabled(False)
+
+        # "COPY" & "PASTE" buttons?
+        # "MOVE UP" & "MOVE DOWN" buttons?
 
         button_layout = QVBoxLayout()
         button_layout.addWidget(self.refresh_button)
@@ -125,17 +129,19 @@ class UserToneManagerWindow(QWidget):
             self.delete_button.setEnabled(False)
 
     def delete_tone(self):
-        selected_items = self.table_widget.selectedItems()
-        if selected_items:
-            for selected_item in selected_items:
-                tone_number = self.table_widget.row(selected_item)
-                tone_name = selected_item.text()
-                print(f"Deleting tone: {tone_number} - {tone_name}")
-                # worker = Worker(self.core.delete_user_memory_tone, tone_number, tone_name)
-                # worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
-                # worker.signals.result.connect(self.load_memory_tone_names)
-                # worker.start()
+        if self.table_widget.selectedItems():
+            self.selectedItems = self.table_widget.selectedItems()
+            self.delete_next_tone()
 
-                # self.core.start_tone_delete_worker(tone_number + 801)
+    def delete_next_tone(self):
+        if self.selectedItems:
+            self.loading_animation.start()
+            selected_item = self.selectedItems.pop()
+            tone_number = self.table_widget.row(selected_item) + 801
+            tone_name = selected_item.text()
+            print(f"Deleting tone: {tone_number} - {tone_name}")
+            worker = Worker(self.core.delete_next_tone, tone_number)
+            worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
+            worker.start()
         else:
-            self.core.show_error_msg("No tone selected")
+            self.core.after_all_selected_tones_deleted()

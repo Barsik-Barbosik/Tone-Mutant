@@ -607,6 +607,7 @@ class Core(QObject):
         self.status_msg_signal.emit("Tone successfully renamed!", 3000)
         self.main_window.loading_animation.stop()
 
+    # @Deprecated (used in old separate delete-dialog)
     def start_tone_delete_worker(self, tone_number):
         if tone_number < 801 or tone_number > 900:
             raise Exception("The 'Tone Number' must be in the range of 801 to 900.")
@@ -619,6 +620,7 @@ class Core(QObject):
         worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
         worker.start()
 
+    # @Deprecated (used in old separate delete-dialog)
     def delete_tone(self, tone_number):
         self.tyrant_midi_service.bulk_upload(tone_number - 801, EMPTY_TONE, memory=1, category=3)
         self.close_midi_ports()
@@ -627,6 +629,17 @@ class Core(QObject):
         self.synchronize_tone_signal.emit()
         self.status_msg_signal.emit("Tone successfully deleted!", 3000)
         self.main_window.loading_animation.stop()
+
+    def delete_next_tone(self, tone_number):
+        self.tyrant_midi_service.bulk_upload(tone_number - 801, EMPTY_TONE, memory=1, category=3)
+        self.main_window.user_tone_manager_window.delete_next_tone()  # delete next tone
+
+    def after_all_selected_tones_deleted(self):
+        self.close_midi_ports()
+        self.open_midi_ports()
+
+        self.main_window.user_tone_manager_window.load_memory_tone_names()
+        self.status_msg_signal.emit("Tone(s) successfully deleted!", 3000)
 
     def request_user_memory_tone_names(self):
         for i in range(0, INTERNAL_MEMORY_USER_TONE_COUNT):
