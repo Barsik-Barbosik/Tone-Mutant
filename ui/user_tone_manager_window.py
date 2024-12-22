@@ -3,7 +3,7 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog
 
-from constants.constants import INTERNAL_MEMORY_USER_TONE_COUNT
+from constants.constants import INTERNAL_MEMORY_USER_TONE_COUNT, USER_TONE_TABLE_ROW_OFFSET
 from ui.drag_and_drop_table import DragAndDropTable
 from ui.loading_animation import LoadingAnimation
 from utils.utils import resource_path
@@ -38,7 +38,9 @@ class UserToneManagerWindow(QDialog):
         content_layout = QHBoxLayout()
         content_layout.setContentsMargins(5, 5, 5, 5)
 
-        self.table_widget = DragAndDropTable(self)
+        self.table_widget = DragAndDropTable(self,
+                                             table_row_offset=USER_TONE_TABLE_ROW_OFFSET,
+                                             editing_finished_callback=self.on_editing_finished)
         content_layout.addWidget(self.table_widget)
 
         self.refresh_button = QPushButton(" Refresh")
@@ -138,6 +140,14 @@ class UserToneManagerWindow(QDialog):
                 item.setFlags(item.flags() | Qt.ItemIsEditable)
                 self.table_widget.editItem(item)
 
+    def on_editing_finished(self):
+        """Callback method to handle the end of editing."""
+        current_item = self.table_widget.currentItem()  # Get the currently edited item
+        if current_item:
+            new_value = current_item.text()  # Get the updated text value
+            selected_row = self.table_widget.row(current_item)  # Get the row index of the current item
+            print(f"After edit: {new_value}, row: {selected_row} ({selected_row + USER_TONE_TABLE_ROW_OFFSET})")
+
     def delete_tone(self):
         if self.table_widget.selectedItems():
             self.selectedItems = self.table_widget.selectedItems()
@@ -147,7 +157,7 @@ class UserToneManagerWindow(QDialog):
         if self.selectedItems:
             self.loading_animation.start()
             selected_item = self.selectedItems.pop()
-            tone_number = self.table_widget.row(selected_item) + 801
+            tone_number = self.table_widget.row(selected_item) + USER_TONE_TABLE_ROW_OFFSET
             tone_name = selected_item.text()
             worker = Worker(self.core.delete_next_tone, tone_number, tone_name)
             worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))

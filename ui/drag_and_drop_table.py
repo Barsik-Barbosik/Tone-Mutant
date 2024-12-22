@@ -26,10 +26,11 @@ class LimitedLengthDelegate(QItemDelegate):
 
 
 class DragAndDropTable(QTableWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, table_row_offset=0, editing_finished_callback=None):
         super().__init__(parent)
         self._dragged_item_row = None  # Store the row index of the dragged item
-        self._row_offset = 801  # Start row numbering from 801
+        self._row_offset = table_row_offset  # Start row numbering from offset (801 for user tones)
+        self.editing_finished_callback = editing_finished_callback  # Store the callback
         self._setup_table()
 
     def _setup_table(self):
@@ -45,7 +46,7 @@ class DragAndDropTable(QTableWidget):
         # self.setAlternatingRowColors(True)
         # self.setEditTriggers(QAbstractItemView.DoubleClicked)  # Allow editing on double click
         # self.setItemDelegateForColumn(0, LimitedLengthDelegate(self))
-        self.setItemDelegateForColumn(0, LimitedLengthDelegate(self, callback=self.abc))
+        self.setItemDelegateForColumn(0, LimitedLengthDelegate(self, callback=self.editing_finished_callback))
 
         self.verticalHeader().setMinimumWidth(50)
         self.horizontalHeader().setStretchLastSection(True)
@@ -78,7 +79,7 @@ class DragAndDropTable(QTableWidget):
         text = event.mimeData().text().strip()
         drop_row = self.rowAt(event.pos().y())  # Get the row where the item is dropped
 
-        # Ensure the drop row is a valid row indexMy Drum
+        # Ensure the drop row is a valid row index
         drop_row = drop_row if drop_row != -1 and drop_row < self.rowCount() else self.rowCount() - 1
 
         # If the drop position is outside the table, do nothing
@@ -90,7 +91,7 @@ class DragAndDropTable(QTableWidget):
         self.insertRow(drop_row)  # Insert the item at the new position
         self.setItem(drop_row, 0, item)  # Add the item to the new row
 
-        # After the drop, update the row numbers starting from 801
+        # After the drop, update the row numbers starting from table_row_offset
         self._update_row_numbers()
 
         event.acceptProposedAction()
@@ -103,7 +104,7 @@ class DragAndDropTable(QTableWidget):
         self.insertRow(row)  # Insert the row at the specified position
         self.setItem(row, 0, QTableWidgetItem(item_text))  # Add the item to the row
 
-        # After adding a new item, update the row numbers starting from 801
+        # After adding a new item, update the row numbers starting from table_row_offset
         self._update_row_numbers()
 
     def itemExists(self, text):
@@ -111,18 +112,10 @@ class DragAndDropTable(QTableWidget):
         return any(self.item(row, 0).text() == text for row in range(self.rowCount()))
 
     def _update_row_numbers(self):
-        """Updates the row numbers in the vertical header starting from 801."""
+        """Updates the row numbers in the vertical header starting from table_row_offset."""
         row_count = self.rowCount()
         row_labels = [str(self._row_offset + i) for i in range(row_count)]
         self.setVerticalHeaderLabels(row_labels)
-
-    # def currentRowWithOffset(self):
-    #     """Returns the row index considering the row offset."""
-    #     # Get the current row, then subtract the offset to adjust the row number
-    #     current_row = self.currentRow()
-    #     if current_row == -1:
-    #         return -1
-    #     return current_row + self._row_offset - 1  # Adjust for 0-based index
 
     def keyPressEvent(self, event):
         # Check if the pressed key is Enter
@@ -131,6 +124,3 @@ class DragAndDropTable(QTableWidget):
             return
         # Call the parent class' keyPressEvent for all other keys
         super().keyPressEvent(event)
-
-    def abc(self):
-        print("Hello??")
