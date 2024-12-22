@@ -1,6 +1,28 @@
 from PySide2.QtCore import Qt, QMimeData
 from PySide2.QtGui import QDrag
-from PySide2.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView
+from PySide2.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QLineEdit, QItemDelegate
+
+
+class LimitedLengthEditor(QLineEdit):
+    def __init__(self, parent=None, max_length=8):
+        super().__init__(parent)
+        self.setMaxLength(max_length)  # Set the max length of input
+
+
+class LimitedLengthDelegate(QItemDelegate):
+    def __init__(self, parent=None, callback=None):
+        super().__init__(parent)
+        self.callback = callback  # Store the callback function passed as a parameter
+
+    def createEditor(self, parent, option, index):
+        # Create a custom QLineEdit editor with a max length of 8
+        editor = LimitedLengthEditor(parent, max_length=8)
+
+        # If a callback is provided, connect the `editingFinished` signal to it
+        if self.callback:
+            editor.editingFinished.connect(self.callback)
+
+        return editor
 
 
 class DragAndDropTable(QTableWidget):
@@ -19,7 +41,11 @@ class DragAndDropTable(QTableWidget):
         self.setDragEnabled(True)
         self.setAcceptDrops(True)
         self.setDropIndicatorShown(True)
+        # self.setDragDropMode(QTableWidget.InternalMove)
         # self.setAlternatingRowColors(True)
+        # self.setEditTriggers(QAbstractItemView.DoubleClicked)  # Allow editing on double click
+        # self.setItemDelegateForColumn(0, LimitedLengthDelegate(self))
+        self.setItemDelegateForColumn(0, LimitedLengthDelegate(self, callback=self.abc))
 
         self.verticalHeader().setMinimumWidth(50)
         self.horizontalHeader().setStretchLastSection(True)
@@ -89,3 +115,22 @@ class DragAndDropTable(QTableWidget):
         row_count = self.rowCount()
         row_labels = [str(self._row_offset + i) for i in range(row_count)]
         self.setVerticalHeaderLabels(row_labels)
+
+    # def currentRowWithOffset(self):
+    #     """Returns the row index considering the row offset."""
+    #     # Get the current row, then subtract the offset to adjust the row number
+    #     current_row = self.currentRow()
+    #     if current_row == -1:
+    #         return -1
+    #     return current_row + self._row_offset - 1  # Adjust for 0-based index
+
+    def keyPressEvent(self, event):
+        # Check if the pressed key is Enter
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            # Disable the default behavior for Enter key
+            return
+        # Call the parent class' keyPressEvent for all other keys
+        super().keyPressEvent(event)
+
+    def abc(self):
+        print("Hello??")

@@ -1,4 +1,5 @@
 from PySide2 import QtCore
+from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog
 
@@ -53,6 +54,7 @@ class UserToneManagerWindow(QDialog):
         self.rename_button = QPushButton(" Rename")
         self.rename_button.setIcon(QIcon(resource_path("resources/piano_pencil.png")))
         self.rename_button.setObjectName("manager-button")
+        self.rename_button.clicked.connect(self.enable_text_editing)
         self.rename_button.setEnabled(False)
 
         self.delete_button = QPushButton(" Delete")
@@ -128,6 +130,14 @@ class UserToneManagerWindow(QDialog):
             self.rename_button.setEnabled(False)
             self.delete_button.setEnabled(False)
 
+    def enable_text_editing(self):
+        selected_row = self.table_widget.currentRow()
+        if selected_row != -1:
+            item = self.table_widget.item(selected_row, 0)
+            if item:
+                item.setFlags(item.flags() | Qt.ItemIsEditable)
+                self.table_widget.editItem(item)
+
     def delete_tone(self):
         if self.table_widget.selectedItems():
             self.selectedItems = self.table_widget.selectedItems()
@@ -139,8 +149,7 @@ class UserToneManagerWindow(QDialog):
             selected_item = self.selectedItems.pop()
             tone_number = self.table_widget.row(selected_item) + 801
             tone_name = selected_item.text()
-            print(f"Deleting tone: {tone_number} - {tone_name}")
-            worker = Worker(self.core.delete_next_tone, tone_number)
+            worker = Worker(self.core.delete_next_tone, tone_number, tone_name)
             worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
             worker.start()
         else:

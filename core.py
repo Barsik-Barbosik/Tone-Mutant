@@ -630,9 +630,10 @@ class Core(QObject):
         self.status_msg_signal.emit("Tone successfully deleted!", 3000)
         self.main_window.loading_animation.stop()
 
-    def delete_next_tone(self, tone_number):
+    def delete_next_tone(self, tone_number, tone_name):
+        self.log(f"[INFO] Deleting tone: {tone_number} - {tone_name}")
         self.tyrant_midi_service.bulk_upload(tone_number - 801, EMPTY_TONE, memory=1, category=3)
-        self.main_window.user_tone_manager_window.delete_next_tone()  # delete next tone
+        self.main_window.user_tone_manager_window.delete_next_tone()
 
     def after_all_selected_tones_deleted(self):
         self.close_midi_ports()
