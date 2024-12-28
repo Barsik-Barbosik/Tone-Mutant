@@ -1,7 +1,7 @@
 from PySide2 import QtCore
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog
+from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog, QApplication
 
 from constants.constants import INTERNAL_MEMORY_USER_TONE_COUNT, USER_TONE_TABLE_ROW_OFFSET
 from ui.drag_and_drop_table import DragAndDropTable
@@ -54,31 +54,28 @@ class UserToneManagerWindow(QDialog):
         self.upload_button.setIcon(QIcon(resource_path("resources/piano_plus.png")))
         self.upload_button.setObjectName("manager-button")
         self.upload_button.clicked.connect(self.upload_tone)
-        self.upload_button.setEnabled(False)
 
         self.rename_button = QPushButton(" Rename")
         self.rename_button.setIcon(QIcon(resource_path("resources/piano_pencil.png")))
         self.rename_button.setObjectName("manager-button")
         self.rename_button.clicked.connect(self.enable_text_editing)
-        self.rename_button.setEnabled(False)
 
         self.delete_button = QPushButton(" Delete")
         self.delete_button.setIcon(QIcon(resource_path("resources/piano_minus.png")))
         self.delete_button.setObjectName("manager-button")
         self.delete_button.clicked.connect(self.delete_tone)
-        self.delete_button.setEnabled(False)
 
         self.move_up_button = QPushButton(" Move Up")
         self.move_up_button.setIcon(QIcon(resource_path("resources/up.png")))
         self.move_up_button.setObjectName("manager-button")
         self.move_up_button.clicked.connect(self.on_move_up_button)
-        self.move_up_button.setEnabled(False)
 
         self.move_down_button = QPushButton(" Move Down")
         self.move_down_button.setIcon(QIcon(resource_path("resources/down.png")))
         self.move_down_button.setObjectName("manager-button")
         self.move_down_button.clicked.connect(self.on_move_down_button)
-        self.move_down_button.setEnabled(False)
+
+        self.disable_controls()
 
         # "COPY" & "PASTE" buttons?
 
@@ -99,45 +96,20 @@ class UserToneManagerWindow(QDialog):
 
         self.setLayout(main_layout)
 
-    def load_memory_tone_names(self):
+    def disable_controls(self):
+        self.table_widget.setEnabled(False)
         self.refresh_button.setEnabled(False)
         self.upload_button.setEnabled(False)
         self.rename_button.setEnabled(False)
         self.delete_button.setEnabled(False)
         self.move_up_button.setEnabled(False)
         self.move_down_button.setEnabled(False)
+        QApplication.processEvents()
 
-        self.loading_animation.start()
-        self.items = [None] * INTERNAL_MEMORY_USER_TONE_COUNT
-        worker = Worker(self.core.request_user_memory_tone_names)
-        worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
-        worker.start()
-
-    def add_item(self, tone_number, tone_name):
-        if tone_number < INTERNAL_MEMORY_USER_TONE_COUNT:
-            self.items[tone_number] = tone_name
-            if len(self.items) == INTERNAL_MEMORY_USER_TONE_COUNT and all(self.items):
-                self.refresh_list()
-        else:
-            raise ValueError("Tone number exceeds the limit")
-
-    def refresh_list(self):
-        """Refreshes the list in the GUI."""
-        self.table_widget.clearContents()
-        self.table_widget.setRowCount(0)
-
-        for item in self.items:
-            self.table_widget.addItem(item)
-
-        self.refresh_button.setEnabled(True)
+    def enable_controls(self):
         self.table_widget.setEnabled(True)
-        self.loading_animation.stop()
+        self.refresh_button.setEnabled(True)
 
-    def resizeEvent(self, event):
-        super(UserToneManagerWindow, self).resizeEvent(event)
-        self.loading_animation.center_loading_animation()
-
-    def on_item_selection_changed(self):
         if self.table_widget.selectedItems():
             if len(self.table_widget.selectedItems()) == 1:
                 self.upload_button.setEnabled(True)
@@ -163,8 +135,43 @@ class UserToneManagerWindow(QDialog):
             self.move_up_button.setEnabled(False)
             self.move_down_button.setEnabled(False)
 
+    def load_memory_tone_names(self):
+        self.loading_animation.start()
+        self.disable_controls()
+        self.items = [None] * INTERNAL_MEMORY_USER_TONE_COUNT
+        worker = Worker(self.core.request_user_memory_tone_names)
+        worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
+        worker.start()
+
+    def add_item(self, tone_number, tone_name):
+        if tone_number < INTERNAL_MEMORY_USER_TONE_COUNT:
+            self.items[tone_number] = tone_name
+            if len(self.items) == INTERNAL_MEMORY_USER_TONE_COUNT and all(self.items):
+                self.refresh_list()
+        else:
+            raise ValueError("Tone number exceeds the limit")
+
+    def refresh_list(self):
+        """Refreshes the list in the GUI."""
+        self.table_widget.clearContents()
+        self.table_widget.setRowCount(0)
+
+        for item in self.items:
+            self.table_widget.addItem(item)
+
+        self.enable_controls()
+        self.loading_animation.stop()
+
+    def resizeEvent(self, event):
+        super(UserToneManagerWindow, self).resizeEvent(event)
+        self.loading_animation.center_loading_animation()
+
+    def on_item_selection_changed(self):
+        self.enable_controls()
+
     def on_move_up_button(self):
         self.loading_animation.start()
+        self.disable_controls()
 
         if self.table_widget.selectedItems() and len(self.table_widget.selectedItems()) == 1:
             row_number = self.table_widget.currentRow()
@@ -187,10 +194,12 @@ class UserToneManagerWindow(QDialog):
                 # Update the selection
                 self.table_widget.selectRow(row_number - 1)
 
+        self.enable_controls()
         self.loading_animation.stop()
 
     def on_move_down_button(self):
         self.loading_animation.start()
+        self.disable_controls()
 
         if self.table_widget.selectedItems() and len(self.table_widget.selectedItems()) == 1:
             row_number = self.table_widget.currentRow()
@@ -213,18 +222,19 @@ class UserToneManagerWindow(QDialog):
                 # Update the selection
                 self.table_widget.selectRow(row_number + 1)
 
+        self.enable_controls()
         self.loading_animation.stop()
 
     def on_drag_and_drop(self, original_row, new_row):
         self.loading_animation.start()
-        self.table_widget.setEnabled(False)
+        self.disable_controls()
         worker = Worker(self.move_row, original_row, new_row)
         worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
         worker.signals.finished.connect(self.on_move_row_worker_finished)
         worker.start()
 
     def on_move_row_worker_finished(self):
-        self.table_widget.setEnabled(True)
+        self.enable_controls()
         self.loading_animation.stop()
 
     def move_row(self, original_row, new_row):
@@ -243,12 +253,12 @@ class UserToneManagerWindow(QDialog):
                 self.core.save_tone_data(i + USER_TONE_TABLE_ROW_OFFSET - 1, row_data)
             self.core.save_tone_data(new_row + USER_TONE_TABLE_ROW_OFFSET, original_row_data)
 
-        self.loading_animation.stop()
+        # self.loading_animation.stop()
 
     def upload_tone(self):
         if self.table_widget.selectedItems() and len(self.table_widget.selectedItems()) == 1:
-            self.table_widget.setEnabled(False)
             self.loading_animation.start()
+            self.disable_controls()
             tone_number = self.table_widget.currentRow() + USER_TONE_TABLE_ROW_OFFSET
             worker = Worker(self.core.upload_current_tone, tone_number)
             worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
@@ -267,6 +277,7 @@ class UserToneManagerWindow(QDialog):
         current_item = self.table_widget.currentItem()
         if current_item:
             self.loading_animation.start()
+            self.disable_controls()
             tone_number = self.table_widget.row(current_item) + USER_TONE_TABLE_ROW_OFFSET
             new_tone_name = current_item.text()
             worker = Worker(self.core.rename_tone, tone_number, new_tone_name)
@@ -276,7 +287,7 @@ class UserToneManagerWindow(QDialog):
     def delete_tone(self):
         if self.table_widget.selectedItems():
             self.selectedItems = self.table_widget.selectedItems()
-            self.table_widget.setEnabled(False)
+            self.disable_controls()
             self.delete_next_tone()
 
     def delete_next_tone(self):
