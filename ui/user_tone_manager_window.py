@@ -53,6 +53,7 @@ class UserToneManagerWindow(QDialog):
         self.upload_button = QPushButton(" Save Here")
         self.upload_button.setIcon(QIcon(resource_path("resources/piano_plus.png")))
         self.upload_button.setObjectName("manager-button")
+        self.upload_button.clicked.connect(self.upload_tone)
         self.upload_button.setEnabled(False)
 
         self.rename_button = QPushButton(" Rename")
@@ -129,6 +130,7 @@ class UserToneManagerWindow(QDialog):
             self.table_widget.addItem(item)
 
         self.refresh_button.setEnabled(True)
+        self.table_widget.setEnabled(True)
         self.loading_animation.stop()
 
     def resizeEvent(self, event):
@@ -243,6 +245,15 @@ class UserToneManagerWindow(QDialog):
 
         self.loading_animation.stop()
 
+    def upload_tone(self):
+        if self.table_widget.selectedItems() and len(self.table_widget.selectedItems()) == 1:
+            self.table_widget.setEnabled(False)
+            self.loading_animation.start()
+            tone_number = self.table_widget.currentRow() + USER_TONE_TABLE_ROW_OFFSET
+            worker = Worker(self.core.upload_current_tone, tone_number)
+            worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
+            worker.start()
+
     def enable_text_editing(self):
         selected_row = self.table_widget.currentRow()
         if selected_row != -1:
@@ -265,6 +276,7 @@ class UserToneManagerWindow(QDialog):
     def delete_tone(self):
         if self.table_widget.selectedItems():
             self.selectedItems = self.table_widget.selectedItems()
+            self.table_widget.setEnabled(False)
             self.delete_next_tone()
 
     def delete_next_tone(self):

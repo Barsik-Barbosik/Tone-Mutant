@@ -564,6 +564,7 @@ class Core(QObject):
         worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
         worker.start()
 
+    # upload_tone: used in old separate rename-dialog
     def upload_tone(self, tone_number, tone_name):
         if not tone_name:
             tone_name = DEFAULT_TONE_NAME
@@ -702,3 +703,19 @@ class Core(QObject):
         self.tyrant_midi_service.bulk_upload(tone_number - USER_TONE_TABLE_ROW_OFFSET, tone_data, memory=1, category=3)
         self.close_midi_ports()
         self.open_midi_ports()
+
+    def upload_current_tone(self, tone_number):
+        """Tone manager: Save current tone"""
+        tone_name = self.tone.name
+        if not tone_name:
+            tone_name = DEFAULT_TONE_NAME
+
+        current_tone = self.tyrant_midi_service.read_current_tone(tone_name[:8])
+
+        self.tyrant_midi_service.bulk_upload(tone_number - USER_TONE_TABLE_ROW_OFFSET, current_tone, memory=1,
+                                             category=3)
+        self.close_midi_ports()
+        self.open_midi_ports()
+
+        self.main_window.user_tone_manager_window.load_memory_tone_names()  # reload list and stop loading animation
+        self.status_msg_signal.emit("Tone successfully saved!", 3000)

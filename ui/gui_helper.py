@@ -65,7 +65,7 @@ class GuiHelper:
 
         user_tone_manager_action = QAction(QIcon(resource_path('resources/memory_manager.png')), "User Tone Manager",
                                            main_window)
-        user_tone_manager_action.setStatusTip("Under construction...")
+        user_tone_manager_action.setStatusTip("User Tone Manager allows you to save, rename, delete, and move tones within the synthesizer's user tone memory.")
         user_tone_manager_action.triggered.connect(user_tone_manager_callback)
 
         how_to_save_action = QAction(QIcon(resource_path('resources/help.png')), "Saving a TON File Using Synthesizer",
@@ -84,13 +84,14 @@ class GuiHelper:
         menu_bar.addMenu(file_menu)
 
         tools_menu = QMenu("&Synthesizer Tools", main_window)
+        tools_menu.addAction(user_tone_manager_action)
+        tools_menu.addSeparator()
         tools_menu.addAction(upload_tone_action)
         tools_menu.addAction(rename_tone_action)
         tools_menu.addAction(delete_tone_action)
 
         if GuiHelper.is_expert_mode_enabled():
             tools_menu.addSeparator()
-            tools_menu.addAction(user_tone_manager_action)
             tools_menu.addAction(request_parameter_action)
 
         if not GuiHelper.has_user_memory():
