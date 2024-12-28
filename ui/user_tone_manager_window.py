@@ -170,13 +170,11 @@ class UserToneManagerWindow(QDialog):
         self.enable_controls()
 
     def on_move_up_button(self):
-        self.loading_animation.start()
-        self.disable_controls()
-
         if self.table_widget.selectedItems() and len(self.table_widget.selectedItems()) == 1:
             row_number = self.table_widget.currentRow()
             if row_number > 0:  # Ensure it's not the first row
-                self.move_row(row_number, row_number - 1)
+                self.loading_animation.start()
+                self.disable_controls()
 
                 # Swap names with the row above
                 for col in range(self.table_widget.columnCount()):
@@ -192,19 +190,21 @@ class UserToneManagerWindow(QDialog):
                         above_item.setText(current_text)
 
                 # Update the selection
+                self.table_widget.blockSignals(True)
                 self.table_widget.selectRow(row_number - 1)
+                self.table_widget.blockSignals(False)
 
-        self.enable_controls()
-        self.loading_animation.stop()
+                worker = Worker(self.move_row, row_number, row_number - 1)
+                worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
+                worker.signals.finished.connect(self.on_move_row_worker_finished)
+                worker.start()
 
     def on_move_down_button(self):
-        self.loading_animation.start()
-        self.disable_controls()
-
         if self.table_widget.selectedItems() and len(self.table_widget.selectedItems()) == 1:
             row_number = self.table_widget.currentRow()
             if row_number < self.table_widget.rowCount() - 1:  # Ensure it's not the last row
-                self.move_row(row_number, row_number + 1)
+                self.loading_animation.start()
+                self.disable_controls()
 
                 # Swap names with the row below
                 for col in range(self.table_widget.columnCount()):
@@ -220,10 +220,14 @@ class UserToneManagerWindow(QDialog):
                         below_item.setText(current_text)
 
                 # Update the selection
+                self.table_widget.blockSignals(True)
                 self.table_widget.selectRow(row_number + 1)
+                self.table_widget.blockSignals(False)
 
-        self.enable_controls()
-        self.loading_animation.stop()
+                worker = Worker(self.move_row, row_number, row_number + 1)
+                worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
+                worker.signals.finished.connect(self.on_move_row_worker_finished)
+                worker.start()
 
     def on_drag_and_drop(self, original_row, new_row):
         self.loading_animation.start()
