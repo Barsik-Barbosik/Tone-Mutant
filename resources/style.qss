@@ -36,9 +36,9 @@ QPushButton {
 }
 
 #manager-button {
-    width: 95px;
+    width: 110px;
     text-align: left;
-    padding: 5px 15px 5px 15px;
+    padding: 5px 5px 5px 10px;
     margin-left: 10px;
 }
 

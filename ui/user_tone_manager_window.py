@@ -56,12 +56,12 @@ class UserToneManagerWindow(QDialog):
         self.upload_button.clicked.connect(self.upload_tone)
 
         self.rename_button = QPushButton(" Rename")
-        self.rename_button.setIcon(QIcon(resource_path("resources/piano_pencil.png")))
+        self.rename_button.setIcon(QIcon(resource_path("resources/pencil.png")))
         self.rename_button.setObjectName("manager-button")
         self.rename_button.clicked.connect(self.enable_text_editing)
 
         self.delete_button = QPushButton(" Delete")
-        self.delete_button.setIcon(QIcon(resource_path("resources/piano_minus.png")))
+        self.delete_button.setIcon(QIcon(resource_path("resources/eraser.png")))
         self.delete_button.setObjectName("manager-button")
         self.delete_button.clicked.connect(self.delete_tone)
 
