@@ -1,6 +1,6 @@
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QMovie
-from PySide2.QtWidgets import QLabel, QVBoxLayout, QWidget
+from PySide2.QtWidgets import QLabel, QVBoxLayout, QWidget, QApplication
 
 from utils.utils import resource_path
 
@@ -29,6 +29,7 @@ class LoadingAnimation(QWidget):
         self.setVisible(True)
         self.movie.start()
         self.raise_()
+        QApplication.processEvents()
 
     def stop(self):
         """Stop the loading animation and hide it."""

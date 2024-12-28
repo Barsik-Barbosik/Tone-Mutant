@@ -7,7 +7,7 @@ from PySide2.QtCore import Signal, Slot, QObject
 
 from constants import constants
 from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL, EMPTY_TONE, EMPTY_DSP_MODULE_ID, \
-    EMPTY_DSP_PARAMS_LIST, INTERNAL_MEMORY_USER_TONE_COUNT
+    EMPTY_DSP_PARAMS_LIST, INTERNAL_MEMORY_USER_TONE_COUNT, USER_TONE_TABLE_ROW_OFFSET
 from constants.enums import ParameterType, SysexType
 from models.parameter import MainParameter
 from models.tone import Tone
@@ -570,7 +570,8 @@ class Core(QObject):
 
         current_tone = self.tyrant_midi_service.read_current_tone(tone_name[:8])
 
-        self.tyrant_midi_service.bulk_upload(tone_number - 801, current_tone, memory=1, category=3)
+        self.tyrant_midi_service.bulk_upload(tone_number - USER_TONE_TABLE_ROW_OFFSET, current_tone, memory=1,
+                                             category=3)
         self.close_midi_ports()
         self.open_midi_ports()
 
@@ -593,7 +594,8 @@ class Core(QObject):
 
     # @Deprecated(used in old separate rename-dialog)
     def rename_tone_from_main_menu(self, tone_number, new_name):
-        tone_data = self.tyrant_midi_service.bulk_download(tone_number - 801, memory=1, category=3)
+        tone_data = self.tyrant_midi_service.bulk_download(tone_number - USER_TONE_TABLE_ROW_OFFSET, memory=1,
+                                                           category=3)
 
         if new_name:
             tone_data = bytearray(tone_data)  # Convert the tone data to a mutable bytearray
@@ -601,7 +603,7 @@ class Core(QObject):
             tone_data[0x1A6:0x1B6] = new_tone_name_bytes.ljust(16, b' ')
             tone_data[0x1A6 + 8] = 0x00
 
-        self.tyrant_midi_service.bulk_upload(tone_number - 801, tone_data, memory=1, category=3)
+        self.tyrant_midi_service.bulk_upload(tone_number - USER_TONE_TABLE_ROW_OFFSET, tone_data, memory=1, category=3)
         self.close_midi_ports()
         self.open_midi_ports()
 
@@ -615,7 +617,8 @@ class Core(QObject):
             raise Exception("The 'Tone Number' must be in the range of 801 to 900.")
 
         self.log(f"[INFO] Renaming tone: {tone_number} - {new_tone_name}")
-        tone_data = self.tyrant_midi_service.bulk_download(tone_number - 801, memory=1, category=3)
+        tone_data = self.tyrant_midi_service.bulk_download(tone_number - USER_TONE_TABLE_ROW_OFFSET, memory=1,
+                                                           category=3)
 
         if new_tone_name:
             tone_data = bytearray(tone_data)  # Convert the tone data to a mutable bytearray
@@ -623,7 +626,7 @@ class Core(QObject):
             tone_data[0x1A6:0x1B6] = new_tone_name_bytes.ljust(16, b' ')
             tone_data[0x1A6 + 8] = 0x00
 
-        self.tyrant_midi_service.bulk_upload(tone_number - 801, tone_data, memory=1, category=3)
+        self.tyrant_midi_service.bulk_upload(tone_number - USER_TONE_TABLE_ROW_OFFSET, tone_data, memory=1, category=3)
         self.close_midi_ports()
         self.open_midi_ports()
 
@@ -645,7 +648,7 @@ class Core(QObject):
 
     # @Deprecated (used in old separate delete-dialog)
     def delete_tone(self, tone_number):
-        self.tyrant_midi_service.bulk_upload(tone_number - 801, EMPTY_TONE, memory=1, category=3)
+        self.tyrant_midi_service.bulk_upload(tone_number - USER_TONE_TABLE_ROW_OFFSET, EMPTY_TONE, memory=1, category=3)
         self.close_midi_ports()
         self.open_midi_ports()
 
@@ -659,7 +662,7 @@ class Core(QObject):
             raise Exception("The 'Tone Number' must be in the range of 801 to 900.")
 
         self.log(f"[INFO] Deleting tone: {tone_number} - {tone_name}")
-        self.tyrant_midi_service.bulk_upload(tone_number - 801, EMPTY_TONE, memory=1, category=3)
+        self.tyrant_midi_service.bulk_upload(tone_number - USER_TONE_TABLE_ROW_OFFSET, EMPTY_TONE, memory=1, category=3)
         self.main_window.user_tone_manager_window.delete_next_tone()
 
     def after_all_selected_tones_deleted(self):
@@ -680,3 +683,22 @@ class Core(QObject):
         tone_number = lsb_msb_to_int(tone_number_response[0], tone_number_response[1])
         tone_name = ''.join(chr(i) for i in tone_name_response if chr(i).isprintable()).strip()
         self.main_window.user_tone_manager_window.add_item(tone_number, tone_name)
+
+    def load_tone_data(self, tone_number):
+        if tone_number < 801 or tone_number > 900:
+            raise Exception("The 'Tone Number' must be in the range of 801 to 900.")
+
+        tone_data = self.tyrant_midi_service.bulk_download(tone_number - USER_TONE_TABLE_ROW_OFFSET, memory=1,
+                                                           category=3)
+        self.close_midi_ports()
+        self.open_midi_ports()
+
+        return tone_data
+
+    def save_tone_data(self, tone_number, tone_data):
+        if tone_number < 801 or tone_number > 900:
+            raise Exception("The 'Tone Number' must be in the range of 801 to 900.")
+
+        self.tyrant_midi_service.bulk_upload(tone_number - USER_TONE_TABLE_ROW_OFFSET, tone_data, memory=1, category=3)
+        self.close_midi_ports()
+        self.open_midi_ports()

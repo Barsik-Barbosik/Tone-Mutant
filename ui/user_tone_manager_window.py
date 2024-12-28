@@ -42,7 +42,7 @@ class UserToneManagerWindow(QDialog):
         self.table_widget = DragAndDropTable(self,
                                              table_row_offset=USER_TONE_TABLE_ROW_OFFSET,
                                              editing_finished_callback=self.on_editing_finished,
-                                             drag_drop_finished_callback=self.on_drag_drop_finished)
+                                             drag_drop_finished_callback=self.on_drag_and_drop)
         content_layout.addWidget(self.table_widget)
 
         self.refresh_button = QPushButton(" Refresh")
@@ -50,7 +50,7 @@ class UserToneManagerWindow(QDialog):
         self.refresh_button.setObjectName("manager-button")
         self.refresh_button.clicked.connect(self.load_memory_tone_names)
 
-        self.upload_button = QPushButton(" Save Tone")
+        self.upload_button = QPushButton(" Save Here")
         self.upload_button.setIcon(QIcon(resource_path("resources/piano_plus.png")))
         self.upload_button.setObjectName("manager-button")
         self.upload_button.setEnabled(False)
@@ -67,14 +67,27 @@ class UserToneManagerWindow(QDialog):
         self.delete_button.clicked.connect(self.delete_tone)
         self.delete_button.setEnabled(False)
 
+        self.move_up_button = QPushButton(" Move Up")
+        self.move_up_button.setIcon(QIcon(resource_path("resources/up.png")))
+        self.move_up_button.setObjectName("manager-button")
+        self.move_up_button.clicked.connect(self.on_move_up_button)
+        self.move_up_button.setEnabled(False)
+
+        self.move_down_button = QPushButton(" Move Down")
+        self.move_down_button.setIcon(QIcon(resource_path("resources/down.png")))
+        self.move_down_button.setObjectName("manager-button")
+        self.move_down_button.clicked.connect(self.on_move_down_button)
+        self.move_down_button.setEnabled(False)
+
         # "COPY" & "PASTE" buttons?
-        # "MOVE UP" & "MOVE DOWN" buttons?
 
         button_layout = QVBoxLayout()
         button_layout.addWidget(self.refresh_button)
         button_layout.addWidget(self.upload_button)
         button_layout.addWidget(self.rename_button)
         button_layout.addWidget(self.delete_button)
+        button_layout.addWidget(self.move_up_button)
+        button_layout.addWidget(self.move_down_button)
         button_layout.addStretch()
 
         content_layout.addLayout(button_layout)
@@ -90,6 +103,8 @@ class UserToneManagerWindow(QDialog):
         self.upload_button.setEnabled(False)
         self.rename_button.setEnabled(False)
         self.delete_button.setEnabled(False)
+        self.move_up_button.setEnabled(False)
+        self.move_down_button.setEnabled(False)
 
         self.loading_animation.start()
         self.items = [None] * INTERNAL_MEMORY_USER_TONE_COUNT
@@ -125,31 +140,108 @@ class UserToneManagerWindow(QDialog):
             if len(self.table_widget.selectedItems()) == 1:
                 self.upload_button.setEnabled(True)
                 self.rename_button.setEnabled(True)
+                if self.table_widget.currentRow() > 0:
+                    self.move_up_button.setEnabled(True)
+                else:
+                    self.move_up_button.setEnabled(False)
+                if self.table_widget.currentRow() < 99:
+                    self.move_down_button.setEnabled(True)
+                else:
+                    self.move_down_button.setEnabled(False)
             else:
                 self.upload_button.setEnabled(False)
                 self.rename_button.setEnabled(False)
+                self.move_up_button.setEnabled(False)
+                self.move_down_button.setEnabled(False)
             self.delete_button.setEnabled(True)
         else:
             self.upload_button.setEnabled(False)
             self.rename_button.setEnabled(False)
             self.delete_button.setEnabled(False)
+            self.move_up_button.setEnabled(False)
+            self.move_down_button.setEnabled(False)
 
-    def on_drag_drop_finished(self, original_row, new_row):
+    def on_move_up_button(self):
+        self.loading_animation.start()
+
+        if self.table_widget.selectedItems() and len(self.table_widget.selectedItems()) == 1:
+            row_number = self.table_widget.currentRow()
+            if row_number > 0:  # Ensure it's not the first row
+                self.move_row(row_number, row_number - 1)
+
+                # Swap names with the row above
+                for col in range(self.table_widget.columnCount()):
+                    current_item = self.table_widget.item(row_number, col)
+                    above_item = self.table_widget.item(row_number - 1, col)
+
+                    current_text = current_item.text() if current_item else ""
+                    above_text = above_item.text() if above_item else ""
+
+                    if current_item:
+                        current_item.setText(above_text)
+                    if above_item:
+                        above_item.setText(current_text)
+
+                # Update the selection
+                self.table_widget.selectRow(row_number - 1)
+
+        self.loading_animation.stop()
+
+    def on_move_down_button(self):
+        self.loading_animation.start()
+
+        if self.table_widget.selectedItems() and len(self.table_widget.selectedItems()) == 1:
+            row_number = self.table_widget.currentRow()
+            if row_number < self.table_widget.rowCount() - 1:  # Ensure it's not the last row
+                self.move_row(row_number, row_number + 1)
+
+                # Swap names with the row below
+                for col in range(self.table_widget.columnCount()):
+                    current_item = self.table_widget.item(row_number, col)
+                    below_item = self.table_widget.item(row_number + 1, col)
+
+                    current_text = current_item.text() if current_item else ""
+                    below_text = below_item.text() if below_item else ""
+
+                    if current_item:
+                        current_item.setText(below_text)
+                    if below_item:
+                        below_item.setText(current_text)
+
+                # Update the selection
+                self.table_widget.selectRow(row_number + 1)
+
+        self.loading_animation.stop()
+
+    def on_drag_and_drop(self, original_row, new_row):
+        self.loading_animation.start()
+        self.table_widget.setEnabled(False)
+        worker = Worker(self.move_row, original_row, new_row)
+        worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
+        worker.signals.finished.connect(self.on_move_row_worker_finished)
+        worker.start()
+
+    def on_move_row_worker_finished(self):
+        self.table_widget.setEnabled(True)
+        self.loading_animation.stop()
+
+    def move_row(self, original_row, new_row):
         if original_row > new_row:
-            # Moving up
-            print(f"Save row {original_row} to temp")
+            # Moving selected item up (affected items are moving down)
+            original_row_data = self.core.load_tone_data(original_row + USER_TONE_TABLE_ROW_OFFSET)
             for i in range(original_row - 1, new_row - 1, -1):
-                print(f"Move row {i} to {i + 1}")
-            print(f"Paste temp to row {new_row}")
+                row_data = self.core.load_tone_data(i + USER_TONE_TABLE_ROW_OFFSET)
+                self.core.save_tone_data(i + USER_TONE_TABLE_ROW_OFFSET + 1, row_data)
+            self.core.save_tone_data(new_row + USER_TONE_TABLE_ROW_OFFSET, original_row_data)
         elif original_row < new_row:
-            # Moving down
-            print(f"Save row {original_row} to temp")
+            # Moving selected item down (affected items are moving up)
+            original_row_data = self.core.load_tone_data(original_row + USER_TONE_TABLE_ROW_OFFSET)
             for i in range(original_row + 1, new_row + 1):
-                print(f"Move row {i} to {i - 1}")
-            print(f"Paste temp to row {new_row}")
-        else:
-            # No movement
-            print("No movement")
+                row_data = self.core.load_tone_data(i + USER_TONE_TABLE_ROW_OFFSET)
+                self.core.save_tone_data(i + USER_TONE_TABLE_ROW_OFFSET - 1, row_data)
+            self.core.save_tone_data(new_row + USER_TONE_TABLE_ROW_OFFSET, original_row_data)
+
+        self.loading_animation.stop()
 
     def enable_text_editing(self):
         selected_row = self.table_widget.currentRow()
