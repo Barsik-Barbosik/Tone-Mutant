@@ -292,9 +292,10 @@ class Core(QObject):
         instrument = Tone.get_instrument_by_id(instrument_id)
         self.tone.name = instrument.name
         self.tone.parent_tone = instrument
-        self.log("[INFO] Instrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
+        self.log(f"[INFO] Selected tone: {instrument_id} - {self.tone.parent_tone.name}")
         try:
             self.midi_service.send_change_tone_msg(instrument_id)
+            self.main_window.top_widget.tone_name_label.setStyleSheet("color: #1B998B")
             self.synchronize_tone_signal.emit()
         except Exception as e:
             self.show_error_msg(str(e))
@@ -330,6 +331,7 @@ class Core(QObject):
             self.main_window.central_widget.instrument_list.clearSelection()
 
     def countdown_and_autosynchronize(self, timeout):
+        self.main_window.top_widget.tone_name_label.setStyleSheet("color: black")
         is_active = self.timeout > 0
 
         if is_active:
