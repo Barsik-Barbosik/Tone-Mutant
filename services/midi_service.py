@@ -304,7 +304,15 @@ class MidiService:
         sysex = self.make_sysex_8bit_value(block_id, parameter, value)
         self.send_sysex(sysex)
 
-    def send_change_tone_msg(self, instrument: Instrument):
+    def send_change_tone_msg(self, tone_number):
+        internal_number = tone_number - 1
+        if tone_number > 800:
+            internal_number = tone_number + 19
+        msg = "F0 44 19 01 7F 01 02 03 00 00 00 00 00 00 00 00 00 00 64 01 00 00 00 00" \
+              + int_to_lsb_msb(internal_number) + "F7"
+        self.send_sysex(msg)
+
+    def send_change_tone_cc_msg(self, instrument: Instrument):
         self.midi_out.send_message([CC_FIRST_BYTE, CC_BANK_SELECT_MSB, instrument.bank])
         time.sleep(0.01)
         self.midi_out.send_message([CC_FIRST_BYTE, CC_BANK_SELECT_LSB, 0x00])
