@@ -2,6 +2,7 @@ import configparser
 import copy
 import os
 import time
+from typing import Union
 
 from PySide2.QtCore import Signal, Slot, QObject
 
@@ -9,7 +10,7 @@ from constants import constants
 from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL, EMPTY_TONE, EMPTY_DSP_MODULE_ID, \
     EMPTY_DSP_PARAMS_LIST, INTERNAL_MEMORY_USER_TONE_COUNT, USER_TONE_TABLE_ROW_OFFSET
 from constants.enums import ParameterType, SysexType
-from models.parameter import MainParameter
+from models.parameter import MainParameter, AdvancedParameter
 from models.tone import Tone
 from services.midi_service import MidiService
 from services.tyrant_midi_service import TyrantMidiService
@@ -110,22 +111,19 @@ class Core(QObject):
             self.show_error_msg(str(e))
 
     def process_tone_number_from_performance_params_response(self, tone_number):
-        # self.main_window.central_widget.instrument_list.disconnect(True)
-        # self.main_window.central_widget.instrument_list.itemSelectionChanged.disconnect(self.main_window.central_widget.on_instrument_list_changed)
         for instrument in get_all_instruments():
             if instrument.id == tone_number:
                 self.log(f"[INFO] Synth tone name (by number from performance params): {instrument.name}")
                 self.tone.name = instrument.name
                 self.tone.parent_tone = instrument
 
-                self.main_window.central_widget.instrument_list.setCurrentRow(self.tone.parent_tone.id - 1)
+                self.main_window.central_widget.instrument_list.set_current_row_from_thread(
+                    self.tone.parent_tone.id - 1)
 
                 tone_id_and_name = self.get_tone_id_and_name()
                 self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
 
                 break
-        # self.main_window.central_widget.instrument_list.disconnect(False)
-        # self.main_window.central_widget.instrument_list.itemSelectionChanged.connect(self.main_window.central_widget.on_instrument_list_changed)
 
     # Request main parameter value from synth
     def request_main_parameters(self):
@@ -174,7 +172,7 @@ class Core(QObject):
             self.main_window.top_widget.redraw_upper_volume_knob_signal.emit()
 
     # Send message to update synth's main parameter
-    def send_parameter_change_sysex(self, parameter: MainParameter):
+    def send_parameter_change_sysex(self, parameter: Union[MainParameter, AdvancedParameter]):
         self.log(
             "[INFO] Param " + str(parameter.name) + ": " + str(parameter.param_number) + ", " + str(parameter.value))
         value = utils.encode_value_by_type(parameter)
@@ -296,19 +294,18 @@ class Core(QObject):
         self.tone.parent_tone = instrument
         self.log("[INFO] Instrument id: " + str(instrument_id) + " " + self.tone.parent_tone.name)
         try:
-            self.midi_service.send_change_tone_msg(self.tone.parent_tone)
+            self.midi_service.send_change_tone_msg(instrument_id)
+            self.synchronize_tone_signal.emit()
         except Exception as e:
             self.show_error_msg(str(e))
 
     # Intercept instrument change messages from synth
     def process_instrument_select_response(self, bank, program):
-        self.main_window.central_widget.instrument_list.blockSignals(True)
         self.log("[INFO] Instrument: " + str(bank) + ", " + str(program))
         self.find_instrument_and_update_tone(bank, program)
 
         tone_id_and_name = self.get_tone_id_and_name()
         self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
-        self.main_window.central_widget.instrument_list.blockSignals(False)
 
     def get_tone_id_and_name(self):
         if self.tone.parent_tone:
@@ -324,7 +321,8 @@ class Core(QObject):
                 is_found = True
                 self.tone.name = instrument.name
                 self.tone.parent_tone = instrument
-                self.main_window.central_widget.instrument_list.setCurrentRow(self.tone.parent_tone.id - 1)
+                self.main_window.central_widget.instrument_list.set_current_row_from_thread(
+                    self.tone.parent_tone.id - 1)
                 break
         if not is_found:
             self.tone.name = DEFAULT_TONE_NAME

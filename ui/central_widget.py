@@ -9,7 +9,7 @@ from constants import constants
 from constants.enums import TabName, ParameterType
 from ui.dsp_page import DspPage
 from ui.gui_helper import GuiHelper
-from ui.inactive_list_widget import InactiveListWidget
+from ui.instrument_list_widget import InstrumentListWidget
 from utils.object_encoder import ObjectEncoder
 from utils.syntax_highlighters.json_highlighter import JsonHighlighter
 from utils.utils import resource_path, get_all_instruments
@@ -36,8 +36,7 @@ class CentralWidget(QWidget):
         main_layout = QGridLayout(self)
         self.setLayout(main_layout)
 
-        self.instrument_list = InactiveListWidget(self)
-        self.instrument_list.setObjectName("inactive-list")
+        self.instrument_list = InstrumentListWidget(self)
 
         self.qgrid_layout = QGridLayout()
         self.advanced_qgrid_layout = QGridLayout()
@@ -69,7 +68,8 @@ class CentralWidget(QWidget):
 
         self.instrument_list.setFixedWidth(180)
         self.populate_instrument_list()
-        self.instrument_list.itemSelectionChanged.connect(self.on_instrument_list_changed)
+        self.instrument_list.connect_signal(self.instrument_list.itemSelectionChanged,
+                                            lambda: self.on_instrument_list_changed())
         hbox_layout.addWidget(self.instrument_list)  # left side
 
         GuiHelper.fill_qgrid_with_params(self.qgrid_layout,
@@ -178,9 +178,8 @@ class CentralWidget(QWidget):
         return json.dumps(self.core.tone, cls=ObjectEncoder, indent=4)
 
     def on_instrument_list_changed(self):
-        # instrument_id: int = self.instrument_list.currentItem().data(Qt.UserRole)
-        # self.core.change_instrument_by_id_from_list(instrument_id)
-        pass
+        instrument_id: int = self.instrument_list.currentItem().data(Qt.UserRole)
+        self.core.change_instrument_by_id_from_list(instrument_id)
 
     def create_json_view_page(self) -> QWidget:
         json_view_page = QWidget(self)
