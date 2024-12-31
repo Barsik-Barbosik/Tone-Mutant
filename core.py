@@ -375,7 +375,7 @@ class Core(QObject):
         # Name
         if "name" in json_tone:
             self.tone.name = json_tone["name"]
-            self.main_window.top_widget.tone_name_label.setText(self.tone.name)
+            # self.main_window.top_widget.tone_name_label.setText(self.tone.name)  # later
 
         # Parent tone
         self.tone.parent_tone = None
@@ -417,6 +417,9 @@ class Core(QObject):
         modal_window = ChangeInstrumentWindow(modal_window_message)
         modal_window.exec_()
         self.show_status_msg("", 0)
+
+        # Shows required number (not current): is it wrong?
+        self.main_window.top_widget.tone_name_label.setText(self.get_tone_id_and_name())
 
         # Main parameters
         if "parameters" in json_tone:

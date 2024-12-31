@@ -110,7 +110,7 @@ class MainWindow(QMainWindow):
             self.core.tone.name = file_name_without_extension[:8]  # trim to first 8 symbols
 
             FileOperations.save_json(file_name, self.central_widget.get_json())
-            self.top_widget.tone_name_label.setText(self.core.tone.name)
+            self.top_widget.tone_name_label.setText(self.core.get_tone_id_and_name())
             self.core.status_msg_signal.emit("File successfully saved!", 3000)
 
     def show_request_parameter_dialog(self):
@@ -121,7 +121,7 @@ class MainWindow(QMainWindow):
         if file_name:
             try:
                 self.core.start_ton_file_save_worker(file_name)
-                self.top_widget.tone_name_label.setText(self.core.tone.name)
+                self.top_widget.tone_name_label.setText(self.core.get_tone_id_and_name())
             except Exception as e:
                 self.core.show_error_msg(str(e))
 
