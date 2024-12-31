@@ -290,15 +290,16 @@ class Core(QObject):
     # Send program change message
     def change_instrument_by_id_from_list(self, instrument_id):
         instrument = Tone.get_instrument_by_id(instrument_id)
-        self.tone.name = instrument.name
-        self.tone.parent_tone = instrument
-        self.log(f"[INFO] Selected tone: {instrument_id} - {self.tone.parent_tone.name}")
-        try:
-            self.midi_service.send_change_tone_msg(instrument_id)
-            self.main_window.top_widget.tone_name_label.setStyleSheet("color: #1B998B")
-            self.synchronize_tone_signal.emit()
-        except Exception as e:
-            self.show_error_msg(str(e))
+        if instrument:
+            self.tone.name = instrument.name
+            self.tone.parent_tone = instrument
+            self.log(f"[INFO] Selected tone: {instrument_id} - {self.tone.parent_tone.name}")
+            try:
+                self.midi_service.send_change_tone_msg(instrument_id)
+                self.main_window.top_widget.tone_name_label.setStyleSheet("color: #1B998B")
+                self.synchronize_tone_signal.emit()
+            except Exception as e:
+                self.show_error_msg(str(e))
 
     # Intercept instrument change messages from synth
     def process_instrument_select_response(self, bank, program):
