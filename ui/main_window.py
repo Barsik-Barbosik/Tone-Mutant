@@ -2,7 +2,7 @@ import os
 
 from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser
+from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser, QWidget
 
 from constants.constants import HOW_TO_SAVE_TONE
 from core import Core
@@ -53,6 +53,12 @@ class MainWindow(QMainWindow):
         self.user_tone_manager_window = None
         self.request_parameter_window = None
 
+        # Dimming overlay
+        self.overlay = QWidget(self)
+        self.overlay.setStyleSheet("background-color: rgba(255, 255, 255, 180);")  # Light gray
+        self.overlay.setGeometry(0, 0, self.width(), self.height())
+        self.overlay.setVisible(False)  # Hidden by default
+
         # Initialize tone synchronization
         self.core.synchronize_tone_with_synth()
 
@@ -100,7 +106,9 @@ class MainWindow(QMainWindow):
     def show_open_json_dialog(self):
         file_name = FileDialogHelper.open_json_dialog(self)
         if file_name:
+            self.overlay.setVisible(True)
             self.core.load_tone_from_json(FileOperations.load_json(file_name))
+            self.overlay.setVisible(False)
 
     def show_save_json_dialog(self):
         file_name = FileDialogHelper.save_json_dialog(self)
@@ -135,15 +143,18 @@ class MainWindow(QMainWindow):
         self.delete_tone_window = DeleteToneWindow(self)
 
     def show_user_tone_manager_window(self):
+        self.overlay.setVisible(True)
         self.user_tone_manager_window = UserToneManagerWindow(self)
         self.user_tone_manager_window.load_memory_tone_names()
         self.user_tone_manager_window.exec_()
 
+        self.overlay.setVisible(False)
         self.core.synchronize_tone_signal.emit()  # when user tone manager is closed, synchronize tone with synth
 
     def resizeEvent(self, event):
         super(MainWindow, self).resizeEvent(event)
         self.loading_animation.center_loading_animation()
+        self.overlay.setGeometry(0, 0, self.width(), self.height())
 
     @staticmethod
     def menu_exit_action():
