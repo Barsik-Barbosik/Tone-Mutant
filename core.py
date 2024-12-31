@@ -376,51 +376,63 @@ class Core(QObject):
         # Name
         if "name" in json_tone:
             self.tone.name = json_tone["name"]
-            # self.main_window.top_widget.tone_name_label.setText(self.tone.name)  # later
 
         # Parent tone
-        self.tone.parent_tone = None
-        json_id = json_tone["id"] if "id" in json_tone else None
+        show_modal_window = False
+        current_parent_tone = self.tone.parent_tone
         json_synthesizer_model = json_tone["synthesizer_model"] if "synthesizer_model" in json_tone else None
-        json_bank = None
-        json_program = None
-        modal_window_message = ""
+        json_parent_id = None
+        json_parent_bank = None
+        json_parent_program = None
+        json_parent_name = None
         json_parent_tone = json_tone.get("parent_tone")
-        if json_parent_tone:
-            json_bank = json_parent_tone.get("bank")
-            json_program = json_parent_tone.get("program")
-            if json_bank is not None and json_program is not None:
-                self.find_instrument_and_update_tone(json_bank, json_program)
-                if self.tone.parent_tone is not None:
-                    modal_window_message = "Please, use your " + self.tone.synthesizer_model \
-                                           + " synthesizer controls to manually select the parent tone:<h2>" \
-                                           + str(self.tone.parent_tone.id) + " " + str(self.tone.parent_tone.name) \
-                                           + "</h2><h5>(bank: " + str(self.tone.parent_tone.bank) \
-                                           + ", program: " + str(self.tone.parent_tone.program) \
-                                           + ")</h5>Then, press the 'Continue' button to apply the parameter changes from the JSON file."
 
-        if self.tone.parent_tone is None:
+        if json_parent_tone:
+            json_parent_id = json_parent_tone.get("id")
+            json_parent_bank = json_parent_tone.get("bank")
+            json_parent_program = json_parent_tone.get("program")
+            json_parent_name = json_parent_tone.get("name")
+
+            if json_parent_bank is not None and json_parent_program is not None:
+                self.tone.parent_tone = None
+                self.find_instrument_and_update_tone(json_parent_bank, json_parent_program)
+
+                if self.tone.parent_tone is not None and self.tone.parent_tone.id is not None:
+                    # Parent tone is found: automatically select instrument
+                    try:
+                        self.midi_service.send_change_tone_msg(self.tone.parent_tone.id)
+                        self.main_window.top_widget.tone_name_label.setStyleSheet("color: #1B998B")
+                        self.main_window.top_widget.tone_name_label.setText(self.get_tone_id_and_name())
+                    except Exception as e:
+                        self.show_error_msg(str(e))
+                else:
+                    show_modal_window = True  # refactor that ladder :)
+            else:
+                show_modal_window = True
+        else:
+            show_modal_window = True
+
+        if show_modal_window:
+            # Parent tone is not found: show modal window
             json_synthesizer_model_str = "unknown synthesizer model" if json_synthesizer_model is None else str(
                 json_synthesizer_model)
-            id_str = "" if json_id is None else str(json_id) + " "
-            tone_name_str = "?????" if self.tone.name is None else self.tone.name
-            json_bank_str = "unknown" if json_bank is None else str(json_bank)
-            json_program_str = "unknown" if json_program is None else str(json_program)
-            modal_window_message = "The parent tone (from " + json_synthesizer_model_str + " model) is unknown:<h2>" \
-                                   + id_str + tone_name_str \
-                                   + "</h2><h5>(bank: " + json_bank_str + ", program: " + json_program_str \
-                                   + ")</h5>You can select any other source tone using your synthesizer controls.<br/>" \
-                                   + "Then, press the 'Continue' button to apply the parameter changes from the JSON file."
+            json_parent_id_str = "" if json_parent_id is None else str(json_parent_id) + " "
+            json_parent_name_str = "Unknown Name" if not json_parent_name else json_parent_name
+            json_parent_bank_str = "???" if json_parent_bank is None else str(json_parent_bank)
+            json_parent_program_str = "???" if json_parent_program is None else str(json_parent_program)
 
-        self.show_status_msg(
-            "Manual tone selection is necessary because selecting the UPPER Tone is not possible via SysEx messages.",
-            0)
-        modal_window = ChangeInstrumentWindow(modal_window_message)
-        modal_window.exec_()
-        self.show_status_msg("", 0)
+            modal_window_message = "<br/>The required parent tone from the " + json_synthesizer_model_str + " was not found:<br/><b>" \
+                                   + json_parent_id_str + json_parent_name_str + " (bank: " + json_parent_bank_str + ", program: " + json_parent_program_str \
+                                   + ")</b><br/><br/>You can apply parameters from a JSON file to the currently selected tone."
+            button_text = " Apply Parameters to Current Tone (" + str(current_parent_tone.id) + " " \
+                          + current_parent_tone.name + ")"
+            self.show_status_msg("Select a parent tone to proceed", 0)
+            modal_window = ChangeInstrumentWindow(self, modal_window_message, button_text)
+            modal_window.exec_()
 
-        # Shows required number (not current): is it wrong?
-        self.main_window.top_widget.tone_name_label.setText(self.get_tone_id_and_name())
+            self.show_status_msg("", 0)
+            self.tone.parent_tone = current_parent_tone
+            self.main_window.top_widget.tone_name_label.setText(self.get_tone_id_and_name())
 
         # Main parameters
         if "parameters" in json_tone:
