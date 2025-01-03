@@ -75,7 +75,8 @@ class MainWindow(QMainWindow):
             upload_tone_callback=self.show_upload_tone_dialog,
             rename_tone_callback=self.show_rename_tone_dialog,
             delete_tone_callback=self.show_delete_tone_dialog,
-            user_tone_manager_callback=self.show_user_tone_manager_window
+            user_tone_manager_callback=self.show_user_tone_manager_window,
+            calibration_tone_callback=self.select_calibration_tone
         )
         self.setMenuBar(self.menu_bar)
 
@@ -150,6 +151,9 @@ class MainWindow(QMainWindow):
 
         self.overlay.setVisible(False)
         self.core.synchronize_tone_signal.emit()  # when user tone manager is closed, synchronize tone with synth
+
+    def select_calibration_tone(self):
+        self.core.select_calibration_tone(800)
 
     def resizeEvent(self, event):
         super(MainWindow, self).resizeEvent(event)

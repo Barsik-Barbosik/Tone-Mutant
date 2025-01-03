@@ -21,7 +21,7 @@ class GuiHelper:
     def init_menu_bar(main_window: QMainWindow, exit_callback, open_json_callback, save_json_callback,
                       settings_callback, how_to_save_callback, request_parameter_callback, save_ton_callback,
                       upload_tone_callback, rename_tone_callback, delete_tone_callback,
-                      user_tone_manager_callback):
+                      user_tone_manager_callback, calibration_tone_callback):
         menu_bar = QMenuBar(main_window)
 
         open_json_action = QAction(QIcon(resource_path('resources/open.png')), "Open Tone (JSON)", main_window)
@@ -65,8 +65,18 @@ class GuiHelper:
 
         user_tone_manager_action = QAction(QIcon(resource_path('resources/memory_manager.png')), "User Tone Manager",
                                            main_window)
-        user_tone_manager_action.setStatusTip("User Tone Manager allows you to save, rename, delete, and move tones within the synthesizer's user tone memory.")
+        user_tone_manager_action.setStatusTip(
+            "User Tone Manager allows you to save, rename, delete, and move tones within the synthesizer's user tone memory.")
         user_tone_manager_action.triggered.connect(user_tone_manager_callback)
+
+        # Calibration Tones sub-menu
+        calibration_tone_menu = QMenu("Select Calibration Tone", main_window)
+        calibration_tone_menu.setIcon(QIcon(resource_path('resources/note.png')))
+        # calibration_tone_menu.setStatusTip("Calibration tones are useful for performing calibrations and experiments on the keyboard.")
+        calibration_sine_action = QAction(QIcon(resource_path('resources/note.png')), "Calibration Sine", main_window)
+        calibration_sine_action.setStatusTip("Pure sine note")
+        calibration_sine_action.triggered.connect(calibration_tone_callback)
+        calibration_tone_menu.addAction(calibration_sine_action)
 
         how_to_save_action = QAction(QIcon(resource_path('resources/help.png')), "Saving a TON File Using Synthesizer",
                                      main_window)
@@ -89,6 +99,8 @@ class GuiHelper:
         tools_menu.addAction(upload_tone_action)
         tools_menu.addAction(rename_tone_action)
         tools_menu.addAction(delete_tone_action)
+        tools_menu.addSeparator()
+        tools_menu.addMenu(calibration_tone_menu)
 
         if GuiHelper.is_expert_mode_enabled():
             tools_menu.addSeparator()

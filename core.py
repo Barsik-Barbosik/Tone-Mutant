@@ -301,6 +301,17 @@ class Core(QObject):
             except Exception as e:
                 self.show_error_msg(str(e))
 
+    # Select calibration tone
+    def select_calibration_tone(self, instrument_id):
+        try:
+            self.midi_service.send_change_tone_msg_2(instrument_id)
+            self.main_window.top_widget.tone_name_label.setStyleSheet("color: #1B998B")
+            self.tone.name = "Calibration Sine"
+            self.tone.parent_tone = None
+            self.synchronize_tone_signal.emit()
+        except Exception as e:
+            self.show_error_msg(str(e))
+
     # Intercept instrument change messages from synth
     def process_instrument_select_response(self, bank, program):
         self.log("[INFO] Instrument: " + str(bank) + ", " + str(program))
@@ -699,7 +710,8 @@ class Core(QObject):
     def process_user_memory_tone_name_response(self, tone_number_response, tone_name_response):
         tone_number = lsb_msb_to_int(tone_number_response[0], tone_number_response[1])
         tone_name = ''.join(chr(i) for i in tone_name_response if chr(i).isprintable()).strip()
-        self.main_window.user_tone_manager_window.add_item(tone_number, tone_name)
+        if self.main_window.user_tone_manager_window:
+            self.main_window.user_tone_manager_window.add_item(tone_number, tone_name)
 
     def load_tone_data(self, tone_number):
         if tone_number < 801 or tone_number > 900:

@@ -31,6 +31,7 @@ SYSEX_TYPE_INDEX = 18
 class MidiService:
     __instance = None
     __lock = threading.Lock()
+    IS_DEBUG_MODE = False
 
     @staticmethod
     def get_instance():
@@ -180,6 +181,9 @@ class MidiService:
         finally:
             self.lock.unlock()
 
+        if self.IS_DEBUG_MODE:
+            print(format_as_nice_hex(list_to_hex_str(message)))
+
         if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO and len(message) > (SYSEX_TYPE_INDEX + 1):
             block_id = lsb_msb_to_int(message[BLOCK_INDEX], message[BLOCK_INDEX + 1])
             sysex_type = lsb_msb_to_int(message[SYSEX_TYPE_INDEX], message[SYSEX_TYPE_INDEX + 1])
@@ -310,6 +314,11 @@ class MidiService:
             internal_number = tone_number + 19
         msg = "F0 44 19 01 7F 01 02 03 00 00 00 00 00 00 00 00 00 00 64 01 00 00 00 00" \
               + int_to_lsb_msb(internal_number) + "F7"
+        self.send_sysex(msg)
+
+    def send_change_tone_msg_2(self, tone_number):
+        msg = "F0 44 19 01 7F 01 02 03 00 00 00 00 00 00 00 00 00 00 64 01 00 00 00 00" \
+              + int_to_lsb_msb(tone_number) + "F7"
         self.send_sysex(msg)
 
     def send_change_tone_cc_msg(self, instrument: Instrument):
