@@ -3494,6 +3494,25 @@ ALL_INSTRUMENTS_700_800: Final[tuple] = (
     Instrument(600, "Tom Set", 120, 68)
 )
 
+# Calibration Tones (valid for CT-X3000/5000)
+CALIBRATION_TONES: Final[tuple] = (
+    Instrument.with_description(800, "Cal Sine", 63, 80, "Pure sine note"),
+    Instrument.with_description(810, "Cal Sine 2", 63, 90, "Pure sine note (variation)"),
+    Instrument.with_description(811, "Cal Sine 3", 63, 91, "Pure sine note (variation)"),
+    Instrument.with_description(812, "Cal Sine 4", 63, 92, "Pure sine note (variation)"),
+    Instrument.with_description(818, "Cal Sine 5", 63, 98, "Pure sine note (variation)"),
+    Instrument.with_description(802, "Cal 1kHz", 63, 82, "Pure sine at precisely 1kHz"),
+    Instrument.with_description(808, "Cal 1kHz 2", 63, 88, "Pure sine at precisely 1kHz (variation)"),
+    Instrument.with_description(803, "Cal White Noise", 63, 83, "White noise"),
+    Instrument.with_description(804, "Cal Pink Noise", 63, 84, "Pink noise"),
+    Instrument.with_description(801, "Cal All Octave Sweep", 63, 81, "Pure sine swept through all octaves"),
+    Instrument.with_description(806, "Cal Multi-octave Sweep", 63, 86,
+                                "Pure sine swept through multiple octaves"),
+    Instrument.with_description(807, "Cal Single Octave Sweep", 63, 87, "Pure sine swept through one octave"),
+    Instrument.with_description(805, "Cal Piano", 63, 85, "No-frills piano sound"),
+    Instrument.with_description(809, "Drum Kit ICH-NI-SAN", 63, 120, "Spoken digits 1-5")
+)
+
 HOW_TO_SAVE_TONE: Final[str] = '''
     <h2>Saving a Tone</h2>
     1. Long-press <b>"FUNCTION"</b> key until the <i>"[EDIT]"</i> indicator appears.<br/><br/>

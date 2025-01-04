@@ -1,11 +1,13 @@
 import os
+from functools import partial
 
 from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser, QWidget
+from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser, QWidget, QMenu, QAction, QMenuBar
 
-from constants.constants import HOW_TO_SAVE_TONE
+from constants.constants import HOW_TO_SAVE_TONE, CALIBRATION_TONES
 from core import Core
+from models.instrument import Instrument
 from ui.central_widget import CentralWidget
 from ui.delete_tone_window import DeleteToneWindow
 from ui.deque_log import DequeLog
@@ -63,22 +65,111 @@ class MainWindow(QMainWindow):
         self.core.synchronize_tone_with_synth()
 
     def reload_menu_bar(self):
-        self.menu_bar = GuiHelper.init_menu_bar(
-            self,
-            exit_callback=self.menu_exit_action,
-            open_json_callback=self.show_open_json_dialog,
-            save_json_callback=self.show_save_json_dialog,
-            settings_callback=self.show_settings,
-            how_to_save_callback=self.show_how_to_save_tone,
-            request_parameter_callback=self.show_request_parameter_dialog,
-            save_ton_callback=self.show_save_ton_dialog,
-            upload_tone_callback=self.show_upload_tone_dialog,
-            rename_tone_callback=self.show_rename_tone_dialog,
-            delete_tone_callback=self.show_delete_tone_dialog,
-            user_tone_manager_callback=self.show_user_tone_manager_window,
-            calibration_tone_callback=self.select_calibration_tone
-        )
+        self.menu_bar = QMenuBar(self)
+
+        open_json_action = QAction(QIcon(resource_path('resources/open.png')), "Open Tone (JSON)", self)
+        open_json_action.setStatusTip("Read tone information from a JSON-formatted file")
+        open_json_action.triggered.connect(self.show_open_json_dialog)
+
+        save_json_action = QAction(QIcon(resource_path('resources/save_purple.png')), "Save Tone (JSON)", self)
+        save_json_action.setStatusTip("Save tone information as a JSON-formatted file")
+        save_json_action.triggered.connect(self.show_save_json_dialog)
+
+        save_action = QAction(QIcon(resource_path('resources/save.png')), "Save Tone (TON)", self)
+        save_action.setStatusTip("Save tone as a TON file")
+        save_action.triggered.connect(self.show_save_ton_dialog)
+
+        midi_settings_action = QAction(QIcon(resource_path('resources/settings.png')), "Settings", self)
+        midi_settings_action.setStatusTip("Open settings")
+        midi_settings_action.triggered.connect(self.show_settings)
+
+        exit_action = QAction(QIcon(resource_path('resources/exit.png')), "Exit", self)
+        exit_action.setStatusTip("Exit application")
+        exit_action.triggered.connect(self.menu_exit_action)
+
+        upload_tone_action = QAction(QIcon(resource_path('resources/piano_plus.png')),
+                                     "Save Tone to Synthesizer's Memory",
+                                     self)
+        upload_tone_action.setStatusTip("Save current tone to the synthesizer's user memory section (801–900)")
+        upload_tone_action.triggered.connect(self.show_upload_tone_dialog)
+
+        rename_tone_action = QAction(QIcon(resource_path('resources/piano_pencil.png')), "Rename Tone", self)
+        rename_tone_action.setStatusTip("Rename user tone (801–900)")
+        rename_tone_action.triggered.connect(self.show_rename_tone_dialog)
+
+        delete_tone_action = QAction(QIcon(resource_path('resources/piano_minus.png')), "Delete Tone", self)
+        delete_tone_action.setStatusTip("Delete user tone (801–900)")
+        delete_tone_action.triggered.connect(self.show_delete_tone_dialog)
+
+        request_parameter_action = QAction(QIcon(resource_path('resources/request.png')), "Request Parameter",
+                                           self)
+        request_parameter_action.setStatusTip("Request a parameter from synthesizer")
+        request_parameter_action.triggered.connect(self.show_request_parameter_dialog)
+
+        user_tone_manager_action = QAction(QIcon(resource_path('resources/memory_manager.png')), "User Tone Manager",
+                                           self)
+        user_tone_manager_action.setStatusTip(
+            "User Tone Manager allows you to save, rename, delete, and move tones within the synthesizer's user tone memory.")
+        user_tone_manager_action.triggered.connect(self.show_user_tone_manager_window)
+
+        # Calibration Tones sub-menu
+        calibration_tone_menu = self.create_calibration_tone_menu()
+
+        how_to_save_action = QAction(QIcon(resource_path('resources/help.png')), "Saving a TON File Using Synthesizer",
+                                     self)
+        how_to_save_action.setStatusTip("Instructions on how to use the synthesizer to save and export the tone")
+        how_to_save_action.triggered.connect(self.show_how_to_save_tone)
+
+        file_menu = QMenu("&File", self)
+        file_menu.addAction(open_json_action)
+        file_menu.addAction(save_json_action)
+        file_menu.addAction(save_action)
+        file_menu.addSeparator()
+        file_menu.addAction(midi_settings_action)
+        file_menu.addSeparator()
+        file_menu.addAction(exit_action)
+        self.menu_bar.addMenu(file_menu)
+
+        tools_menu = QMenu("&Synthesizer Tools", self)
+        tools_menu.addAction(user_tone_manager_action)
+        tools_menu.addSeparator()
+        tools_menu.addAction(upload_tone_action)
+        tools_menu.addAction(rename_tone_action)
+        tools_menu.addAction(delete_tone_action)
+
+        if GuiHelper.is_expert_mode_enabled():
+            tools_menu.addSeparator()
+            tools_menu.addAction(request_parameter_action)
+
+        tools_menu.addSeparator()
+        tools_menu.addMenu(calibration_tone_menu)
+
+        if not GuiHelper.has_user_memory():
+            upload_tone_action.setEnabled(False)
+            rename_tone_action.setEnabled(False)
+            delete_tone_action.setEnabled(False)
+            user_tone_manager_action.setEnabled(False)
+
+        self.menu_bar.addMenu(tools_menu)
+
+        help_menu = QMenu("&Help", self)
+        help_menu.addAction(how_to_save_action)
+        self.menu_bar.addMenu(help_menu)
+
         self.setMenuBar(self.menu_bar)
+
+    def create_calibration_tone_menu(self):
+        calibration_tone_menu = QMenu("Select Calibration Tone", self)
+        calibration_tone_menu.setIcon(QIcon(resource_path("resources/note.png")))
+
+        for instrument in CALIBRATION_TONES:
+            action = QAction(QIcon(resource_path("resources/note.png")), instrument.name, self)
+            action.setStatusTip(instrument.description)
+
+            action.triggered.connect(partial(self.select_calibration_tone, instrument))
+            calibration_tone_menu.addAction(action)
+
+        return calibration_tone_menu
 
     def _setup_layout(self):
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)
@@ -152,8 +243,8 @@ class MainWindow(QMainWindow):
         self.overlay.setVisible(False)
         self.core.synchronize_tone_signal.emit()  # when user tone manager is closed, synchronize tone with synth
 
-    def select_calibration_tone(self):
-        self.core.select_calibration_tone(800)
+    def select_calibration_tone(self, instrument: Instrument):
+        self.core.select_calibration_tone(instrument)
 
     def resizeEvent(self, event):
         super(MainWindow, self).resizeEvent(event)

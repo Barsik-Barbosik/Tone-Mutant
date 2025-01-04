@@ -302,11 +302,11 @@ class Core(QObject):
                 self.show_error_msg(str(e))
 
     # Select calibration tone
-    def select_calibration_tone(self, instrument_id):
+    def select_calibration_tone(self, instrument):
         try:
-            self.midi_service.send_change_tone_msg_2(instrument_id)
+            self.midi_service.send_change_tone_msg_2(instrument.id)
             self.main_window.top_widget.tone_name_label.setStyleSheet("color: #1B998B")
-            self.tone.name = "Calibration Sine"
+            self.tone.name = instrument.name
             self.tone.parent_tone = None
             self.synchronize_tone_signal.emit()
         except Exception as e:
