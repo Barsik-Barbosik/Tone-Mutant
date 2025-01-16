@@ -187,11 +187,10 @@ class MainWindow(QMainWindow):
         random_tone_action = QAction(QIcon(resource_path("resources/random_wand.png")), "Generate Tone", self)
         random_tone_action.setStatusTip(
             "Generate Random Tone: set random main parameters and select 1–2 random DSP modules")
-        random_tone_action.triggered.connect(self.top_widget.on_randomize_tone_button_pressed)
+        random_tone_action.triggered.connect(self.core.on_randomize_tone_button_pressed)
 
         # upper2_action = QAction(QIcon(resource_path("resources/random_wand.png")), "Show Layer Mixer", self)
         # upper2_action.setStatusTip("Show Layer Mixer")
-        # upper2_action.triggered.connect(self.top_widget.on_randomize_tone_button_pressed)
 
         toolbar.addAction(refresh_action)
         toolbar.addAction(random_tone_action)

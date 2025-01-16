@@ -1,6 +1,7 @@
 import configparser
 import copy
 import os
+import random
 import time
 from typing import Union
 
@@ -747,3 +748,48 @@ class Core(QObject):
 
         self.main_window.user_tone_manager_window.load_memory_tone_names()  # reload list and stop loading animation
         self.status_msg_signal.emit("Tone successfully saved!", 3000)
+
+    def on_randomize_tone_button_pressed(self):
+        msg = "Setting random main parameters and selecting 1–2 random DSP modules"
+        self.log(f"[INFO] {msg}...")
+        self.main_window.loading_animation.start()
+
+        self.main_window.central_widget.on_random_button_pressed()
+
+        # Random DSP modules
+        random_dsp_1 = random.randint(0, self.main_window.central_widget.dsp_page_1.list_widget.count() - 1)
+        random_dsp_2 = random.randint(0, self.main_window.central_widget.dsp_page_2.list_widget.count() - 1)
+
+        if random_dsp_1 == 0 and random_dsp_2 > 0:  # swap
+            random_dsp_1, random_dsp_2 = random_dsp_2, random_dsp_1
+
+        self.main_window.central_widget.dsp_page_1.list_widget.setCurrentRow(random_dsp_1)
+        self.main_window.central_widget.dsp_page_2.list_widget.setCurrentRow(random_dsp_2)
+
+        if random_dsp_1 > 0 or random_dsp_2 > 0:
+            msg += ": " + ", ".join(filter(None, [
+                self.tone.dsp_module_1.name if random_dsp_1 > 0 else None,
+                self.tone.dsp_module_2.name if random_dsp_2 > 0 else None
+            ]))
+
+        self.show_status_msg(msg, 3000)
+        self.pause_status_bar_updates(True)
+
+        # Random DSP params
+        worker = Worker(self.randomize_dsp_params, random_dsp_1, random_dsp_2)
+        worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
+        worker.start()
+
+    def randomize_dsp_params(self, random_dsp_1, random_dsp_2):
+        if random_dsp_1 > 0:
+            time.sleep(0.3)
+            self.main_window.central_widget.dsp_page_1.on_random_button_pressed(
+                self.main_window.central_widget.dsp_page_1.block_id)
+
+        if random_dsp_2 > 0:
+            time.sleep(0.3)
+            self.main_window.central_widget.dsp_page_2.on_random_button_pressed(
+                self.main_window.central_widget.dsp_page_2.block_id)
+
+        self.pause_status_bar_updates(False)
+        self.main_window.loading_animation.stop()
