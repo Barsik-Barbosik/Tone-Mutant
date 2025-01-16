@@ -11,8 +11,23 @@ QPushButton {
     color: #FFFFFF;
 }
 
-#top-widget {
+#toolbar {
     background-color: white;
+}
+
+QButton#toolbar {
+    background-color: #1B998B;
+    color: #FFFFFF;
+}
+
+#top-widget {
+    background: transparent;
+    border: none;
+}
+
+#upper-frame {
+    background-color: white;
+    border: 1px solid gray;
 }
 
 #tone-name-label {

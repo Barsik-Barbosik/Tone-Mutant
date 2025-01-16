@@ -100,8 +100,8 @@ class Core(QObject):
             self.tone.name = constants.DEFAULT_TONE_NAME
             self.request_tone_number_from_performance_params()
 
-        tone_id_and_name = self.get_tone_id_and_name()
-        self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
+        # tone_id_and_name = self.get_tone_id_and_name()
+        self.main_window.top_widget.tone_name_input.setText(self.tone.name)
 
     # A new method for retrieving tone number and name
     def request_tone_number_from_performance_params(self):
@@ -120,8 +120,8 @@ class Core(QObject):
                 self.main_window.central_widget.instrument_list.set_current_row_from_thread(
                     self.tone.parent_tone.id - 1)
 
-                tone_id_and_name = self.get_tone_id_and_name()
-                self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
+                # tone_id_and_name = self.get_tone_id_and_name()
+                self.main_window.top_widget.tone_name_input.setText(self.tone.name)
 
                 break
 
@@ -296,7 +296,7 @@ class Core(QObject):
             self.log(f"[INFO] Selected tone: {instrument_id} - {self.tone.parent_tone.name}")
             try:
                 self.midi_service.send_change_tone_msg(instrument_id)
-                self.main_window.top_widget.tone_name_label.setStyleSheet("color: #1B998B")
+                self.main_window.top_widget.tone_name_input.setStyleSheet("color: #1B998B")
                 self.synchronize_tone_signal.emit()
             except Exception as e:
                 self.show_error_msg(str(e))
@@ -305,7 +305,7 @@ class Core(QObject):
     def select_calibration_tone(self, instrument):
         try:
             self.midi_service.send_change_tone_msg_2(instrument.id)
-            self.main_window.top_widget.tone_name_label.setStyleSheet("color: #1B998B")
+            self.main_window.top_widget.tone_name_input.setStyleSheet("color: #1B998B")
             self.tone.name = instrument.name
             self.tone.parent_tone = None
             self.synchronize_tone_signal.emit()
@@ -317,8 +317,8 @@ class Core(QObject):
         self.log("[INFO] Instrument: " + str(bank) + ", " + str(program))
         self.find_instrument_and_update_tone(bank, program)
 
-        tone_id_and_name = self.get_tone_id_and_name()
-        self.main_window.top_widget.tone_name_label.setText(tone_id_and_name)
+        # tone_id_and_name = self.get_tone_id_and_name()
+        self.main_window.top_widget.tone_name_input.setText(self.tone.name)
 
     def get_tone_id_and_name(self):
         if self.tone.parent_tone:
@@ -343,7 +343,7 @@ class Core(QObject):
             self.main_window.central_widget.instrument_list.clearSelection()
 
     def countdown_and_autosynchronize(self, timeout):
-        self.main_window.top_widget.tone_name_label.setStyleSheet("color: black")
+        self.main_window.top_widget.tone_name_input.setStyleSheet("color: black")
         is_active = self.timeout > 0
 
         if is_active:
@@ -412,8 +412,8 @@ class Core(QObject):
                     # Parent tone is found: automatically select instrument
                     try:
                         self.midi_service.send_change_tone_msg(self.tone.parent_tone.id)
-                        self.main_window.top_widget.tone_name_label.setStyleSheet("color: #1B998B")
-                        self.main_window.top_widget.tone_name_label.setText(self.get_tone_id_and_name())
+                        self.main_window.top_widget.tone_name_input.setStyleSheet("color: #1B998B")
+                        self.main_window.top_widget.tone_name_input.setText(self.tone.name)
                     except Exception as e:
                         self.show_error_msg(str(e))
                 else:
@@ -443,7 +443,7 @@ class Core(QObject):
 
             self.show_status_msg("", 0)
             self.tone.parent_tone = current_parent_tone
-            self.main_window.top_widget.tone_name_label.setText(self.get_tone_id_and_name())
+            self.main_window.top_widget.tone_name_input.setText(self.tone.name)
 
         # Main parameters
         if "parameters" in json_tone:

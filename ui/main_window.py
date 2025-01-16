@@ -1,9 +1,10 @@
 import os
 from functools import partial
 
-from PySide2.QtCore import Qt, QCoreApplication
+from PySide2.QtCore import Qt, QCoreApplication, QSize
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser, QWidget, QMenu, QAction, QMenuBar
+from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser, QWidget, QMenu, QAction, QMenuBar, \
+    QToolBar
 
 from constants.constants import HOW_TO_SAVE_TONE, CALIBRATION_TONES
 from core import Core
@@ -17,7 +18,7 @@ from ui.loading_animation import LoadingAnimation
 from ui.rename_tone_window import RenameToneWindow
 from ui.request_parameter_window import RequestParameterWindow
 from ui.settings_window import SettingsWindow
-from ui.top_widget import TopWidget
+from ui.top_widget_mixer import TopWidgetMixer
 from ui.upload_tone_window import UploadToneWindow
 from ui.user_tone_manager_window import UserToneManagerWindow
 from utils.file_operations import FileOperations
@@ -42,8 +43,9 @@ class MainWindow(QMainWindow):
         self.log_texbox = DequeLog(self)
 
         self.central_widget = CentralWidget(self)
-        self.top_widget = TopWidget(self)
+        self.top_widget = TopWidgetMixer(self)
 
+        self._init_toolbar()
         self._setup_layout()
 
         self.loading_animation = LoadingAnimation(self)
@@ -171,6 +173,32 @@ class MainWindow(QMainWindow):
 
         return calibration_tone_menu
 
+    def _init_toolbar(self):
+        toolbar = QToolBar("Toolbar")
+        toolbar.setIconSize(QSize(16, 16))
+        toolbar.setObjectName("toolbar")
+        toolbar.setMovable(False)
+        toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)  # show both icon and text
+
+        refresh_action = QAction(QIcon(resource_path("resources/refresh.png")), "Refresh", self)
+        refresh_action.setStatusTip("Synchronize params from the synthesizer to the computer")
+        refresh_action.triggered.connect(self.core.synchronize_tone_with_synth)
+
+        random_tone_action = QAction(QIcon(resource_path("resources/random_wand.png")), "Generate Tone", self)
+        random_tone_action.setStatusTip(
+            "Generate Random Tone: set random main parameters and select 1–2 random DSP modules")
+        random_tone_action.triggered.connect(self.top_widget.on_randomize_tone_button_pressed)
+
+        # upper2_action = QAction(QIcon(resource_path("resources/random_wand.png")), "Show Layer Mixer", self)
+        # upper2_action.setStatusTip("Show Layer Mixer")
+        # upper2_action.triggered.connect(self.top_widget.on_randomize_tone_button_pressed)
+
+        toolbar.addAction(refresh_action)
+        toolbar.addAction(random_tone_action)
+        # toolbar.addAction(upper2_action)
+
+        self.addToolBar(toolbar)
+
     def _setup_layout(self):
         self.central_widget.layout().setContentsMargins(10, 10, 0, 10)
 
@@ -210,7 +238,7 @@ class MainWindow(QMainWindow):
             self.core.tone.name = file_name_without_extension[:8]  # trim to first 8 symbols
 
             FileOperations.save_json(file_name, self.central_widget.get_json())
-            self.top_widget.tone_name_label.setText(self.core.get_tone_id_and_name())
+            self.top_widget.tone_name_input.setText(self.core.get_tone_id_and_name())
             self.core.status_msg_signal.emit("File successfully saved!", 3000)
 
     def show_request_parameter_dialog(self):
@@ -221,7 +249,7 @@ class MainWindow(QMainWindow):
         if file_name:
             try:
                 self.core.start_ton_file_save_worker(file_name)
-                self.top_widget.tone_name_label.setText(self.core.get_tone_id_and_name())
+                self.top_widget.tone_name_input.setText(self.core.get_tone_id_and_name())
             except Exception as e:
                 self.core.show_error_msg(str(e))
 
