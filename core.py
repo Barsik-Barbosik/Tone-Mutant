@@ -170,7 +170,7 @@ class Core(QObject):
                 break
         if self.tone.upper_volume.param_number == param_number and self.tone.upper_volume.block_id == block_id:
             self.tone.upper_volume.value = response[0]
-            self.main_window.top_widget.redraw_upper_volume_knob_signal.emit()
+            self.main_window.top_widget.redraw_volume_knob_signal.emit(0)
 
     # Send message to update synth's main parameter
     def send_parameter_change_sysex(self, parameter: Union[MainParameter, AdvancedParameter]):

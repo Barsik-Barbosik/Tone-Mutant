@@ -1,4 +1,3 @@
-from PySide2.QtCore import Slot, Signal
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QWidget, QLabel, QHBoxLayout, QPushButton
 
@@ -8,7 +7,7 @@ from utils.utils import resource_path
 
 
 class TopWidget(QWidget):
-    redraw_upper_volume_knob_signal = Signal()
+    # redraw_upper_volume_knob_signal = Signal()
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -45,7 +44,7 @@ class TopWidget(QWidget):
         # randomize_tone_button.clicked.connect(self.on_randomize_tone_button_pressed)
         self.layout.addWidget(randomize_tone_button)
 
-        self.redraw_upper_volume_knob_signal.connect(self.redraw_upper_volume_knob)
+        # self.redraw_volume_knob_signal.connect(self.redraw_upper_volume_knob)
 
     def on_volume_change(self, parameter):
         self.core.send_parameter_change_sysex(parameter)
@@ -95,9 +94,9 @@ class TopWidget(QWidget):
     #     self.core.pause_status_bar_updates(False)
     #     self.core.main_window.loading_animation.stop()
 
-    @Slot()
-    def redraw_upper_volume_knob(self):
-        GuiHelper.clear_layout(self.inner_upper_volume_knob_layout)
-        self.inner_upper_volume_knob_layout = GuiHelper.create_knob_input(self.core.tone.upper_volume,
-                                                                          self.on_volume_change)
-        self.outer_upper_volume_knob_layout.addLayout(self.inner_upper_volume_knob_layout)
+    # @Slot()
+    # def redraw_upper_volume_knob(self):
+    #     GuiHelper.clear_layout(self.inner_upper_volume_knob_layout)
+    #     self.inner_upper_volume_knob_layout = GuiHelper.create_knob_input(self.core.tone.upper_volume,
+    #                                                                       self.on_volume_change)
+    #     self.outer_upper_volume_knob_layout.addLayout(self.inner_upper_volume_knob_layout)

@@ -3,15 +3,24 @@ from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QWidget, QLabel, QHBoxLayout, QFrame, QGridLayout, QComboBox, QSizePolicy, QSpacerItem, \
     QLineEdit
 
+from constants.enums import ParameterType
+from models.parameter import AdvancedParameter
 from ui.gui_helper import GuiHelper
 
 
 class TopWidgetMixer(QWidget):
-    redraw_upper_volume_knob_signal = Signal()
+    redraw_volume_knob_signal = Signal(int)
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.core = parent.core
+
+        self.upper2_volume = AdvancedParameter(200, 200, 0, "UPPER 2 Volume", "Volume of the note.",
+                                               ParameterType.KNOB, [0, 127])
+        self.lower1_volume = AdvancedParameter(200, 200, 0, "LOWER 1 Volume", "Volume of the note. ",
+                                               ParameterType.KNOB, [0, 127])
+        self.lower2_volume = AdvancedParameter(200, 200, 0, "LOWER 2 Volume", "Volume of the note.",
+                                               ParameterType.KNOB, [0, 127])
 
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
@@ -25,13 +34,13 @@ class TopWidgetMixer(QWidget):
         self.tone_name_input.setFont(font)
 
         self.create_block("UPPER 1", self.core.tone.upper_volume, self.on_volume_change, self.on_pan_change)
-        self.create_block("UPPER 2", self.core.tone.upper_volume, self.on_volume_change, self.on_pan_change)
-        self.create_block("LOWER 1", self.core.tone.upper_volume, self.on_volume_change, self.on_pan_change)
-        self.create_block("LOWER 2", self.core.tone.upper_volume, self.on_volume_change, self.on_pan_change)
+        self.create_block("UPPER 2", self.upper2_volume, self.on_volume_change, self.on_pan_change)
+        self.create_block("LOWER 1", self.lower1_volume, self.on_volume_change, self.on_pan_change)
+        self.create_block("LOWER 2", self.lower2_volume, self.on_volume_change, self.on_pan_change)
 
-        self.redraw_upper_volume_knob_signal.connect(self.redraw_upper_volume_knob)
+        self.redraw_volume_knob_signal.connect(self.redraw_volume_knob)
 
-    def create_block(self, title, volume_value, volume_callback, pan_callback):
+    def create_block(self, title, volume_ctrl, volume_callback, pan_callback):
         frame = QFrame()
         frame.setObjectName("upper-frame")
         frame_layout = QGridLayout(frame)
@@ -53,12 +62,12 @@ class TopWidgetMixer(QWidget):
             frame_layout.addWidget(tone_combo, 0, 1, 1, 2, alignment=Qt.AlignLeft)
 
         frame_layout.addWidget(QLabel("Vol:"), 1, 1)
-        inner_volume_knob_layout = GuiHelper.create_knob_input(volume_value, volume_callback)
-        frame_layout.addLayout(inner_volume_knob_layout, 1, 2)
+        volume_knob_layout = GuiHelper.create_knob_input(volume_ctrl, volume_callback)
+        frame_layout.addLayout(volume_knob_layout, 1, 2)
 
         frame_layout.addWidget(QLabel("Pan:"), 2, 1)
-        inner_pan_knob_layout = GuiHelper.create_knob_input(volume_value, pan_callback)
-        frame_layout.addLayout(inner_pan_knob_layout, 2, 2)
+        pan_knob_layout = GuiHelper.create_knob_input(volume_ctrl, pan_callback)
+        frame_layout.addLayout(pan_knob_layout, 2, 2)
 
         self.layout.addWidget(frame)
 
@@ -69,9 +78,9 @@ class TopWidgetMixer(QWidget):
         pass
 
     @Slot()
-    def redraw_upper_volume_knob(self):
+    def redraw_volume_knob(self, param_set_value: int):
         # GuiHelper.clear_layout(self.inner_upper_volume_knob_layout)
         # self.inner_upper_volume_knob_layout = GuiHelper.create_knob_input(self.core.tone.upper_volume,
         #                                                                   self.on_volume_change)
         # self.outer_upper_volume_knob_layout.addLayout(self.inner_upper_volume_knob_layout)
-        pass
+        print(f"redraw_volume_knob... param_set: {param_set_value}")
