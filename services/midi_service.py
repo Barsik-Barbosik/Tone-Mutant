@@ -26,6 +26,7 @@ MEMORY_3 = 3  # 3 is real-time, current tone
 
 BLOCK_INDEX = 16
 SYSEX_TYPE_INDEX = 18
+PARAM_SET_INDEX = 8
 
 
 class MidiService:
@@ -187,11 +188,12 @@ class MidiService:
         if message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.CASIO and len(message) > (SYSEX_TYPE_INDEX + 1):
             block_id = lsb_msb_to_int(message[BLOCK_INDEX], message[BLOCK_INDEX + 1])
             sysex_type = lsb_msb_to_int(message[SYSEX_TYPE_INDEX], message[SYSEX_TYPE_INDEX + 1])
-
+            param_set = lsb_msb_to_int(message[PARAM_SET_INDEX], message[PARAM_SET_INDEX + 1])
+            print(f"param_set: {param_set}")
             if message[7] == MEMORY_1:
                 self._process_memory_1_message(sysex_type, message)
             elif message[7] == MEMORY_3:
-                self._process_memory_3_message(sysex_type, block_id, message)
+                self._process_memory_3_message(sysex_type, block_id, param_set, message)
             else:
                 self.log("[MIDI IN] SysEx", message)
         elif message[0] == SYSEX_FIRST_BYTE and message[1] == SysexId.REAL_TIME:
@@ -226,7 +228,7 @@ class MidiService:
         else:
             self.log("[MIDI IN] SysEx (Memory 1)", message)
 
-    def _process_memory_3_message(self, sysex_type, block_id, message):
+    def _process_memory_3_message(self, sysex_type, block_id, param_set, message):
         if sysex_type == SysexType.TONE_NAME.value:
             self.log("[MIDI IN] Tone Name", message)
             response = message[-1 - Size.TONE_NAME:-1]
@@ -234,11 +236,11 @@ class MidiService:
         elif sysex_type in self.long_params:
             self.log(f"[MIDI IN] Parameter {sysex_type}", message)
             response = message[-1 - Size.MAIN_PARAMETER:-1]
-            self.core.process_parameter_response(sysex_type, block_id, response)  # 2 bytes
+            self.core.process_parameter_response(sysex_type, block_id, param_set, response)  # 2 bytes
         elif sysex_type in self.short_params:
             self.log(f"[MIDI IN] Parameter {sysex_type}", message)
             response = message[-1 - Size.MAIN_PARAMETER_SHORT:-1]
-            self.core.process_parameter_response(sysex_type, block_id, response[:1])  # 1 byte
+            self.core.process_parameter_response(sysex_type, block_id, param_set, response[:1])  # 1 byte
         elif sysex_type == SysexType.DSP_MODULE.value:
             self.log("[MIDI IN] DSP module", message)
             response = message[-1 - Size.DSP_MODULE:-1]

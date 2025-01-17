@@ -145,7 +145,7 @@ class Core(QObject):
                 self.show_error_msg(str(e))
 
     # Process main/advanced parameter value response
-    def process_parameter_response(self, param_number, block_id, response):
+    def process_parameter_response(self, param_number, block_id, param_set, response):
         for parameter in self.tone.main_parameter_list:
             if parameter.param_number == param_number and parameter.block_id == block_id:
                 self.log(f"[INFO] {parameter.name}: {str(response)}")
@@ -170,8 +170,8 @@ class Core(QObject):
                 break
         if self.main_window.top_widget.upper1_volume.param_number == param_number \
                 and self.main_window.top_widget.upper1_volume.block_id == block_id:
-            self.main_window.top_widget.upper1_volume.value = response[0]
-            self.main_window.top_widget.redraw_volume_knob_signal.emit(0)
+            # not only upper1_volume, but all 4 layers
+            self.main_window.top_widget.redraw_volume_knob_signal.emit(param_set, response[0])
 
     # Send message to update synth's main parameter
     def send_parameter_change_sysex(self, parameter: Union[MainParameter, AdvancedParameter]):
@@ -271,6 +271,16 @@ class Core(QObject):
         try:
             self.midi_service.request_parameter_value(self.main_window.top_widget.upper1_volume.block_id,
                                                       self.main_window.top_widget.upper1_volume.param_number)
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block_id,
+                                                           self.main_window.top_widget.upper1_volume.param_number,
+                                                           3, 3, 1, 0)
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block_id,
+                                                           self.main_window.top_widget.upper1_volume.param_number,
+                                                           3, 3, 2, 0)
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block_id,
+                                                           self.main_window.top_widget.upper1_volume.param_number,
+                                                           3, 3, 3, 0)
+
         except Exception as e:
             self.show_error_msg(str(e))
 
