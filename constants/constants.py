@@ -32,9 +32,10 @@ BLOCK_MAPPING = {
 
 SHORT_PARAMS: Final[tuple] = (
     "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Octave Shift", "Volume", "Velocity Sense",
-    "Reverb Send", "Chorus Send", "Delay Send", "UPPER 1 Volume", "Sound A Timbre Type", "Sound B Timbre Type",
-    "Sound B for Note-off", "Note-off velocity", "Sound B for Double-stop", "Monophonic Mode", "Portamento",
-    "Portamento Time", "Velocity to Cutoff", "Stretch Tuning")
+    "Reverb Send", "Chorus Send", "Delay Send", "UPPER 1 Volume", "UPPER 2 Volume", "LOWER 1 Volume", "LOWER 2 Volume",
+    "Sound A Timbre Type", "Sound B Timbre Type", "Sound B for Note-off", "Note-off velocity",
+    "Sound B for Double-stop", "Monophonic Mode", "Portamento", "Portamento Time", "Velocity to Cutoff",
+    "Stretch Tuning")
 
 RIGHT_SIDE_MAIN_PARAMS: Final[tuple] = (
     "Vibrato Type", "Vibrato Depth", "Vibrato Rate", "Vibrato Delay", "Reverb Send", "Chorus Send", "Delay Send")

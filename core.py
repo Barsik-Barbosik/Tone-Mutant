@@ -193,6 +193,22 @@ class Core(QObject):
         except Exception as e:
             self.show_error_msg(str(e))
 
+    def send_volume_change_sysex(self, parameter: AdvancedParameter):
+        self.log(
+            "[INFO] Param " + str(parameter.name) + ": " + str(parameter.param_number) + ", " + str(parameter.value))
+        value = utils.encode_value_by_type(parameter)
+        parameter_set = 0
+
+        if parameter.name == "UPPER 2 Volume":
+            parameter_set = 1
+        elif parameter.name == "LOWER 1 Volume":
+            parameter_set = 2
+        elif parameter.name == "LOWER 2 Volume":
+            parameter_set = 3
+
+        self.midi_service.send_parameter_change_short_sysex2(parameter.block_id, parameter.param_number, parameter_set,
+                                                             value)
+
     # Request DSP module from synth
     def request_dsp_module(self, block_id):
         try:

@@ -306,6 +306,11 @@ class MidiService:
         sysex = self.make_sysex_short_value(block_id, parameter, value)
         self.send_sysex(sysex)
 
+    # Same as send_parameter_change_short_sysex, but with parameter_set
+    def send_parameter_change_short_sysex2(self, block_id: int, parameter: int, parameter_set: int, value: int):
+        sysex = self.make_sysex_short_value2(block_id, parameter, parameter_set, value)
+        self.send_sysex(sysex)
+
     def send_atk_rel_parameter_change_sysex(self, block_id: int, parameter: int, value: int):
         sysex = self.make_sysex_8bit_value(block_id, parameter, value)
         self.send_sysex(sysex)
@@ -343,6 +348,16 @@ class MidiService:
     @staticmethod
     def make_sysex_short_value(block_id: int, parameter: int, value: int) -> str:
         return "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00" \
+            + int_to_lsb_msb(block_id) \
+            + int_to_lsb_msb(parameter) \
+            + "00 00 00 00" \
+            + int_to_hex(value) \
+            + "F7"
+
+    # Same as make_sysex_short_value, but with parameter_set
+    @staticmethod
+    def make_sysex_short_value2(block_id: int, parameter: int, parameter_set: int, value: int) -> str:
+        return "F0 44 19 01 7F 01 03 03 " + int_to_lsb_msb(parameter_set) + " 00 00 00 00 00 00" \
             + int_to_lsb_msb(block_id) \
             + int_to_lsb_msb(parameter) \
             + "00 00 00 00" \

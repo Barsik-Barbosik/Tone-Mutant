@@ -127,7 +127,7 @@ class TopWidgetMixer(QWidget):
         self.redraw_volume_knob_signal.connect(self.redraw_volume_knob)
 
     def on_volume_change(self, parameter):
-        self.core.send_parameter_change_sysex(parameter)
+        self.core.send_volume_change_sysex(parameter)
 
     def on_pan_change(self, parameter):
         pass
