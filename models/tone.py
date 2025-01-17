@@ -60,10 +60,6 @@ class Tone:
                           ParameterType.KNOB, [0, 127])]
 
         # Advanced parameters: parameters, that cannot be edited using synthesizer "tone edit" menu
-        self.upper_volume = AdvancedParameter(200, 200, 0, "UPPER 1 Volume",
-                                              "Volume of the note. Only notes played on the keyboard are affected by this (not MIDI IN or rhythms).",
-                                              ParameterType.KNOB, [0, 127])
-
         self.advanced_parameter_list: List[AdvancedParameter] = [
             AdvancedParameter(1, 1, 0, "Sound A Timbre Type",
                               "Timbre type of Sound A: melody/drum/piano/versatile (hex-layer). Sound A is dedicated to playing note-on events, providing the primary tone when a note is initiated.",

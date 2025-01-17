@@ -67,7 +67,7 @@ class Core(QObject):
             self.request_dsp_module(2)
             self.request_dsp_module(3)
             self.request_advanced_parameters()
-            self.request_upper_volume()
+            self.request_volumes()
 
         self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
 
@@ -168,8 +168,9 @@ class Core(QObject):
                     value = lsb_msb_to_int(response[0], response[1])
                 parameter.value = decode_param_value(value, parameter)
                 break
-        if self.tone.upper_volume.param_number == param_number and self.tone.upper_volume.block_id == block_id:
-            self.tone.upper_volume.value = response[0]
+        if self.main_window.top_widget.upper1_volume.param_number == param_number \
+                and self.main_window.top_widget.upper1_volume.block_id == block_id:
+            self.main_window.top_widget.upper1_volume.value = response[0]
             self.main_window.top_widget.redraw_volume_knob_signal.emit(0)
 
     # Send message to update synth's main parameter
@@ -266,10 +267,10 @@ class Core(QObject):
         if self.main_window.central_widget.current_dsp_page:
             self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
 
-    def request_upper_volume(self):
+    def request_volumes(self):
         try:
-            self.midi_service.request_parameter_value(self.tone.upper_volume.block_id,
-                                                      self.tone.upper_volume.param_number)
+            self.midi_service.request_parameter_value(self.main_window.top_widget.upper1_volume.block_id,
+                                                      self.main_window.top_widget.upper1_volume.param_number)
         except Exception as e:
             self.show_error_msg(str(e))
 
