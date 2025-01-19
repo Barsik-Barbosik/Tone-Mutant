@@ -70,6 +70,7 @@ class TopWidgetMixer(QWidget):
         self.tone_combo_upper2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.tone_combo_upper2.setFixedWidth(130)
         self.populate_tone_combo(self.tone_combo_upper2)
+        self.tone_combo_upper2.currentIndexChanged.connect(self.on_upper2_selected)
         self.frame_layout_upper2.addWidget(self.tone_combo_upper2, 0, 1, 1, 2, alignment=Qt.AlignLeft)
         self.frame_layout_upper2.addWidget(QLabel("Vol:"), 1, 1)
         self.volume_knob_layout_upper2 = GuiHelper.create_knob_input(self.upper2_volume, self.on_volume_change)
@@ -93,6 +94,7 @@ class TopWidgetMixer(QWidget):
         self.tone_combo_lower1.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.tone_combo_lower1.setFixedWidth(130)
         self.populate_tone_combo(self.tone_combo_lower1)
+        self.tone_combo_lower1.currentIndexChanged.connect(self.on_lower1_selected)
         self.frame_layout_lower1.addWidget(self.tone_combo_lower1, 0, 1, 1, 2, alignment=Qt.AlignLeft)
         self.frame_layout_lower1.addWidget(QLabel("Vol:"), 1, 1)
         self.volume_knob_layout_lower1 = GuiHelper.create_knob_input(self.lower1_volume, self.on_volume_change)
@@ -116,6 +118,7 @@ class TopWidgetMixer(QWidget):
         self.tone_combo_lower2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.tone_combo_lower2.setFixedWidth(130)
         self.populate_tone_combo(self.tone_combo_lower2)
+        self.tone_combo_lower2.currentIndexChanged.connect(self.on_lower2_selected)
         self.frame_layout_lower2.addWidget(self.tone_combo_lower2, 0, 1, 1, 2, alignment=Qt.AlignLeft)
         self.frame_layout_lower2.addWidget(QLabel("Vol:"), 1, 1)
         self.volume_knob_layout_lower2 = GuiHelper.create_knob_input(self.lower2_volume, self.on_volume_change)
@@ -191,3 +194,21 @@ class TopWidgetMixer(QWidget):
                     self.tone_combo_lower2.setCurrentIndex(index)
                     return
             print(f"ID {id_to_select} not found in the combo box.")
+
+    def on_upper2_selected(self, index):
+        if index >= 0:  # Ensure a valid selection
+            selected_text = self.tone_combo_upper2.itemText(index)
+            selected_id = self.tone_combo_upper2.itemData(index, Qt.UserRole)
+            print(f"Selected Tone: {selected_text}, ID: {selected_id}")
+
+    def on_lower1_selected(self, index):
+        if index >= 0:  # Ensure a valid selection
+            selected_text = self.tone_combo_upper2.itemText(index)
+            selected_id = self.tone_combo_upper2.itemData(index, Qt.UserRole)
+            print(f"Selected Tone: {selected_text}, ID: {selected_id}")
+
+    def on_lower2_selected(self, index):
+        if index >= 0:  # Ensure a valid selection
+            selected_text = self.tone_combo_upper2.itemText(index)
+            selected_id = self.tone_combo_upper2.itemData(index, Qt.UserRole)
+            print(f"Selected Tone: {selected_text}, ID: {selected_id}")
