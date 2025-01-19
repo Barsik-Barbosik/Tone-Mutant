@@ -6,6 +6,7 @@ from PySide2.QtWidgets import QWidget, QLabel, QHBoxLayout, QFrame, QGridLayout,
 from constants.enums import ParameterType
 from models.parameter import AdvancedParameter
 from ui.gui_helper import GuiHelper
+from utils.utils import get_all_instruments
 
 
 class TopWidgetMixer(QWidget):
@@ -65,11 +66,11 @@ class TopWidgetMixer(QWidget):
         self.frame_layout_upper2.addWidget(QLabel("<b>UPPER 2</b>"), 0, 0, alignment=Qt.AlignLeft)
         spacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.frame_layout_upper2.addItem(spacer, 0, 0)
-        tone_combo_upper2 = QComboBox()
-        tone_combo_upper2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        tone_combo_upper2.addItems(["001 - StagePno", "002 - GrandPno", "003 - BrtPiano"])
-        tone_combo_upper2.setFixedWidth(130)
-        self.frame_layout_upper2.addWidget(tone_combo_upper2, 0, 1, 1, 2, alignment=Qt.AlignLeft)
+        self.tone_combo_upper2 = QComboBox()
+        self.tone_combo_upper2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.tone_combo_upper2.setFixedWidth(130)
+        self.populate_tone_combo(self.tone_combo_upper2)
+        self.frame_layout_upper2.addWidget(self.tone_combo_upper2, 0, 1, 1, 2, alignment=Qt.AlignLeft)
         self.frame_layout_upper2.addWidget(QLabel("Vol:"), 1, 1)
         self.volume_knob_layout_upper2 = GuiHelper.create_knob_input(self.upper2_volume, self.on_volume_change)
         self.frame_layout_upper2.addLayout(self.volume_knob_layout_upper2, 1, 2)
@@ -88,11 +89,11 @@ class TopWidgetMixer(QWidget):
         self.frame_layout_lower1.addWidget(QLabel("<b>LOWER 1</b>"), 0, 0, alignment=Qt.AlignLeft)
         spacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.frame_layout_lower1.addItem(spacer, 0, 0)
-        tone_combo_lower1 = QComboBox()
-        tone_combo_lower1.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        tone_combo_lower1.addItems(["001 - StagePno", "002 - GrandPno", "003 - BrtPiano"])
-        tone_combo_lower1.setFixedWidth(130)
-        self.frame_layout_lower1.addWidget(tone_combo_lower1, 0, 1, 1, 2, alignment=Qt.AlignLeft)
+        self.tone_combo_lower1 = QComboBox()
+        self.tone_combo_lower1.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.tone_combo_lower1.setFixedWidth(130)
+        self.populate_tone_combo(self.tone_combo_lower1)
+        self.frame_layout_lower1.addWidget(self.tone_combo_lower1, 0, 1, 1, 2, alignment=Qt.AlignLeft)
         self.frame_layout_lower1.addWidget(QLabel("Vol:"), 1, 1)
         self.volume_knob_layout_lower1 = GuiHelper.create_knob_input(self.lower1_volume, self.on_volume_change)
         self.frame_layout_lower1.addLayout(self.volume_knob_layout_lower1, 1, 2)
@@ -111,11 +112,11 @@ class TopWidgetMixer(QWidget):
         self.frame_layout_lower2.addWidget(QLabel("<b>LOWER 2</b>"), 0, 0, alignment=Qt.AlignLeft)
         spacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.frame_layout_lower2.addItem(spacer, 0, 0)
-        tone_combo_lower2 = QComboBox()
-        tone_combo_lower2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        tone_combo_lower2.addItems(["001 - StagePno", "002 - GrandPno", "003 - BrtPiano"])
-        tone_combo_lower2.setFixedWidth(130)
-        self.frame_layout_lower2.addWidget(tone_combo_lower2, 0, 1, 1, 2, alignment=Qt.AlignLeft)
+        self.tone_combo_lower2 = QComboBox()
+        self.tone_combo_lower2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.tone_combo_lower2.setFixedWidth(130)
+        self.populate_tone_combo(self.tone_combo_lower2)
+        self.frame_layout_lower2.addWidget(self.tone_combo_lower2, 0, 1, 1, 2, alignment=Qt.AlignLeft)
         self.frame_layout_lower2.addWidget(QLabel("Vol:"), 1, 1)
         self.volume_knob_layout_lower2 = GuiHelper.create_knob_input(self.lower2_volume, self.on_volume_change)
         self.frame_layout_lower2.addLayout(self.volume_knob_layout_lower2, 1, 2)
@@ -156,3 +157,16 @@ class TopWidgetMixer(QWidget):
             GuiHelper.clear_layout(self.volume_knob_layout_lower2)
             self.volume_knob_layout_lower2 = GuiHelper.create_knob_input(self.lower2_volume, self.on_volume_change)
             self.frame_layout_lower2.addLayout(self.volume_knob_layout_lower2, 1, 2)
+
+    @staticmethod
+    def populate_tone_combo(combo):
+        combo.clear()
+
+        for instrument in get_all_instruments():
+            display_text = "{:03} - {}".format(instrument.id, instrument.name)
+            combo.addItem(display_text, instrument.id)
+
+    def populate_all_tone_combos(self):
+        self.populate_tone_combo(self.tone_combo_upper2)
+        self.populate_tone_combo(self.tone_combo_lower1)
+        self.populate_tone_combo(self.tone_combo_lower2)

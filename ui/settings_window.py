@@ -124,6 +124,7 @@ class SettingsWindow(QWidget):
         if is_synth_model_changed:
             self.core.main_window.reload_menu_bar()
             self._refresh_instrument_list()
+            self.core.main_window.top_widget.populate_all_tone_combos()
 
         if is_expert_mode_changed:
             self.core.main_window.reload_menu_bar()
