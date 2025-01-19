@@ -69,6 +69,11 @@ class Core(QObject):
             self.request_advanced_parameters()
             self.request_volumes()
 
+            # upper2, lower1 and lower2 tone names
+            self.request_custom_parameter(SysexType.TONE_NUMBER.value, 1, 2, 3, 0, 0)
+            self.request_custom_parameter(SysexType.TONE_NUMBER.value, 2, 2, 3, 0, 0)
+            self.request_custom_parameter(SysexType.TONE_NUMBER.value, 3, 2, 3, 0, 0)
+
         self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
 
         worker = Worker(self.redraw_main_and_advanced_params_pages)
@@ -111,18 +116,23 @@ class Core(QObject):
         except Exception as e:
             self.show_error_msg(str(e))
 
-    def process_tone_number_from_performance_params_response(self, tone_number):
+    def process_tone_number_from_performance_params_response(self, tone_number, block_id):
         for instrument in get_all_instruments():
             if instrument.id == tone_number:
                 self.log(f"[INFO] Synth tone name (by number from performance params): {instrument.name}")
-                self.tone.name = instrument.name
-                self.tone.parent_tone = instrument
+                print(f"[INFO] Synth tone name (by number from performance params): {instrument.name}")
 
-                self.main_window.central_widget.instrument_list.set_current_row_from_thread(
-                    self.tone.parent_tone.id - 1)
+                if block_id == 0:
+                    self.tone.name = instrument.name
+                    self.tone.parent_tone = instrument
 
-                # tone_id_and_name = self.get_tone_id_and_name()
-                self.main_window.top_widget.tone_name_input.setText(self.tone.name)
+                    self.main_window.central_widget.instrument_list.set_current_row_from_thread(
+                        self.tone.parent_tone.id - 1)
+
+                    # tone_id_and_name = self.get_tone_id_and_name()
+                    self.main_window.top_widget.tone_name_input.setText(self.tone.name)
+                else:
+                    self.main_window.top_widget.select_item_by_id(block_id, instrument.id)
 
                 break
 

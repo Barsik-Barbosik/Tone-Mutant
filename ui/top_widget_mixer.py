@@ -135,8 +135,6 @@ class TopWidgetMixer(QWidget):
 
     @Slot()
     def redraw_volume_knob(self, param_set: int, volume):
-        print(f"redraw_volume_knob... param_set: {param_set}, volume: {volume}")
-
         if param_set == 0:
             self.upper1_volume.value = volume
             GuiHelper.clear_layout(self.volume_knob_layout_upper1)
@@ -170,3 +168,26 @@ class TopWidgetMixer(QWidget):
         self.populate_tone_combo(self.tone_combo_upper2)
         self.populate_tone_combo(self.tone_combo_lower1)
         self.populate_tone_combo(self.tone_combo_lower2)
+
+    def select_item_by_id(self, block_id, id_to_select):
+        if block_id == 1:
+            for index in range(self.tone_combo_upper2.count()):
+                item_data = self.tone_combo_upper2.itemData(index, Qt.UserRole)
+                if item_data == id_to_select:
+                    self.tone_combo_upper2.setCurrentIndex(index)
+                    return
+            print(f"ID {id_to_select} not found in the combo box.")
+        elif block_id == 2:
+            for index in range(self.tone_combo_lower1.count()):
+                item_data = self.tone_combo_lower1.itemData(index, Qt.UserRole)
+                if item_data == id_to_select:
+                    self.tone_combo_lower1.setCurrentIndex(index)
+                    return
+            print(f"ID {id_to_select} not found in the combo box.")
+        elif block_id == 3:
+            for index in range(self.tone_combo_lower2.count()):
+                item_data = self.tone_combo_lower2.itemData(index, Qt.UserRole)
+                if item_data == id_to_select:
+                    self.tone_combo_lower2.setCurrentIndex(index)
+                    return
+            print(f"ID {id_to_select} not found in the combo box.")

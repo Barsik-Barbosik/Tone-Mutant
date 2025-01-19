@@ -189,7 +189,7 @@ class MidiService:
             block_id = lsb_msb_to_int(message[BLOCK_INDEX], message[BLOCK_INDEX + 1])
             sysex_type = lsb_msb_to_int(message[SYSEX_TYPE_INDEX], message[SYSEX_TYPE_INDEX + 1])
             param_set = lsb_msb_to_int(message[PARAM_SET_INDEX], message[PARAM_SET_INDEX + 1])
-            print(f"param_set: {param_set}")
+
             if message[7] == MEMORY_1:
                 self._process_memory_1_message(sysex_type, message)
             elif message[7] == MEMORY_3:
@@ -260,7 +260,7 @@ class MidiService:
             elif tone_tumber_response in range(820, 920):
                 tone_number = tone_tumber_response - 19
 
-            self.core.process_tone_number_from_performance_params_response(tone_number)
+            self.core.process_tone_number_from_performance_params_response(tone_number, block_id)
         else:
             self.log("[MIDI IN] SysEx", message)
 
