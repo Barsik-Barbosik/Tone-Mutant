@@ -52,6 +52,7 @@ class Core(QObject):
         self.log("[INFO] Synchronizing tone...")
         self.midi_service.active_sync_job_count = 0
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
+        self.main_window.top_widget.tone_name_input.setStyleSheet("color: black")
 
         try:
             self.close_midi_ports()
@@ -393,27 +394,22 @@ class Core(QObject):
             self.main_window.central_widget.instrument_list.clearSelection()
 
     def countdown_and_autosynchronize(self, timeout):
-        self.main_window.top_widget.tone_name_input.setStyleSheet("color: black")
-        is_active = self.timeout > 0
-
-        if is_active:
-            # worker exists: reset timer and exit
-            self.timeout = timeout
-        else:
-            # start countdown
-            self.timeout = timeout
-            while True:
-                is_active = self.timeout > 0
-
-                if is_active:
-                    text = "Autosynchronize countdown: " + str(self.timeout)
+        try:
+            if self.timeout > 0:
+                # countdown timer exists: reset time and exit
+                self.timeout = timeout
+            else:
+                # start countdown
+                self.timeout = timeout
+                while self.timeout > 0:
+                    text = f"Auto-synchronize countdown: {self.timeout}"
                     self.status_msg_signal.emit(text, 1000)
-                    self.timeout = self.timeout - 1
+                    self.timeout -= 1
                     time.sleep(1)
-                else:
-                    break
 
-            self.synchronize_tone_signal.emit()
+                self.synchronize_tone_signal.emit()
+        except Exception as e:
+            self.show_error_msg(str(e))
 
     # Open midi ports
     def open_midi_ports(self):

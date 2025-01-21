@@ -154,7 +154,7 @@ class CentralWidget(QWidget):
         current_tab_name = self.get_current_tab_name()
 
         if current_tab_name == TabName.MAIN_PARAMETERS:
-            self.core.show_status_msg("Main parameters for editing tone", 3000)
+            self.core.show_status_msg("Ready", 3000)
         elif current_tab_name in [TabName.DSP_1, TabName.DSP_2, TabName.DSP_3, TabName.DSP_4]:
             self.core.show_status_msg("Parameters for " + current_tab_name.value + " module", 3000)
             if current_tab_name == TabName.DSP_1:
