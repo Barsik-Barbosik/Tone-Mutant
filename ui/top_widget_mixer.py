@@ -18,15 +18,14 @@ class TopWidgetMixer(QWidget):
         super().__init__(parent, *args, **kwargs)
         self.core = parent.core
 
-        # Maybe param 234 (category 2 & memory 3) should be used for volume... But 200 is working fine for now.
-        self.upper1_volume = AdvancedParameter(200, 200, 0, "UPPER 1 Volume",
+        self.upper1_volume = AdvancedParameter(234, 234, 0, "UPPER 1 Volume",
                                                "Volume of the note. Only notes played on the keyboard are affected by this (not MIDI IN or rhythms).",
                                                ParameterType.KNOB, [0, 127])
-        self.upper2_volume = AdvancedParameter(200, 200, 0, "UPPER 2 Volume", "Volume of the note.",
+        self.upper2_volume = AdvancedParameter(234, 234, 1, "UPPER 2 Volume", "Volume of the note.",
                                                ParameterType.KNOB, [0, 127])
-        self.lower1_volume = AdvancedParameter(200, 200, 0, "LOWER 1 Volume", "Volume of the note. ",
+        self.lower1_volume = AdvancedParameter(234, 234, 2, "LOWER 1 Volume", "Volume of the note. ",
                                                ParameterType.KNOB, [0, 127])
-        self.lower2_volume = AdvancedParameter(200, 200, 0, "LOWER 2 Volume", "Volume of the note.",
+        self.lower2_volume = AdvancedParameter(234, 234, 3, "LOWER 2 Volume", "Volume of the note.",
                                                ParameterType.KNOB, [0, 127])
 
         # Param number 237 works with category 2 & memory 3
@@ -116,28 +115,25 @@ class TopWidgetMixer(QWidget):
 
         # Volume
         frame_layout.addWidget(QLabel("Vol:"), 1, 1)
-        volume_knob_layout = GuiHelper.create_knob_input(volume_var, self.on_volume_change)
+        volume_knob_layout = GuiHelper.create_knob_input(volume_var, self.on_knob_change)
         if volume_knob_name:
             setattr(self, volume_knob_name, volume_knob_layout)
         frame_layout.addLayout(volume_knob_layout, 1, 2)
 
         # Pan
         frame_layout.addWidget(QLabel("Pan:"), 2, 1)
-        pan_knob_layout = GuiHelper.create_knob_input(pan_var, self.on_pan_change)
+        pan_knob_layout = GuiHelper.create_knob_input(pan_var, self.on_knob_change)
         if pan_knob_name:
             setattr(self, pan_knob_name, pan_knob_layout)
         frame_layout.addLayout(pan_knob_layout, 2, 2)
 
         return frame
 
-    def on_volume_change(self, parameter):
-        self.core.send_volume_change_sysex(parameter)
-
-    def on_pan_change(self, parameter):
-        self.core.send_pan_change_sysex(parameter)
+    def on_knob_change(self, parameter):
+        self.core.send_performance_param_change_sysex(parameter)
 
     @Slot()
-    def redraw_volume_knob(self, param_set: int, volume: int):
+    def redraw_volume_knob(self, block0: int, volume: int):
         volume_knob_layouts = [
             (self.upper1_volume, self.volume_knob_layout_upper1, self.frame_layout_upper1),
             (self.upper2_volume, self.volume_knob_layout_upper2, self.frame_layout_upper2),
@@ -145,11 +141,11 @@ class TopWidgetMixer(QWidget):
             (self.lower2_volume, self.volume_knob_layout_lower2, self.frame_layout_lower2)
         ]
 
-        if 0 <= param_set < len(volume_knob_layouts):
-            volume_param, layout, frame_layout = volume_knob_layouts[param_set]
+        if 0 <= block0 < len(volume_knob_layouts):
+            volume_param, layout, frame_layout = volume_knob_layouts[block0]
             volume_param.value = volume
             GuiHelper.clear_layout(layout)
-            layout = GuiHelper.create_knob_input(volume_param, self.on_volume_change)
+            layout = GuiHelper.create_knob_input(volume_param, self.on_knob_change)
             frame_layout.addLayout(layout, 1, 2)
 
     @Slot()
@@ -165,7 +161,7 @@ class TopWidgetMixer(QWidget):
             pan_param, layout, frame_layout = pan_knob_layouts[block0]
             pan_param.value = pan
             GuiHelper.clear_layout(layout)
-            layout = GuiHelper.create_knob_input(pan_param, self.on_pan_change)
+            layout = GuiHelper.create_knob_input(pan_param, self.on_knob_change)
             frame_layout.addLayout(layout, 2, 2)
 
     @staticmethod

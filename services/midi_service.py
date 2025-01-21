@@ -57,7 +57,7 @@ class MidiService:
             self.input_name = None
             self.output_name = None
             self.channel = None
-            self.short_params = [200, 237]  # volume, pan
+            self.short_params = [234, 237]  # volume, pan
             self.long_params = []
 
             for param in self.core.tone.main_parameter_list:
@@ -322,10 +322,10 @@ class MidiService:
         sysex = self.make_sysex_short_value(block0, parameter, value)
         self.send_sysex(sysex)
 
-    # Same as send_parameter_change_short_sysex, but with parameter_set
-    def send_parameter_change_short_sysex2(self, block0: int, parameter: int, parameter_set: int, value: int):
-        sysex = self.make_sysex_short_value2(block0, parameter, parameter_set, value)
-        self.send_sysex(sysex)
+    # # Same as send_parameter_change_short_sysex, but with parameter_set
+    # def send_parameter_change_short_sysex_2(self, block0: int, parameter: int, parameter_set: int, value: int):
+    #     sysex = self.make_sysex_short_value_2(block0, parameter, parameter_set, value)
+    #     self.send_sysex(sysex)
 
     def send_atk_rel_parameter_change_sysex(self, block0: int, parameter: int, value: int):
         sysex = self.make_sysex_8bit_value(block0, parameter, value)
@@ -371,15 +371,15 @@ class MidiService:
             + int_to_hex(value) \
             + "F7"
 
-    # Same as make_sysex_short_value, but with parameter_set
-    @staticmethod
-    def make_sysex_short_value2(block0: int, parameter: int, parameter_set: int, value: int) -> str:
-        return "F0 44 19 01 7F 01 03 03 " + int_to_lsb_msb(parameter_set) + " 00 00 00 00 00 00" \
-            + int_to_lsb_msb(block0) \
-            + int_to_lsb_msb(parameter) \
-            + "00 00 00 00" \
-            + int_to_hex(value) \
-            + "F7"
+    # # Same as make_sysex_short_value, but with parameter_set
+    # @staticmethod
+    # def make_sysex_short_value_2(block0: int, parameter: int, parameter_set: int, value: int) -> str:
+    #     return "F0 44 19 01 7F 01 03 03 " + int_to_lsb_msb(parameter_set) + " 00 00 00 00 00 00" \
+    #         + int_to_lsb_msb(block0) \
+    #         + int_to_lsb_msb(parameter) \
+    #         + "00 00 00 00" \
+    #         + int_to_hex(value) \
+    #         + "F7"
 
     # Special case for "Attack time" and "Release time" parameters
     @staticmethod
