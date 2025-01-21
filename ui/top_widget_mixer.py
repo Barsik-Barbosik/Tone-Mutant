@@ -3,6 +3,7 @@ from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QWidget, QLabel, QHBoxLayout, QFrame, QGridLayout, QComboBox, QSizePolicy, QSpacerItem, \
     QLineEdit
 
+from constants.constants import DEFAULT_TONE_NAME
 from constants.enums import ParameterType
 from models.parameter import AdvancedParameter
 from ui.gui_helper import GuiHelper
@@ -37,107 +38,97 @@ class TopWidgetMixer(QWidget):
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        self.tone_name_input = QLineEdit("StagePno")
-        self.tone_name_input.setFixedWidth(130)
-        self.tone_name_input.setAlignment(Qt.AlignCenter)
+        # Tone Name Input
+        self.tone_name_input = self.create_tone_name_input(DEFAULT_TONE_NAME)
+
+        # Add Blocks for UPPER 1, UPPER 2, LOWER 1, LOWER 2
+        self.layout.addWidget(self.create_tone_block("UPPER 1", self.tone_name_input,
+                                                     self.upper1_volume, self.upper1_pan,
+                                                     volume_knob_name="volume_knob_layout_upper1",
+                                                     pan_knob_name="pan_knob_layout_upper1",
+                                                     frame_layout_name="frame_layout_upper1"))
+        self.layout.addWidget(self.create_tone_block("UPPER 2", None, self.upper2_volume, self.upper2_pan,
+                                                     self.on_upper2_selected, "tone_combo_upper2",
+                                                     volume_knob_name="volume_knob_layout_upper2",
+                                                     pan_knob_name="pan_knob_layout_upper2",
+                                                     frame_layout_name="frame_layout_upper2"))
+        self.layout.addWidget(self.create_tone_block("LOWER 1", None, self.lower1_volume, self.lower1_pan,
+                                                     self.on_lower1_selected, "tone_combo_lower1",
+                                                     volume_knob_name="volume_knob_layout_lower1",
+                                                     pan_knob_name="pan_knob_layout_lower1",
+                                                     frame_layout_name="frame_layout_lower1"))
+        self.layout.addWidget(self.create_tone_block("LOWER 2", None, self.lower2_volume, self.lower2_pan,
+                                                     self.on_lower2_selected, "tone_combo_lower2",
+                                                     volume_knob_name="volume_knob_layout_lower2",
+                                                     pan_knob_name="pan_knob_layout_lower2",
+                                                     frame_layout_name="frame_layout_lower2"))
+
+        # Signals
+        self.redraw_volume_knob_signal.connect(self.redraw_volume_knob)
+        self.redraw_pan_knob_signal.connect(self.redraw_pan_knob)
+
+    @staticmethod
+    def create_tone_name_input(default_name):
+        tone_name_input = QLineEdit(default_name)
+        tone_name_input.setFixedWidth(130)
+        tone_name_input.setAlignment(Qt.AlignCenter)
         font = QFont()
         font.setPointSize(14)
         font.setBold(True)
-        self.tone_name_input.setFont(font)
+        tone_name_input.setFont(font)
+        return tone_name_input
 
-        # Block for UPPER 1
-        frame_upper1 = QFrame()
-        frame_upper1.setObjectName("upper-frame")
-        self.frame_layout_upper1 = QGridLayout(frame_upper1)
-        self.frame_layout_upper1.setVerticalSpacing(2)
-        self.frame_layout_upper1.setContentsMargins(10, 10, 10, 5)
+    def create_tone_block(self, label, tone_widget, volume_var, pan_var, tone_change_handler=None,
+                          tone_combo_name=None, volume_knob_name=None, pan_knob_name=None, frame_layout_name=None):
+        frame = QFrame()
+        frame.setObjectName("upper-frame")
+        frame_layout = QGridLayout(frame)
+        frame_layout.setVerticalSpacing(2)
+        frame_layout.setContentsMargins(10, 10, 10, 5)
 
-        self.frame_layout_upper1.addWidget(QLabel("<b>UPPER 1</b>"), 0, 0, alignment=Qt.AlignLeft)
+        # Assign the frame layout to an instance attribute if a name is provided
+        if frame_layout_name:
+            setattr(self, frame_layout_name, frame_layout)
+
+        # Title
+        frame_layout.addWidget(QLabel(f"<b>{label}</b>"), 0, 0, alignment=Qt.AlignLeft)
+
+        # Spacer
         spacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.frame_layout_upper1.addItem(spacer, 0, 0)
-        self.frame_layout_upper1.addWidget(self.tone_name_input, 0, 1, 1, 2, alignment=Qt.AlignLeft)
-        self.frame_layout_upper1.addWidget(QLabel("Vol:"), 1, 1)
-        self.volume_knob_layout_upper1 = GuiHelper.create_knob_input(self.upper1_volume, self.on_volume_change)
-        self.frame_layout_upper1.addLayout(self.volume_knob_layout_upper1, 1, 2)
-        self.frame_layout_upper1.addWidget(QLabel("Pan:"), 2, 1)
-        self.pan_knob_layout_upper1 = GuiHelper.create_knob_input(self.upper1_pan, self.on_pan_change)
-        self.frame_layout_upper1.addLayout(self.pan_knob_layout_upper1, 2, 2)
-        self.layout.addWidget(frame_upper1)
+        frame_layout.addItem(spacer, 0, 0)
 
-        # Block for UPPER 2
-        frame_upper2 = QFrame()
-        frame_upper2.setObjectName("upper-frame")
-        self.frame_layout_upper2 = QGridLayout(frame_upper2)
-        self.frame_layout_upper2.setVerticalSpacing(2)
-        self.frame_layout_upper2.setContentsMargins(10, 10, 10, 5)
+        # Tone Widget or Combo Box
+        if tone_widget:
+            frame_layout.addWidget(tone_widget, 0, 1, 1, 2, alignment=Qt.AlignLeft)
+        else:
+            tone_combo = QComboBox()
+            tone_combo.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            tone_combo.setFixedWidth(130)
+            self.populate_tone_combo(tone_combo)
+            if tone_change_handler:
+                tone_combo.currentIndexChanged.connect(tone_change_handler)
 
-        self.frame_layout_upper2.addWidget(QLabel("<b>UPPER 2</b>"), 0, 0, alignment=Qt.AlignLeft)
-        spacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.frame_layout_upper2.addItem(spacer, 0, 0)
-        self.tone_combo_upper2 = QComboBox()
-        self.tone_combo_upper2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self.tone_combo_upper2.setFixedWidth(130)
-        self.populate_tone_combo(self.tone_combo_upper2)
-        self.tone_combo_upper2.currentIndexChanged.connect(self.on_upper2_selected)
-        self.frame_layout_upper2.addWidget(self.tone_combo_upper2, 0, 1, 1, 2, alignment=Qt.AlignLeft)
-        self.frame_layout_upper2.addWidget(QLabel("Vol:"), 1, 1)
-        self.volume_knob_layout_upper2 = GuiHelper.create_knob_input(self.upper2_volume, self.on_volume_change)
-        self.frame_layout_upper2.addLayout(self.volume_knob_layout_upper2, 1, 2)
-        self.frame_layout_upper2.addWidget(QLabel("Pan:"), 2, 1)
-        self.pan_knob_layout_upper2 = GuiHelper.create_knob_input(self.upper2_pan, self.on_pan_change)
-        self.frame_layout_upper2.addLayout(self.pan_knob_layout_upper2, 2, 2)
-        self.layout.addWidget(frame_upper2)
+            # Assign the combo box to an instance attribute if a name is provided
+            if tone_combo_name:
+                setattr(self, tone_combo_name, tone_combo)
 
-        # Block for LOWER 1
-        frame_lower1 = QFrame()
-        frame_lower1.setObjectName("upper-frame")
-        self.frame_layout_lower1 = QGridLayout(frame_lower1)
-        self.frame_layout_lower1.setVerticalSpacing(2)
-        self.frame_layout_lower1.setContentsMargins(10, 10, 10, 5)
+            frame_layout.addWidget(tone_combo, 0, 1, 1, 2, alignment=Qt.AlignLeft)
 
-        self.frame_layout_lower1.addWidget(QLabel("<b>LOWER 1</b>"), 0, 0, alignment=Qt.AlignLeft)
-        spacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.frame_layout_lower1.addItem(spacer, 0, 0)
-        self.tone_combo_lower1 = QComboBox()
-        self.tone_combo_lower1.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self.tone_combo_lower1.setFixedWidth(130)
-        self.populate_tone_combo(self.tone_combo_lower1)
-        self.tone_combo_lower1.currentIndexChanged.connect(self.on_lower1_selected)
-        self.frame_layout_lower1.addWidget(self.tone_combo_lower1, 0, 1, 1, 2, alignment=Qt.AlignLeft)
-        self.frame_layout_lower1.addWidget(QLabel("Vol:"), 1, 1)
-        self.volume_knob_layout_lower1 = GuiHelper.create_knob_input(self.lower1_volume, self.on_volume_change)
-        self.frame_layout_lower1.addLayout(self.volume_knob_layout_lower1, 1, 2)
-        self.frame_layout_lower1.addWidget(QLabel("Pan:"), 2, 1)
-        self.pan_knob_layout_lower1 = GuiHelper.create_knob_input(self.lower1_pan, self.on_pan_change)
-        self.frame_layout_lower1.addLayout(self.pan_knob_layout_lower1, 2, 2)
-        self.layout.addWidget(frame_lower1)
+        # Volume
+        frame_layout.addWidget(QLabel("Vol:"), 1, 1)
+        volume_knob_layout = GuiHelper.create_knob_input(volume_var, self.on_volume_change)
+        if volume_knob_name:
+            setattr(self, volume_knob_name, volume_knob_layout)
+        frame_layout.addLayout(volume_knob_layout, 1, 2)
 
-        # Block for LOWER 2
-        frame_lower2 = QFrame()
-        frame_lower2.setObjectName("upper-frame")
-        self.frame_layout_lower2 = QGridLayout(frame_lower2)
-        self.frame_layout_lower2.setVerticalSpacing(2)
-        self.frame_layout_lower2.setContentsMargins(10, 10, 10, 5)
+        # Pan
+        frame_layout.addWidget(QLabel("Pan:"), 2, 1)
+        pan_knob_layout = GuiHelper.create_knob_input(pan_var, self.on_pan_change)
+        if pan_knob_name:
+            setattr(self, pan_knob_name, pan_knob_layout)
+        frame_layout.addLayout(pan_knob_layout, 2, 2)
 
-        self.frame_layout_lower2.addWidget(QLabel("<b>LOWER 2</b>"), 0, 0, alignment=Qt.AlignLeft)
-        spacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.frame_layout_lower2.addItem(spacer, 0, 0)
-        self.tone_combo_lower2 = QComboBox()
-        self.tone_combo_lower2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self.tone_combo_lower2.setFixedWidth(130)
-        self.populate_tone_combo(self.tone_combo_lower2)
-        self.tone_combo_lower2.currentIndexChanged.connect(self.on_lower2_selected)
-        self.frame_layout_lower2.addWidget(self.tone_combo_lower2, 0, 1, 1, 2, alignment=Qt.AlignLeft)
-        self.frame_layout_lower2.addWidget(QLabel("Vol:"), 1, 1)
-        self.volume_knob_layout_lower2 = GuiHelper.create_knob_input(self.lower2_volume, self.on_volume_change)
-        self.frame_layout_lower2.addLayout(self.volume_knob_layout_lower2, 1, 2)
-        self.frame_layout_lower2.addWidget(QLabel("Pan:"), 2, 1)
-        self.pan_knob_layout_lower2 = GuiHelper.create_knob_input(self.lower2_pan, self.on_pan_change)
-        self.frame_layout_lower2.addLayout(self.pan_knob_layout_lower2, 2, 2)
-        self.layout.addWidget(frame_lower2)
-
-        self.redraw_volume_knob_signal.connect(self.redraw_volume_knob)
-        self.redraw_pan_knob_signal.connect(self.redraw_pan_knob)
+        return frame
 
     def on_volume_change(self, parameter):
         self.core.send_volume_change_sysex(parameter)
@@ -147,49 +138,35 @@ class TopWidgetMixer(QWidget):
 
     @Slot()
     def redraw_volume_knob(self, param_set: int, volume: int):
-        if param_set == 0:
-            self.upper1_volume.value = volume
-            GuiHelper.clear_layout(self.volume_knob_layout_upper1)
-            self.volume_knob_layout_upper1 = GuiHelper.create_knob_input(self.upper1_volume, self.on_volume_change)
-            self.frame_layout_upper1.addLayout(self.volume_knob_layout_upper1, 1, 2)
-        elif param_set == 1:
-            self.upper2_volume.value = volume
-            GuiHelper.clear_layout(self.volume_knob_layout_upper2)
-            self.volume_knob_layout_upper2 = GuiHelper.create_knob_input(self.upper2_volume, self.on_volume_change)
-            self.frame_layout_upper2.addLayout(self.volume_knob_layout_upper2, 1, 2)
-        elif param_set == 2:
-            self.lower1_volume.value = volume
-            GuiHelper.clear_layout(self.volume_knob_layout_lower1)
-            self.volume_knob_layout_lower1 = GuiHelper.create_knob_input(self.lower1_volume, self.on_volume_change)
-            self.frame_layout_lower1.addLayout(self.volume_knob_layout_lower1, 1, 2)
-        elif param_set == 3:
-            self.lower2_volume.value = volume
-            GuiHelper.clear_layout(self.volume_knob_layout_lower2)
-            self.volume_knob_layout_lower2 = GuiHelper.create_knob_input(self.lower2_volume, self.on_volume_change)
-            self.frame_layout_lower2.addLayout(self.volume_knob_layout_lower2, 1, 2)
+        volume_knob_layouts = [
+            (self.upper1_volume, self.volume_knob_layout_upper1, self.frame_layout_upper1),
+            (self.upper2_volume, self.volume_knob_layout_upper2, self.frame_layout_upper2),
+            (self.lower1_volume, self.volume_knob_layout_lower1, self.frame_layout_lower1),
+            (self.lower2_volume, self.volume_knob_layout_lower2, self.frame_layout_lower2)
+        ]
+
+        if 0 <= param_set < len(volume_knob_layouts):
+            volume_param, layout, frame_layout = volume_knob_layouts[param_set]
+            volume_param.value = volume
+            GuiHelper.clear_layout(layout)
+            layout = GuiHelper.create_knob_input(volume_param, self.on_volume_change)
+            frame_layout.addLayout(layout, 1, 2)
 
     @Slot()
     def redraw_pan_knob(self, block0: int, pan: int):
-        if block0 == 0:
-            self.upper1_pan.value = pan
-            GuiHelper.clear_layout(self.pan_knob_layout_upper1)
-            self.pan_knob_layout_upper1 = GuiHelper.create_knob_input(self.upper1_pan, self.on_pan_change)
-            self.frame_layout_upper1.addLayout(self.pan_knob_layout_upper1, 2, 2)
-        elif block0 == 1:
-            self.upper2_pan.value = pan
-            GuiHelper.clear_layout(self.pan_knob_layout_upper2)
-            self.pan_knob_layout_upper2 = GuiHelper.create_knob_input(self.upper2_pan, self.on_pan_change)
-            self.frame_layout_upper2.addLayout(self.pan_knob_layout_upper2, 2, 2)
-        elif block0 == 2:
-            self.lower1_pan.value = pan
-            GuiHelper.clear_layout(self.pan_knob_layout_lower1)
-            self.pan_knob_layout_lower1 = GuiHelper.create_knob_input(self.lower1_pan, self.on_pan_change)
-            self.frame_layout_lower1.addLayout(self.pan_knob_layout_lower1, 2, 2)
-        elif block0 == 3:
-            self.lower2_pan.value = pan
-            GuiHelper.clear_layout(self.pan_knob_layout_lower2)
-            self.pan_knob_layout_lower2 = GuiHelper.create_knob_input(self.lower2_pan, self.on_pan_change)
-            self.frame_layout_lower2.addLayout(self.pan_knob_layout_lower2, 2, 2)
+        pan_knob_layouts = [
+            (self.upper1_pan, self.pan_knob_layout_upper1, self.frame_layout_upper1),
+            (self.upper2_pan, self.pan_knob_layout_upper2, self.frame_layout_upper2),
+            (self.lower1_pan, self.pan_knob_layout_lower1, self.frame_layout_lower1),
+            (self.lower2_pan, self.pan_knob_layout_lower2, self.frame_layout_lower2)
+        ]
+
+        if 0 <= block0 < len(pan_knob_layouts):
+            pan_param, layout, frame_layout = pan_knob_layouts[block0]
+            pan_param.value = pan
+            GuiHelper.clear_layout(layout)
+            layout = GuiHelper.create_knob_input(pan_param, self.on_pan_change)
+            frame_layout.addLayout(layout, 2, 2)
 
     @staticmethod
     def populate_tone_combo(combo):
@@ -205,42 +182,32 @@ class TopWidgetMixer(QWidget):
         self.populate_tone_combo(self.tone_combo_lower2)
 
     def select_item_by_id(self, block0, id_to_select):
-        if block0 == 1:
-            for index in range(self.tone_combo_upper2.count()):
-                item_data = self.tone_combo_upper2.itemData(index, Qt.UserRole)
+        tone_combos = {
+            1: self.tone_combo_upper2,
+            2: self.tone_combo_lower1,
+            3: self.tone_combo_lower2
+        }
+
+        combo = tone_combos.get(block0)
+        if combo:
+            for index in range(combo.count()):
+                item_data = combo.itemData(index, Qt.UserRole)
                 if item_data == id_to_select:
-                    self.tone_combo_upper2.setCurrentIndex(index)
-                    return
-        elif block0 == 2:
-            for index in range(self.tone_combo_lower1.count()):
-                item_data = self.tone_combo_lower1.itemData(index, Qt.UserRole)
-                if item_data == id_to_select:
-                    self.tone_combo_lower1.setCurrentIndex(index)
-                    return
-        elif block0 == 3:
-            for index in range(self.tone_combo_lower2.count()):
-                item_data = self.tone_combo_lower2.itemData(index, Qt.UserRole)
-                if item_data == id_to_select:
-                    self.tone_combo_lower2.setCurrentIndex(index)
+                    combo.setCurrentIndex(index)
                     return
 
     def on_upper2_selected(self, index):
-        if index >= 0:
-            selected_text = self.tone_combo_upper2.itemText(index)
-            selected_id = self.tone_combo_upper2.itemData(index, Qt.UserRole)
-            self.core.log(f"[INFO] UPPER 2 Tone: {selected_text}")
-            self.core.send_instrument_change_sysex(1, selected_id)
+        self._on_tone_selected(index, self.tone_combo_upper2, 1, "UPPER 2 Tone")
 
     def on_lower1_selected(self, index):
-        if index >= 0:
-            selected_text = self.tone_combo_upper2.itemText(index)
-            selected_id = self.tone_combo_upper2.itemData(index, Qt.UserRole)
-            self.core.log(f"[INFO] LOWER 1 Tone: {selected_text}")
-            self.core.send_instrument_change_sysex(2, selected_id)
+        self._on_tone_selected(index, self.tone_combo_upper2, 2, "LOWER 1 Tone")
 
     def on_lower2_selected(self, index):
+        self._on_tone_selected(index, self.tone_combo_upper2, 3, "LOWER 2 Tone")
+
+    def _on_tone_selected(self, index, combo_box, block, log_prefix):
         if index >= 0:
-            selected_text = self.tone_combo_upper2.itemText(index)
-            selected_id = self.tone_combo_upper2.itemData(index, Qt.UserRole)
-            self.core.log(f"[INFO] LOWER 2 Tone: {selected_text}")
-            self.core.send_instrument_change_sysex(3, selected_id)
+            selected_text = combo_box.itemText(index)
+            selected_id = combo_box.itemData(index, Qt.UserRole)
+            self.core.log(f"[INFO] {log_prefix}: {selected_text}")
+            self.core.send_instrument_change_sysex(block, selected_id)
