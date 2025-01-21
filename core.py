@@ -2,6 +2,7 @@ import configparser
 import copy
 import os
 import random
+import string
 import time
 from typing import Union
 
@@ -837,3 +838,21 @@ class Core(QObject):
 
         self.pause_status_bar_updates(False)
         self.main_window.loading_animation.stop()
+
+    def on_random_name_button_pressed(self):
+        self.tone.name = self.generate_random_word()
+        self.main_window.top_widget.tone_name_input.setText(self.tone.name)
+
+    @staticmethod
+    def generate_random_word():
+        letters = string.ascii_letters
+        digits = string.digits
+        symbols = "-_"
+
+        first_char = random.choice(string.ascii_uppercase)
+        second_char = random.choice(string.ascii_lowercase + symbols)
+        third_char = random.choice(letters + symbols)
+        middle_chars = ''.join(random.choices(letters + digits + symbols, k=4))
+        last_char = random.choice(letters + digits + "!")
+
+        return first_char + second_char + third_char + middle_chars + last_char
