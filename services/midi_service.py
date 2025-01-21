@@ -160,6 +160,18 @@ class MidiService:
               + int_to_lsb_msb(parameter) + "00 00" + int_to_lsb_msb(size) + "F7"
         self.send_sysex(msg)
 
+    # def send_parameter_value_full(self,
+    #                               block_id: int,
+    #                               parameter: int,
+    #                               category: int,
+    #                               memory: int,
+    #                               parameter_set: int,
+    #                               size: int):
+    #     msg = "F0 44 19 01 7F 01" + int_to_hex(category) + int_to_hex(memory) \
+    #           + int_to_lsb_msb(parameter_set) + "00 00 00 00 00 00" + int_to_lsb_msb(block_id) \
+    #           + int_to_lsb_msb(parameter) + "00 00" + int_to_lsb_msb(size) + "F7"
+    #     self.send_sysex(msg)
+
     def request_dsp_module(self, block_id: int):
         msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"
         msg_block_id = int_to_lsb_msb(block_id)
@@ -315,14 +327,15 @@ class MidiService:
         sysex = self.make_sysex_8bit_value(block_id, parameter, value)
         self.send_sysex(sysex)
 
-    def send_change_tone_msg(self, tone_number):
+    def send_change_tone_msg(self, tone_number, block0):
         internal_number = tone_number - 1
         if tone_number > 800:
             internal_number = tone_number + 19
-        msg = "F0 44 19 01 7F 01 02 03 00 00 00 00 00 00 00 00 00 00 64 01 00 00 00 00" \
+        msg = "F0 44 19 01 7F 01 02 03 00 00 00 00 00 00 00 00 " + int_to_lsb_msb(block0) + " 64 01 00 00 00 00" \
               + int_to_lsb_msb(internal_number) + "F7"
         self.send_sysex(msg)
 
+    # for calibration tones
     def send_change_tone_msg_2(self, tone_number):
         msg = "F0 44 19 01 7F 01 02 03 00 00 00 00 00 00 00 00 00 00 64 01 00 00 00 00" \
               + int_to_lsb_msb(tone_number) + "F7"

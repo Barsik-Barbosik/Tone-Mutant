@@ -333,7 +333,7 @@ class Core(QObject):
             self.tone.parent_tone = instrument
             self.log(f"[INFO] Selected tone: {instrument_id} - {self.tone.parent_tone.name}")
             try:
-                self.midi_service.send_change_tone_msg(instrument_id)
+                self.midi_service.send_change_tone_msg(instrument_id, 0)
                 self.main_window.top_widget.tone_name_input.setStyleSheet("color: #1B998B")
                 self.synchronize_tone_signal.emit()
             except Exception as e:
@@ -449,7 +449,7 @@ class Core(QObject):
                 if self.tone.parent_tone is not None and self.tone.parent_tone.id is not None:
                     # Parent tone is found: automatically select instrument
                     try:
-                        self.midi_service.send_change_tone_msg(self.tone.parent_tone.id)
+                        self.midi_service.send_change_tone_msg(self.tone.parent_tone.id, 0)
                         self.main_window.top_widget.tone_name_input.setStyleSheet("color: #1B998B")
                         self.main_window.top_widget.tone_name_input.setText(self.tone.name)
                     except Exception as e:
@@ -567,6 +567,9 @@ class Core(QObject):
     def request_custom_parameter(self, number: int, block_id: int, category: int, memory: int, parameter_set: int,
                                  size: int):
         self.midi_service.request_parameter_value_full(block_id, number, category, memory, parameter_set, size)
+
+    def send_instrument_change_sysex(self, block0, tone_number):
+        self.midi_service.send_change_tone_msg(tone_number, block0)
 
     @Slot()
     def show_status_msg(self, text: str, msecs: int):

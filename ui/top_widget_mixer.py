@@ -179,36 +179,36 @@ class TopWidgetMixer(QWidget):
                 if item_data == id_to_select:
                     self.tone_combo_upper2.setCurrentIndex(index)
                     return
-            print(f"ID {id_to_select} not found in the combo box.")
         elif block_id == 2:
             for index in range(self.tone_combo_lower1.count()):
                 item_data = self.tone_combo_lower1.itemData(index, Qt.UserRole)
                 if item_data == id_to_select:
                     self.tone_combo_lower1.setCurrentIndex(index)
                     return
-            print(f"ID {id_to_select} not found in the combo box.")
         elif block_id == 3:
             for index in range(self.tone_combo_lower2.count()):
                 item_data = self.tone_combo_lower2.itemData(index, Qt.UserRole)
                 if item_data == id_to_select:
                     self.tone_combo_lower2.setCurrentIndex(index)
                     return
-            print(f"ID {id_to_select} not found in the combo box.")
 
     def on_upper2_selected(self, index):
-        if index >= 0:  # Ensure a valid selection
+        if index >= 0:
             selected_text = self.tone_combo_upper2.itemText(index)
             selected_id = self.tone_combo_upper2.itemData(index, Qt.UserRole)
             print(f"Selected Tone: {selected_text}, ID: {selected_id}")
+            self.core.send_instrument_change_sysex(1, selected_id)
 
     def on_lower1_selected(self, index):
-        if index >= 0:  # Ensure a valid selection
+        if index >= 0:
             selected_text = self.tone_combo_upper2.itemText(index)
             selected_id = self.tone_combo_upper2.itemData(index, Qt.UserRole)
             print(f"Selected Tone: {selected_text}, ID: {selected_id}")
+            self.core.send_instrument_change_sysex(2, selected_id)
 
     def on_lower2_selected(self, index):
-        if index >= 0:  # Ensure a valid selection
+        if index >= 0:
             selected_text = self.tone_combo_upper2.itemText(index)
             selected_id = self.tone_combo_upper2.itemData(index, Qt.UserRole)
             print(f"Selected Tone: {selected_text}, ID: {selected_id}")
+            self.core.send_instrument_change_sysex(3, selected_id)
