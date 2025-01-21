@@ -160,17 +160,21 @@ class MidiService:
               + int_to_lsb_msb(parameter) + "00 00" + int_to_lsb_msb(size) + "F7"
         self.send_sysex(msg)
 
-    # def send_parameter_value_full(self,
-    #                               block0: int,
-    #                               parameter: int,
-    #                               category: int,
-    #                               memory: int,
-    #                               parameter_set: int,
-    #                               size: int):
-    #     msg = "F0 44 19 01 7F 01" + int_to_hex(category) + int_to_hex(memory) \
-    #           + int_to_lsb_msb(parameter_set) + "00 00 00 00 00 00" + int_to_lsb_msb(block0) \
-    #           + int_to_lsb_msb(parameter) + "00 00" + int_to_lsb_msb(size) + "F7"
-    #     self.send_sysex(msg)
+    def send_parameter_value_full(self,
+                                  block0: int,
+                                  param_number: int,
+                                  category: int,
+                                  memory: int,
+                                  parameter_set: int,
+                                  value: int,
+                                  size: int):
+        msg_value = int_to_hex(value) if param_number in self.short_params else int_to_lsb_msb(value)
+        msg = "F0 44 19 01 7F 01" + int_to_hex(category) + int_to_hex(memory) \
+              + int_to_lsb_msb(parameter_set) + "00 00 00 00 00 00" + int_to_lsb_msb(block0) \
+              + int_to_lsb_msb(param_number) + "00 00" + int_to_lsb_msb(size) + msg_value + "F7"
+        if self.IS_DEBUG_MODE:
+            print(">> " + format_as_nice_hex(msg))
+        self.send_sysex(msg)
 
     def request_dsp_module(self, block0: int):
         msg_start = "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00"

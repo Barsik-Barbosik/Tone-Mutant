@@ -223,6 +223,12 @@ class Core(QObject):
         self.midi_service.send_parameter_change_short_sysex2(parameter.block0, parameter.param_number, parameter_set,
                                                              value)
 
+    def send_pan_change_sysex(self, parameter: AdvancedParameter):
+        self.log(
+            "[INFO] Param " + str(parameter.name) + ": " + str(parameter.param_number) + ", " + str(parameter.value))
+        value = utils.encode_value_by_type(parameter)
+        self.midi_service.send_parameter_value_full(parameter.block0, parameter.param_number, 2, 3, 0, value, 0)
+
     # Request DSP module from synth
     def request_dsp_module(self, block0):
         try:

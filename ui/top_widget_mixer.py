@@ -143,7 +143,7 @@ class TopWidgetMixer(QWidget):
         self.core.send_volume_change_sysex(parameter)
 
     def on_pan_change(self, parameter):
-        pass
+        self.core.send_pan_change_sysex(parameter)
 
     @Slot()
     def redraw_volume_knob(self, param_set: int, volume: int):
