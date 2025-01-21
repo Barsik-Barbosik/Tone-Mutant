@@ -48,7 +48,6 @@ class DspPage(QWidget):
 
     @Slot()
     def redraw_dsp_params_panel(self, _):
-        # print(f"redraw_dsp_params_panel, block: {self.block0}")
         GuiHelper.clear_layout(self.qgrid_layout)
 
         if self.dsp_module is not None:
@@ -89,7 +88,6 @@ class DspPage(QWidget):
             self.list_widget.blockSignals(False)
         else:
             dsp_module_id: int = self.list_widget.currentItem().data(Qt.UserRole)
-            # print(f"block0: {self.block0}, dsp_module_id: {dsp_module_id}")
             if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
                 self.core.update_dsp_module_from_list(self.block0, dsp_module_id)
 

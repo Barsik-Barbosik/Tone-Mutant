@@ -57,7 +57,7 @@ class MidiService:
             self.input_name = None
             self.output_name = None
             self.channel = None
-            self.short_params = [200]  # volume
+            self.short_params = [200, 237]  # volume, pan
             self.long_params = []
 
             for param in self.core.tone.main_parameter_list:

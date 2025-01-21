@@ -68,6 +68,7 @@ class Core(QObject):
             self.request_dsp_module(3)
             self.request_advanced_parameters()
             self.request_volumes()
+            self.request_pan_values()
 
             # upper2, lower1 and lower2 tone names
             self.request_custom_parameter(SysexType.TONE_NUMBER.value, 1, 2, 3, 0, 0)
@@ -119,8 +120,7 @@ class Core(QObject):
     def process_tone_number_from_performance_params_response(self, tone_number, block0):
         for instrument in get_all_instruments():
             if instrument.id == tone_number:
-                self.log(f"[INFO] Synth tone name (by number from performance params): {instrument.name}")
-                print(f"[INFO] Synth tone name (by number from performance params): {instrument.name}")
+                self.log(f"[INFO] Tone name (by number from performance params): {instrument.name}")
 
                 if block0 == 0:
                     self.tone.name = instrument.name
@@ -182,6 +182,10 @@ class Core(QObject):
                 and self.main_window.top_widget.upper1_volume.block0 == block0:
             # not only upper1_volume, but all 4 layers
             self.main_window.top_widget.redraw_volume_knob_signal.emit(param_set, response[0])
+        elif self.main_window.top_widget.upper1_pan.param_number == param_number:  # and cat==2
+            parameter = self.main_window.top_widget.upper1_pan
+            value = decode_param_value(response[0], parameter)
+            self.main_window.top_widget.redraw_pan_knob_signal.emit(block0, value)
 
     # Send message to update synth's main parameter
     def send_parameter_change_sysex(self, parameter: Union[MainParameter, AdvancedParameter]):
@@ -297,15 +301,33 @@ class Core(QObject):
         try:
             self.midi_service.request_parameter_value(self.main_window.top_widget.upper1_volume.block0,
                                                       self.main_window.top_widget.upper1_volume.param_number)
-            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block0,
-                                                           self.main_window.top_widget.upper1_volume.param_number,
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper2_volume.block0,
+                                                           self.main_window.top_widget.upper2_volume.param_number,
                                                            3, 3, 1, 0)
-            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block0,
-                                                           self.main_window.top_widget.upper1_volume.param_number,
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.lower1_volume.block0,
+                                                           self.main_window.top_widget.lower1_volume.param_number,
                                                            3, 3, 2, 0)
-            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block0,
-                                                           self.main_window.top_widget.upper1_volume.param_number,
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.lower2_volume.block0,
+                                                           self.main_window.top_widget.lower2_volume.param_number,
                                                            3, 3, 3, 0)
+
+        except Exception as e:
+            self.show_error_msg(str(e))
+
+    def request_pan_values(self):
+        try:
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_pan.block0,
+                                                           self.main_window.top_widget.upper1_pan.param_number,
+                                                           2, 3, 0, 0)
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper2_pan.block0,
+                                                           self.main_window.top_widget.upper2_pan.param_number,
+                                                           2, 3, 0, 0)
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.lower1_pan.block0,
+                                                           self.main_window.top_widget.lower1_pan.param_number,
+                                                           2, 3, 0, 0)
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.lower2_pan.block0,
+                                                           self.main_window.top_widget.lower2_pan.param_number,
+                                                           2, 3, 0, 0)
 
         except Exception as e:
             self.show_error_msg(str(e))
