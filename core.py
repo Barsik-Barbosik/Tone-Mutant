@@ -116,13 +116,13 @@ class Core(QObject):
         except Exception as e:
             self.show_error_msg(str(e))
 
-    def process_tone_number_from_performance_params_response(self, tone_number, block_id):
+    def process_tone_number_from_performance_params_response(self, tone_number, block0):
         for instrument in get_all_instruments():
             if instrument.id == tone_number:
                 self.log(f"[INFO] Synth tone name (by number from performance params): {instrument.name}")
                 print(f"[INFO] Synth tone name (by number from performance params): {instrument.name}")
 
-                if block_id == 0:
+                if block0 == 0:
                     self.tone.name = instrument.name
                     self.tone.parent_tone = instrument
 
@@ -132,7 +132,7 @@ class Core(QObject):
                     # tone_id_and_name = self.get_tone_id_and_name()
                     self.main_window.top_widget.tone_name_input.setText(self.tone.name)
                 else:
-                    self.main_window.top_widget.select_item_by_id(block_id, instrument.id)
+                    self.main_window.top_widget.select_item_by_id(block0, instrument.id)
 
                 break
 
@@ -141,7 +141,7 @@ class Core(QObject):
         for parameter in self.tone.main_parameter_list:
             self.log("[INFO] Requesting parameter: " + parameter.name)
             try:
-                self.midi_service.request_parameter_value(parameter.block_id, parameter.param_number)
+                self.midi_service.request_parameter_value(parameter.block0, parameter.param_number)
             except Exception as e:
                 self.show_error_msg(str(e))
 
@@ -150,14 +150,14 @@ class Core(QObject):
         for parameter in self.tone.advanced_parameter_list:
             self.log("[INFO] Requesting parameter: " + parameter.name)
             try:
-                self.midi_service.request_parameter_value(parameter.block_id, parameter.param_number)
+                self.midi_service.request_parameter_value(parameter.block0, parameter.param_number)
             except Exception as e:
                 self.show_error_msg(str(e))
 
     # Process main/advanced parameter value response
-    def process_parameter_response(self, param_number, block_id, param_set, response):
+    def process_parameter_response(self, param_number, block0, param_set, response):
         for parameter in self.tone.main_parameter_list:
-            if parameter.param_number == param_number and parameter.block_id == block_id:
+            if parameter.param_number == param_number and parameter.block0 == block0:
                 self.log(f"[INFO] {parameter.name}: {str(response)}")
                 if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
                     value = int(int_to_hex(response[1]) + int_to_hex(response[0]), 16)
@@ -168,7 +168,7 @@ class Core(QObject):
                 parameter.value = decode_param_value(value, parameter)
                 break
         for parameter in self.tone.advanced_parameter_list:
-            if parameter.param_number == param_number and parameter.block_id == block_id:
+            if parameter.param_number == param_number and parameter.block0 == block0:
                 self.log(f"[INFO] {parameter.name}: {str(response)}")
                 if len(response) == 1:
                     value = response[0]
@@ -179,7 +179,7 @@ class Core(QObject):
                 parameter.value = decode_param_value(value, parameter)
                 break
         if self.main_window.top_widget.upper1_volume.param_number == param_number \
-                and self.main_window.top_widget.upper1_volume.block_id == block_id:
+                and self.main_window.top_widget.upper1_volume.block0 == block0:
             # not only upper1_volume, but all 4 layers
             self.main_window.top_widget.redraw_volume_knob_signal.emit(param_set, response[0])
 
@@ -193,13 +193,13 @@ class Core(QObject):
 
         try:
             if parameter.type == ParameterType.SPECIAL_ATK_REL_KNOB:
-                self.midi_service.send_atk_rel_parameter_change_sysex(parameter.block_id,
+                self.midi_service.send_atk_rel_parameter_change_sysex(parameter.block0,
                                                                       parameter.param_number, value)
             elif parameter.name in constants.SHORT_PARAMS:
-                self.midi_service.send_parameter_change_short_sysex(parameter.block_id,
+                self.midi_service.send_parameter_change_short_sysex(parameter.block0,
                                                                     parameter.param_number, value)
             else:
-                self.midi_service.send_parameter_change_sysex(parameter.block_id, parameter.param_number, value)
+                self.midi_service.send_parameter_change_sysex(parameter.block0, parameter.param_number, value)
         except Exception as e:
             self.show_error_msg(str(e))
 
@@ -216,53 +216,53 @@ class Core(QObject):
         elif parameter.name == "LOWER 2 Volume":
             parameter_set = 3
 
-        self.midi_service.send_parameter_change_short_sysex2(parameter.block_id, parameter.param_number, parameter_set,
+        self.midi_service.send_parameter_change_short_sysex2(parameter.block0, parameter.param_number, parameter_set,
                                                              value)
 
     # Request DSP module from synth
-    def request_dsp_module(self, block_id):
+    def request_dsp_module(self, block0):
         try:
-            self.midi_service.request_dsp_module(block_id)
+            self.midi_service.request_dsp_module(block0)
         except Exception as e:
             self.show_error_msg(str(e))
 
     # Process DSP module from synth response
-    def process_dsp_module_response(self, block_id: int, dsp_module_id: int):
-        self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
-        self.request_dsp_module_parameters(block_id, dsp_module_id)
+    def process_dsp_module_response(self, block0: int, dsp_module_id: int):
+        self.update_tone_dsp_module_and_refresh_gui(block0, dsp_module_id)
+        self.request_dsp_module_parameters(block0, dsp_module_id)
 
     # On list widget changed: update tone dsp and send module change sysex
-    def update_dsp_module_from_list(self, block_id, dsp_module_id):
-        self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
+    def update_dsp_module_from_list(self, block0, dsp_module_id):
+        self.update_tone_dsp_module_and_refresh_gui(block0, dsp_module_id)
 
         try:
             if dsp_module_id is None:
-                self.midi_service.send_dsp_module_change_sysex(block_id, EMPTY_DSP_MODULE_ID)
-                self.midi_service.send_dsp_params_change_sysex(block_id, EMPTY_DSP_PARAMS_LIST)
-                self.midi_service.send_dsp_bypass_sysex(block_id, True)
+                self.midi_service.send_dsp_module_change_sysex(block0, EMPTY_DSP_MODULE_ID)
+                self.midi_service.send_dsp_params_change_sysex(block0, EMPTY_DSP_PARAMS_LIST)
+                self.midi_service.send_dsp_bypass_sysex(block0, True)
                 if self.main_window.central_widget.current_dsp_page:
                     self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
             else:
-                self.midi_service.send_dsp_bypass_sysex(block_id, False)
-                self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
-                self.request_dsp_module_parameters(block_id, dsp_module_id)
+                self.midi_service.send_dsp_bypass_sysex(block0, False)
+                self.midi_service.send_dsp_module_change_sysex(block0, dsp_module_id)
+                self.request_dsp_module_parameters(block0, dsp_module_id)
         except Exception as e:
             self.show_error_msg(str(e))
 
     # Update tone dsp module and refresh GUI
-    def update_tone_dsp_module_and_refresh_gui(self, block_id, dsp_module_id):
-        dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
+    def update_tone_dsp_module_and_refresh_gui(self, block0, dsp_module_id):
+        dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block0]
         setattr(self.tone, dsp_module_attr, copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id)))
         dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
         dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_page.dsp_module:
             self.log(f"[INFO] DSP module: {dsp_page.dsp_module.name}")
             dsp_page.dsp_module.bypass.value = 0
-            self.main_window.central_widget.tab_widget.setTabIcon(block_id + 1, GuiHelper.get_green_icon())
-            # self.main_window.central_widget.tab_widget.setTabText(block_id + 1, dsp_page.dsp_module.name)
+            self.main_window.central_widget.tab_widget.setTabIcon(block0 + 1, GuiHelper.get_green_icon())
+            # self.main_window.central_widget.tab_widget.setTabText(block0 + 1, dsp_page.dsp_module.name)
         else:
-            self.main_window.central_widget.tab_widget.setTabIcon(block_id + 1, GuiHelper.get_white_icon())
-            # self.main_window.central_widget.tab_widget.setTabText(block_id + 1, "DSP X")
+            self.main_window.central_widget.tab_widget.setTabIcon(block0 + 1, GuiHelper.get_white_icon())
+            # self.main_window.central_widget.tab_widget.setTabText(block0 + 1, "DSP X")
 
         dsp_page.list_widget.blockSignals(True)
         dsp_page.list_widget.setCurrentItem(dsp_page.get_list_item_by_dsp_id(dsp_module_id))
@@ -272,16 +272,16 @@ class Core(QObject):
             self.main_window.central_widget.update_help_text_panel_signal.emit()
 
     # Request DSP module parameters from synth
-    def request_dsp_module_parameters(self, block_id, dsp_module_id):
+    def request_dsp_module_parameters(self, block0, dsp_module_id):
         if dsp_module_id is not None:
             try:
-                self.midi_service.request_dsp_params(block_id)
+                self.midi_service.request_dsp_params(block0)
             except Exception as e:
                 self.show_error_msg(str(e))
 
     # Process DSP module parameters from synth response
-    def process_dsp_module_parameters_response(self, block_id, synth_dsp_params):
-        dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
+    def process_dsp_module_parameters_response(self, block0, synth_dsp_params):
+        dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block0]
         dsp_module = getattr(self.tone, dsp_module_attr)
         if dsp_module is not None:
             for idx, dsp_param in enumerate(dsp_module.dsp_parameter_list):
@@ -295,15 +295,15 @@ class Core(QObject):
 
     def request_volumes(self):
         try:
-            self.midi_service.request_parameter_value(self.main_window.top_widget.upper1_volume.block_id,
+            self.midi_service.request_parameter_value(self.main_window.top_widget.upper1_volume.block0,
                                                       self.main_window.top_widget.upper1_volume.param_number)
-            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block_id,
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block0,
                                                            self.main_window.top_widget.upper1_volume.param_number,
                                                            3, 3, 1, 0)
-            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block_id,
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block0,
                                                            self.main_window.top_widget.upper1_volume.param_number,
                                                            3, 3, 2, 0)
-            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block_id,
+            self.midi_service.request_parameter_value_full(self.main_window.top_widget.upper1_volume.block0,
                                                            self.main_window.top_widget.upper1_volume.param_number,
                                                            3, 3, 3, 0)
 
@@ -315,13 +315,13 @@ class Core(QObject):
         try:
             dsp_page = self.main_window.central_widget.current_dsp_page
             if dsp_page:
-                self.midi_service.send_dsp_params_change_sysex(dsp_page.block_id, dsp_page.get_dsp_params_as_list())
+                self.midi_service.send_dsp_params_change_sysex(dsp_page.block0, dsp_page.get_dsp_params_as_list())
         except Exception as e:
             self.show_error_msg(str(e))
 
-    def send_dsp_bypass(self, block_id, bypass):
+    def send_dsp_bypass(self, block0, bypass):
         try:
-            self.midi_service.send_dsp_bypass_sysex(block_id, bypass)
+            self.midi_service.send_dsp_bypass_sysex(block0, bypass)
         except Exception as e:
             self.show_error_msg(str(e))
 
@@ -413,14 +413,14 @@ class Core(QObject):
 
     # Load Tone from JSON
     def load_tone_from_json(self, json_tone: dict):
-        def _get_block_id(dsp_id):
-            block_id_mapping = {
+        def _get_block0(dsp_id):
+            block0_mapping = {
                 "dsp_1": 0,
                 "dsp_2": 1,
                 "dsp_3": 2,
                 "dsp_4": 3
             }
-            return block_id_mapping.get(dsp_id)
+            return block0_mapping.get(dsp_id)
 
         # Name
         if "name" in json_tone:
@@ -512,29 +512,29 @@ class Core(QObject):
         # DSP
         if "dsp_modules" in json_tone:
             for json_dsp_id, json_dsp_module in json_tone["dsp_modules"].items():
-                block_id = _get_block_id(json_dsp_id)
-                if block_id is not None and json_dsp_module is not None and "name" in json_dsp_module:
-                    self._load_dsp_from_json(block_id, json_dsp_module)
+                block0 = _get_block0(json_dsp_id)
+                if block0 is not None and json_dsp_module is not None and "name" in json_dsp_module:
+                    self._load_dsp_from_json(block0, json_dsp_module)
 
-    def _load_dsp_from_json(self, block_id, json_dsp_module):
+    def _load_dsp_from_json(self, block0, json_dsp_module):
         dsp_module = next(
             (dsp_module for dsp_module in constants.ALL_DSP_MODULES if
              dsp_module.name == json_dsp_module["name"]), None)
         if dsp_module:
             dsp_module_id = dsp_module.id
-            self.update_tone_dsp_module_and_refresh_gui(block_id, dsp_module_id)
+            self.update_tone_dsp_module_and_refresh_gui(block0, dsp_module_id)
             try:
                 if dsp_module_id is None:
-                    self.midi_service.send_dsp_bypass_sysex(block_id, True)
+                    self.midi_service.send_dsp_bypass_sysex(block0, True)
                     if self.main_window.central_widget.current_dsp_page:
                         self.main_window.central_widget.current_dsp_page.redraw_dsp_params_panel_signal.emit()
                 else:
-                    self.midi_service.send_dsp_bypass_sysex(block_id, False)
-                    self.midi_service.send_dsp_module_change_sysex(block_id, dsp_module_id)
+                    self.midi_service.send_dsp_bypass_sysex(block0, False)
+                    self.midi_service.send_dsp_module_change_sysex(block0, dsp_module_id)
             except Exception as e:
                 self.show_error_msg(str(e))
 
-            dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block_id]
+            dsp_module_attr, dsp_page_attr = constants.BLOCK_MAPPING[block0]
             dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
             dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
 
@@ -553,7 +553,7 @@ class Core(QObject):
 
                 time.sleep(0.3)
                 try:
-                    self.midi_service.send_dsp_params_change_sysex(block_id,
+                    self.midi_service.send_dsp_params_change_sysex(block0,
                                                                    dsp_page.get_dsp_params_as_list())
                 except Exception as e:
                     self.show_error_msg(str(e))
@@ -564,9 +564,9 @@ class Core(QObject):
     def send_custom_midi_msg(self, midi_msg: str):
         self.midi_service.send_custom_midi_msg(midi_msg)
 
-    def request_custom_parameter(self, number: int, block_id: int, category: int, memory: int, parameter_set: int,
+    def request_custom_parameter(self, number: int, block0: int, category: int, memory: int, parameter_set: int,
                                  size: int):
-        self.midi_service.request_parameter_value_full(block_id, number, category, memory, parameter_set, size)
+        self.midi_service.request_parameter_value_full(block0, number, category, memory, parameter_set, size)
 
     def send_instrument_change_sysex(self, block0, tone_number):
         self.midi_service.send_change_tone_msg(tone_number, block0)
@@ -824,12 +824,12 @@ class Core(QObject):
         if random_dsp_1 > 0:
             time.sleep(0.3)
             self.main_window.central_widget.dsp_page_1.on_random_button_pressed(
-                self.main_window.central_widget.dsp_page_1.block_id)
+                self.main_window.central_widget.dsp_page_1.block0)
 
         if random_dsp_2 > 0:
             time.sleep(0.3)
             self.main_window.central_widget.dsp_page_2.on_random_button_pressed(
-                self.main_window.central_widget.dsp_page_2.block_id)
+                self.main_window.central_widget.dsp_page_2.block0)
 
         self.pause_status_bar_updates(False)
         self.main_window.loading_animation.stop()

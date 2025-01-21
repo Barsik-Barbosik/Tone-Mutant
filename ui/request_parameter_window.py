@@ -30,11 +30,11 @@ class RequestParameterWindow(QWidget):
         self.number_input.setValidator(QIntValidator(0, 255, self))
         form_layout.addRow(self.create_colored_square_label("#0000FF", "Number:"), self.number_input)
 
-        self.block_input = QLineEdit()
-        self.block_input.setPlaceholderText("Block...")
-        self.block_input.setText("0")
-        self.block_input.setValidator(QIntValidator(0, 7, self))
-        form_layout.addRow(self.create_colored_square_label("#FF00FF", "Block:"), self.block_input)
+        self.block0_input = QLineEdit()
+        self.block0_input.setPlaceholderText("Block 0...")
+        self.block0_input.setText("0")
+        self.block0_input.setValidator(QIntValidator(0, 7, self))
+        form_layout.addRow(self.create_colored_square_label("#FF00FF", "Block 0:"), self.block0_input)
 
         self.category_input = QLineEdit()
         self.category_input.setPlaceholderText("Category... (0-65)")
@@ -88,12 +88,12 @@ class RequestParameterWindow(QWidget):
         try:
             self.core.main_window.right_tab_widget.setCurrentIndex(1)  # open Log tab
             number = int(self.number_input.text())
-            block = int(self.block_input.text())
+            block0 = int(self.block0_input.text())
             category = int(self.category_input.text())
             memory = int(self.memory_input.text())
             parameter_set = int(self.parameter_set_input.text())
             size = int(self.size_input.text())
-            self.core.request_custom_parameter(number, block, category, memory, parameter_set, size)
+            self.core.request_custom_parameter(number, block0, category, memory, parameter_set, size)
         except ValueError:
             QMessageBox.warning(self, "Input Error", "All fields must contain valid integers.")
             return

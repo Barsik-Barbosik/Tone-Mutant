@@ -15,10 +15,10 @@ from utils.utils import resource_path
 class DspPage(QWidget):
     redraw_dsp_params_panel_signal = Signal()
 
-    def __init__(self, parent, block_id: int):
+    def __init__(self, parent, block0: int):
         super().__init__(parent)
         self.core = parent.core
-        self.block_id: int = block_id
+        self.block0: int = block0
         self.dsp_module: DspModule = None
 
         hbox_layout = QHBoxLayout(self)
@@ -39,16 +39,16 @@ class DspPage(QWidget):
             item.setData(Qt.UserRole, dsp_module.id)
             self.list_widget.insertItem(idx + 1, item)
         self.list_widget.setCurrentRow(0)
-        self.list_widget.itemSelectionChanged.connect(lambda: self.on_list_widget_changed(block_id))
+        self.list_widget.itemSelectionChanged.connect(lambda: self.on_list_widget_changed(block0))
 
         hbox_layout.addWidget(self.list_widget)  # left side
         hbox_layout.addLayout(self.qgrid_layout)  # right side
 
-        self.redraw_dsp_params_panel_signal.connect(lambda: self.redraw_dsp_params_panel(block_id))
+        self.redraw_dsp_params_panel_signal.connect(lambda: self.redraw_dsp_params_panel(block0))
 
     @Slot()
     def redraw_dsp_params_panel(self, _):
-        # print(f"redraw_dsp_params_panel, block: {self.block_id}")
+        # print(f"redraw_dsp_params_panel, block: {self.block0}")
         GuiHelper.clear_layout(self.qgrid_layout)
 
         if self.dsp_module is not None:
@@ -70,7 +70,7 @@ class DspPage(QWidget):
             random_button = QPushButton(" Randomize DSP Values", self)
             random_button.setIcon(QIcon(resource_path("resources/random_star.png")))
             random_button.setObjectName("random-button")
-            random_button.clicked.connect(lambda: self.on_random_button_pressed(self.block_id))
+            random_button.clicked.connect(lambda: self.on_random_button_pressed(self.block0))
             button_row = largest_items_count + 1
             self.qgrid_layout.addWidget(random_button, button_row, 0, 1, 4)
         else:
@@ -80,7 +80,7 @@ class DspPage(QWidget):
 
     def send_dsp_bypass(self, bypass_parameter):
         bypass = True if bypass_parameter.value == 1 else False
-        self.core.send_dsp_bypass(self.block_id, bypass)
+        self.core.send_dsp_bypass(self.block0, bypass)
 
     def on_list_widget_changed(self, _):
         if self.list_widget.currentItem() is None:
@@ -89,9 +89,9 @@ class DspPage(QWidget):
             self.list_widget.blockSignals(False)
         else:
             dsp_module_id: int = self.list_widget.currentItem().data(Qt.UserRole)
-            # print(f"block_id: {self.block_id}, dsp_module_id: {dsp_module_id}")
+            # print(f"block0: {self.block0}, dsp_module_id: {dsp_module_id}")
             if self.dsp_module is None or self.dsp_module.id != dsp_module_id:
-                self.core.update_dsp_module_from_list(self.block_id, dsp_module_id)
+                self.core.update_dsp_module_from_list(self.block0, dsp_module_id)
 
     def on_random_button_pressed(self, _):
         for dsp_param in self.dsp_module.dsp_parameter_list:

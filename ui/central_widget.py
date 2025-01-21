@@ -197,7 +197,7 @@ class CentralWidget(QWidget):
                 text = text + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
         elif self.get_current_tab_name() == TabName.JSON:
             text = "<h2>Tone in JSON format</h2>Parameter values are displayed here.<br/><br/>Currently, this view is read-only, but it may become editable in the future."
-        elif self.current_dsp_page is not None and self.current_dsp_page.block_id is not None:
+        elif self.current_dsp_page is not None and self.current_dsp_page.block0 is not None:
             if self.current_dsp_page.dsp_module is None:
                 text = "The DSP module is not selected."
             else:

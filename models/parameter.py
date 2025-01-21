@@ -23,19 +23,19 @@ class Parameter:
 
 
 class MainParameter(Parameter):
-    def __init__(self, id: int, param_number: int, block_id: int, name: str, description: str, type: ParameterType,
+    def __init__(self, id: int, param_number: int, block0: int, name: str, description: str, type: ParameterType,
                  choices: List):
         super().__init__(id, name, description, type, choices)
         self.param_number: int = param_number
-        self.block_id: int = block_id
+        self.block0: int = block0
 
 
 class AdvancedParameter(Parameter):
-    def __init__(self, id: int, param_number: int, block_id: int, name: str, description: str, type: ParameterType,
+    def __init__(self, id: int, param_number: int, block0: int, name: str, description: str, type: ParameterType,
                  choices: List):
         super().__init__(id, name, description, type, choices)
         self.param_number: int = param_number
-        self.block_id: int = block_id
+        self.block0: int = block0
 
 
 class DspParameter(Parameter):
