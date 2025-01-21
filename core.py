@@ -50,7 +50,7 @@ class Core(QObject):
     @Slot()
     def synchronize_tone_with_synth(self):
         self.log("[INFO] Synchronizing tone...")
-        self.midi_service.active_sync_job_count = 0
+        # self.midi_service.active_sync_job_count = 0
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
         self.main_window.top_widget.tone_name_input.setStyleSheet("color: black")
 
@@ -84,12 +84,8 @@ class Core(QObject):
         self.main_window.loading_animation.stop()
 
     def redraw_main_and_advanced_params_pages(self):
-        for i in range(0, 10):
-            if self.midi_service.active_sync_job_count == 0:
-                self.main_window.central_widget.redraw_main_params_panel_signal.emit()
-                self.main_window.central_widget.redraw_advanced_params_panel_signal.emit()
-                break
-            time.sleep(0.5)
+        self.main_window.central_widget.redraw_main_params_panel_signal.emit()
+        self.main_window.central_widget.redraw_advanced_params_panel_signal.emit()
 
     # Request tone name from synth
     def request_tone_name(self):
