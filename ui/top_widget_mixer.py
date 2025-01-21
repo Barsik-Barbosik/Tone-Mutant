@@ -135,34 +135,32 @@ class TopWidgetMixer(QWidget):
     @Slot()
     def redraw_volume_knob(self, block0: int, volume: int):
         volume_knob_layouts = [
-            (self.upper1_volume, self.volume_knob_layout_upper1, self.frame_layout_upper1),
-            (self.upper2_volume, self.volume_knob_layout_upper2, self.frame_layout_upper2),
-            (self.lower1_volume, self.volume_knob_layout_lower1, self.frame_layout_lower1),
-            (self.lower2_volume, self.volume_knob_layout_lower2, self.frame_layout_lower2)
+            (self.upper1_volume, self.volume_knob_layout_upper1),
+            (self.upper2_volume, self.volume_knob_layout_upper2),
+            (self.lower1_volume, self.volume_knob_layout_lower1),
+            (self.lower2_volume, self.volume_knob_layout_lower2)
         ]
 
         if 0 <= block0 < len(volume_knob_layouts):
-            volume_param, layout, frame_layout = volume_knob_layouts[block0]
+            volume_param, layout = volume_knob_layouts[block0]
             volume_param.value = volume
-            GuiHelper.clear_layout(layout)
-            layout = GuiHelper.create_knob_input(volume_param, self.on_knob_change)
-            frame_layout.addLayout(layout, 1, 2)
+            knob = layout.itemAt(0).widget()
+            knob.setValue(volume)
 
     @Slot()
     def redraw_pan_knob(self, block0: int, pan: int):
         pan_knob_layouts = [
-            (self.upper1_pan, self.pan_knob_layout_upper1, self.frame_layout_upper1),
-            (self.upper2_pan, self.pan_knob_layout_upper2, self.frame_layout_upper2),
-            (self.lower1_pan, self.pan_knob_layout_lower1, self.frame_layout_lower1),
-            (self.lower2_pan, self.pan_knob_layout_lower2, self.frame_layout_lower2)
+            (self.upper1_pan, self.pan_knob_layout_upper1),
+            (self.upper2_pan, self.pan_knob_layout_upper2),
+            (self.lower1_pan, self.pan_knob_layout_lower1),
+            (self.lower2_pan, self.pan_knob_layout_lower2)
         ]
 
         if 0 <= block0 < len(pan_knob_layouts):
-            pan_param, layout, frame_layout = pan_knob_layouts[block0]
+            pan_param, layout = pan_knob_layouts[block0]
             pan_param.value = pan
-            GuiHelper.clear_layout(layout)
-            layout = GuiHelper.create_knob_input(pan_param, self.on_knob_change)
-            frame_layout.addLayout(layout, 2, 2)
+            knob = layout.itemAt(0).widget()
+            knob.setValue(pan)
 
     @staticmethod
     def populate_tone_combo(combo):
