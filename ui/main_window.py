@@ -191,7 +191,7 @@ class MainWindow(QMainWindow):
 
         random_name_action = QAction(QIcon(resource_path("resources/random_wand.png")), "Random Name", self)
         random_name_action.setStatusTip("Generate random tone name")
-        random_name_action.triggered.connect(self.core.on_random_name_button_pressed)
+        random_name_action.triggered.connect(self.core.generate_random_name)
 
         toolbar.addAction(refresh_action)
         toolbar.addAction(random_tone_action)

@@ -800,6 +800,7 @@ class Core(QObject):
         self.log(f"[INFO] {msg}...")
         self.main_window.loading_animation.start()
 
+        self.generate_random_name()
         self.main_window.central_widget.on_random_button_pressed()
 
         # Random DSP modules
@@ -840,7 +841,7 @@ class Core(QObject):
         self.pause_status_bar_updates(False)
         self.main_window.loading_animation.stop()
 
-    def on_random_name_button_pressed(self):
+    def generate_random_name(self):
         self.tone.name = self.generate_random_word()
         self.main_window.top_widget.tone_name_input.setText(self.tone.name)
 
