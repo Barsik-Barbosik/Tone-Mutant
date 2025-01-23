@@ -19,7 +19,10 @@ SYSEX_FIRST_BYTE = 0xF0
 CC_FIRST_BYTE = 0xB0  # for channel 0
 CC_BANK_SELECT_MSB = 0x00
 CC_BANK_SELECT_LSB = 0x20  # transmit: 0x00, receive: ignored
-INSTRUMENT_SELECT_FIRST_BYTE = 0xC0
+INSTRUMENT_SELECT_FIRST_BYTE_CH0 = 0xC0
+INSTRUMENT_SELECT_FIRST_BYTE_CH1 = 0xC1
+INSTRUMENT_SELECT_FIRST_BYTE_CH2 = 0xC2
+INSTRUMENT_SELECT_FIRST_BYTE_CH3 = 0xC3
 
 MEMORY_1 = 1  # Synthesizer's user memory area
 MEMORY_3 = 3  # 3 is real-time, current tone
@@ -222,7 +225,7 @@ class MidiService:
             self.log("[MIDI IN] Bank change LSB ", message)
         # elif message[0] == CC_FIRST_BYTE:
         #     self.log("[MIDI IN] CC: ", message)
-        elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE:
+        elif message[0] == INSTRUMENT_SELECT_FIRST_BYTE_CH0:
             self.log("[MIDI IN] Program change ", message)
             bank_select_msg = self.get_last_bank_select_message()
             if bank_select_msg is not None:
@@ -231,7 +234,11 @@ class MidiService:
                 worker = Worker(self.core.countdown_and_autosynchronize, 2)
                 worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
                 worker.start()
-
+        elif message[0] in [INSTRUMENT_SELECT_FIRST_BYTE_CH1, INSTRUMENT_SELECT_FIRST_BYTE_CH2, INSTRUMENT_SELECT_FIRST_BYTE_CH3]:
+            self.log("[MIDI IN] Upper/Lower program change ", message)
+            self.core.request_custom_parameter(SysexType.TONE_NUMBER.value, 1, 2, 3, 0, 0)
+            self.core.request_custom_parameter(SysexType.TONE_NUMBER.value, 2, 2, 3, 0, 0)
+            self.core.request_custom_parameter(SysexType.TONE_NUMBER.value, 3, 2, 3, 0, 0)
         else:
             self.log("[MIDI IN] ", message)
 
@@ -350,7 +357,7 @@ class MidiService:
         time.sleep(0.01)
         self.midi_out.send_message([CC_FIRST_BYTE, CC_BANK_SELECT_LSB, 0x00])
         time.sleep(0.01)
-        self.midi_out.send_message([INSTRUMENT_SELECT_FIRST_BYTE, instrument.program])
+        self.midi_out.send_message([INSTRUMENT_SELECT_FIRST_BYTE_CH0, instrument.program])
 
     @staticmethod
     def make_sysex(block0: int, parameter: int, value: int) -> str:

@@ -51,9 +51,8 @@ class Core(QObject):
     @Slot()
     def synchronize_tone_with_synth(self):
         self.log("[INFO] Synchronizing tone...")
-        # self.midi_service.active_sync_job_count = 0
+        self.main_window.loading_animation.start()
         # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
-        self.main_window.top_widget.tone_name_input.setStyleSheet("color: black")
 
         try:
             self.close_midi_ports()
@@ -100,6 +99,8 @@ class Core(QObject):
         tone_name = ''.join(chr(i) for i in response if chr(i).isprintable()).strip()
         self.log(f"[INFO] Synth tone name: {tone_name}")
         if tone_name:
+            # Works only with user tones?
+            self.main_window.top_widget.tone_name_input.setStyleSheet("color: black")
             self.tone.name = tone_name
         elif self.tone.name is None:
             self.tone.name = constants.DEFAULT_TONE_NAME
