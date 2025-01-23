@@ -19,7 +19,7 @@ class GuiHelper:
 
     @staticmethod
     def init_top_dock(main_window: QMainWindow):
-        top_dock = QDockWidget("Top Dock", main_window)
+        top_dock = QDockWidget("Layer Mixer", main_window)
         top_dock.setTitleBarWidget(QWidget())
         top_dock.setFloating(False)
 
