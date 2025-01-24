@@ -800,6 +800,16 @@ class Core(QObject):
         self.log(f"[INFO] {msg}...")
         self.main_window.loading_animation.start()
 
+        # Random parent tone
+        if self.main_window.change_parent_tone_checkbox.isChecked():
+            max_number = self.main_window.central_widget.instrument_list.count()
+            if max_number > 800:
+                max_number = 800  # do not choose user tones
+            new_number = random.randint(1, max_number)
+            self.send_instrument_change_sysex(0, new_number)
+            self.process_tone_number_from_performance_params_response(new_number, 0)
+
+        # Random name and main params
         self.generate_random_name()
         self.main_window.central_widget.on_random_button_pressed()
 

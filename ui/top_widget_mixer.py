@@ -96,6 +96,15 @@ class TopWidgetMixer(QWidget):
         spacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
         frame_layout.addItem(spacer, 0, 0)
 
+        # if label == "UPPER 1":
+        #     button1 = QPushButton("X", self)
+        #     button1.setIcon(QIcon(resource_path("resources/random_star.png")))
+        #     frame_layout.addWidget(button1, 1, 0)
+        #
+        #     button2 = QPushButton("Y", self)
+        #     button2.setIcon(QIcon(resource_path("resources/random_star.png")))
+        #     frame_layout.addWidget(button2, 2, 0)
+
         # Tone Widget or Combo Box
         if tone_widget:
             frame_layout.addWidget(tone_widget, 0, 1, 1, 2, alignment=Qt.AlignLeft)
@@ -199,9 +208,9 @@ class TopWidgetMixer(QWidget):
     def on_lower2_selected(self, index):
         self._on_tone_selected(index, self.tone_combo_upper2, 3, "LOWER 2 Tone")
 
-    def _on_tone_selected(self, index, combo_box, block, log_prefix):
+    def _on_tone_selected(self, index, combo_box, block0, log_prefix):
         if index >= 0:
             selected_text = combo_box.itemText(index)
             selected_id = combo_box.itemData(index, Qt.UserRole)
             self.core.log(f"[INFO] {log_prefix}: {selected_text}")
-            self.core.send_instrument_change_sysex(block, selected_id)
+            self.core.send_instrument_change_sysex(block0, selected_id)

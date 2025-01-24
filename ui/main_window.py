@@ -4,7 +4,7 @@ from functools import partial
 from PySide2.QtCore import Qt, QCoreApplication, QSize
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QMainWindow, QSplitter, QStatusBar, QTextBrowser, QWidget, QMenu, QAction, QMenuBar, \
-    QToolBar
+    QToolBar, QCheckBox
 
 from constants.constants import HOW_TO_SAVE_TONE, CALIBRATION_TONES
 from core import Core
@@ -44,6 +44,11 @@ class MainWindow(QMainWindow):
 
         self.central_widget = CentralWidget(self)
         self.top_widget = TopWidgetMixer(self)
+
+        self.change_parent_tone_checkbox = QCheckBox("Random Parent Tone")
+        self.change_parent_tone_checkbox.setStatusTip("When selected, the parent tone is randomly chosen before tone generation")
+        self.change_parent_tone_checkbox.setStyleSheet("margin-left: 5px; margin-right: 5px;")
+        self.change_parent_tone_checkbox.setChecked(True)
 
         self._init_toolbar()
         self._setup_layout()
@@ -194,7 +199,10 @@ class MainWindow(QMainWindow):
         random_name_action.triggered.connect(self.core.generate_random_name)
 
         toolbar.addAction(refresh_action)
+        toolbar.addSeparator()
         toolbar.addAction(random_tone_action)
+        toolbar.addWidget(self.change_parent_tone_checkbox)
+        toolbar.addSeparator()
         toolbar.addAction(random_name_action)
 
         self.addToolBar(toolbar)
