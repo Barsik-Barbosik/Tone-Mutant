@@ -28,7 +28,7 @@ from utils.utils import resource_path
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Tone Mutant 1.2.4")
+        self.setWindowTitle("Tone Mutant 1.2.5")
         self.setWindowIcon(QIcon(resource_path("resources/note.png")))
 
         self.status_bar = QStatusBar(self)
@@ -194,7 +194,7 @@ class MainWindow(QMainWindow):
             "Generate Random Tone: set random main parameters and select 1–2 random DSP modules")
         random_tone_action.triggered.connect(self.core.on_randomize_tone_button_pressed)
 
-        random_name_action = QAction(QIcon(resource_path("resources/random_wand.png")), "Random Name", self)
+        random_name_action = QAction(QIcon(resource_path("resources/random_name.png")), "Random Name", self)
         random_name_action.setStatusTip("Generate random tone name")
         random_name_action.triggered.connect(self.core.generate_random_name)
 

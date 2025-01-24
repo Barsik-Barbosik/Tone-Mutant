@@ -10,8 +10,8 @@ from utils.utils import resource_path
 # Nuitka compiler options:
 # nuitka-project: --output-filename=ToneMutant
 # nuitka-project: --product-name=ToneMutant
-# nuitka-project: --product-version=1.2.4
-# nuitka-project: --file-version=1.2.4
+# nuitka-project: --product-version=1.2.5
+# nuitka-project: --file-version=1.2.5
 # nuitka-project: --file-description="Tone editor for Casio keyboards"
 # nuitka-project: --company-name="Barsik-Barbosik"
 # nuitka-project: --standalone
