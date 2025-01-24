@@ -135,11 +135,14 @@ class CentralWidget(QWidget):
 
     def on_random_button_pressed(self):
         for main_param in self.core.tone.main_parameter_list:
-            if main_param.name != "Volume":
+            if main_param.name != "Volume":  # skip volume
                 if main_param.type == ParameterType.COMBO:
                     main_param.value = random.randint(0, len(main_param.choices) - 1)
                 if main_param.type in [ParameterType.KNOB, ParameterType.KNOB_X2, ParameterType.SPECIAL_ATK_REL_KNOB]:
-                    main_param.value = random.randint(main_param.choices[0], main_param.choices[1])
+                    if main_param.name == "Release Time":
+                        main_param.value = random.randint(0, 123)  # not maximum (infinite)
+                    else:
+                        main_param.value = random.randint(main_param.choices[0], main_param.choices[1])
                 self.core.send_parameter_change_sysex(main_param)
         self.redraw_main_params_panel()
         msg = "It may be necessary to adjust the volume level and octave shift after setting random values."

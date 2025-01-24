@@ -821,7 +821,18 @@ class Core(QObject):
             random_dsp_1, random_dsp_2 = random_dsp_2, random_dsp_1
 
         self.main_window.central_widget.dsp_page_1.list_widget.setCurrentRow(random_dsp_1)
+
+        if self.tone.dsp_module_1 and self.tone.dsp_module_1.name == "Distortion":
+            random_dsp_2 = 0  # if  DSP 1 is distortion, do not select another DSP module
+
         self.main_window.central_widget.dsp_page_2.list_widget.setCurrentRow(random_dsp_2)
+
+        if self.tone.dsp_module_2 and self.tone.dsp_module_2.name == "Distortion":
+            # move distortion to DSP 1, do not select DSP 2
+            random_dsp_1 = random_dsp_2
+            random_dsp_2 = 0
+            self.main_window.central_widget.dsp_page_1.list_widget.setCurrentRow(random_dsp_1)
+            self.main_window.central_widget.dsp_page_2.list_widget.setCurrentRow(random_dsp_2)
 
         if random_dsp_1 > 0 or random_dsp_2 > 0:
             msg += ": " + ", ".join(filter(None, [

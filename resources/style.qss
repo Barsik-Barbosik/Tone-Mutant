@@ -46,7 +46,7 @@ QButton#toolbar {
 #random-button {
     background-color: #1B998B;
     color: #FFFFFF;
-    margin: 20px 50px 10px 50px;
+    margin: 20px 90px 10px 90px;
     padding: 8px 20px 8px 20px;
 }
 
