@@ -37,8 +37,11 @@ class TopWidgetMixer(QWidget):
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        # Tone Name Input
+        # Tone Name Input and Parent Tone Label
         self.tone_name_input = self.create_tone_name_input(DEFAULT_TONE_NAME)
+        self.parent_tone_label = QLabel(f"Parent Tone:")
+        self.parent_tone_label.setContentsMargins(0, 0, 0, 0)
+        self.parent_tone_label.setStyleSheet("font-size: 9pt")
 
         # Add Blocks for UPPER 1, UPPER 2, LOWER 1, LOWER 2
         self.layout.addWidget(self.create_tone_block("UPPER 1", self.tone_name_input,
@@ -69,6 +72,7 @@ class TopWidgetMixer(QWidget):
     @staticmethod
     def create_tone_name_input(default_name):
         tone_name_input = QLineEdit(default_name)
+        tone_name_input.setMaxLength(8)
         tone_name_input.setFixedWidth(130)
         tone_name_input.setAlignment(Qt.AlignCenter)
         font = QFont()
@@ -76,6 +80,14 @@ class TopWidgetMixer(QWidget):
         font.setBold(True)
         tone_name_input.setFont(font)
         return tone_name_input
+
+    def update_tone_name_input_and_parent_info(self):
+        self.tone_name_input.setText(self.core.tone.name)
+
+        parent_id_and_name = "???"
+        if self.core.tone.parent_tone:
+            parent_id_and_name = "{:03}".format(self.core.tone.parent_tone.id) + " " + self.core.tone.parent_tone.name
+        self.parent_tone_label.setText(f"Parent Tone:\n{parent_id_and_name}")
 
     def create_tone_block(self, label, tone_widget, volume_var, pan_var, tone_change_handler=None,
                           tone_combo_name=None, volume_knob_name=None, pan_knob_name=None, frame_layout_name=None):
@@ -96,14 +108,8 @@ class TopWidgetMixer(QWidget):
         spacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
         frame_layout.addItem(spacer, 0, 0)
 
-        # if label == "UPPER 1":
-        #     button1 = QPushButton("X", self)
-        #     button1.setIcon(QIcon(resource_path("resources/random_star.png")))
-        #     frame_layout.addWidget(button1, 1, 0)
-        #
-        #     button2 = QPushButton("Y", self)
-        #     button2.setIcon(QIcon(resource_path("resources/random_star.png")))
-        #     frame_layout.addWidget(button2, 2, 0)
+        if label == "UPPER 1":
+            frame_layout.addWidget(self.parent_tone_label, 1, 0, alignment=Qt.AlignLeft)
 
         # Tone Widget or Combo Box
         if tone_widget:

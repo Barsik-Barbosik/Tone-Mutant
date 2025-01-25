@@ -106,8 +106,7 @@ class Core(QObject):
             self.tone.name = constants.DEFAULT_TONE_NAME
             self.request_tone_number_from_performance_params()
 
-        # tone_id_and_name = self.get_tone_id_and_name()
-        self.main_window.top_widget.tone_name_input.setText(self.tone.name)
+        self.main_window.top_widget.update_tone_name_input_and_parent_info()
 
     # A new method for retrieving tone number and name
     def request_tone_number_from_performance_params(self):
@@ -369,6 +368,7 @@ class Core(QObject):
         # tone_id_and_name = self.get_tone_id_and_name()
         self.main_window.top_widget.tone_name_input.setText(self.tone.name)
 
+    # Deprecated
     def get_tone_id_and_name(self):
         if self.tone.parent_tone:
             tone_id_and_name = "{:03}".format(self.tone.parent_tone.id) + " " + self.tone.name
