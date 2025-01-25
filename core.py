@@ -127,8 +127,7 @@ class Core(QObject):
                     self.main_window.central_widget.instrument_list.set_current_row_from_thread(
                         self.tone.parent_tone.id - 1)
 
-                    # tone_id_and_name = self.get_tone_id_and_name()
-                    self.main_window.top_widget.tone_name_input.setText(self.tone.name)
+                    self.main_window.top_widget.update_tone_name_input_and_parent_info()
                 else:
                     self.main_window.top_widget.select_item_by_id(block0, instrument.id)
 
@@ -365,16 +364,7 @@ class Core(QObject):
         self.log("[INFO] Instrument: " + str(bank) + ", " + str(program))
         self.find_instrument_and_update_tone(bank, program)
 
-        # tone_id_and_name = self.get_tone_id_and_name()
-        self.main_window.top_widget.tone_name_input.setText(self.tone.name)
-
-    # Deprecated
-    def get_tone_id_and_name(self):
-        if self.tone.parent_tone:
-            tone_id_and_name = "{:03}".format(self.tone.parent_tone.id) + " " + self.tone.name
-        else:
-            tone_id_and_name = self.tone.name
-        return tone_id_and_name
+        self.main_window.top_widget.update_tone_name_input_and_parent_info()
 
     def find_instrument_and_update_tone(self, bank, program):
         is_found = False
@@ -600,10 +590,6 @@ class Core(QObject):
         self.main_window.loading_animation.start()
         self.status_msg_signal.emit("Saving... Please wait!", 10000)
         self.log(f"[INFO] Saving tone file: {file_name}")
-
-        if not self.tone.name:
-            file_name_without_extension = os.path.splitext(os.path.basename(file_name))[0]
-            self.tone.name = file_name_without_extension
 
         worker = Worker(self.get_current_tone_as_ton_file, self.tone.name)
         worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))

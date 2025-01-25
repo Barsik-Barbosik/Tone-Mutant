@@ -100,7 +100,7 @@ class UploadToneWindow(QWidget):
                     self.core.tone.name = DEFAULT_TONE_NAME
 
                 self.core.start_tone_upload_worker(tone_number)
-                self.core.main_window.top_widget.tone_name_input.setText(self.core.get_tone_id_and_name())
+                self.core.main_window.top_widget.update_tone_name_input_and_parent_info()
                 self.deleteLater()
             else:
                 QMessageBox.warning(self, "Input Error", "The 'Tone Number' must be in the range of 801 to 900.")

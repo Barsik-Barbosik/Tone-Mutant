@@ -239,25 +239,23 @@ class MainWindow(QMainWindow):
             self.overlay.setVisible(False)
 
     def show_save_json_dialog(self):
-        file_name = FileDialogHelper.save_json_dialog(self)
+        self.core.tone.name = self.top_widget.tone_name_input.text()
+        file_name = FileDialogHelper.save_json_dialog(self, self.core.tone.name)
         if file_name:
-            # if not self.core.tone.name:
-            file_name_without_extension = os.path.splitext(os.path.basename(file_name))[0]
-            self.core.tone.name = file_name_without_extension[:8]  # trim to first 8 symbols
-
             FileOperations.save_json(file_name, self.central_widget.get_json())
-            self.top_widget.tone_name_input.setText(self.core.get_tone_id_and_name())
+            self.top_widget.update_tone_name_input_and_parent_info()
             self.core.status_msg_signal.emit("File successfully saved!", 3000)
 
     def show_request_parameter_dialog(self):
         self.request_parameter_window = RequestParameterWindow(self)
 
     def show_save_ton_dialog(self):
-        file_name = FileDialogHelper.save_ton_dialog(self)
+        self.core.tone.name = self.top_widget.tone_name_input.text()
+        file_name = FileDialogHelper.save_ton_dialog(self, self.core.tone.name)
         if file_name:
             try:
                 self.core.start_ton_file_save_worker(file_name)
-                self.top_widget.tone_name_input.setText(self.core.get_tone_id_and_name())
+                self.top_widget.update_tone_name_input_and_parent_info()
             except Exception as e:
                 self.core.show_error_msg(str(e))
 
