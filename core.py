@@ -363,7 +363,6 @@ class Core(QObject):
     def process_instrument_select_response(self, bank, program):
         self.log("[INFO] Instrument: " + str(bank) + ", " + str(program))
         self.find_instrument_and_update_tone(bank, program)
-
         self.main_window.top_widget.update_tone_name_input_and_parent_info()
 
     def find_instrument_and_update_tone(self, bank, program):
@@ -418,13 +417,9 @@ class Core(QObject):
             }
             return block0_mapping.get(dsp_id)
 
-        # Name
-        if "name" in json_tone:
-            self.tone.name = json_tone["name"]
-
         # Parent tone
-        show_modal_window = False
         current_parent_tone = self.tone.parent_tone
+        self.tone.parent_tone = None
         json_synthesizer_model = json_tone["synthesizer_model"] if "synthesizer_model" in json_tone else None
         json_parent_id = None
         json_parent_bank = None
@@ -447,17 +442,10 @@ class Core(QObject):
                     try:
                         self.midi_service.send_change_tone_msg(self.tone.parent_tone.id, 0)
                         self.main_window.top_widget.tone_name_input.setStyleSheet("color: #1B998B")
-                        self.main_window.top_widget.tone_name_input.setText(self.tone.name)
                     except Exception as e:
                         self.show_error_msg(str(e))
-                else:
-                    show_modal_window = True  # refactor that ladder :)
-            else:
-                show_modal_window = True
-        else:
-            show_modal_window = True
 
-        if show_modal_window:
+        if not self.tone.parent_tone:
             # Parent tone is not found: show modal window
             json_synthesizer_model_str = "unknown synthesizer model" if json_synthesizer_model is None else str(
                 json_synthesizer_model)
@@ -477,7 +465,11 @@ class Core(QObject):
 
             self.show_status_msg("", 0)
             self.tone.parent_tone = current_parent_tone
-            self.main_window.top_widget.tone_name_input.setText(self.tone.name)
+
+        # Name
+        if "name" in json_tone:
+            self.tone.name = json_tone["name"]
+        self.main_window.top_widget.update_tone_name_input_and_parent_info()
 
         # Main parameters
         if "parameters" in json_tone:
