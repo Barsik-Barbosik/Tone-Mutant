@@ -3559,3 +3559,6 @@ EMPTY_DSP_PARAMS_LIST = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 INTERNAL_MEMORY_USER_TONE_COUNT: Final[int] = 100
 
 USER_TONE_TABLE_ROW_OFFSET: Final[int] = 801
+
+BLACK_TEXT = "color: black"
+BLUE_TEXT = "color: #1B998B"

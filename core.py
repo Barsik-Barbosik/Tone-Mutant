@@ -1,6 +1,5 @@
 import configparser
 import copy
-import os
 import random
 import string
 import time
@@ -10,7 +9,7 @@ from PySide2.QtCore import Signal, Slot, QObject
 
 from constants import constants
 from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL, EMPTY_TONE, EMPTY_DSP_MODULE_ID, \
-    EMPTY_DSP_PARAMS_LIST, INTERNAL_MEMORY_USER_TONE_COUNT, USER_TONE_TABLE_ROW_OFFSET
+    EMPTY_DSP_PARAMS_LIST, INTERNAL_MEMORY_USER_TONE_COUNT, USER_TONE_TABLE_ROW_OFFSET, BLUE_TEXT, BLACK_TEXT
 from constants.enums import ParameterType, SysexType
 from models.parameter import MainParameter, AdvancedParameter
 from models.tone import Tone
@@ -38,6 +37,7 @@ class Core(QObject):
         self.midi_service = MidiService(self)
         self.tyrant_midi_service = TyrantMidiService()
         self.timeout = 0
+        self.name_color = BLACK_TEXT
         self.synchronize_tone_signal.connect(self.synchronize_tone_with_synth)
         self.status_msg_signal.connect(self.show_status_msg)
 
@@ -100,12 +100,12 @@ class Core(QObject):
         self.log(f"[INFO] Synth tone name: {tone_name}")
         if tone_name:
             # Works only with user tones?
-            self.main_window.top_widget.tone_name_input.setStyleSheet("color: black")
             self.tone.name = tone_name
         elif self.tone.name is None:
             self.tone.name = constants.DEFAULT_TONE_NAME
             self.request_tone_number_from_performance_params()
 
+        self.main_window.top_widget.tone_name_input.setStyleSheet(self.name_color)
         self.main_window.top_widget.update_tone_name_input_and_parent_info()
 
     # A new method for retrieving tone number and name
@@ -343,7 +343,7 @@ class Core(QObject):
             self.log(f"[INFO] Selected tone: {instrument_id} - {self.tone.parent_tone.name}")
             try:
                 self.midi_service.send_change_tone_msg(instrument_id, 0)
-                self.main_window.top_widget.tone_name_input.setStyleSheet("color: #1B998B")
+                self.name_color = BLUE_TEXT
                 self.synchronize_tone_signal.emit()
             except Exception as e:
                 self.show_error_msg(str(e))
@@ -352,7 +352,7 @@ class Core(QObject):
     def select_calibration_tone(self, instrument):
         try:
             self.midi_service.send_change_tone_msg_2(instrument.id)
-            self.main_window.top_widget.tone_name_input.setStyleSheet("color: #1B998B")
+            self.name_color = BLUE_TEXT
             self.tone.name = instrument.name
             self.tone.parent_tone = None
             self.synchronize_tone_signal.emit()
@@ -361,6 +361,7 @@ class Core(QObject):
 
     # Intercept instrument change messages from synth
     def process_instrument_select_response(self, bank, program):
+        self.name_color = BLACK_TEXT
         self.log("[INFO] Instrument: " + str(bank) + ", " + str(program))
         self.find_instrument_and_update_tone(bank, program)
         self.main_window.top_widget.update_tone_name_input_and_parent_info()
@@ -441,7 +442,8 @@ class Core(QObject):
                     # Parent tone is found: automatically select instrument
                     try:
                         self.midi_service.send_change_tone_msg(self.tone.parent_tone.id, 0)
-                        self.main_window.top_widget.tone_name_input.setStyleSheet("color: #1B998B")
+                        self.name_color = BLUE_TEXT
+                        self.main_window.top_widget.tone_name_input.setStyleSheet(BLUE_TEXT)
                     except Exception as e:
                         self.show_error_msg(str(e))
 
