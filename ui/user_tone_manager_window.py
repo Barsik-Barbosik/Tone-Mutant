@@ -1,11 +1,11 @@
 from PySide2 import QtCore
 from PySide2.QtCore import Qt, QDir
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog, QApplication, QTableWidget, \
-    QTableWidgetItem
+from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog, QApplication, QTableWidgetItem
 
 from constants.constants import INTERNAL_MEMORY_USER_TONE_COUNT, USER_TONE_TABLE_ROW_OFFSET
 from ui.drag_and_drop_table import DragAndDropTable
+from ui.file_table import FileTable
 from ui.loading_animation import LoadingAnimation
 from utils.utils import resource_path
 from utils.worker import Worker
@@ -46,12 +46,7 @@ class UserToneManagerWindow(QDialog):
         file_table_title.setAlignment(QtCore.Qt.AlignCenter)
         table_layout.addWidget(file_table_title)
 
-        self.file_table_widget = QTableWidget(self)
-        self.file_table_widget.setColumnCount(1)  # Single column for file names
-        self.file_table_widget.setHorizontalHeaderLabels(["File Name"])
-        self.file_table_widget.verticalHeader().setDefaultSectionSize(22)
-        self.file_table_widget.verticalHeader().setMinimumWidth(50)
-        self.file_table_widget.horizontalHeader().setStretchLastSection(True)
+        self.file_table_widget = FileTable(self)
         self.populate_file_table(self.path)
 
         table_layout.addWidget(self.file_table_widget)
@@ -118,8 +113,8 @@ class UserToneManagerWindow(QDialog):
 
         main_layout.addLayout(content_layout)
 
-        self.table_widget.itemSelectionChanged.connect(self.on_item_selection_changed)
         self.file_table_widget.itemSelectionChanged.connect(self.on_file_selection_changed)
+        self.table_widget.itemSelectionChanged.connect(self.on_item_selection_changed)
 
     def disable_controls(self):
         self.table_widget.setEnabled(False)
@@ -192,6 +187,9 @@ class UserToneManagerWindow(QDialog):
         self.loading_animation.center_loading_animation()
 
     def on_item_selection_changed(self):
+        self.file_table_widget.itemSelectionChanged.disconnect(self.on_file_selection_changed)
+        self.file_table_widget.clearSelection()
+        self.file_table_widget.itemSelectionChanged.connect(self.on_file_selection_changed)
         self.enable_controls()
 
     def on_move_up_button(self):
@@ -341,7 +339,11 @@ class UserToneManagerWindow(QDialog):
             self.file_table_widget.setItem(row, 0, item)
 
     def on_file_selection_changed(self):
-        """Handles the file selection change event."""
+        self.table_widget.itemSelectionChanged.disconnect(self.on_item_selection_changed)
+        self.table_widget.clearSelection()
+        self.enable_controls()
+        self.table_widget.itemSelectionChanged.connect(self.on_item_selection_changed)
+
         selected_items = self.file_table_widget.selectedItems()
         if selected_items:
             selected_file = selected_items[0].text()
