@@ -56,6 +56,7 @@ class DragAndDropTable(QTableWidget):
         self.setEditTriggers(QAbstractItemView.DoubleClicked)  # Allow editing on double click
         self.setItemDelegateForColumn(0, LimitedLengthDelegate(self, callback=self.editing_finished_callback))
 
+        self.verticalHeader().setDefaultSectionSize(22)
         self.verticalHeader().setMinimumWidth(50)
         self.horizontalHeader().setStretchLastSection(True)
 

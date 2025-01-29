@@ -1,7 +1,8 @@
 from PySide2 import QtCore
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, QDir
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog, QApplication
+from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog, QApplication, QTableWidget, \
+    QTableWidgetItem
 
 from constants.constants import INTERNAL_MEMORY_USER_TONE_COUNT, USER_TONE_TABLE_ROW_OFFSET
 from ui.drag_and_drop_table import DragAndDropTable
@@ -12,20 +13,20 @@ from utils.worker import Worker
 
 class UserToneManagerWindow(QDialog):
     def __init__(self, parent):
-        super().__init__()
+        super().__init__(parent)
 
         self.setWindowTitle("User Tone Manager")
         self.setWindowIcon(QIcon(resource_path("resources/memory_manager.png")))
         self.setWindowFlags(QtCore.Qt.Window)
 
         self.core = parent.core
+        self.path = ""  # Replace with the actual directory path
         self.items = []
         self.selectedItems = []
         self.loading_animation = LoadingAnimation(self)
 
-        self.resize(600, 500)
+        self.resize(800, 660)
         self._setup_ui()
-        # self.show()
 
     def _setup_ui(self):
         """Sets up the UI elements of the window."""
@@ -39,11 +40,36 @@ class UserToneManagerWindow(QDialog):
         content_layout = QHBoxLayout()
         content_layout.setContentsMargins(5, 5, 5, 5)
 
+        table_layout = QVBoxLayout()
+
+        file_table_title = QLabel("<b>PC User Data Files</b>")
+        file_table_title.setAlignment(QtCore.Qt.AlignCenter)
+        table_layout.addWidget(file_table_title)
+
+        self.file_table_widget = QTableWidget(self)
+        self.file_table_widget.setColumnCount(1)  # Single column for file names
+        self.file_table_widget.setHorizontalHeaderLabels(["File Name"])
+        self.file_table_widget.verticalHeader().setDefaultSectionSize(22)
+        self.file_table_widget.verticalHeader().setMinimumWidth(50)
+        self.file_table_widget.horizontalHeader().setStretchLastSection(True)
+        self.populate_file_table(self.path)
+
+        table_layout.addWidget(self.file_table_widget)
+
+        content_layout.addLayout(table_layout)
+
+        table_layout = QVBoxLayout()
+
+        user_memory_title = QLabel("<b>Synthesizer's Internal Memory</b>")
+        user_memory_title.setAlignment(QtCore.Qt.AlignCenter)
+        table_layout.addWidget(user_memory_title)
+
         self.table_widget = DragAndDropTable(self,
                                              table_row_offset=USER_TONE_TABLE_ROW_OFFSET,
                                              editing_finished_callback=self.on_editing_finished,
                                              drag_drop_finished_callback=self.on_drag_and_drop)
-        content_layout.addWidget(self.table_widget)
+        table_layout.addWidget(self.table_widget)
+        content_layout.addLayout(table_layout)
 
         self.refresh_button = QPushButton(" Refresh")
         self.refresh_button.setIcon(QIcon(resource_path("resources/refresh.png")))
@@ -93,8 +119,7 @@ class UserToneManagerWindow(QDialog):
         main_layout.addLayout(content_layout)
 
         self.table_widget.itemSelectionChanged.connect(self.on_item_selection_changed)
-
-        self.setLayout(main_layout)
+        self.file_table_widget.itemSelectionChanged.connect(self.on_file_selection_changed)
 
     def disable_controls(self):
         self.table_widget.setEnabled(False)
@@ -305,3 +330,20 @@ class UserToneManagerWindow(QDialog):
             worker.start()
         else:
             self.core.after_all_selected_tones_deleted()
+
+    def populate_file_table(self, directory):
+        """Populates the file table with .ton files from the given directory."""
+        dir = QDir(directory)
+        filtered_files = dir.entryList(["*.ton"], QDir.Files)
+        self.file_table_widget.setRowCount(len(filtered_files))
+        for row, file_name in enumerate(filtered_files):
+            item = QTableWidgetItem(file_name)
+            self.file_table_widget.setItem(row, 0, item)
+
+    def on_file_selection_changed(self):
+        """Handles the file selection change event."""
+        selected_items = self.file_table_widget.selectedItems()
+        if selected_items:
+            selected_file = selected_items[0].text()
+            # Handle the selected file
+            print(f"Selected file: {selected_file}")

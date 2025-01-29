@@ -2,6 +2,10 @@ QWidget {
     font-size: 11pt;
 }
 
+QTableWidget {
+    font-size: 11pt;
+}
+
 QStatusBar {
     background-color: white;
 }
