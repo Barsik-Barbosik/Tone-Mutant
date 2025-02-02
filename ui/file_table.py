@@ -19,7 +19,7 @@ class FileTable(QTableWidget):
         self.setDragEnabled(True)
         self.setAcceptDrops(True)
         self.setDropIndicatorShown(True)
-        self.setEditTriggers(QAbstractItemView.DoubleClicked)  # Allow editing on double click
+        # self.setEditTriggers(QAbstractItemView.DoubleClicked)  # Allow editing on double click
 
     def mousePressEvent(self, event):
         index = self.indexAt(event.pos())
@@ -32,8 +32,6 @@ class FileTable(QTableWidget):
     def startDrag(self, supportedActions):
         item = self.currentItem()
         if item:
-            self._dragged_item_row = self.row(item)  # Track the dragged item's row
-
             mime_data = QMimeData()
             mime_data.setText(item.text())
 
@@ -47,15 +45,14 @@ class FileTable(QTableWidget):
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasText():
-            event.acceptProposedAction()
+            if self == event.source():
+                event.ignore()
+            else:
+                event.acceptProposedAction()
 
     def dropEvent(self, event):
-        if event.mimeData().hasText():
-            source_table = event.source()
-            if source_table != self and self.external_drag_drop_finished_callback:
-                data = event.mimeData().text()  # format: "row_number:item_text"
-                row_number, item_text = data.split(":", 1)
-                tone_number = int(row_number)  # Convert the row number back to an integer
-
-                self.external_drag_drop_finished_callback(item_text, tone_number)
-                event.acceptProposedAction()
+        if event.mimeData().hasText() and event.source() != self and self.external_drag_drop_finished_callback:
+            data = event.mimeData().text()  # String format: "row_number:item_text\nrow_number:item_text"
+            rows_data = data.split("\n")  # Split by newline to get individual rows
+            self.external_drag_drop_finished_callback(rows_data)
+            event.acceptProposedAction()

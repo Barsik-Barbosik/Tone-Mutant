@@ -1,3 +1,5 @@
+import time
+
 from PySide2 import QtCore
 from PySide2.QtCore import Qt, QDir
 from PySide2.QtGui import QIcon
@@ -46,8 +48,8 @@ class UserToneManagerWindow(QDialog):
         file_table_title.setAlignment(QtCore.Qt.AlignCenter)
         table_layout.addWidget(file_table_title)
 
-        self.file_table_widget = FileTable(self, external_drag_drop_finished_callback=self.on_download_tone)
-        self.populate_file_table(self.path)
+        self.file_table_widget = FileTable(self, external_drag_drop_finished_callback=self.on_save_tone_file)
+        self.populate_file_table()
 
         table_layout.addWidget(self.file_table_widget)
 
@@ -63,7 +65,7 @@ class UserToneManagerWindow(QDialog):
                                              table_row_offset=USER_TONE_TABLE_ROW_OFFSET,
                                              editing_finished_callback=self.on_editing_finished,
                                              internal_drag_drop_finished_callback=self.on_drag_and_drop,
-                                             external_drag_drop_finished_callback=self.on_upload_tone)
+                                             external_drag_drop_finished_callback=self.on_load_tone_file)
         table_layout.addWidget(self.table_widget)
         content_layout.addLayout(table_layout)
 
@@ -158,6 +160,11 @@ class UserToneManagerWindow(QDialog):
 
     def load_memory_tone_names(self):
         self.loading_animation.start()
+
+        # Refresh the file table
+        self.populate_file_table()
+
+        # Refresh the user memory table
         self.disable_controls()
         self.items = [None] * INTERNAL_MEMORY_USER_TONE_COUNT
         worker = Worker(self.core.request_user_memory_tone_names)
@@ -330,9 +337,9 @@ class UserToneManagerWindow(QDialog):
         else:
             self.core.after_all_selected_tones_deleted()
 
-    def populate_file_table(self, directory):
+    def populate_file_table(self):
         """Populates the file table with .ton files from the given directory."""
-        dir = QDir(directory)
+        dir = QDir(self.path)
         filtered_files = dir.entryList(["*.ton"], QDir.Files)
         self.file_table_widget.setRowCount(len(filtered_files))
         for row, file_name in enumerate(filtered_files):
@@ -351,11 +358,25 @@ class UserToneManagerWindow(QDialog):
             # Handle the selected file
             print(f"Selected file: {selected_file}")
 
-    def on_upload_tone(self, file_name, row_number):
+    def on_load_tone_file(self, file_name, row_number):
         tone_number = row_number + USER_TONE_TABLE_ROW_OFFSET
         print(f"upload tone: {file_name}, {tone_number}")
 
-    def on_download_tone(self, tone_name, row_number):
-        file_name = tone_name + ".ton"
-        tone_number = row_number + USER_TONE_TABLE_ROW_OFFSET
-        print(f"download tone: {file_name}, {tone_number}")
+    def on_save_tone_file(self, rows_data):
+        self.loading_animation.start()
+
+        for row_data in rows_data:
+            row_number, tone_name = row_data.split(":", 1)  # Split by the colon to separate row and text
+            tone_number = int(row_number) + USER_TONE_TABLE_ROW_OFFSET
+            file_name = tone_name + ".ton"
+            print(f"save tone file: {file_name}, {tone_number}")
+
+            if file_name:
+                try:
+                    self.core.tone_manager_save_ton_file(file_name, tone_number)
+
+                    if len(rows_data) > 1:
+                        time.sleep(1)  # TODO: Replace with a better solution
+
+                except Exception as e:
+                    self.core.show_error_msg(str(e))

@@ -63,13 +63,19 @@ class DragAndDropTable(QTableWidget):
         self.horizontalHeader().setStretchLastSection(True)
 
     def startDrag(self, supportedActions):
-        item = self.currentItem()
-        if item:
-            self._dragged_item_row = self.row(item)  # Track the dragged item's row
+        selected_items = self.selectedItems()  # Get all selected items
 
+        if selected_items:
+            # Prepare a list to store row information (row_number:item_text)
+            rows_data = []
+
+            for item in selected_items:
+                row_number = self.row(item)  # Get the row of the selected item
+                rows_data.append(f"{row_number}:{item.text()}")  # Store row number and item text
+
+            # Join the rows' data into a single string with a delimiter (e.g., newline or comma)
             mime_data = QMimeData()
-            # mime_data.setText(item.text())
-            mime_data.setText(f"{self._dragged_item_row}:{item.text()}")
+            mime_data.setText("\n".join(rows_data))  # Use newline to separate each row's data
 
             drag = QDrag(self)
             drag.setMimeData(mime_data)

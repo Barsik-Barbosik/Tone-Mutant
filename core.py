@@ -606,6 +606,12 @@ class Core(QObject):
         self.status_msg_signal.emit("File successfully saved!", 3000)
         self.main_window.loading_animation.stop()
 
+    def save_file2(self, file_name, ton_file_data):
+        FileOperations.save_binary_file(file_name, ton_file_data)
+        self.status_msg_signal.emit("File successfully saved!", 3000)
+        self.main_window.user_tone_manager_window.populate_file_table()
+        self.main_window.user_tone_manager_window.loading_animation.stop()
+
     def start_tone_upload_worker(self, tone_number):
         if tone_number < 801 or tone_number > 900:
             raise Exception("The 'Tone Number' must be in the range of 801 to 900.")
@@ -859,3 +865,16 @@ class Core(QObject):
         last_char = random.choice(letters + digits + "!")
 
         return first_char + second_char + third_char + middle_chars + last_char
+
+    def tone_manager_save_ton_file(self, file_name, tone_number):
+        self.status_msg_signal.emit("Saving... Please wait!", 10000)
+        self.log(f"[INFO] Saving tone file: {file_name}")
+
+        worker = Worker(self.tone_manager_save_ton_file_job, file_name, tone_number)
+        worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
+        worker.start()
+
+    def tone_manager_save_ton_file_job(self, file_name, tone_number):
+        tone_data = self.load_tone_data(tone_number)
+        ton_file_data = self.tyrant_midi_service.wrap_tone_file(tone_data)
+        self.save_file2(file_name, ton_file_data)
