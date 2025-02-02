@@ -46,7 +46,7 @@ class UserToneManagerWindow(QDialog):
         file_table_title.setAlignment(QtCore.Qt.AlignCenter)
         table_layout.addWidget(file_table_title)
 
-        self.file_table_widget = FileTable(self)
+        self.file_table_widget = FileTable(self, external_drag_drop_finished_callback=self.on_download_tone)
         self.populate_file_table(self.path)
 
         table_layout.addWidget(self.file_table_widget)
@@ -62,7 +62,8 @@ class UserToneManagerWindow(QDialog):
         self.table_widget = DragAndDropTable(self,
                                              table_row_offset=USER_TONE_TABLE_ROW_OFFSET,
                                              editing_finished_callback=self.on_editing_finished,
-                                             drag_drop_finished_callback=self.on_drag_and_drop)
+                                             internal_drag_drop_finished_callback=self.on_drag_and_drop,
+                                             external_drag_drop_finished_callback=self.on_upload_tone)
         table_layout.addWidget(self.table_widget)
         content_layout.addLayout(table_layout)
 
@@ -349,3 +350,12 @@ class UserToneManagerWindow(QDialog):
             selected_file = selected_items[0].text()
             # Handle the selected file
             print(f"Selected file: {selected_file}")
+
+    def on_upload_tone(self, file_name, row_number):
+        tone_number = row_number + USER_TONE_TABLE_ROW_OFFSET
+        print(f"upload tone: {file_name}, {tone_number}")
+
+    def on_download_tone(self, tone_name, row_number):
+        file_name = tone_name + ".ton"
+        tone_number = row_number + USER_TONE_TABLE_ROW_OFFSET
+        print(f"download tone: {file_name}, {tone_number}")

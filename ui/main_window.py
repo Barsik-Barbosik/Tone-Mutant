@@ -1,4 +1,3 @@
-import os
 from functools import partial
 
 from PySide2.QtCore import Qt, QCoreApplication, QSize
@@ -46,7 +45,8 @@ class MainWindow(QMainWindow):
         self.top_widget = TopWidgetMixer(self)
 
         self.change_parent_tone_checkbox = QCheckBox("Random Parent Tone")
-        self.change_parent_tone_checkbox.setStatusTip("When selected, the parent tone is randomly chosen before tone generation")
+        self.change_parent_tone_checkbox.setStatusTip(
+            "When selected, the parent tone is randomly chosen before tone generation")
         self.change_parent_tone_checkbox.setStyleSheet("margin-left: 5px; margin-right: 5px;")
         self.change_parent_tone_checkbox.setChecked(True)
 
