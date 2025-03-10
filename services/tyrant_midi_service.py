@@ -830,3 +830,34 @@ class TyrantMidiService:
         y += x
         y += b'EODA'
         return y
+
+    @staticmethod
+    def unwrap_tone_file(y):
+        # Ensure that 'y' is a bytes object
+        if not isinstance(y, bytes):
+            raise ValueError("Expected a bytes object")
+
+        # Check for the expected start and end markers
+        if not y.startswith(b'CT-X') or not y.endswith(b'EODA'):
+            raise ValueError("Invalid tone file format")
+
+        # Remove the 'EODA' footer before proceeding
+        y = y[:-4]  # Remove the 'EODA' footer (length of 'EODA' is 4 bytes)
+
+        # Skip the 'CT-X3000' prefix and read the next parts
+        offset = len(b'CT-X3000') + struct.calcsize('<2I')  # Skip CT-X3000 + 2 ints (0,0)
+        if y[offset:offset + 4] != b'TONH':
+            raise ValueError("Invalid tone file format: missing TONH")
+
+        # Unpack the 3 integers (we expect CRC, length, and 0) from the "TONH" section
+        crc, length, _ = struct.unpack('<3I', y[offset + 4:offset + 16])  # Unpacking 3 integers
+
+        # Now extract the actual data
+        actual_data = y[offset + 16:offset + 16 + length]
+
+        # Enforce exact file length (without 'EODA')
+        expected_length = 0x1C8  # 456 bytes
+        if len(actual_data) != expected_length:
+            raise ValueError(f"Invalid tone file length: expected {expected_length} bytes, got {len(y)} bytes")
+
+        return bytearray(actual_data)

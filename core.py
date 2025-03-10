@@ -878,3 +878,23 @@ class Core(QObject):
         tone_data = self.load_tone_data(tone_number)
         ton_file_data = self.tyrant_midi_service.wrap_tone_file(tone_data)
         self.save_file2(file_name, ton_file_data)
+
+    def tone_manager_upload_ton_file(self, file_name, tone_number):
+        self.status_msg_signal.emit("Saving... Please wait!", 10000)
+        self.log(f"[INFO] Saving tone file: {file_name}")
+
+        worker = Worker(self.tone_manager_upload_ton_file_process, file_name, tone_number)
+        worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
+        worker.start()
+
+    def tone_manager_upload_ton_file_process(self, tone_number, wrapped_ton_file_data):
+        try:
+            unwrapped_ton_file_data = self.tyrant_midi_service.unwrap_tone_file(wrapped_ton_file_data)
+            self.tyrant_midi_service.bulk_upload(tone_number - USER_TONE_TABLE_ROW_OFFSET, unwrapped_ton_file_data,
+                                                 memory=1, category=3)
+        finally:
+            self.close_midi_ports()
+            self.open_midi_ports()
+
+            self.main_window.user_tone_manager_window.load_memory_tone_names()  # reload list and stop loading animation
+            self.status_msg_signal.emit("Tone successfully uploaded!", 3000)

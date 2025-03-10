@@ -9,6 +9,7 @@ from constants.constants import INTERNAL_MEMORY_USER_TONE_COUNT, USER_TONE_TABLE
 from ui.drag_and_drop_table import DragAndDropTable
 from ui.file_table import FileTable
 from ui.loading_animation import LoadingAnimation
+from utils.file_operations import FileOperations
 from utils.utils import resource_path
 from utils.worker import Worker
 
@@ -352,15 +353,10 @@ class UserToneManagerWindow(QDialog):
         self.enable_controls()
         self.table_widget.itemSelectionChanged.connect(self.on_item_selection_changed)
 
-        selected_items = self.file_table_widget.selectedItems()
-        if selected_items:
-            selected_file = selected_items[0].text()
-            # Handle the selected file
-            print(f"Selected file: {selected_file}")
-
     def on_load_tone_file(self, file_name, row_number):
+        self.loading_animation.start()
         tone_number = row_number + USER_TONE_TABLE_ROW_OFFSET
-        print(f"upload tone: {file_name}, {tone_number}")
+        self.core.tone_manager_upload_ton_file(tone_number, FileOperations.load_binary_file(file_name))
 
     def on_save_tone_file(self, rows_data):
         self.loading_animation.start()
@@ -369,7 +365,6 @@ class UserToneManagerWindow(QDialog):
             row_number, tone_name = row_data.split(":", 1)  # Split by the colon to separate row and text
             tone_number = int(row_number) + USER_TONE_TABLE_ROW_OFFSET
             file_name = tone_name + ".ton"
-            print(f"save tone file: {file_name}, {tone_number}")
 
             if file_name:
                 try:

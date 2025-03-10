@@ -20,6 +20,7 @@ class FileTable(QTableWidget):
         self.setAcceptDrops(True)
         self.setDropIndicatorShown(True)
         # self.setEditTriggers(QAbstractItemView.DoubleClicked)  # Allow editing on double click
+        self.setSelectionMode(QAbstractItemView.SingleSelection)  # Allow only single row selection
 
     def mousePressEvent(self, event):
         index = self.indexAt(event.pos())

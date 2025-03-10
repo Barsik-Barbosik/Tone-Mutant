@@ -13,6 +13,11 @@ class FileOperations:
             file.write(data)
 
     @staticmethod
+    def load_binary_file(file_path):
+        with open(file_path, 'rb') as file:
+            return file.read()
+
+    @staticmethod
     def save_binary_file(file_path, data):
         with open(file_path, 'wb') as file:
             file.write(data)
