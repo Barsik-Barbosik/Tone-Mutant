@@ -63,6 +63,10 @@ class DragAndDropTable(QTableWidget):
         self.horizontalHeader().setStretchLastSection(True)
 
     def startDrag(self, supportedActions):
+        single_item = self.currentItem()
+        if single_item:
+            self._dragged_item_row = self.row(single_item)
+
         selected_items = self.selectedItems()  # Get all selected items
 
         if selected_items:
@@ -101,6 +105,7 @@ class DragAndDropTable(QTableWidget):
 
             source_table = event.source()
             if source_table == self and self.internal_drag_drop_finished_callback:
+                # and self._dragged_item_row is not None:
                 original_row = self._dragged_item_row  # Store the original row
                 item = self.takeItem(self._dragged_item_row, 0)  # Remove the item from its original position
                 self.removeRow(self._dragged_item_row)  # Remove the row itself
