@@ -355,6 +355,8 @@ class UserToneManagerWindow(QDialog):
 
     def on_load_tone_file(self, file_name, row_number):
         self.loading_animation.start()
+        self.disable_controls()
+
         tone_number = row_number + USER_TONE_TABLE_ROW_OFFSET
         self.core.tone_manager_upload_ton_file(tone_number, FileOperations.load_binary_file(file_name))
 
