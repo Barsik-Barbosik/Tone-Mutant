@@ -9,7 +9,6 @@
 * Save tones directly to the synthesizer's internal memory.
 * Rename tones stored in the synthesizer's memory: For better organization.
 * Delete tones from the synthesizer's memory.
-* Includes descriptions for all used parameters.
 * Displays a log of incoming and outgoing MIDI messages: For monitoring and debugging.
 * Option to send custom MIDI messages.
 

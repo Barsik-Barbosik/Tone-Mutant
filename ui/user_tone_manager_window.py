@@ -1,9 +1,11 @@
+import os
 import time
 
 from PySide2 import QtCore
 from PySide2.QtCore import Qt, QDir
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog, QApplication, QTableWidgetItem
+from PySide2.QtWidgets import QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QDialog, QApplication, QTableWidgetItem, \
+    QFileDialog
 
 from constants.constants import INTERNAL_MEMORY_USER_TONE_COUNT, USER_TONE_TABLE_ROW_OFFSET
 from ui.drag_and_drop_table import DragAndDropTable
@@ -42,6 +44,25 @@ class UserToneManagerWindow(QDialog):
 
         content_layout = QHBoxLayout()
         content_layout.setContentsMargins(5, 5, 5, 5)
+
+        self.change_folder_button = QPushButton(" PC Folder")
+        self.change_folder_button.setIcon(QIcon(resource_path("resources/open.png")))
+        self.change_folder_button.setObjectName("manager-button")
+        self.change_folder_button.clicked.connect(self.select_folder)
+
+        self.move_from_pc = QPushButton(" Upload")
+        self.move_from_pc.setIcon(QIcon(resource_path("resources/right.png")))
+        self.move_from_pc.setObjectName("manager-button")
+        self.move_from_pc.clicked.connect(self.select_folder)
+
+        left_button_layout = QVBoxLayout()
+        left_invisible_title = QLabel("")
+        left_button_layout.addWidget(left_invisible_title)
+        left_button_layout.addWidget(self.change_folder_button)
+        left_button_layout.addWidget(self.move_from_pc)
+        left_button_layout.addStretch()
+
+        content_layout.addLayout(left_button_layout)
 
         table_layout = QVBoxLayout()
 
@@ -100,17 +121,25 @@ class UserToneManagerWindow(QDialog):
         self.move_down_button.setObjectName("manager-button")
         self.move_down_button.clicked.connect(self.on_move_down_button)
 
+        self.move_to_pc = QPushButton(" Download")
+        self.move_to_pc.setIcon(QIcon(resource_path("resources/left.png")))
+        self.move_to_pc.setObjectName("manager-button")
+        self.move_to_pc.clicked.connect(self.select_folder)
+
         self.disable_controls()
 
         # "COPY" & "PASTE" buttons?
 
         button_layout = QVBoxLayout()
+        right_invisible_title = QLabel("")
+        button_layout.addWidget(right_invisible_title)
         button_layout.addWidget(self.refresh_button)
         button_layout.addWidget(self.upload_button)
         button_layout.addWidget(self.rename_button)
         button_layout.addWidget(self.delete_button)
         button_layout.addWidget(self.move_up_button)
         button_layout.addWidget(self.move_down_button)
+        button_layout.addWidget(self.move_to_pc)
         button_layout.addStretch()
 
         content_layout.addLayout(button_layout)
@@ -128,6 +157,8 @@ class UserToneManagerWindow(QDialog):
         self.delete_button.setEnabled(False)
         self.move_up_button.setEnabled(False)
         self.move_down_button.setEnabled(False)
+        self.move_from_pc.setEnabled(False)
+        self.move_to_pc.setEnabled(False)
         QApplication.processEvents()
 
     def enable_controls(self):
@@ -358,7 +389,8 @@ class UserToneManagerWindow(QDialog):
         self.disable_controls()
 
         tone_number = row_number + USER_TONE_TABLE_ROW_OFFSET
-        self.core.tone_manager_upload_ton_file(tone_number, FileOperations.load_binary_file(file_name))
+        full_path = os.path.join(self.path, file_name)
+        self.core.tone_manager_upload_ton_file(tone_number, FileOperations.load_binary_file(full_path))
 
     def on_save_tone_file(self, rows_data):
         self.loading_animation.start()
@@ -370,10 +402,17 @@ class UserToneManagerWindow(QDialog):
 
             if file_name:
                 try:
-                    self.core.tone_manager_save_ton_file(file_name, tone_number)
+                    full_path = os.path.join(self.path, file_name)
+                    self.core.tone_manager_save_ton_file(full_path, tone_number)
 
                     if len(rows_data) > 1:
                         time.sleep(1)  # TODO: Replace with a better solution
 
                 except Exception as e:
                     self.core.show_error_msg(str(e))
+
+    def select_folder(self):
+        folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
+        if folder_path:
+            self.path = folder_path
+            self.populate_file_table()
