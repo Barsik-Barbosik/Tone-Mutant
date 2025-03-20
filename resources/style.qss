@@ -54,6 +54,18 @@ QButton#toolbar {
     padding: 8px 20px 8px 20px;
 }
 
+#manager-left-button {
+    width: 110px;
+    text-align: left;
+    padding: 5px 5px 5px 10px;
+    margin-right: 10px;
+}
+
+#manager-left-button:disabled {
+    background-color: #BBBBBB;
+    color: #FFFFFF;
+}
+
 #manager-button {
     width: 110px;
     text-align: left;

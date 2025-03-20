@@ -30,7 +30,7 @@ class UserToneManagerWindow(QDialog):
         self.selectedItems = []
         self.loading_animation = LoadingAnimation(self)
 
-        self.resize(800, 660)
+        self.resize(960, 670)
         self._setup_ui()
 
     def _setup_ui(self):
@@ -42,18 +42,15 @@ class UserToneManagerWindow(QDialog):
         label.setAlignment(QtCore.Qt.AlignCenter)
         main_layout.addWidget(label)
 
-        content_layout = QHBoxLayout()
-        content_layout.setContentsMargins(5, 5, 5, 5)
-
         self.change_folder_button = QPushButton(" PC Folder")
         self.change_folder_button.setIcon(QIcon(resource_path("resources/open.png")))
-        self.change_folder_button.setObjectName("manager-button")
+        self.change_folder_button.setObjectName("manager-left-button")
         self.change_folder_button.clicked.connect(self.select_folder)
 
         self.move_from_pc = QPushButton(" Upload")
         self.move_from_pc.setIcon(QIcon(resource_path("resources/right.png")))
-        self.move_from_pc.setObjectName("manager-button")
-        self.move_from_pc.clicked.connect(self.select_folder)
+        self.move_from_pc.setObjectName("manager-left-button")
+        self.move_from_pc.clicked.connect(self.do_nothing)
 
         left_button_layout = QVBoxLayout()
         left_invisible_title = QLabel("")
@@ -62,20 +59,16 @@ class UserToneManagerWindow(QDialog):
         left_button_layout.addWidget(self.move_from_pc)
         left_button_layout.addStretch()
 
-        content_layout.addLayout(left_button_layout)
-
-        table_layout = QVBoxLayout()
+        file_table_layout = QVBoxLayout()
 
         file_table_title = QLabel("<b>PC User Data Files</b>")
         file_table_title.setAlignment(QtCore.Qt.AlignCenter)
-        table_layout.addWidget(file_table_title)
+        file_table_layout.addWidget(file_table_title)
 
         self.file_table_widget = FileTable(self, external_drag_drop_finished_callback=self.on_save_tone_file)
         self.populate_file_table()
 
-        table_layout.addWidget(self.file_table_widget)
-
-        content_layout.addLayout(table_layout)
+        file_table_layout.addWidget(self.file_table_widget)
 
         table_layout = QVBoxLayout()
 
@@ -89,7 +82,6 @@ class UserToneManagerWindow(QDialog):
                                              internal_drag_drop_finished_callback=self.on_drag_and_drop,
                                              external_drag_drop_finished_callback=self.on_load_tone_file)
         table_layout.addWidget(self.table_widget)
-        content_layout.addLayout(table_layout)
 
         self.refresh_button = QPushButton(" Refresh")
         self.refresh_button.setIcon(QIcon(resource_path("resources/refresh.png")))
@@ -124,7 +116,7 @@ class UserToneManagerWindow(QDialog):
         self.move_to_pc = QPushButton(" Download")
         self.move_to_pc.setIcon(QIcon(resource_path("resources/left.png")))
         self.move_to_pc.setObjectName("manager-button")
-        self.move_to_pc.clicked.connect(self.select_folder)
+        self.move_to_pc.clicked.connect(self.do_nothing)
 
         self.disable_controls()
 
@@ -142,6 +134,11 @@ class UserToneManagerWindow(QDialog):
         button_layout.addWidget(self.move_to_pc)
         button_layout.addStretch()
 
+        content_layout = QHBoxLayout()
+        content_layout.setContentsMargins(5, 5, 5, 5)
+        content_layout.addLayout(left_button_layout)
+        content_layout.addLayout(file_table_layout)
+        content_layout.addLayout(table_layout)
         content_layout.addLayout(button_layout)
 
         main_layout.addLayout(content_layout)
@@ -183,12 +180,19 @@ class UserToneManagerWindow(QDialog):
                 self.move_up_button.setEnabled(False)
                 self.move_down_button.setEnabled(False)
             self.delete_button.setEnabled(True)
+            self.move_to_pc.setEnabled(True)
         else:
             self.upload_button.setEnabled(False)
             self.rename_button.setEnabled(False)
             self.delete_button.setEnabled(False)
             self.move_up_button.setEnabled(False)
             self.move_down_button.setEnabled(False)
+            self.move_to_pc.setEnabled(False)
+
+        if self.file_table_widget.selectedItems():
+            self.move_from_pc.setEnabled(True)
+        else:
+            self.move_from_pc.setEnabled(False)
 
     def load_memory_tone_names(self):
         self.loading_animation.start()
@@ -416,3 +420,6 @@ class UserToneManagerWindow(QDialog):
         if folder_path:
             self.path = folder_path
             self.populate_file_table()
+
+    def do_nothing(self):
+        pass
