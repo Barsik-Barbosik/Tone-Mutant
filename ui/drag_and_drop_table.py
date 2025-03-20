@@ -1,5 +1,5 @@
-from PySide2.QtCore import Qt, QMimeData, QMetaObject
-from PySide2.QtGui import QDrag
+from PySide2.QtCore import Qt, QMimeData
+from PySide2.QtGui import QDrag, QColor
 from PySide2.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QLineEdit, QItemDelegate
 
 
@@ -127,7 +127,12 @@ class DragAndDropTable(QTableWidget):
             row = self.rowCount()  # If no row specified, add to the end
 
         self.insertRow(row)  # Insert the row at the specified position
-        self.setItem(row, 0, QTableWidgetItem(item_text))  # Add the item to the row
+        item = QTableWidgetItem(item_text)
+
+        if item_text == "No Data":
+            item.setBackground(QColor(240, 240, 240))
+
+        self.setItem(row, 0, item)
 
         # After adding a new item, update the row numbers starting from table_row_offset
         self._update_row_numbers()
