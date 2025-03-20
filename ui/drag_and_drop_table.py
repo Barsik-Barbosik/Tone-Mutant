@@ -130,8 +130,9 @@ class DragAndDropTable(QTableWidget):
         self.setItem(row, 0, QTableWidgetItem(item_text))  # Add the item to the row
 
         # After adding a new item, update the row numbers starting from table_row_offset
+        self._update_row_numbers()
         # Trying to prevent crash: call the method in the next event loop
-        QMetaObject.invokeMethod(self, "_update_row_numbers", Qt.QueuedConnection)
+        # QMetaObject.invokeMethod(self, "_update_row_numbers", Qt.QueuedConnection)
 
     def itemExists(self, text):
         """Checks if an item with the given text already exists in the table."""
