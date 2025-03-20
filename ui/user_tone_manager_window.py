@@ -50,7 +50,7 @@ class UserToneManagerWindow(QDialog):
         self.move_from_pc = QPushButton(" Upload")
         self.move_from_pc.setIcon(QIcon(resource_path("resources/right.png")))
         self.move_from_pc.setObjectName("manager-left-button")
-        self.move_from_pc.clicked.connect(self.do_nothing)
+        self.move_from_pc.clicked.connect(self.on_move_from_pc)
 
         left_button_layout = QVBoxLayout()
         left_invisible_title = QLabel("")
@@ -116,7 +116,7 @@ class UserToneManagerWindow(QDialog):
         self.move_to_pc = QPushButton(" Download")
         self.move_to_pc.setIcon(QIcon(resource_path("resources/left.png")))
         self.move_to_pc.setObjectName("manager-button")
-        self.move_to_pc.clicked.connect(self.do_nothing)
+        self.move_to_pc.clicked.connect(self.on_move_to_pc)
 
         self.disable_controls()
 
@@ -421,5 +421,21 @@ class UserToneManagerWindow(QDialog):
             self.path = folder_path
             self.populate_file_table()
 
-    def do_nothing(self):
-        pass
+    def on_move_from_pc(self):
+        file_name = self.file_table_widget.currentItem().text()
+        row_number = 99  # Default to the last row
+
+        empty_items = self.table_widget.findItems("No Data", Qt.MatchExactly)
+        if empty_items:
+            row_number = self.table_widget.row(empty_items[0])
+
+        self.on_load_tone_file(file_name, row_number)
+
+    def on_move_to_pc(self):
+        selected_items = self.table_widget.selectedItems()
+        if selected_items:
+            rows_data = []
+            for item in selected_items:
+                rows_data.append(f"{item.row()}:{item.text()}")  # Store row number and item text
+
+            self.on_save_tone_file(rows_data)
