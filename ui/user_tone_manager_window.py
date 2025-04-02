@@ -439,3 +439,42 @@ class UserToneManagerWindow(QDialog):
                 rows_data.append(f"{item.row()}:{item.text()}")  # Store row number and item text
 
             self.on_save_tone_file(rows_data)
+
+    def closeEvent(self, event):
+        """Ensures proper cleanup when the window is closed."""
+        # Stop any running animations
+        if self.loading_animation:
+            self.loading_animation.stop()
+            self.loading_animation.deleteLater()
+            self.loading_animation = None
+
+        # Disconnect signals
+        try:
+            self.file_table_widget.itemSelectionChanged.disconnect(self.on_file_selection_changed)
+            self.table_widget.itemSelectionChanged.disconnect(self.on_item_selection_changed)
+        except TypeError:
+            pass  # Avoid errors if they were already disconnected
+
+        # Delete dynamically created widgets
+        for widget in [
+            self.file_table_widget,
+            self.table_widget,
+            self.change_folder_button,
+            self.move_from_pc,
+            self.refresh_button,
+            self.upload_button,
+            self.rename_button,
+            self.delete_button,
+            self.move_up_button,
+            self.move_down_button,
+            self.move_to_pc
+        ]:
+            if widget:
+                widget.deleteLater()
+
+        # Clear lists
+        self.items.clear()
+        self.selectedItems.clear()
+
+        # Call parent close event
+        super().closeEvent(event)
