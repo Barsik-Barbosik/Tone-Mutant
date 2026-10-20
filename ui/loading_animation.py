@@ -1,6 +1,6 @@
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QMovie
-from PySide2.QtWidgets import QLabel, QVBoxLayout, QWidget, QApplication
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QMovie
+from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget, QApplication
 
 from utils.utils import resource_path
 

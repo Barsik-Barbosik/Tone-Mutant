@@ -4,7 +4,7 @@ import time
 from collections import deque
 
 import rtmidi
-from PySide2.QtCore import QReadWriteLock
+from PySide6.QtCore import QReadWriteLock, QObject, QThread
 
 from constants import constants
 from constants.constants import DEFAULT_MIDI_IN_PORT, DEFAULT_MIDI_OUT_PORT, DEFAULT_MIDI_CHANNEL
@@ -97,13 +97,17 @@ class MidiService:
                 self.midi_in.set_callback(self.process_message)
 
     def close_midi_ports(self):
-        self.midi_in.close_port()
-        self.midi_out.close_port()
-        self.midi_in.delete()
-        self.midi_out.delete()
+        for port in (self.midi_in, self.midi_out):
+            if port is not None:
+                if hasattr(port, "cancel_callback"):
+                    port.cancel_callback()
+                port.close_port()
+                port.delete()
+        self.midi_in = self.midi_out = None
 
     def check_and_reopen_midi_ports(self):
-        if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
+        if self.midi_out is None or self.midi_in is None or not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
+            self.close_midi_ports()
             self.open_midi_ports()
         if not self.midi_out.is_port_open() or not self.midi_in.is_port_open():
             raise Exception("Unable to open MIDI port. Please check the MIDI settings.")
@@ -193,13 +197,57 @@ class MidiService:
         self.send_sysex(msg_start + msg_block0 + msg_end)
 
     def process_message(self, message, _):
-        message, deltatime = message
+        if isinstance(self.core, QObject):
+            if self.core._closing:
+                return
+            if QThread.currentThread() != self.core.thread():
+                # RtMidi owns this callback thread. Copy its buffer and return immediately.
+                self.core.midi_message_signal.emit((list(message[0]), message[1]))
+                return
+        self._process_message(message, _)
 
-        self.lock.lockForWrite()
-        try:
-            self.active_sync_job_count = max(0, self.active_sync_job_count - 1)  # count-- until 0
-        finally:
-            self.lock.unlock()
+    def _process_message(self, message, _):
+        message, deltatime = message
+        if not message:
+            return
+        if message[0] == SYSEX_FIRST_BYTE:
+            if (len(message) < 3 or message[-1] != 0xF7 or
+                    any(not 0 <= byte < 128 for byte in message[1:-1])):
+                self.log("[MIDI IN] Ignored malformed SysEx ", message)
+                return
+            if message[1] == SysexId.CASIO:
+                if (len(message) < 26 or message[2:6] != [0x19, 0x01, 0x7F, 1]):
+                    self.log("[MIDI IN] Ignored other Casio message ", message)
+                    return
+                parameter = lsb_msb_to_int(message[18], message[19])
+                expected = {SysexType.TONE_NAME.value: 16, SysexType.DSP_MODULE.value: 2,
+                            SysexType.DSP_PARAMS.value: 14, SysexType.TONE_NUMBER.value: 2}
+                size = expected.get(parameter)
+                if size is None:
+                    size = 1 if parameter in self.short_params else 2 if parameter in self.long_params else None
+                if size is not None and len(message[24:-1]) != size:
+                    self.log("[MIDI IN] Ignored unexpected payload size ", message)
+                    return
+                if (message[6] != 3 and not (message[6] == 2 and parameter in (228, 234, 237))):
+                    self.log("[MIDI IN] Unhandled category ", message)
+                    return
+                if parameter in (85, 86, 87) and lsb_msb_to_int(message[16], message[17]) not in range(4):
+                    self.log("[MIDI IN] Ignored DSP block ", message)
+                    return
+                self.lock.lockForWrite()
+                try:
+                    self.active_sync_job_count = max(0, self.active_sync_job_count - 1)
+                finally:
+                    self.lock.unlock()
+                if message[6:10] == [3, 3, 0, 0]:
+                    self.core.raw_parameter_signal.emit(parameter,
+                        lsb_msb_to_int(message[16], message[17]), message[24:-1])
+        elif message[0] == CC_FIRST_BYTE:
+            if len(message) != 3 or any(not 0 <= byte < 128 for byte in message[1:]):
+                return
+        elif message[0] in (0xC0, 0xC1, 0xC2, 0xC3):
+            if len(message) != 2 or not 0 <= message[1] < 128:
+                return
 
         if self.IS_DEBUG_MODE:
             print(format_as_nice_hex(list_to_hex_str(message)))
@@ -231,9 +279,7 @@ class MidiService:
             if bank_select_msg is not None:
                 self.core.process_instrument_select_response(bank_select_msg[2], message[1])
 
-                worker = Worker(self.core.countdown_and_autosynchronize, 2)
-                worker.signals.error.connect(lambda error: self.core.show_error_msg(str(error[1])))
-                worker.start()
+            self.core.schedule_autosynchronize(350)
         elif message[0] in [INSTRUMENT_SELECT_FIRST_BYTE_CH1, INSTRUMENT_SELECT_FIRST_BYTE_CH2, INSTRUMENT_SELECT_FIRST_BYTE_CH3]:
             self.log("[MIDI IN] Upper/Lower program change ", message)
             self.core.request_custom_parameter(SysexType.TONE_NUMBER.value, 1, 2, 3, 0, 0)
@@ -298,7 +344,9 @@ class MidiService:
             try:
                 last_message = self.bank_select_msg_queue.popleft()
             except IndexError:
-                return last_message
+                if last_message is not None:
+                    self._last_bank_select_message = last_message
+                return getattr(self, "_last_bank_select_message", None)
 
     def get_message(self):
         try:

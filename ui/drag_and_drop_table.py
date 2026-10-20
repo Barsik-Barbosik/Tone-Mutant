@@ -1,11 +1,13 @@
-from PySide2.QtCore import Qt, QMimeData
-from PySide2.QtGui import QDrag, QColor
-from PySide2.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QLineEdit, QItemDelegate
+from ui.i18n import tr
+from PySide6.QtCore import Qt, QMimeData
+from PySide6.QtGui import QDrag, QColor
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QAbstractItemView, QLineEdit, QItemDelegate
 
 
 class LimitedLengthEditor(QLineEdit):
     def __init__(self, parent=None, max_length=8):
         super().__init__(parent)
+        self.setAccessibleName(tr("User tone name"))
         self.setMaxLength(max_length)  # Set the max length of input
 
 
@@ -47,7 +49,7 @@ class DragAndDropTable(QTableWidget):
     def _setup_table(self):
         """Setup the table configuration."""
         self.setColumnCount(1)  # One column for the user tone
-        self.setHorizontalHeaderLabels(["User Tone"])  # Set the header label for the item column
+        self.setHorizontalHeaderLabels(["Tono de usuario"])
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Prevent editing
         self.setSelectionBehavior(QAbstractItemView.SelectRows)  # Select entire rows
         self.setDragEnabled(True)
@@ -55,7 +57,7 @@ class DragAndDropTable(QTableWidget):
         self.setDropIndicatorShown(True)
         # self.setDragDropMode(QTableWidget.InternalMove)
         # self.setAlternatingRowColors(True)
-        self.setEditTriggers(QAbstractItemView.DoubleClicked)  # Allow editing on double click
+        self.setEditTriggers(QAbstractItemView.DoubleClicked | QAbstractItemView.EditKeyPressed)
         self.setItemDelegateForColumn(0, LimitedLengthDelegate(self, callback=self.editing_finished_callback))
 
         self.verticalHeader().setDefaultSectionSize(22)
@@ -83,7 +85,7 @@ class DragAndDropTable(QTableWidget):
 
             drag = QDrag(self)
             drag.setMimeData(mime_data)
-            drag.exec_(Qt.MoveAction)
+            drag.exec(Qt.MoveAction)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasText():
@@ -150,9 +152,12 @@ class DragAndDropTable(QTableWidget):
         self.setVerticalHeaderLabels(row_labels)
 
     def keyPressEvent(self, event):
-        # Check if the pressed key is Enter
+        # Enter edits the selected name, just like F2 or double click.
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
-            # Disable the default behavior for Enter key
+            if self.state() != QAbstractItemView.EditingState and self.currentItem():
+                self.editItem(self.currentItem())
+            else:
+                super().keyPressEvent(event)
             return
         # Call the parent class' keyPressEvent for all other keys
         super().keyPressEvent(event)

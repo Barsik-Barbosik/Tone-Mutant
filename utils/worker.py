@@ -2,7 +2,7 @@ import sys
 import traceback
 from threading import Thread
 
-from PySide2.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Signal
 
 
 class WorkerSignals(QObject):

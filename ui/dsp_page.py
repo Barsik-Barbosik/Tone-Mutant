@@ -1,8 +1,9 @@
+from ui.i18n import tr
 import random
 
-from PySide2.QtCore import Qt, Slot, Signal
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QListWidgetItem, QPushButton, QLabel
+from PySide6.QtCore import Qt, Slot, Signal
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QWidget, QGridLayout, QListWidget, QHBoxLayout, QListWidgetItem, QPushButton, QLabel
 
 from constants import constants
 from constants.enums import ParameterType
@@ -31,13 +32,16 @@ class DspPage(QWidget):
         self.qgrid_layout.setColumnStretch(3, 2)
 
         self.list_widget = QListWidget(self)
+        self.list_widget.setAccessibleName(tr("DSP {} effect".format(block0 + 1)))
         self.list_widget.setFixedWidth(180)
-        self.list_widget.insertItem(0, constants.EMPTY_DSP_NAME)
+        self.list_widget.insertItem(0, tr(constants.EMPTY_DSP_NAME))
         for idx, dsp_module in enumerate(constants.ALL_DSP_MODULES):
+            if "(hidden)" in dsp_module.name:
+                continue
             item = QListWidgetItem()
-            item.setText(dsp_module.name)
+            item.setText(tr(dsp_module.name))
             item.setData(Qt.UserRole, dsp_module.id)
-            self.list_widget.insertItem(idx + 1, item)
+            self.list_widget.addItem(item)
         self.list_widget.setCurrentRow(0)
         self.list_widget.itemSelectionChanged.connect(lambda: self.on_list_widget_changed(block0))
 
@@ -56,7 +60,7 @@ class DspPage(QWidget):
                                                                       constants.RIGHT_SIDE_DSP_PARAMS,
                                                                       self.core.set_synth_dsp_params)
 
-            label = QLabel("Bypass:")
+            label = QLabel(tr("Bypass:"))
             label.setObjectName("label-right-side")
             self.qgrid_layout.addWidget(label, right_side_items_count, 2)
             self.qgrid_layout.addWidget(GuiHelper.create_combo_input(self.dsp_module.bypass, self.send_dsp_bypass),
@@ -66,7 +70,7 @@ class DspPage(QWidget):
             largest_items_count = max(right_side_items_count,
                                       len(self.dsp_module.dsp_parameter_list) - right_side_items_count)
 
-            random_button = QPushButton(" Randomize DSP Values", self)
+            random_button = QPushButton(tr(" Randomize DSP Values"), self)
             random_button.setIcon(QIcon(resource_path("resources/random_star.png")))
             random_button.setObjectName("random-button")
             random_button.clicked.connect(lambda: self.on_random_button_pressed(self.block0))

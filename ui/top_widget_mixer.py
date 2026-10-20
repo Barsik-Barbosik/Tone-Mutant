@@ -1,6 +1,7 @@
-from PySide2.QtCore import Slot, Signal, Qt
-from PySide2.QtGui import QFont
-from PySide2.QtWidgets import QWidget, QLabel, QHBoxLayout, QFrame, QGridLayout, QComboBox, QSizePolicy, QSpacerItem, \
+from ui.i18n import tr
+from PySide6.QtCore import Slot, Signal, Qt, QSignalBlocker
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout, QFrame, QGridLayout, QComboBox, QSizePolicy, QSpacerItem, \
     QLineEdit
 
 from constants.constants import DEFAULT_TONE_NAME
@@ -39,7 +40,7 @@ class TopWidgetMixer(QWidget):
 
         # Tone Name Input and Parent Tone Label
         self.tone_name_input = self.create_tone_name_input(DEFAULT_TONE_NAME)
-        self.parent_tone_label = QLabel(f"Parent Tone:")
+        self.parent_tone_label = QLabel(tr(f"Parent Tone:"))
         self.parent_tone_label.setContentsMargins(0, 0, 0, 0)
         self.parent_tone_label.setStyleSheet("font-size: 9pt")
 
@@ -71,7 +72,9 @@ class TopWidgetMixer(QWidget):
 
     @staticmethod
     def create_tone_name_input(default_name):
-        tone_name_input = QLineEdit(default_name)
+        tone_name_input = QLineEdit(tr(default_name))
+        tone_name_input.setAccessibleName(tr("Current tone name"))
+        tone_name_input.setAccessibleDescription(tr("Up to 8 characters."))
         tone_name_input.setMaxLength(8)
         tone_name_input.setFixedWidth(130)
         tone_name_input.setAlignment(Qt.AlignCenter)
@@ -87,7 +90,7 @@ class TopWidgetMixer(QWidget):
         parent_id_and_name = "???"
         if self.core.tone.parent_tone:
             parent_id_and_name = "{:03}".format(self.core.tone.parent_tone.id) + " " + self.core.tone.parent_tone.name
-        self.parent_tone_label.setText(f"Parent Tone:\n{parent_id_and_name}")
+        self.parent_tone_label.setText(tr(f"Parent Tone:\n{parent_id_and_name}"))
 
     def create_tone_block(self, label, tone_widget, volume_var, pan_var, tone_change_handler=None,
                           tone_combo_name=None, volume_knob_name=None, pan_knob_name=None, frame_layout_name=None):
@@ -102,7 +105,7 @@ class TopWidgetMixer(QWidget):
             setattr(self, frame_layout_name, frame_layout)
 
         # Title
-        frame_layout.addWidget(QLabel(f"<b>{label}</b>"), 0, 0, alignment=Qt.AlignLeft)
+        frame_layout.addWidget(QLabel(tr(f"<b>{label}</b>")), 0, 0, alignment=Qt.AlignLeft)
 
         # Spacer
         spacer = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -116,6 +119,7 @@ class TopWidgetMixer(QWidget):
             frame_layout.addWidget(tone_widget, 0, 1, 1, 2, alignment=Qt.AlignLeft)
         else:
             tone_combo = QComboBox()
+            tone_combo.setAccessibleName(tr(label + " Tone"))
             tone_combo.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
             tone_combo.setFixedWidth(130)
             self.populate_tone_combo(tone_combo)
@@ -129,14 +133,14 @@ class TopWidgetMixer(QWidget):
             frame_layout.addWidget(tone_combo, 0, 1, 1, 2, alignment=Qt.AlignLeft)
 
         # Volume
-        frame_layout.addWidget(QLabel("Vol:"), 1, 1)
+        frame_layout.addWidget(QLabel(tr("Vol:")), 1, 1)
         volume_knob_layout = GuiHelper.create_knob_input(volume_var, self.on_knob_change)
         if volume_knob_name:
             setattr(self, volume_knob_name, volume_knob_layout)
         frame_layout.addLayout(volume_knob_layout, 1, 2)
 
         # Pan
-        frame_layout.addWidget(QLabel("Pan:"), 2, 1)
+        frame_layout.addWidget(QLabel(tr("Pan:")), 2, 1)
         pan_knob_layout = GuiHelper.create_knob_input(pan_var, self.on_knob_change)
         if pan_knob_name:
             setattr(self, pan_knob_name, pan_knob_layout)
@@ -159,8 +163,7 @@ class TopWidgetMixer(QWidget):
         if 0 <= block0 < len(volume_knob_layouts):
             volume_param, layout = volume_knob_layouts[block0]
             volume_param.value = volume
-            knob = layout.itemAt(0).widget()
-            knob.setValue(volume)
+            self._set_received_value(layout, volume)
 
     @Slot()
     def redraw_pan_knob(self, block0: int, pan: int):
@@ -174,11 +177,19 @@ class TopWidgetMixer(QWidget):
         if 0 <= block0 < len(pan_knob_layouts):
             pan_param, layout = pan_knob_layouts[block0]
             pan_param.value = pan
-            knob = layout.itemAt(0).widget()
-            knob.setValue(pan)
+            self._set_received_value(layout, pan)
+
+    @staticmethod
+    def _set_received_value(layout, value):
+        spinbox, dial = layout.itemAt(0).widget(), layout.itemAt(1).widget()
+        blockers = [QSignalBlocker(spinbox), QSignalBlocker(dial)]
+        spinbox.setValue(value)
+        dial.setValue(value)
+        del blockers
 
     @staticmethod
     def populate_tone_combo(combo):
+        blocker = QSignalBlocker(combo)
         combo.clear()
 
         for instrument in get_all_instruments():
@@ -199,6 +210,7 @@ class TopWidgetMixer(QWidget):
 
         combo = tone_combos.get(block0)
         if combo:
+            blocker = QSignalBlocker(combo)
             for index in range(combo.count()):
                 item_data = combo.itemData(index, Qt.UserRole)
                 if item_data == id_to_select:
@@ -209,10 +221,10 @@ class TopWidgetMixer(QWidget):
         self._on_tone_selected(index, self.tone_combo_upper2, 1, "UPPER 2 Tone")
 
     def on_lower1_selected(self, index):
-        self._on_tone_selected(index, self.tone_combo_upper2, 2, "LOWER 1 Tone")
+        self._on_tone_selected(index, self.tone_combo_lower1, 2, "LOWER 1 Tone")
 
     def on_lower2_selected(self, index):
-        self._on_tone_selected(index, self.tone_combo_upper2, 3, "LOWER 2 Tone")
+        self._on_tone_selected(index, self.tone_combo_lower2, 3, "LOWER 2 Tone")
 
     def _on_tone_selected(self, index, combo_box, block0, log_prefix):
         if index >= 0:

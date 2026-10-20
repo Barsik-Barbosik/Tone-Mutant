@@ -9,6 +9,7 @@ class TabName(Enum):
     DSP_4 = "DSP 4"
     ADVANCED_PARAMETERS = "Advanced Params"
     JSON = "JSON"
+    EXPERIMENTAL = "Experimental"
 
 
 class ParameterType(Enum):

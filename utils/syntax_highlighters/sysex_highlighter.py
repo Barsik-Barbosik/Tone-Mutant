@@ -1,5 +1,5 @@
-from PySide2.QtCore import Qt, QRegExp
-from PySide2.QtGui import QTextCharFormat, QSyntaxHighlighter
+from PySide6.QtCore import Qt, QRegularExpression
+from PySide6.QtGui import QTextCharFormat, QSyntaxHighlighter
 
 
 class SysexHighlighter(QSyntaxHighlighter):
@@ -35,7 +35,7 @@ class SysexHighlighter(QSyntaxHighlighter):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.word_formats = self._create_word_formats()
-        self.word_regex = QRegExp(r'\b\w+\b')
+        self.word_regex = QRegularExpression(r'\b\w+\b')
 
     def _create_word_formats(self):
         """Create and return a list of word index and QTextCharFormat pairs."""
@@ -85,15 +85,14 @@ class SysexHighlighter(QSyntaxHighlighter):
 
     def _highlight_keywords(self, text, pattern, color):
         """Highlight keywords matching the given pattern."""
-        expression = QRegExp(pattern)
+        expression = QRegularExpression(pattern)
         keyword_format = QTextCharFormat()
         keyword_format.setForeground(color)
 
-        index = expression.indexIn(text)
-        while index >= 0:
-            length = expression.matchedLength()
-            self.setFormat(index, length, keyword_format)
-            index = expression.indexIn(text, index + length)
+        matches = expression.globalMatch(text)
+        while matches.hasNext():
+            match = matches.next()
+            self.setFormat(match.capturedStart(), match.capturedLength(), keyword_format)
 
     def _highlight_prefixed_line(self, text, prefix, color):
         """Highlight lines starting with a specific prefix."""

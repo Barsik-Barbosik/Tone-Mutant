@@ -10,6 +10,7 @@ import struct
 import time
 
 from services.midi_service import MidiService  # RtMidi has been replaced with the existing MidiService
+from utils.utils import int_to_lsb_msb
 
 have_got_ack = False
 have_got_ess = False
@@ -560,7 +561,9 @@ class TyrantMidiService:
                 block = [0, 0, 0, 0]
             for blk in block:
                 packet += struct.pack('<BB', blk % 128, blk // 128)
-            packet += struct.pack('<BBHH', parameter % 128, parameter // 128, index, length - 1)
+            packet += struct.pack('<BB', parameter % 128, parameter // 128)
+            packet += bytes.fromhex(int_to_lsb_msb(index))
+            packet += bytes.fromhex(int_to_lsb_msb(length - 1))
 
         if tx:
             packet += data
@@ -600,6 +603,8 @@ class TyrantMidiService:
         in_packet = bool(so_far)  # Determine if already in a packet
 
         for byte in data:
+            if byte >= 0xF8:
+                continue  # MIDI real-time messages can be interleaved within SysEx.
             if in_packet:
                 if byte == 0xF7:  # End of SYSEX packet
                     so_far += b'\xF7'
@@ -682,6 +687,8 @@ class TyrantMidiService:
         Encode to MIDI "7-bit format", which requires the MSb of each byte to be zero.
         """
 
+        if not b:
+            return b''
         r = 0  # remainder
         n = 0  # position of split
         i = 0  # pointer to input
@@ -838,7 +845,7 @@ class TyrantMidiService:
             raise ValueError("Expected a bytes object")
 
         # Check for the expected start and end markers
-        if not y.startswith(b'CT-X') or not y.endswith(b'EODA'):
+        if len(y) < 36 or not y.startswith(b'CT-X') or not y.endswith(b'EODA'):
             raise ValueError("Invalid tone file format")
 
         # Remove the 'EODA' footer before proceeding
@@ -850,14 +857,16 @@ class TyrantMidiService:
             raise ValueError("Invalid tone file format: missing TONH")
 
         # Unpack the 3 integers (we expect CRC, length, and 0) from the "TONH" section
-        crc, length, _ = struct.unpack('<3I', y[offset + 4:offset + 16])  # Unpacking 3 integers
+        _, crc, length = struct.unpack('<3I', y[offset + 4:offset + 16])
 
         # Now extract the actual data
         actual_data = y[offset + 16:offset + 16 + length]
 
         # Enforce exact file length (without 'EODA')
         expected_length = 0x1C8  # 456 bytes
-        if len(actual_data) != expected_length:
-            raise ValueError(f"Invalid tone file length: expected {expected_length} bytes, got {len(y)} bytes")
+        if length != expected_length or len(y) != offset + 16 + length or len(actual_data) != expected_length:
+            raise ValueError(f"Invalid tone file length: expected {expected_length} data bytes")
+        if binascii.crc32(actual_data) != crc:
+            raise ValueError("Invalid tone file checksum")
 
         return bytearray(actual_data)

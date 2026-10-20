@@ -19,8 +19,8 @@ def int_to_hex(number: int) -> str:
 # Converts int to 2-byte hex string (7-bit LSB + 7-bit MSB): default for all parameters
 # Example: 222 -> "5E 01"
 def int_to_lsb_msb(number: int) -> str:
-    if number > 32267:
-        raise ValueError("Number is too big: {}".format(number))
+    if not 0 <= number <= 16383:
+        raise ValueError("Number must fit in two 7-bit MIDI bytes (0-16383): {}".format(number))
     return "{:02X}".format(number % 128) + " {:02X}".format(number // 128)
 
 
@@ -63,8 +63,8 @@ def encode_value_by_type(parameter):
     elif parameter.type == ParameterType.KNOB:
         if parameter.choices[1] == 127:  # 0...127
             return parameter.value
-        elif parameter.choices[1] == 3:  # -3...3
-            return parameter.value + parameter.choices[1] + 1
+        elif parameter.name == "Octave Shift" or parameter.choices[1] == 3:
+            return parameter.value + 4  # MIDI center stays 4 across model-specific UI limits.
         else:  # -12...12, -24...24, -50...50, -64...63
             return parameter.value + 64
     elif parameter.type == ParameterType.KNOB_X2:
@@ -87,8 +87,8 @@ def decode_param_value(value: int, parameter: Parameter):
     elif parameter.type == ParameterType.KNOB:
         if parameter.choices[1] == 127:  # 0...127
             return value
-        elif parameter.choices[1] == 3:  # -3...3
-            return value - parameter.choices[1] - 1
+        elif parameter.name == "Octave Shift" or parameter.choices[1] == 3:
+            return value - 4
         else:  # -12...12, -24...24, -50...50, -64...63
             return value - 64
     elif parameter.type == ParameterType.KNOB_X2:
@@ -99,8 +99,8 @@ def decode_param_value(value: int, parameter: Parameter):
             if value == item[2]:
                 return item[0]
             if value > item[2]:
-                return item[0] - 1
-        return 0
+                return max(0, item[0] - 1)
+        return constants.ATTACK_AND_RELEASE_TIME[-1][0]
     elif parameter.name == "Vibrato Type" and value == 0x0F:
         return 0  # Why synth returns "0F" instead of "00"?
     return value
@@ -108,19 +108,25 @@ def decode_param_value(value: int, parameter: Parameter):
 
 # Get the absolute path to a resource
 def resource_path(relative_path):
-    if hasattr(sys.modules[__name__], '__compiled__'):
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    elif hasattr(sys.modules[__name__], '__compiled__'):
         # Nuitka exe: temp dir
         base_path = os.path.dirname(os.path.abspath(sys.executable))
     else:
         # development: current dir
-        base_path = os.getcwd()
+        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
 
-def get_all_instruments():
+def get_synthesizer_model():
     cfg = configparser.ConfigParser()
     cfg.read(constants.CONFIG_FILENAME)
-    synth_model = cfg.get("Synthesizer", "Model", fallback=DEFAULT_SYNTH_MODEL)
+    return cfg.get("Synthesizer", "Model", fallback=DEFAULT_SYNTH_MODEL)
+
+
+def get_all_instruments():
+    synth_model = get_synthesizer_model()
 
     if synth_model == CTX_700_800:
         all_instruments = constants.ALL_INSTRUMENTS_700_800

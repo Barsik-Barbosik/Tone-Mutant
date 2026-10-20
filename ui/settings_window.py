@@ -1,21 +1,24 @@
+from ui.i18n import tr
 import configparser
 
 import rtmidi
-from PySide2 import QtCore
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QLabel, QComboBox, QGridLayout, QHBoxLayout, QPushButton, QSizePolicy, \
+from PySide6 import QtCore
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QWidget, QLabel, QComboBox, QGridLayout, QHBoxLayout, QPushButton, QSizePolicy, \
     QSpacerItem, QMessageBox
 
 from constants import constants
 from constants.constants import DEFAULT_MIDI_IN_PORT, DEFAULT_MIDI_OUT_PORT, DEFAULT_SYNTH_MODEL, CTX_3000_5000, \
     CTX_700_800, CTX_8000IN_9000IN
 from utils.utils import resource_path
+from ui.accessibility import enable_escape_to_close
 
 
 class SettingsWindow(QWidget):
     def __init__(self, parent):
         super().__init__()
-        self.setWindowTitle("Settings")
+        enable_escape_to_close(self)
+        self.setWindowTitle(tr("Settings"))
         self.setWindowIcon(QIcon(resource_path("resources/settings.png")))
 
         self.core = parent.core
@@ -49,7 +52,7 @@ class SettingsWindow(QWidget):
 
         # Add title label
         title_label = QLabel()
-        title_label.setText("<h2>Settings</h2>")
+        title_label.setText(tr("<h2>Settings</h2>"))
         title_label.setAlignment(QtCore.Qt.AlignCenter)
         self.layout.addWidget(title_label, 0, 0, 1, 2)
 
@@ -66,14 +69,17 @@ class SettingsWindow(QWidget):
 
     def _add_combo_box(self, label_text, items, selection, row):
         """Helper method to add a labeled combo box."""
-        label = QLabel(label_text)
+        label = QLabel(tr(label_text))
         label.setObjectName("midi-settings-label")
         self.layout.addWidget(label, row, 0)
 
         combo_box = QComboBox(self)
+        combo_box.setAccessibleName(tr(label_text.rstrip(":")))
+        label.setBuddy(combo_box)
         combo_box.setObjectName("midi-settings-combo")
-        combo_box.addItems(items)
-        combo_box.setCurrentText(selection)
+        for item in items:
+            combo_box.addItem(tr(item), item)
+        combo_box.setCurrentIndex(combo_box.findData(selection))
         self.layout.addWidget(combo_box, row, 1)
 
         attribute_name = self._format_attribute_name(label_text)
@@ -88,12 +94,12 @@ class SettingsWindow(QWidget):
         """Helper method to add OK and Cancel buttons."""
         button_layout = QHBoxLayout()
 
-        ok_button = QPushButton(" OK", self)
+        ok_button = QPushButton(tr(" OK"), self)
         ok_button.setIcon(QIcon(resource_path("resources/apply.png")))
         ok_button.clicked.connect(self._apply_settings)
         button_layout.addWidget(ok_button)
 
-        cancel_button = QPushButton(" CANCEL", self)
+        cancel_button = QPushButton(tr(" CANCEL"), self)
         cancel_button.setIcon(QIcon(resource_path("resources/cancel.png")))
         cancel_button.clicked.connect(self._close_window)
         button_layout.addWidget(cancel_button)
@@ -102,15 +108,15 @@ class SettingsWindow(QWidget):
 
     def _apply_settings(self):
         """Apply the settings and update the configuration file."""
-        is_synth_model_changed = self.synthesizer_model != self.synthesizer_model_combo.currentText()
+        is_synth_model_changed = self.synthesizer_model != self.synthesizer_model_combo.currentData()
         is_expert_mode_changed = (
-                self.is_expert_mode_enabled != self.expert_mode_mapping[self.expert_mode_combo.currentText()])
+                self.is_expert_mode_enabled != self.expert_mode_mapping[self.expert_mode_combo.currentData()])
 
-        self._update_config('Synthesizer', 'Model', self.synthesizer_model_combo.currentText())
-        self._update_config('Midi', 'InPort', self.midi_input_port_combo.currentText())
-        self._update_config('Midi', 'OutPort', self.midi_output_port_combo.currentText())
+        self._update_config('Synthesizer', 'Model', self.synthesizer_model_combo.currentData())
+        self._update_config('Midi', 'InPort', self.midi_input_port_combo.currentData() or "")
+        self._update_config('Midi', 'OutPort', self.midi_output_port_combo.currentData() or "")
         self._update_config('Expert', 'is_expert_mode_enabled',
-                            self.expert_mode_mapping[self.expert_mode_combo.currentText()])
+                            self.expert_mode_mapping[self.expert_mode_combo.currentData()])
 
         with open(constants.CONFIG_FILENAME, 'w') as cfg_file:
             self.cfg.write(cfg_file)
@@ -139,17 +145,19 @@ class SettingsWindow(QWidget):
         self.cfg.set(section, option, value)
 
     def _refresh_instrument_list(self):
-        self.core.tone.synthesizer_model = self.synthesizer_model_combo.currentText()
+        self.core.tone.configure_model(self.synthesizer_model_combo.currentData())
         self.core.main_window.central_widget.populate_instrument_list()
+        self.core.main_window.central_widget.redraw_main_params_panel()
+        self.core.main_window.central_widget.redraw_advanced_params_panel()
 
     def _show_restart_required_message(self):
         """Show a message box indicating restart is required."""
         message_box = QMessageBox(self)
         message_box.setIcon(QMessageBox.Information)
-        message_box.setWindowTitle("Restart Required")
-        message_box.setText("Changes to Expert Mode will take effect after restarting the application.")
+        message_box.setWindowTitle(tr("Restart Required"))
+        message_box.setText(tr("Changes to Expert Mode will take effect after restarting the application."))
         message_box.setStandardButtons(QMessageBox.Ok)
-        message_box.exec_()
+        message_box.exec()
 
     def _close_window(self):
         """Close and clean up the settings window."""

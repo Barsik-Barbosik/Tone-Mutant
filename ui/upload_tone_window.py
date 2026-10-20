@@ -1,22 +1,25 @@
-from PySide2 import QtCore
-from PySide2.QtGui import QIcon, QIntValidator
-from PySide2.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFormLayout, QMessageBox, \
+from ui.i18n import tr
+from PySide6 import QtCore
+from PySide6.QtGui import QIcon, QIntValidator
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFormLayout, QMessageBox, \
     QHBoxLayout
 
 from constants.constants import DEFAULT_TONE_NAME
 from utils.utils import resource_path
+from ui.accessibility import enable_escape_to_close
 
 
 class UploadToneWindow(QWidget):
     def __init__(self, parent):
         super().__init__()
+        enable_escape_to_close(self)
 
         self.core = parent.core
 
         self.number_input = None
         self.name_input = None
         self.submit_button = None
-        self.setWindowTitle("Save a tone to the synth's memory")
+        self.setWindowTitle(tr("Save a tone to the synth's memory"))
         self.setWindowIcon(QIcon(resource_path("resources/piano_plus.png")))
 
         self.init_ui()
@@ -35,7 +38,7 @@ class UploadToneWindow(QWidget):
     @staticmethod
     def add_title(layout):
         label = QLabel()
-        label.setText("<h2>Save Current Tone</h2>")
+        label.setText(tr("<h2>Save Current Tone</h2>"))
         label.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(label)
 
@@ -45,18 +48,22 @@ class UploadToneWindow(QWidget):
         # Tone Number input
         tone_number = self.get_tone_number()
         self.number_input = self.create_line_edit("User Memory... (801-900)", QIntValidator(801, 900), tone_number)
-        form_layout.addRow("Tone Number:", self.number_input)
+        form_layout.addRow(tr("Tone Number:"), self.number_input)
 
         # Tone Name input
         tone_name = self.get_tone_name()
         self.name_input = self.create_line_edit("Tone Name... (8 symbols)", None, tone_name)
         self.name_input.setMaxLength(8)
-        form_layout.addRow("Tone Name:", self.name_input)
+        self.number_input.setAccessibleName(tr("Tone Number"))
+        self.number_input.setAccessibleDescription(tr("User memory slot, 801 to 900."))
+        self.name_input.setAccessibleName(tr("Tone Name"))
+        self.name_input.setAccessibleDescription(tr("Up to 8 characters."))
+        form_layout.addRow(tr("Tone Name:"), self.name_input)
 
         layout.addLayout(form_layout)
 
     def add_submit_button(self, layout):
-        self.submit_button = QPushButton(" SAVE")
+        self.submit_button = QPushButton(tr(" SAVE"))
         self.submit_button.setIcon(QIcon(resource_path("resources/apply.png")))
         self.submit_button.clicked.connect(self.on_submit)
         self.submit_button.setFixedWidth(150)
@@ -72,7 +79,7 @@ class UploadToneWindow(QWidget):
     @staticmethod
     def create_line_edit(placeholder, validator, default_value):
         line_edit = QLineEdit()
-        line_edit.setPlaceholderText(placeholder)
+        line_edit.setPlaceholderText(tr(placeholder))
         if validator:
             line_edit.setValidator(validator)
         if default_value:
@@ -103,7 +110,7 @@ class UploadToneWindow(QWidget):
                 self.core.main_window.top_widget.update_tone_name_input_and_parent_info()
                 self.deleteLater()
             else:
-                QMessageBox.warning(self, "Input Error", "The 'Tone Number' must be in the range of 801 to 900.")
+                QMessageBox.warning(self, tr("Input Error"), tr("The 'Tone Number' must be in the range of 801 to 900."))
 
         except ValueError:
-            QMessageBox.warning(self, "Input Error", "The 'Tone Number' field must contain a valid integer.")
+            QMessageBox.warning(self, tr("Input Error"), tr("The 'Tone Number' field must contain a valid integer."))

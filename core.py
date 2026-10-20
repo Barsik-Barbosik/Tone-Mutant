@@ -5,7 +5,8 @@ import string
 import time
 from typing import Union
 
-from PySide2.QtCore import Signal, Slot, QObject
+from PySide6.QtCore import Signal, Slot, QObject, QTimer, QThread, Qt
+from PySide6.QtWidgets import QDialog
 
 from constants import constants
 from constants.constants import DEFAULT_TONE_NAME, DEFAULT_SYNTH_MODEL, EMPTY_TONE, EMPTY_DSP_MODULE_ID, \
@@ -21,16 +22,29 @@ from utils import utils
 from utils.file_operations import FileOperations
 from utils.utils import decode_param_value, int_to_hex, lsb_msb_to_int, get_all_instruments
 from utils.worker import Worker
+from ui.i18n import tr
 
 
 # Class for managing tone state and handling all communication between GUI and Midi Service
 # NB! Use int values as its method parameters, all required byte/hex conversions make in the Midi Service!
 class Core(QObject):
+    midi_message_signal = Signal(object)
+    error_message_signal = Signal(str)
+    autosync_request_signal = Signal(int)
+    raw_parameter_signal = Signal(int, int, object)
     synchronize_tone_signal = Signal()
     status_msg_signal = Signal(str, int)
 
     def __init__(self, main_window, status_bar):
-        super().__init__()
+        super().__init__(main_window)
+        self._closing = False
+        self._syncing = False
+        self.midi_message_signal.connect(self._dispatch_midi_message, Qt.QueuedConnection)
+        self.error_message_signal.connect(self.show_error_msg, Qt.QueuedConnection)
+        self.autosync_timer = QTimer(self)
+        self.autosync_timer.setSingleShot(True)
+        self.autosync_timer.timeout.connect(self.synchronize_tone_with_synth)
+        self.autosync_request_signal.connect(self.schedule_autosynchronize)
         self.main_window = main_window
         self.status_bar = status_bar
         self.tone: Tone = Tone()
@@ -43,49 +57,65 @@ class Core(QObject):
 
         cfg = configparser.ConfigParser()
         cfg.read(constants.CONFIG_FILENAME)
-        self.tone.synthesizer_model = cfg.get("Synthesizer", "Model", fallback=DEFAULT_SYNTH_MODEL)
+        self.tone.configure_model(cfg.get("Synthesizer", "Model", fallback=DEFAULT_SYNTH_MODEL))
 
         self.is_status_bar_update_on_pause = False
 
-    # Synchronize all Tone data: name, main params, DSP modules and their params
+    # Synchronize by reading the existing ports; do not destroy the active callback.
     @Slot()
     def synchronize_tone_with_synth(self):
-        self.log("[INFO] Synchronizing tone...")
-        self.main_window.loading_animation.start()
-        # self.tone = Tone()  # if enabled, then tone is initialized twice during the application startup
-
+        if self._closing or self._syncing:
+            return
+        self._syncing = True
         try:
-            self.close_midi_ports()
-            self.open_midi_ports()
-        except Exception as e:
-            self.show_error_msg(str(e))
-
-        if self.midi_service.midi_out.is_port_open() and self.midi_service.midi_in.is_port_open():
+            self.log("[INFO] Sincronizando el tono…")
+            self.main_window.loading_animation.start()
+            self.midi_service.check_and_reopen_midi_ports()
             self.request_tone_name()
             self.request_main_parameters()
-            self.request_dsp_module(0)
-            self.request_dsp_module(1)
-            self.request_dsp_module(2)
-            self.request_dsp_module(3)
+            for block in range(4):
+                self.request_dsp_module(block)
             self.request_advanced_parameters()
             self.request_volume_values()
             self.request_pan_values()
-
-            # upper2, lower1 and lower2 tone names
-            self.request_custom_parameter(SysexType.TONE_NUMBER.value, 1, 2, 3, 0, 0)
-            self.request_custom_parameter(SysexType.TONE_NUMBER.value, 2, 2, 3, 0, 0)
-            self.request_custom_parameter(SysexType.TONE_NUMBER.value, 3, 2, 3, 0, 0)
-
-        self.main_window.central_widget.on_tab_changed(0)  # updates help tab and JSON (if JSON-tab opened)
-
-        worker = Worker(self.redraw_main_and_advanced_params_pages)
-        worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
-        worker.start()
-        self.main_window.loading_animation.stop()
+            for block in range(4):
+                self.request_custom_parameter(SysexType.TONE_NUMBER.value, block, 2, 3, 0, 0)
+            self.main_window.central_widget.on_tab_changed(0)
+            QTimer.singleShot(100, self.redraw_main_and_advanced_params_pages)
+        except Exception as error:
+            self.show_error_msg(str(error))
+        finally:
+            self.main_window.loading_animation.stop()
+            self._syncing = False
 
     def redraw_main_and_advanced_params_pages(self):
+        if self._closing:
+            return
         self.main_window.central_widget.redraw_main_params_panel_signal.emit()
         self.main_window.central_widget.redraw_advanced_params_panel_signal.emit()
+
+    @Slot(object)
+    def _dispatch_midi_message(self, event):
+        if self._closing:
+            return
+        try:
+            self.midi_service._process_message(event, None)
+        except Exception as error:
+            import logging
+            logging.getLogger("tone_mutant").exception("Error al procesar un mensaje MIDI")
+            self.show_error_msg(str(error))
+
+    @Slot(int)
+    def schedule_autosynchronize(self, milliseconds=350):
+        if not self._closing:
+            self.autosync_timer.start(milliseconds)
+
+    def shutdown(self):
+        if self._closing:
+            return
+        self._closing = True
+        self.autosync_timer.stop()
+        self.close_midi_ports()
 
     # Request tone name from synth
     def request_tone_name(self):
@@ -245,6 +275,8 @@ class Core(QObject):
         setattr(self.tone, dsp_module_attr, copy.deepcopy(Tone.get_dsp_module_by_id(dsp_module_id)))
         dsp_page = getattr(self.main_window.central_widget, dsp_page_attr)
         dsp_page.dsp_module = getattr(self.tone, dsp_module_attr)
+        tab_bar = self.main_window.central_widget.tab_widget.tabBar()
+        tab_bar.setAccessibleTabName(block0 + 1, "DSP {}: {}".format(block0 + 1, tr(dsp_page.get_module_name())))
         if dsp_page.dsp_module:
             self.log(f"[INFO] DSP module: {dsp_page.dsp_module.name}")
             dsp_page.dsp_module.bypass.value = 0
@@ -276,7 +308,7 @@ class Core(QObject):
         if dsp_module is not None:
             for idx, dsp_param in enumerate(dsp_module.dsp_parameter_list):
                 if dsp_param.type == ParameterType.SPECIAL_DELAY_KNOB:
-                    dsp_param.value = int(str(synth_dsp_params[12]) + str(synth_dsp_params[13]))
+                    dsp_param.value = 100 * synth_dsp_params[12] + synth_dsp_params[13]
                 else:
                     dsp_param.value = decode_param_value(synth_dsp_params[idx], dsp_param)
 
@@ -379,25 +411,11 @@ class Core(QObject):
         if not is_found:
             self.tone.name = DEFAULT_TONE_NAME
             self.tone.parent_tone = None
-            self.main_window.central_widget.instrument_list.clearSelection()
+            self.main_window.central_widget.instrument_list.set_current_row_silently(-1)
 
     def countdown_and_autosynchronize(self, timeout):
-        try:
-            if self.timeout > 0:
-                # countdown timer exists: reset time and exit
-                self.timeout = timeout
-            else:
-                # start countdown
-                self.timeout = timeout
-                while self.timeout > 0:
-                    text = f"Auto-synchronize countdown: {self.timeout}"
-                    self.status_msg_signal.emit(text, 1000)
-                    self.timeout -= 1
-                    time.sleep(1)
-
-                self.synchronize_tone_signal.emit()
-        except Exception as e:
-            self.show_error_msg(str(e))
+        # Compatibility for callers that schedule from a worker thread.
+        self.autosync_request_signal.emit(max(1, int(timeout * 1000)))
 
     # Open midi ports
     def open_midi_ports(self):
@@ -449,21 +467,27 @@ class Core(QObject):
 
         if not self.tone.parent_tone:
             # Parent tone is not found: show modal window
-            json_synthesizer_model_str = "unknown synthesizer model" if json_synthesizer_model is None else str(
+            json_synthesizer_model_str = "modelo desconocido" if json_synthesizer_model is None else str(
                 json_synthesizer_model)
             json_parent_id_str = "" if json_parent_id is None else str(json_parent_id) + " "
-            json_parent_name_str = "Unknown Name" if not json_parent_name else json_parent_name
+            json_parent_name_str = "nombre desconocido" if not json_parent_name else json_parent_name
             json_parent_bank_str = "???" if json_parent_bank is None else str(json_parent_bank)
             json_parent_program_str = "???" if json_parent_program is None else str(json_parent_program)
 
-            modal_window_message = "<br/>The required parent tone from the " + json_synthesizer_model_str + " was not found:<br/><b>" \
-                                   + json_parent_id_str + json_parent_name_str + " (bank: " + json_parent_bank_str + ", program: " + json_parent_program_str \
-                                   + ")</b><br/><br/>You can apply parameters from a JSON file to the currently selected tone."
-            button_text = " Apply Parameters to Current Tone (" + str(current_parent_tone.id) + " " \
-                          + current_parent_tone.name + ")"
+            from html import escape
+            modal_window_message = ("<p>No se encontró el tono base indicado por el archivo: <b>{} {}</b> "
+                                    "(modelo: {}; banco: {}; programa: {}).</p>"
+                                    "<p>Puede aplicar los parámetros al tono que tiene seleccionado ahora.</p>").format(
+                escape(json_parent_id_str), escape(json_parent_name_str), escape(json_synthesizer_model_str),
+                escape(json_parent_bank_str), escape(json_parent_program_str))
+            button_text = "Aplicar parámetros al tono actual"
+            if current_parent_tone is not None:
+                button_text += " ({} {})".format(current_parent_tone.id, current_parent_tone.name)
             self.show_status_msg("Select a parent tone to proceed", 0)
             modal_window = ChangeInstrumentWindow(self, modal_window_message, button_text)
-            modal_window.exec_()
+            if modal_window.exec() != QDialog.DialogCode.Accepted:
+                self.tone.parent_tone = current_parent_tone
+                return
 
             self.show_status_msg("", 0)
             self.tone.parent_tone = current_parent_tone
@@ -561,16 +585,22 @@ class Core(QObject):
     def send_instrument_change_sysex(self, block0, tone_number):
         self.midi_service.send_change_tone_msg(tone_number, block0)
 
-    @Slot()
+    @Slot(str, int)
     def show_status_msg(self, text: str, msecs: int):
         if not self.is_status_bar_update_on_pause:
             self.status_bar.setStyleSheet("background-color: white; color: black")
-            self.status_bar.showMessage(text, msecs)
+            self.status_bar.showMessage(tr(text), msecs)
 
+    @Slot(str)
     def show_error_msg(self, text: str):
+        if self._closing:
+            return
+        if QThread.currentThread() != self.thread():
+            self.error_message_signal.emit(text)
+            return
         self.log("[ERROR] " + text)
         self.status_bar.setStyleSheet("background-color: white; color: red")
-        self.status_bar.showMessage(text, 5000)
+        self.status_bar.showMessage("Error: " + tr(text), 5000)
 
         self.main_window.loading_animation.stop()
 
@@ -578,7 +608,7 @@ class Core(QObject):
         self.is_status_bar_update_on_pause = is_status_bar_update_on_pause
 
     def log(self, msg: str):
-        self.main_window.log_texbox.log(msg)
+        self.main_window.log_texbox.log(tr(msg))
 
     def start_ton_file_save_worker(self, file_name):
         self.main_window.loading_animation.start()
@@ -829,22 +859,16 @@ class Core(QObject):
         self.show_status_msg(msg, 3000)
         self.pause_status_bar_updates(True)
 
-        # Random DSP params
-        worker = Worker(self.randomize_dsp_params, random_dsp_1, random_dsp_2)
-        worker.signals.error.connect(lambda error: self.show_error_msg(str(error[1])))
-        worker.start()
+        # GUI work must remain on the GUI thread, including delayed randomization.
+        QTimer.singleShot(300, lambda: self.randomize_dsp_params(random_dsp_1, random_dsp_2))
 
     def randomize_dsp_params(self, random_dsp_1, random_dsp_2):
+        if self._closing:
+            return
         if random_dsp_1 > 0:
-            time.sleep(0.3)
-            self.main_window.central_widget.dsp_page_1.on_random_button_pressed(
-                self.main_window.central_widget.dsp_page_1.block0)
-
+            self.main_window.central_widget.dsp_page_1.on_random_button_pressed(0)
         if random_dsp_2 > 0:
-            time.sleep(0.3)
-            self.main_window.central_widget.dsp_page_2.on_random_button_pressed(
-                self.main_window.central_widget.dsp_page_2.block0)
-
+            self.main_window.central_widget.dsp_page_2.on_random_button_pressed(1)
         self.pause_status_bar_updates(False)
         self.main_window.loading_animation.stop()
 

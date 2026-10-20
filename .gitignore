@@ -1,0 +1,6 @@
+.runtime/
+__pycache__/
+*.pyc
+config.cfg
+dist/
+registros/

@@ -1,11 +1,13 @@
+from ui.i18n import tr, parameter_help
 import configparser
 from typing import Callable
 
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QDial, \
+from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QDial, \
     QHBoxLayout, QSpinBox, QComboBox, QWidget, QSizePolicy, QGridLayout, QMainWindow, \
-    QDockWidget, QFrame, QTabWidget, QVBoxLayout, QTextEdit, QPushButton
-from PySide2.QtWidgets import QLabel
+    QDockWidget, QFrame, QTabWidget, QVBoxLayout, QTextEdit, QPushButton, QApplication
+from PySide6.QtWidgets import QLabel
 
 from constants import constants
 from constants.constants import DEFAULT_SYNTH_MODEL, CTX_700_800
@@ -19,7 +21,7 @@ class GuiHelper:
 
     @staticmethod
     def init_top_dock(main_window: QMainWindow):
-        top_dock = QDockWidget("Layer Mixer", main_window)
+        top_dock = QDockWidget(tr("Layer Mixer"), main_window)
         top_dock.setTitleBarWidget(QWidget())
         top_dock.setFloating(False)
 
@@ -44,7 +46,7 @@ class GuiHelper:
     @staticmethod
     def init_right_dock(main_window: QMainWindow):
         # Create the dock widget
-        right_dock = QDockWidget("Right Dock", main_window)
+        right_dock = QDockWidget(tr("Right Dock"), main_window)
         right_dock.setTitleBarWidget(QWidget())
         right_dock.setFloating(False)
 
@@ -56,8 +58,8 @@ class GuiHelper:
         tab_widget = QTabWidget(main_window)
         tab_widget.setMinimumHeight(500)
         tab_widget.setMinimumWidth(300)
-        tab_widget.addTab(help_tab, "Info / Help")
-        tab_widget.addTab(log_tab, "Log")
+        tab_widget.addTab(help_tab, tr("Info / Help"))
+        tab_widget.addTab(log_tab, tr("Log"))
 
         # Save a reference to the tab widget in the main window
         main_window.right_tab_widget = tab_widget
@@ -112,12 +114,15 @@ class GuiHelper:
     def add_midi_msg_input(log_tab_layout: QVBoxLayout, main_window: QMainWindow):
         """Adds the MIDI message input section to the log tab."""
         midi_msg_input = QTextEdit(main_window)
-        midi_msg_input.setPlaceholderText("MIDI message...")
+        midi_msg_input.setAccessibleName(tr("Custom MIDI message"))
+        midi_msg_input.setAccessibleDescription(tr("Hexadecimal bytes. Tab moves to Send MIDI Message."))
+        midi_msg_input.setTabChangesFocus(True)
+        midi_msg_input.setPlaceholderText(tr("MIDI message..."))
         midi_msg_input.setMaximumHeight(80)
         SysexHighlighter(midi_msg_input.document())
         log_tab_layout.addWidget(midi_msg_input)
 
-        submit_button = QPushButton(" Send MIDI Message")
+        submit_button = QPushButton(tr(" Send MIDI Message"))
         submit_button.setIcon(QIcon(resource_path("resources/send.png")))
         submit_button.clicked.connect(lambda: main_window.core.send_custom_midi_msg(midi_msg_input.toPlainText()))
         log_tab_layout.addWidget(submit_button)
@@ -137,24 +142,30 @@ class GuiHelper:
                 label_class = "label-right-side"
                 right_side_items_count += 1
 
-            label = QLabel(dsp_param.name + ":")
+            label = QLabel(tr(dsp_param.name + ":"))
             label.setObjectName(label_class)
             qgrid_layout.addWidget(label, row, column)
             if dsp_param.type == ParameterType.COMBO:
-                qgrid_layout.addWidget(GuiHelper.create_combo_input(dsp_param, function_to_run), row, column + 1)
+                control = GuiHelper.create_combo_input(dsp_param, function_to_run)
+                label.setBuddy(control)
+                qgrid_layout.addWidget(control, row, column + 1)
             elif dsp_param.type in [ParameterType.KNOB, ParameterType.KNOB_X2, ParameterType.SPECIAL_ATK_REL_KNOB,
                                     ParameterType.SPECIAL_DELAY_KNOB]:
-                qgrid_layout.addLayout(GuiHelper.create_knob_input(dsp_param, function_to_run), row, column + 1)
+                controls = GuiHelper.create_knob_input(dsp_param, function_to_run)
+                label.setBuddy(controls.itemAt(0).widget())
+                qgrid_layout.addLayout(controls, row, column + 1)
         return right_side_items_count
 
     @staticmethod
     def create_combo_input(parameter: Parameter, function_to_run: Callable) -> QComboBox:
         combo_box = QComboBox()
-        if parameter.choices[1] is not None and len(parameter.choices[1]) > 30:
+        combo_box.setAccessibleName(tr(parameter.name))
+        combo_box.setAccessibleDescription(parameter_help(parameter))
+        if len(parameter.choices) > 1 and parameter.choices[1] is not None and len(parameter.choices[1]) > 30:
             # amp cabinet types
             combo_box.setObjectName("fat-combo-box")
             combo_box.setMaximumWidth(150)
-        combo_box.addItems(parameter.choices)
+        combo_box.addItems([tr(choice) for choice in parameter.choices])
         combo_box.setCurrentIndex(parameter.value)
         combo_box.currentIndexChanged.connect(
             lambda new_value: GuiHelper.on_combo_changed(combo_box, parameter, function_to_run))
@@ -163,12 +174,22 @@ class GuiHelper:
     @staticmethod
     def create_knob_input(parameter: Parameter, function_to_run: Callable) -> QHBoxLayout:
         knob_spinbox = QSpinBox()
+        knob_spinbox.setAccessibleName(tr(parameter.name))
+        knob_spinbox.setAccessibleDescription(
+            "{} Rango de {} a {}. Escriba un valor o use las flechas arriba y abajo.".format(
+                parameter_help(parameter), parameter.choices[0], parameter.choices[1]))
+        # Commit typed numbers on Enter or focus loss, avoiding partial MIDI values.
+        knob_spinbox.setKeyboardTracking(False)
         knob_spinbox.setMaximumWidth(60)
         knob_spinbox.setMinimum(parameter.choices[0])
         knob_spinbox.setMaximum(parameter.choices[1])
         knob_spinbox.setValue(parameter.value)
 
         knob = QDial()
+        knob.setAccessibleName(tr(parameter.name + " dial"))
+        knob.setAccessibleDescription(parameter_help(parameter))
+        # The linked native spin box offers the same value without a duplicate Tab stop.
+        knob.setFocusPolicy(Qt.NoFocus)
         knob.setMinimum(knob_spinbox.minimum())
         knob.setMaximum(knob_spinbox.maximum())
         knob.setValue(parameter.value)
@@ -190,7 +211,7 @@ class GuiHelper:
 
     @staticmethod
     def on_combo_changed(combo: QComboBox, parameter: Parameter, function_to_run: Callable):
-        parameter.value = parameter.choices.index(combo.currentText())
+        parameter.value = combo.currentIndex()
         function_to_run(parameter)
 
     @staticmethod
@@ -211,12 +232,39 @@ class GuiHelper:
     @staticmethod
     def clear_layout(layout):
         if layout is not None:
+            focused = QApplication.focusWidget()
+            for widget in GuiHelper.layout_widgets(layout):
+                if widget == focused or widget.isAncestorOf(focused):
+                    name = widget.accessibleName()
+                    if name:
+                        kind = type(widget)
+
+                        def restore_focus(layout=layout, name=name, kind=kind):
+                            try:
+                                for replacement in GuiHelper.layout_widgets(layout):
+                                    if type(replacement) == kind and replacement.accessibleName() == name:
+                                        replacement.setFocus(Qt.OtherFocusReason)
+                                        break
+                            except RuntimeError:
+                                pass  # The whole window may have closed meanwhile.
+
+                        QTimer.singleShot(0, restore_focus)
+                    break
             while layout.count():
                 child = layout.takeAt(0)
                 if child.widget() is not None:
                     child.widget().deleteLater()
                 elif child.layout() is not None:
                     GuiHelper.clear_layout(child.layout())
+
+    @staticmethod
+    def layout_widgets(layout):
+        for index in range(layout.count()):
+            item = layout.itemAt(index)
+            if item.widget() is not None:
+                yield item.widget()
+            elif item.layout() is not None:
+                yield from GuiHelper.layout_widgets(item.layout())
 
     @staticmethod
     def get_spacer() -> QWidget:

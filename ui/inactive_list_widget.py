@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QListWidget
+from PySide6.QtWidgets import QListWidget
 
 
 class InactiveListWidget(QListWidget):

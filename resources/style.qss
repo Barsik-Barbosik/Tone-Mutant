@@ -109,3 +109,10 @@ QButton#toolbar {
     font-family: Courier New;
     font-size: 10pt;
 }
+
+/* Preserve a visible keyboard focus indicator with the custom theme. */
+QPushButton:focus, QToolButton:focus, QComboBox:focus, QSpinBox:focus,
+QLineEdit:focus, QListWidget:focus, QTableWidget:focus, QTextEdit:focus,
+QTextBrowser:focus, QTabBar:focus, QCheckBox:focus {
+    outline: 2px solid #005fcc;
+}

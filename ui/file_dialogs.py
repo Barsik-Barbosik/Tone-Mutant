@@ -1,4 +1,5 @@
-from PySide2.QtWidgets import QFileDialog
+from ui.i18n import tr
+from PySide6.QtWidgets import QFileDialog
 
 
 class FileDialogHelper:
@@ -12,9 +13,9 @@ class FileDialogHelper:
         options = QFileDialog.Options()
         file_name, _ = QFileDialog.getOpenFileName(
             parent,
-            "Open JSON File",
+            tr("Open JSON File"),
             "",
-            "JSON Files (*.json);;All Files (*)",
+            tr("JSON Files (*.json);;All Files (*)"),
             options=options
         )
         return file_name if file_name else None
@@ -30,9 +31,9 @@ class FileDialogHelper:
         options = QFileDialog.Options()
         file_name, _ = QFileDialog.getSaveFileName(
             parent,
-            "Save JSON File",
+            tr("Save JSON File"),
             default_filename,
-            "JSON Files (*.json);;All Files (*)",
+            tr("JSON Files (*.json);;All Files (*)"),
             options=options
         )
         return file_name if file_name else None
@@ -48,9 +49,9 @@ class FileDialogHelper:
         options = QFileDialog.Options()
         file_name, _ = QFileDialog.getSaveFileName(
             parent,
-            "Save TON File",
+            tr("Save TON File"),
             default_filename,
-            "TON Files (*.ton);;All Files (*)",
+            tr("TON Files (*.ton);;All Files (*)"),
             options=options
         )
         return file_name if file_name else None

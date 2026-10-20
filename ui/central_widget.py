@@ -1,14 +1,16 @@
+from ui.i18n import tr, parameter_help, module_help
 import json
 import random
 
-from PySide2.QtCore import Qt, Slot, Signal
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QTextBrowser, QPushButton, QListWidgetItem
+from PySide6.QtCore import Qt, Slot, Signal
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QWidget, QGridLayout, QTabWidget, QHBoxLayout, QTextBrowser, QPushButton, QListWidgetItem
 
 from constants import constants
 from constants.enums import TabName, ParameterType
 from ui.dsp_page import DspPage
 from ui.gui_helper import GuiHelper
+from ui.experimental_page import ExperimentalPage, DOCUMENTED_ADVANCED
 from ui.instrument_list_widget import InstrumentListWidget
 from utils.object_encoder import ObjectEncoder
 from utils.syntax_highlighters.json_highlighter import JsonHighlighter
@@ -25,6 +27,7 @@ class CentralWidget(QWidget):
         self.core = parent.core
 
         self.json_view_tab_textbox = QTextBrowser()
+        self.json_view_tab_textbox.setAccessibleName(tr("Tone JSON"))
         JsonHighlighter(self.json_view_tab_textbox.document())
 
         self.dsp_page_1 = DspPage(self, 0)
@@ -37,18 +40,25 @@ class CentralWidget(QWidget):
         self.setLayout(main_layout)
 
         self.instrument_list = InstrumentListWidget(self)
+        self.instrument_list.setAccessibleName(tr("Parent tone"))
 
         self.qgrid_layout = QGridLayout()
         self.advanced_qgrid_layout = QGridLayout()
         self.tab_widget = QTabWidget(self)
         self.tab_widget.setMinimumHeight(500)
-        self.tab_widget.addTab(self.create_main_params_page(), TabName.MAIN_PARAMETERS.value)
-        self.tab_widget.addTab(self.dsp_page_1, GuiHelper.get_white_icon(), TabName.DSP_1.value)
-        self.tab_widget.addTab(self.dsp_page_2, GuiHelper.get_white_icon(), TabName.DSP_2.value)
-        self.tab_widget.addTab(self.dsp_page_3, GuiHelper.get_white_icon(), TabName.DSP_3.value)
-        self.tab_widget.addTab(self.dsp_page_4, GuiHelper.get_white_icon(), TabName.DSP_4.value)
-        self.tab_widget.addTab(self.create_advanced_params_page(), TabName.ADVANCED_PARAMETERS.value)
-        self.tab_widget.addTab(self.create_json_view_page(), TabName.JSON.value)
+        self.tab_widget.addTab(self.create_main_params_page(), tr(TabName.MAIN_PARAMETERS.value))
+        self.tab_widget.addTab(self.dsp_page_1, GuiHelper.get_white_icon(), tr(TabName.DSP_1.value))
+        self.tab_widget.addTab(self.dsp_page_2, GuiHelper.get_white_icon(), tr(TabName.DSP_2.value))
+        self.tab_widget.addTab(self.dsp_page_3, GuiHelper.get_white_icon(), tr(TabName.DSP_3.value))
+        self.tab_widget.addTab(self.dsp_page_4, GuiHelper.get_white_icon(), tr(TabName.DSP_4.value))
+        self.tab_widget.addTab(self.create_advanced_params_page(), tr(TabName.ADVANCED_PARAMETERS.value))
+        self.tab_widget.addTab(self.create_json_view_page(), tr(TabName.JSON.value))
+        self.experimental_page = ExperimentalPage(self)
+        self.tab_widget.addTab(self.experimental_page, "Experimental")
+        tab_names = [TabName.MAIN_PARAMETERS, TabName.DSP_1, TabName.DSP_2, TabName.DSP_3,
+                     TabName.DSP_4, TabName.ADVANCED_PARAMETERS, TabName.JSON, TabName.EXPERIMENTAL]
+        for index, name in enumerate(tab_names):
+            self.tab_widget.tabBar().setTabData(index, name.value)
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
         main_layout.addWidget(self.tab_widget, 0, 0, 2, 1)
@@ -85,7 +95,7 @@ class CentralWidget(QWidget):
 
         for idx, instrument in enumerate(get_all_instruments()):
             item = QListWidgetItem()
-            item.setText("{:03}".format(instrument.id) + "  -  " + instrument.name)
+            item.setText(tr("{:03}".format(instrument.id) + "  -  " + instrument.name))
             item.setData(Qt.UserRole, instrument.id)
             self.instrument_list.insertItem(idx, item)
 
@@ -100,7 +110,7 @@ class CentralWidget(QWidget):
         advanced_params_page.setLayout(hbox_layout)
 
         GuiHelper.fill_qgrid_with_params(self.advanced_qgrid_layout,
-                                         self.core.tone.advanced_parameter_list,
+                                         [p for p in self.core.tone.advanced_parameter_list if p.param_number in DOCUMENTED_ADVANCED],
                                          constants.RIGHT_SIDE_ADVANCED_PARAMS,
                                          self.set_synth_parameter)
 
@@ -118,7 +128,7 @@ class CentralWidget(QWidget):
         largest_items_count = max(right_side_items_count,
                                   len(self.core.tone.main_parameter_list) - right_side_items_count)
 
-        random_button = QPushButton(" Randomize Parameters", self)
+        random_button = QPushButton(tr(" Randomize Parameters"), self)
         random_button.setIcon(QIcon(resource_path("resources/random_star.png")))
         random_button.setObjectName("random-button")
         random_button.clicked.connect(self.on_random_button_pressed)
@@ -129,9 +139,11 @@ class CentralWidget(QWidget):
     def redraw_advanced_params_panel(self):
         GuiHelper.clear_layout(self.advanced_qgrid_layout)
         GuiHelper.fill_qgrid_with_params(self.advanced_qgrid_layout,
-                                         self.core.tone.advanced_parameter_list,
+                                         [p for p in self.core.tone.advanced_parameter_list if p.param_number in DOCUMENTED_ADVANCED],
                                          constants.RIGHT_SIDE_ADVANCED_PARAMS,
                                          self.set_synth_parameter)
+
+        self.experimental_page.refresh_editors()
 
     def on_random_button_pressed(self):
         for main_param in self.core.tone.main_parameter_list:
@@ -150,7 +162,7 @@ class CentralWidget(QWidget):
         self.core.log("[INFO] " + msg)
 
     def get_current_tab_name(self):
-        return TabName(self.tab_widget.tabText(self.tab_widget.currentIndex()))
+        return TabName(self.tab_widget.tabBar().tabData(self.tab_widget.currentIndex()))
 
     def on_tab_changed(self, _):
         self.current_dsp_page = None
@@ -174,6 +186,8 @@ class CentralWidget(QWidget):
         elif current_tab_name == TabName.JSON:
             self.core.show_status_msg("Tone information in JSON-format", 3000)
             self.json_view_tab_textbox.setPlainText(self.get_json())
+        elif current_tab_name == TabName.EXPERIMENTAL:
+            self.core.show_status_msg("Investigación experimental: consulte valores, guarde instantáneas y revise las preguntas pendientes.", 6000)
 
         self.update_help_text_panel()
 
@@ -181,6 +195,8 @@ class CentralWidget(QWidget):
         return json.dumps(self.core.tone, cls=ObjectEncoder, indent=4)
 
     def on_instrument_list_changed(self):
+        if self.instrument_list.currentItem() is None:
+            return
         instrument_id: int = self.instrument_list.currentItem().data(Qt.UserRole)
         self.core.change_instrument_by_id_from_list(instrument_id)
 
@@ -193,29 +209,27 @@ class CentralWidget(QWidget):
 
     @Slot()
     def update_help_text_panel(self):
-        text = ""
-        if self.get_current_tab_name() == TabName.MAIN_PARAMETERS:
-            text = "<h2>Main Parameters</h2>List of main tone parameters for editing.<br/>"
-            for param in self.core.tone.main_parameter_list:
-                text = text + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
-        elif self.get_current_tab_name() == TabName.JSON:
-            text = "<h2>Tone in JSON format</h2>Parameter values are displayed here.<br/><br/>Currently, this view is read-only, but it may become editable in the future."
-        elif self.current_dsp_page is not None and self.current_dsp_page.block0 is not None:
-            if self.current_dsp_page.dsp_module is None:
-                text = "The DSP module is not selected."
-            else:
-                text = "<h2>" + self.current_dsp_page.get_module_name() + "</h2>" \
-                       + self.current_dsp_page.dsp_module.description + "<br/>"
-                for param in self.current_dsp_page.dsp_module.dsp_parameter_list:
-                    text = text + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
-        elif self.get_current_tab_name() == TabName.ADVANCED_PARAMETERS:
-            text = "<h2>Advanced Parameters</h2>List of advanced tone parameters for editing.<br/><br/>" \
-                   "<i>Note: Sound timbre type and wavetable cannot be changed in real time. Save the tone to the synthesizer's memory, " \
-                   "then reload it to hear the difference. " \
-                   "It also appears that they are related: an incorrect combination can result in silence.</i><br/>"
-            for param in self.core.tone.advanced_parameter_list:
-                text = text + "<br/><b>" + param.name + "</b><br/>" + param.description + "<br/>"
-
+        name = self.get_current_tab_name()
+        parameters = []
+        if name == TabName.MAIN_PARAMETERS:
+            text = "<h2>Parámetros principales</h2><p>Ajustes del tono actual. Use Tab para recorrer los controles.</p>"
+            parameters = self.core.tone.main_parameter_list
+        elif name == TabName.ADVANCED_PARAMETERS:
+            text = "<h2>Parámetros avanzados</h2><p>La ruta de salida permite enviar la señal directamente o a través del efecto DSP. Los controles aún por comprobar están en Experimental.</p>"
+            parameters = [p for p in self.core.tone.advanced_parameter_list if p.param_number in DOCUMENTED_ADVANCED]
+        elif name == TabName.JSON:
+            text = "<h2>Tono en formato JSON</h2><p>Vista de solo lectura de los datos del tono. Los identificadores internos se conservan para mantener la compatibilidad con archivos existentes.</p>"
+        elif name == TabName.EXPERIMENTAL:
+            text = "<h2>Investigación experimental</h2><p>Abra las subsecciones Lecturas e instantáneas, Controles en investigación y Preguntas pendientes. F8 permite leer el último resultado.</p>"
+        elif self.current_dsp_page is not None and self.current_dsp_page.dsp_module is not None:
+            module = self.current_dsp_page.dsp_module
+            text = "<h2>" + tr(module.name) + "</h2><p>" + module_help(module) + "</p>"
+            parameters = module.dsp_parameter_list
+        else:
+            text = "<p>No hay un efecto DSP seleccionado.</p>"
+        from html import escape
+        for parameter in parameters:
+            text += "<p><b>" + escape(tr(parameter.name)) + "</b><br/>" + escape(parameter_help(parameter)) + "</p>"
         self.core.main_window.show_help_text(text)
 
     # Send message to update synth's main parameter

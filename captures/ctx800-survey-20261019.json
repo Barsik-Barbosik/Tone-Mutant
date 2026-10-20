@@ -1,0 +1,4275 @@
+{
+  "started_utc": "2026-10-19T23:02:45.423581+00:00",
+  "mode": "read-only IPR; category=3 memory=3 parameter_set=0",
+  "plan": "upstream TON reader addresses, block 0",
+  "inputs": [
+    "CASIO USB-MIDI 0"
+  ],
+  "outputs": [
+    "Microsoft GS Wavetable Synth 0",
+    "CASIO USB-MIDI 1"
+  ],
+  "requests": [
+    {
+      "name": "Tone parameter 0",
+      "parameter": 0,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0F 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 0,
+        "index": 0,
+        "length_field": 15,
+        "data": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 1",
+      "parameter": 1,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 1,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 2",
+      "parameter": 2,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 02 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 2,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 3",
+      "parameter": 3,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 03 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 3,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 4",
+      "parameter": 4,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 04 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 4,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 5",
+      "parameter": 5,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 05 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 5,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 6",
+      "parameter": 6,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 06 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 6,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 7",
+      "parameter": 7,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 07 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 7,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 8",
+      "parameter": 8,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 08 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 8,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          24,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 9",
+      "parameter": 9,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 09 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 9,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          102,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 10",
+      "parameter": 10,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 0A 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 10,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          26,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 11",
+      "parameter": 11,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 0B 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 11,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 12",
+      "parameter": 12,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 0C 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 12,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 13",
+      "parameter": 13,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 0D 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 13,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 14",
+      "parameter": 14,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 0E 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 14,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 15",
+      "parameter": 15,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 0F 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 15,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 16",
+      "parameter": 16,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 10 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 16,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 17",
+      "parameter": 17,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 11 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 17,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 18",
+      "parameter": 18,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 12 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 18,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 19",
+      "parameter": 19,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 13 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 19,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          104,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 20",
+      "parameter": 20,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 14 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 20,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 21",
+      "parameter": 21,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 15 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 21,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 22",
+      "parameter": 22,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 16 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 22,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 23",
+      "parameter": 23,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 17 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 23,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 24",
+      "parameter": 24,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 18 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 24,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 25",
+      "parameter": 25,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 19 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 25,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 26",
+      "parameter": 26,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 1A 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 26,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 27",
+      "parameter": 27,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 1B 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 27,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 28",
+      "parameter": 28,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 1C 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 28,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 29",
+      "parameter": 29,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 1D 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 29,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 30",
+      "parameter": 30,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 1E 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 30,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 31",
+      "parameter": 31,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 1F 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 31,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 32",
+      "parameter": 32,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 20 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 32,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 33",
+      "parameter": 33,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 21 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 33,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 34",
+      "parameter": 34,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 22 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 34,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 35",
+      "parameter": 35,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 23 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 35,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 36",
+      "parameter": 36,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 24 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 36,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 37",
+      "parameter": 37,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 25 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 37,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 38",
+      "parameter": 38,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 26 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 38,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 39",
+      "parameter": 39,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 27 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 39,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 40",
+      "parameter": 40,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 28 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 40,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 41",
+      "parameter": 41,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 29 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 41,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 42",
+      "parameter": 42,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 2A 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 42,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 43",
+      "parameter": 43,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 2B 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 43,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 44",
+      "parameter": 44,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 2C 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 44,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 45",
+      "parameter": 45,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 2D 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 45,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          90
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 46",
+      "parameter": 46,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 2E 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 46,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 47",
+      "parameter": 47,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 2F 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 47,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          2
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 48",
+      "parameter": 48,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 30 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 48,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          2
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 49",
+      "parameter": 49,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 31 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 49,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          105
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 50",
+      "parameter": 50,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 32 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 50,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          36
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 51",
+      "parameter": 51,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 33 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 51,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          2
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 52",
+      "parameter": 52,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 34 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 52,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 53",
+      "parameter": 53,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 35 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 53,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          2
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 54",
+      "parameter": 54,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 36 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 54,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 55",
+      "parameter": 55,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 37 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 55,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 56",
+      "parameter": 56,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 38 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 56,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 57",
+      "parameter": 57,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 39 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 57,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          30
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 58",
+      "parameter": 58,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 3A 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 58,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 59",
+      "parameter": 59,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 3B 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 59,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          15
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 60",
+      "parameter": 60,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 3C 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 60,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 61",
+      "parameter": 61,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 3D 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 61,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 62",
+      "parameter": 62,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 3E 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 62,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 63",
+      "parameter": 63,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 3F 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 63,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 64",
+      "parameter": 64,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 40 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 64,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          72
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 65",
+      "parameter": 65,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 41 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 65,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          72
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 66",
+      "parameter": 66,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 42 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 66,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          15
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 67",
+      "parameter": 67,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 43 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 67,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 68",
+      "parameter": 68,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 44 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 68,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 69",
+      "parameter": 69,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 45 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 69,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 70",
+      "parameter": 70,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 46 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 70,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 71",
+      "parameter": 71,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 47 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 71,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 72",
+      "parameter": 72,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 48 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 72,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 73",
+      "parameter": 73,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 49 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 73,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 74",
+      "parameter": 74,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 4A 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 74,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 75",
+      "parameter": 75,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 4B 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 75,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 76",
+      "parameter": 76,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 4C 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 76,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 77",
+      "parameter": 77,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 4D 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 77,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 78",
+      "parameter": 78,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 4E 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 78,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 79",
+      "parameter": 79,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 4F 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 79,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 80",
+      "parameter": 80,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 50 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 80,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 81",
+      "parameter": 81,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 51 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 81,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 82",
+      "parameter": 82,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 52 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 82,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 83",
+      "parameter": 83,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 53 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 83,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 84",
+      "parameter": 84,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 54 00 00 00 0F 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 84,
+        "index": 0,
+        "length_field": 15,
+        "data": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 85",
+      "parameter": 85,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 55 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 85,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 86",
+      "parameter": 86,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 56 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 86,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 87",
+      "parameter": 87,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 57 00 00 00 0D 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 87,
+        "index": 0,
+        "length_field": 13,
+        "data": [
+          2,
+          62,
+          16,
+          64,
+          19,
+          67,
+          127,
+          127,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 88",
+      "parameter": 88,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 58 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 88,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 89",
+      "parameter": 89,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 59 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 89,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 90",
+      "parameter": 90,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 5A 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 90,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 91",
+      "parameter": 91,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 5B 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 91,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 92",
+      "parameter": 92,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 5C 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 92,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          3
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 93",
+      "parameter": 93,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 5D 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 93,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          100
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 94",
+      "parameter": 94,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 5E 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 94,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          2
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 95",
+      "parameter": 95,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 5F 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 95,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 96",
+      "parameter": 96,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 60 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 96,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 97",
+      "parameter": 97,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 61 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 97,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          100
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 98",
+      "parameter": 98,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 62 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 98,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 99",
+      "parameter": 99,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 63 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 99,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 100",
+      "parameter": 100,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 64 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 100,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 101",
+      "parameter": 101,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 65 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 101,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 102",
+      "parameter": 102,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 66 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 102,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 103",
+      "parameter": 103,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 67 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 103,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 104",
+      "parameter": 104,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 68 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 104,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 105",
+      "parameter": 105,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 69 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 105,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 106",
+      "parameter": 106,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 6A 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 106,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 107",
+      "parameter": 107,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 6B 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 107,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 108",
+      "parameter": 108,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 6C 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 108,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          4
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 109",
+      "parameter": 109,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 6D 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 109,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 110",
+      "parameter": 110,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 6E 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 110,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 111",
+      "parameter": 111,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 6F 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 111,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 112",
+      "parameter": 112,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 70 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 112,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 113",
+      "parameter": 113,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 71 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 113,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 114",
+      "parameter": 114,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 72 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 114,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 115",
+      "parameter": 115,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 73 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 115,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 116",
+      "parameter": 116,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 74 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 116,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 117",
+      "parameter": 117,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 75 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 117,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          6
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 118",
+      "parameter": 118,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 76 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 118,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 119",
+      "parameter": 119,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 77 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 119,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          14
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 120",
+      "parameter": 120,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 78 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 120,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 121",
+      "parameter": 121,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 79 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 121,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 122",
+      "parameter": 122,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 7A 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 122,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "name": "Tone parameter 200",
+      "parameter": 200,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 48 01 00 00 00 00 F7",
+      "reply": null
+    },
+    {
+      "name": "Tone parameter 201",
+      "parameter": 201,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 49 01 00 00 00 00 F7",
+      "reply": null
+    },
+    {
+      "name": "Tone parameter 202",
+      "parameter": 202,
+      "block": 0,
+      "request_hex": "F0 44 19 01 7F 00 03 03 00 00 00 00 00 00 00 00 00 00 4A 01 00 00 00 00 F7",
+      "reply": null
+    }
+  ],
+  "received": [
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0F 00 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 0,
+        "index": 0,
+        "length_field": 15,
+        "data": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 1,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 2,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 03 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 3,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 04 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 4,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 05 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 5,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 06 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 6,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 07 00 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 7,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 08 00 00 00 00 00 18 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 8,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          24,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 09 00 00 00 00 00 66 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 9,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          102,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 0A 00 00 00 00 00 1A 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 10,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          26,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 0B 00 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 11,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 0C 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 12,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 0D 00 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 13,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 0E 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 14,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 0F 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 15,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 10 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 16,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 11 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 17,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 12 00 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 18,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 13 00 00 00 00 00 68 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 19,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          104,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 14 00 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 20,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 15 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 21,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 16 00 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 22,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 17 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 23,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 18 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 24,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 19 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 25,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 1A 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 26,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 1B 00 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 27,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 1C 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 28,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 1D 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 29,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 1E 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 30,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 1F 00 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 31,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 20 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 32,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 21 00 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 33,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 22 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 34,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 23 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 35,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 24 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 36,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 25 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 37,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 26 00 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 38,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 27 00 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 39,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 28 00 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 40,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 29 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 41,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 2A 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 42,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 2B 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 43,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 2C 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 44,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 2D 00 00 00 00 00 5A F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 45,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          90
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 2E 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 46,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 2F 00 00 00 00 00 02 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 47,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          2
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 30 00 00 00 00 00 02 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 48,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          2
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 31 00 00 00 00 00 69 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 49,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          105
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 32 00 00 00 00 00 24 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 50,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          36
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 33 00 00 00 00 00 02 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 51,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          2
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 34 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 52,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 35 00 00 00 00 00 02 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 53,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          2
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 36 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 54,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 37 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 55,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 38 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 56,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 39 00 00 00 00 00 1E F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 57,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          30
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 3A 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 58,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 3B 00 00 00 00 00 0F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 59,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          15
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 3C 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 60,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 3D 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 61,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 3E 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 62,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 3F 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 63,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 40 00 00 00 00 00 48 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 64,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          72
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 41 00 00 00 00 00 48 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 65,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          72
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 42 00 00 00 00 00 0F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 66,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          15
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 43 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 67,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 44 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 68,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 45 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 69,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 46 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 70,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 47 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 71,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 48 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 72,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 49 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 73,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 4A 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 74,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 4B 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 75,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 4C 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 76,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 4D 00 00 00 00 00 40 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 77,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          64
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 4E 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 78,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 4F 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 79,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 50 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 80,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 51 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 81,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 52 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 82,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 53 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 83,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 54 00 00 00 0F 00 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 84,
+        "index": 0,
+        "length_field": 15,
+        "data": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 55 00 00 00 00 00 01 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 85,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 56 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 86,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 57 00 00 00 0D 00 02 3E 10 40 13 43 7F 7F 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 87,
+        "index": 0,
+        "length_field": 13,
+        "data": [
+          2,
+          62,
+          16,
+          64,
+          19,
+          67,
+          127,
+          127,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 58 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 88,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 59 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 89,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 5A 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 90,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 5B 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 91,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 5C 00 00 00 00 00 03 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 92,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          3
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 5D 00 00 00 00 00 64 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 93,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          100
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 5E 00 00 00 00 00 02 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 94,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          2
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 5F 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 95,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 60 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 96,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 61 00 00 00 00 00 64 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 97,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          100
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 62 00 00 00 00 00 7F F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 98,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          127
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 63 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 99,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 64 00 00 00 00 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 100,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 65 00 00 00 00 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 101,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 66 00 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 102,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 67 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 103,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 68 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 104,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 69 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 105,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 6A 00 00 00 00 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 106,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 6B 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 107,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 6C 00 00 00 00 00 04 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 108,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          4
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 6D 00 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 109,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 6E 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 110,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 6F 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 111,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 70 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 112,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 71 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 113,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 72 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 114,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 73 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 115,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 74 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 116,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 75 00 00 00 00 00 06 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 117,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          6
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 76 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 118,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 77 00 00 00 00 00 0E F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 119,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          14
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 78 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 120,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 79 00 00 00 00 00 01 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 121,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          1
+        ]
+      }
+    },
+    {
+      "hex": "F0 44 19 01 7F 01 03 03 00 00 00 00 00 00 00 00 00 00 7A 00 00 00 00 00 00 F7",
+      "reply": {
+        "category": 3,
+        "memory": 3,
+        "parameter_set": 0,
+        "block": 0,
+        "parameter": 122,
+        "index": 0,
+        "length_field": 0,
+        "data": [
+          0
+        ]
+      }
+    }
+  ],
+  "selected_input": "CASIO USB-MIDI 0",
+  "selected_output": "CASIO USB-MIDI 1",
+  "stopped_reason": "Three consecutive unanswered requests"
+}

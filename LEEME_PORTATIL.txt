@@ -1,0 +1,55 @@
+TONE MUTANT 1.4 EN ESPAÑOL — WINDOWS X64
+
+Extraiga el ZIP completo en una carpeta donde pueda guardar archivos.
+Abra ToneMutant-ES.exe. Mantenga la carpeta _internal junto al ejecutable.
+Esta versión incluye el entorno necesario; no necesita instalar Python.
+Se ha preparado para Windows 10/11 de 64 bits. No es una aplicación Android.
+
+ENTORNO Y ESTABILIDAD
+Python 3.12.14, Qt 6.10.3 y RtMidi 1.5.8.
+Se corrigieron accesos a la ventana desde el hilo MIDI y reenvíos de selección.
+Los cambios rápidos se agrupan y los puertos abiertos se mantienen activos.
+Se comprobaron 1.000 cambios simulados; falta repetir la prueba con el teclado.
+Si vuelve a cerrarse, conserve los archivos de la carpeta registros.
+
+PRIMER USO
+1. Conecte y encienda el teclado por USB.
+2. Abra ToneMutant-ES.exe y pulse Ctrl+, para entrar en Configuración.
+3. Seleccione CT-X700/800 y los puertos MIDI de entrada y salida del Casio.
+4. Confirme con Aceptar y pulse F5 para sincronizar.
+5. Guarde los sonidos con Ctrl+S en formato JSON. Ctrl+O permite recuperarlos.
+
+TECLADO Y NVDA
+Tab / Mayús+Tab: recorrer controles.
+Flechas: cambiar valores, elementos y pestañas.
+Intro: confirmar un número escrito.
+F6 / Mayús+F6: cambiar entre mezclador, edición y ayuda/registro.
+F8: leer el último mensaje de estado. Escape devuelve el foco anterior.
+Alt: acceder a los menús.
+Los controles muestran nombres y descripciones accesibles en español.
+Los nombres originales de los sonidos del Casio y los identificadores JSON se conservan.
+
+EXPERIMENTAL
+La pestaña Experimental reúne lecturas, instantáneas y preguntas pendientes.
+Las 126 filas iniciales proceden de una captura del 19 de octubre de 2026;
+no describen necesariamente el sonido seleccionado en otra máquina.
+Consultar seleccionado actualiza una lectura sin escribir valores.
+Puede guardar instantáneas y compararlas después de cambiar un ajuste del teclado.
+La edición de los controles heredados está desactivada inicialmente.
+Las direcciones sin identificar permanecen de solo lectura.
+Los efectos ocultos y los tonos de calibración están separados como experimentales.
+La exportación TON del CT-X800 está en el menú Experimental.
+
+ARCHIVOS INCLUIDOS
+config.cfg: ajustes locales del modelo y de los puertos MIDI.
+fuentes: código fuente modificado, pruebas y documentación.
+licencias y LICENSE.md: textos y atribuciones conservadas.
+Las instrucciones de compilación están en fuentes/tools/build_portable.py
+y las dependencias de construcción en fuentes/requirements-build.txt.
+
+COMPROBACIONES Y LÍMITES
+La versión se comprueba con pruebas de Qt y capturas reales de lectura del CT-X800.
+La prueba de arranque del ejecutable usa dispositivos simulados.
+Falta validar la lectura auditiva de todos los flujos con NVDA y los cambios
+de sonido de las funciones experimentales. No todos los rangos ni funciones
+heredadas se han confirmado en el instrumento.

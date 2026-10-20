@@ -1,4 +1,8 @@
-# Tone Mutant
+# Tone Mutant 1.4 — Español y Qt 6
+
+Versión local para NVDA y CT-X800: Python 3.12.14 y Qt 6.10.3.
+Consulte [ACCESIBILIDAD.md](ACCESIBILIDAD.md) para ejecutar, compilar y revisar las pruebas.
+La documentación original que sigue describe la versión anterior.
 **Tone Mutant** is a tone editing tool designed for Casio CT-X series keyboards.
 
 ## Features

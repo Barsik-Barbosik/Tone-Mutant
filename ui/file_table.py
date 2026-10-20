@@ -1,15 +1,18 @@
-from PySide2.QtCore import Qt, QMimeData
-from PySide2.QtGui import QDrag
-from PySide2.QtWidgets import QTableWidget, QAbstractItemView
+from ui.i18n import tr
+from PySide6.QtCore import Qt, QMimeData
+from PySide6.QtGui import QDrag
+from PySide6.QtWidgets import QTableWidget, QAbstractItemView
 
 
 class FileTable(QTableWidget):
     def __init__(self, parent=None, external_drag_drop_finished_callback=None):
         super().__init__(parent)
+        self.setAccessibleName(tr("PC tone files"))
+        self.setAccessibleDescription(tr("Select a file, then Tab to Upload to copy it to the synthesizer."))
         self.external_drag_drop_finished_callback = external_drag_drop_finished_callback
 
         self.setColumnCount(1)
-        self.setHorizontalHeaderLabels(["File Name"])
+        self.setHorizontalHeaderLabels(["Nombre de archivo"])
         self.verticalHeader().setDefaultSectionSize(22)
         self.verticalHeader().setMinimumWidth(50)
         self.horizontalHeader().setStretchLastSection(True)
@@ -38,7 +41,7 @@ class FileTable(QTableWidget):
 
             drag = QDrag(self)
             drag.setMimeData(mime_data)
-            drag.exec_(Qt.MoveAction)
+            drag.exec(Qt.MoveAction)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasText():

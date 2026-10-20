@@ -5,7 +5,7 @@ from constants.enums import ParameterType
 from models.dsp_module import DspModule
 from models.instrument import Instrument
 from models.parameter import MainParameter, AdvancedParameter
-from utils.utils import get_all_instruments
+from utils.utils import get_all_instruments, get_synthesizer_model
 
 
 class Tone:
@@ -97,12 +97,28 @@ class Tone:
                               ParameterType.COMBO, ["OFF", "ON"]),
             AdvancedParameter(12, 80, 0, "Stretch Tuning",
                               "Specifies the stretch tuning, also known as the Railsback curve. A value of 0 is recommended for most instruments, while values from 1 to 7 may be suitable for piano or electric piano sounds.",
-                              ParameterType.COMBO, [str(i) for i in range(8)])]
+                              ParameterType.COMBO, [str(i) for i in range(8)]),
+            AdvancedParameter(13, 44, 0, "Output Route",
+                              "Send the tone directly to the output or through the DSP effect.",
+                              ParameterType.COMBO, ["Direct", "DSP"])]
 
         self.dsp_module_1: DspModule = None
         self.dsp_module_2: DspModule = None
         self.dsp_module_3: DspModule = None
         self.dsp_module_4: DspModule = None
+        self.configure_model(get_synthesizer_model())
+
+    def configure_model(self, model):
+        """Apply documented model-specific UI limits without transmitting changes."""
+        self.synthesizer_model = model
+        octave = next(parameter for parameter in self.main_parameter_list if parameter.name == "Octave Shift")
+        octave.choices = [-2, 2] if model == constants.CTX_700_800 else [-3, 3]
+        octave.value = max(octave.choices[0], min(octave.choices[1], octave.value))
+        note_off = next(parameter for parameter in self.advanced_parameter_list if parameter.param_number == 42)
+        note_off.choices = (["Note-off Velocity", "Note-on Velocity", "Both"]
+                            if model == constants.CTX_700_800 else
+                            ["Note-off Velocity", "Note-on Velocity", "Minimum of Both", "Unknown"])
+        note_off.value = min(note_off.value, len(note_off.choices) - 1)
 
     def to_json(self):
         obj = {
